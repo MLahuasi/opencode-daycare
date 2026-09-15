@@ -18,6 +18,9 @@
   --color-coral-soft-hover: #f8d8cb;
   --color-coral-soft-active: #f4cebf;
   --color-ghost-active: #ede1d2;
+  --color-brand-start: #f8c3a8;
+  --color-navigation: #6e6359;
+  --color-navigation-active: #d9583c;
   --shadow-coral-button: 0 8px 18px -8px rgb(238 129 100 / 75%);
 }
 
