@@ -35,7 +35,7 @@
     var(--color-coral-button-end)
   );
   box-shadow: var(--shadow-coral-button);
-  color: white;
+  color: var(--color-on-coral);
 }
 
 .coral:hover:not(:disabled) {

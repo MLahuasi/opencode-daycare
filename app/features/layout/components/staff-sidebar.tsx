@@ -1,23 +1,14 @@
 import { Button } from "@/app/components/ui/button";
 import type { ReactNode } from "react";
+import {
+  staffSidebarMock,
+  type StaffNavigationIcon,
+} from "../data/staff-sidebar-mock";
 import styles from "./staff-sidebar.module.css";
-
-type NavigationIconName = "feed" | "children" | "alerts" | "account";
 
 type StaffSidebarProps = {
   className?: string;
 };
-
-const navigationItems: ReadonlyArray<{
-  label: string;
-  icon: NavigationIconName;
-  active?: boolean;
-}> = [
-  { label: "Feed", icon: "feed", active: true },
-  { label: "Niños", icon: "children" },
-  { label: "Avisos", icon: "alerts" },
-  { label: "Mi cuenta", icon: "account" },
-];
 
 /**
  * Renders an icon used by the staff navigation controls.
@@ -26,8 +17,8 @@ const navigationItems: ReadonlyArray<{
  * @param props.name - Identifier for the icon to render.
  * @returns An inline SVG icon.
  */
-function NavigationIcon({ name }: { name: NavigationIconName }) {
-  const paths: Record<NavigationIconName, ReactNode> = {
+function NavigationIcon({ name }: { name: StaffNavigationIcon }) {
+  const paths: Record<StaffNavigationIcon, ReactNode> = {
     feed: <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />,
     children: (
       <>
@@ -76,7 +67,7 @@ function NavigationIcon({ name }: { name: NavigationIconName }) {
 export function StaffSidebar({ className = "" }: StaffSidebarProps) {
   return (
     <>
-      <aside className={`${styles.sidebar} ${className}`} aria-label="Navegación principal">
+      <aside className={`${styles.sidebar} ${className}`} aria-label={staffSidebarMock.navigationLabel}>
         <div className={styles.brand}>
           <div className={styles.brandMark} aria-hidden="true">
             <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" viewBox="0 0 24 24">
@@ -85,8 +76,8 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
             </svg>
           </div>
           <div>
-            <p className={styles.brandName}>OpenDayCare</p>
-            <p className={styles.roomName}>Sala Soles</p>
+            <p className={styles.brandName}>{staffSidebarMock.brand.name}</p>
+            <p className={styles.roomName}>{staffSidebarMock.brand.room}</p>
           </div>
         </div>
 
@@ -94,11 +85,11 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
           <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
             <path d="M12 5v14M5 12h14" />
           </svg>
-          Nueva publicación
+          {staffSidebarMock.newPostLabel}
         </Button>
 
-        <nav className={styles.navigation} aria-label="Secciones">
-          {navigationItems.map(({ active, icon, label }) => (
+        <nav className={styles.navigation} aria-label={staffSidebarMock.sectionsLabel}>
+          {staffSidebarMock.navigationItems.map(({ active, icon, label }) => (
             <Button
               aria-current={active ? "page" : undefined}
               className={`${styles.navigationButton} ${active ? styles.navigationButtonActive : ""}`}
@@ -112,12 +103,12 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
         </nav>
 
         <div className={styles.profile}>
-          <div className={styles.avatar} aria-hidden="true">C</div>
+          <div className={styles.avatar} aria-hidden="true">{staffSidebarMock.profile.initial}</div>
           <div className={styles.profileDetails}>
-            <p>Caro Giménez</p>
-            <span>Maestra · Soles</span>
+            <p>{staffSidebarMock.profile.name}</p>
+            <span>{staffSidebarMock.profile.role}</span>
           </div>
-          <Button aria-label="Cerrar sesión" className={styles.logoutButton} variant="ghost">
+          <Button aria-label={staffSidebarMock.logoutLabel} className={styles.logoutButton} variant="ghost">
             <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
             </svg>
@@ -125,8 +116,8 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
         </div>
       </aside>
 
-      <nav className={styles.mobileNavigation} aria-label="Navegación móvil">
-        {navigationItems.map(({ active, icon, label }) => (
+      <nav className={styles.mobileNavigation} aria-label={staffSidebarMock.mobileNavigationLabel}>
+        {staffSidebarMock.navigationItems.map(({ active, icon, label }) => (
           <Button
             aria-current={active ? "page" : undefined}
             className={`${styles.mobileNavigationButton} ${active ? styles.mobileNavigationButtonActive : ""}`}

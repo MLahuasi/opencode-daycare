@@ -1,5 +1,14 @@
 import type { FeedPost } from "../types/feed";
 
+export const feedOverview = {
+  roomLabel: "Guardería · Sala Soles",
+  greeting: "Buenas, Caro",
+  attendance: "12 niños",
+  date: "martes 17 jun",
+  composerPrompt: "Compartí un momento…",
+  publishedTodayLabel: "Publicado hoy",
+} as const;
+
 export const feedPosts: readonly FeedPost[] = [
   {
     id: "mateo-first-potty",

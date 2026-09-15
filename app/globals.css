@@ -3,6 +3,7 @@
 :root {
   --color-page: #f6ecdf;
   --color-surface: #fffdf9;
+  --color-on-coral: #fff;
   --color-ink: #3f362e;
   --color-text: #4a4038;
   --color-muted: #94887b;
@@ -34,6 +35,7 @@
   --color-photo: #b0a290;
   --color-card-divider: #f0e6d8;
   --shadow-card: 0 4px 16px -12px rgb(120 90 60 / 50%);
+  --shadow-composer: 0 4px 14px -10px rgb(120 90 60 / 40%);
   --shadow-coral-button: 0 8px 18px -8px rgb(238 129 100 / 75%);
 }
 
