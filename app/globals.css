@@ -13,6 +13,12 @@
   --color-coral-dark: #c5503a;
   --color-coral-soft: #fbe3d8;
   --color-coral-light: #f2937a;
+  --color-coral-button-start: #f4977e;
+  --color-coral-button-end: #ee8164;
+  --color-coral-soft-hover: #f8d8cb;
+  --color-coral-soft-active: #f4cebf;
+  --color-ghost-active: #ede1d2;
+  --shadow-coral-button: 0 8px 18px -8px rgb(238 129 100 / 75%);
 }
 
 @theme inline {
