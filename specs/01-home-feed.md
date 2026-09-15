@@ -1,6 +1,6 @@
 # SPEC 01 — Home del feed del personal
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** Ninguna
 > **Date:** 2026-09-15
 > **Objective:** Implementar el Home `/` como un feed estático del personal de Sala Soles basado en la plantilla visual existente.
