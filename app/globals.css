@@ -21,6 +21,19 @@
   --color-brand-start: #f8c3a8;
   --color-navigation: #6e6359;
   --color-navigation-active: #d9583c;
+  --color-child-avatar-background: #a9d9e8;
+  --color-child-avatar: #1f7a93;
+  --color-achievement-background: #cfebd8;
+  --color-achievement: #3e9b6c;
+  --color-activity-background: #c7e7f1;
+  --color-activity: #2e89a6;
+  --color-announcement-background: #ccd8f4;
+  --color-announcement: #4e72c8;
+  --color-photo-background: #f4ece1;
+  --color-photo-border: #dbcdba;
+  --color-photo: #b0a290;
+  --color-card-divider: #f0e6d8;
+  --shadow-card: 0 4px 16px -12px rgb(120 90 60 / 50%);
   --shadow-coral-button: 0 8px 18px -8px rgb(238 129 100 / 75%);
 }
 

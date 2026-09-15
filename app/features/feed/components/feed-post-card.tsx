@@ -1,0 +1,133 @@
+import type { FeedPost, PostType } from "../types/feed";
+import styles from "./feed-post-card.module.css";
+
+type FeedPostCardProps = {
+  post: FeedPost;
+  className?: string;
+};
+
+const postTypeLabels: Record<PostType, string> = {
+  achievement: "Logro",
+  activity: "Actividad",
+  announcement: "Anuncio",
+};
+
+/**
+ * Renders the icon for a post's category badge.
+ *
+ * @param props - Category icon configuration.
+ * @param props.type - Post category that determines the displayed icon.
+ * @returns An inline SVG category icon.
+ */
+function PostTypeIcon({ type }: { type: PostType }) {
+  return <span aria-hidden="true" className={styles.tagDot} data-post-type={type} />;
+}
+
+/**
+ * Renders the decorative announcement avatar icon.
+ *
+ * @returns An inline SVG megaphone icon.
+ */
+function AnnouncementIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="m3 11 18-5v12L3 14v-3zM11.6 16.8a3 3 0 1 1-5.8-1.6" />
+    </svg>
+  );
+}
+
+/**
+ * Renders the filled reaction icon from the visual reference.
+ *
+ * @returns An inline SVG heart icon.
+ */
+function HeartIcon() {
+  return (
+    <svg aria-hidden="true" fill="currentColor" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z" />
+    </svg>
+  );
+}
+
+/**
+ * Renders the comment count icon.
+ *
+ * @returns An inline SVG comment icon.
+ */
+function CommentIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z" />
+    </svg>
+  );
+}
+
+/**
+ * Renders the static illustration for a media placeholder.
+ *
+ * @returns An inline SVG photo icon.
+ */
+function PhotoIcon() {
+  return (
+    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" viewBox="0 0 24 24">
+      <rect height="18" rx="2" width="18" x="3" y="3" />
+      <circle cx="9" cy="9" r="2" />
+      <path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 21" />
+    </svg>
+  );
+}
+
+/**
+ * Renders a static feed publication using its category-specific visual treatment.
+ *
+ * @param props - Feed card configuration.
+ * @param props.post - Static publication data to display.
+ * @param props.className - Optional classes that customize the card container.
+ * @returns A feed publication article.
+ */
+export function FeedPostCard({ className = "", post }: FeedPostCardProps) {
+  const isAnnouncement = post.type === "announcement";
+
+  return (
+    <article className={`${styles.card} ${styles[post.type]} ${className}`}>
+      <header className={styles.header}>
+        <div className={styles.avatar}>
+          {isAnnouncement ? <AnnouncementIcon /> : post.initial}
+        </div>
+        <div className={styles.author}>
+          <h2>{post.subject}</h2>
+          <p>
+            <time dateTime={post.dateTime}>{post.time}</time>
+            {post.authorLabel ? ` · ${post.authorLabel}` : ""}
+          </p>
+        </div>
+        <span className={styles.tag}>
+          <PostTypeIcon type={post.type} />
+          {postTypeLabels[post.type]}
+        </span>
+      </header>
+
+      <p className={styles.recipient}>Para: {post.recipient}</p>
+      <p className={styles.body}>{post.body}</p>
+
+      {post.hasMedia ? (
+        <div className={styles.mediaPlaceholder} aria-label="Foto: pintando con témperas" role="img">
+          <PhotoIcon />
+          <span>Foto · pintando con témperas</span>
+        </div>
+      ) : null}
+
+      <footer className={styles.footer}>
+        <span className={styles.reaction}>
+          <HeartIcon />
+          {post.reactions}
+        </span>
+        <span className={styles.comments}>
+          <CommentIcon />
+          {post.comments}
+        </span>
+        <span className={styles.editLabel}>Editar</span>
+      </footer>
+    </article>
+  );
+}
