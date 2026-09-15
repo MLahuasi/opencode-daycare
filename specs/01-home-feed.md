@@ -68,19 +68,19 @@ Los datos deben conservar los valores visibles de `references/screens/feed.dc.ht
 
 ## Acceptance criteria
 
-- [ ] `/` carga sin errores de servidor, consola o hidratación.
-- [ ] La página muestra sidebar de 248px y feed con ancho máximo de 760px en escritorio.
-- [ ] La página muestra barra de navegación inferior en una pantalla móvil.
-- [ ] El contenido visible coincide con los datos mock de la plantilla: Caro Giménez, Sala Soles, 12 niños, martes 17 jun y tres publicaciones.
-- [ ] Los corazones y contadores usan el tratamiento coral definido en el HTML de referencia.
-- [ ] Las fuentes Fredoka y Nunito se cargan mediante `next/font/google`.
-- [ ] Los botones y enlaces visuales tienen estados `hover`, `active` y `focus-visible` sin handlers ficticios.
-- [ ] El feed contiene landmarks semánticos, un único H1, `aria-current` para Feed y nombre accesible para el control de cierre de sesión.
-- [ ] No se implementan autenticación, base de datos, persistencia ni rutas adicionales.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] Las capturas de verificación se almacenan bajo `.playwright-mcp/Home/`.
+- [x] `/` carga sin errores de servidor, consola o hidratación.
+- [x] La página muestra sidebar de 248px y feed con ancho máximo de 760px en escritorio.
+- [x] La página muestra barra de navegación inferior en una pantalla móvil.
+- [x] El contenido visible coincide con los datos mock de la plantilla: Caro Giménez, Sala Soles, 12 niños, martes 17 jun y tres publicaciones.
+- [x] Los corazones y contadores usan el tratamiento coral definido en el HTML de referencia.
+- [x] Las fuentes Fredoka y Nunito se cargan mediante `next/font/google`.
+- [x] Los botones y enlaces visuales tienen estados `hover`, `active` y `focus-visible` sin handlers ficticios.
+- [x] El feed contiene landmarks semánticos, un único H1, `aria-current` para Feed y nombre accesible para el control de cierre de sesión.
+- [x] No se implementan autenticación, base de datos, persistencia ni rutas adicionales.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] Las capturas de verificación se almacenan bajo `.playwright-mcp/Home/`.
 
 ## Decisions
 
