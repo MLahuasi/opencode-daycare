@@ -8,92 +8,63 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## Contexto del proyecto
+## Proyecto
 
-- Es una aplicación Next.js 16.3.5 con App Router, React 19.2.8, TypeScript estricto y Tailwind CSS 4.
-- El código de aplicación vive directamente en `app/`; no existe un directorio `src/`.
-- El alias `@/*` resuelve desde la raíz del repositorio; usa npm y conserva `package-lock.json`.
+- Next.js 16.3.5 con App Router, React 19.2.8, TypeScript estricto y Tailwind CSS 4.
+- El código vive en `app/`; `@/*` resuelve desde la raíz. Usar npm y conservar `package-lock.json`.
+- Seguir las convenciones de archivos y las advertencias de la guía local de Next.js; no repetirlas ni contradecirlas aquí.
 
-## Comandos
+## Comandos y referencias
 
-- `npm run dev`: inicia el servidor de desarrollo en `http://localhost:3000`.
-- `npm run build`: genera el build de producción; `npm run start` lo sirve.
-- `npm run lint`: ejecuta ESLint sobre todo el repositorio.
-- No hay scripts ni configuración de tests o typecheck; para una comprobación de tipos usa `npx tsc --noEmit --incremental false`.
+- `npm run dev`, `npm run build`, `npm run start`, `npm run lint`.
+- Typecheck: `npx tsc --noEmit --incremental false`.
+- `references/` no es runtime. No editar `references/screens/support.js` ni `next-env.d.ts`.
+- Guardar capturas y archivos de Playwright en `.playwright-mcp/<Feature>/`.
+- Usar Context7 para documentación actual de frameworks y librerías.
 
-## Referencias y archivos generados
+## Workflow
 
-- `references/` contiene prototipos y capturas visuales; no forma parte del runtime de `app/`.
-- No edites `references/screens/support.js`: es un runtime generado y puede producir errores de lint ajenos a la aplicación.
-- No edites `next-env.d.ts`: Next.js lo genera automáticamente.
-
-## MCPs
-
-- Cualquier Screenshots o archivo relacionado a Playwright se deben almacenar en `.playwright-mcp` en directorios relacionados a la funcionalidad, por ejemplo: Home
-- Usar Context7 para obtener información actualizada acerca del Framework.
-
-## Spec Driven Development - Skills
-
-- Para funcionalidades grandes, cargar la skill `spec` desde `.agents/skills/spec` antes de escribir código. La skill define y guarda especificaciones en `specs/`.
-- Cargar `spec-impl` desde `.agents/skills/spec-impl` solo para implementar una especificación con estado aprobado. Respeta su flujo de rama y sus pausas de revisión.
-
-- `/spec` para crear especificaciones
-- `/spec-impl` para implementar las especificaciones
-
-- El nombre del archivo spec debe ser relacionado al módulo o pagina que se va a generar, no a la pagina o screenshot ejemplo.
+- Para funcionalidades grandes, cargar `spec`; para implementar una spec aprobada, cargar `spec-impl` y respetar sus pausas de revisión.
+- Los nombres de specs se relacionan con el módulo, no con una captura o prototipo.
 
 ## Arquitectura
 
-Usar arquitectura **feature-first** dentro de `app`.
+- Usar feature-first: `components/ui` para UI genérica, `shared` para código transversal y `features/<domain>` para cada dominio.
+- Una feature puede contener `components`, `data`, `types`, `schemas`, `actions`, `services` y `utils`.
+- Las features no dependen de internals de otras features. Exponer su API pública mediante `index.ts` y mover lo común a `shared`.
+- Los archivos especiales de App Router mantienen su convención de Next.js; la organización interna no crea rutas sin `page` o `route`.
 
-- `components/ui`: componentes genéricos reutilizables (`Button`, `Input`, `Select`, `Dialog`, `Card`, `Table`).
-- `shared`: código reutilizado por varias features (`components`, `types`, `utils`, `constants`).
-- `features`: funcionalidades organizadas por dominio (`auth`, `layout`, `children`, etc.).
-- Cada feature puede contener `components`, `types`, `schemas`, `actions`, `services` y `utils`.
-- Una feature no debe depender directamente de componentes internos de otra; mover elementos compartidos a `shared`.
-- Usar `index.ts` como barrel para exponer la API pública del módulo y evitar dependencias circulares.
+## Código
 
-## Reglas de código
+- Nombres de código y archivos en inglés. Mantener responsabilidades claras, bajo acoplamiento y evitar abstracciones o cambios no solicitados.
+- Separar presentación, datos, validación, estado y lógica de negocio cuando mezclarlo reduzca claridad.
 
-- Escribir nombres de variables, funciones, clases, interfaces, types, componentes y archivos en inglés.
-- Aplicar Clean Code: nombres descriptivos, responsabilidades claras y código simple.
-- Aplicar el principio de responsabilidad única (SRP): cada componente, función, clase o módulo debe tener una única responsabilidad y una razón principal para cambiar.
-- Separar presentación, acceso a datos, validación, estado y lógica de negocio cuando mezclar estas responsabilidades reduzca la claridad.
-- Evitar sobreingeniería, abstracciones prematuras y cambios no relacionados con la tarea.
+### Documentación
 
-### Comentarios
+- APIs exportadas y componentes reutilizables DEBEN tener JSDoc.
+- El JSDoc de funciones incluye descripción, `@param`, cada prop propia recibida y `@returns`.
+- Si las props extienden atributos nativos, indicarlo. Usar `//` solo para decisiones o lógica no evidente.
 
-- Usar `//` para comentarios breves sobre lógica o intención relevante.
-- Usar JSDoc `/** ... */` para documentar funciones, clases e interfaces cuando sea necesario.
-- En funciones, documentar descripción, parámetros con `@param` y retorno con `@returns` cuando corresponda.
-- Evitar comentarios que repitan literalmente lo que ya expresa el código.
+### React
 
-### Componentes React
+- Componentes reutilizables DEBEN aceptar y combinar `className?: string`.
+- Eventos configurables se reciben por props; no agregar handlers, enlaces ni navegación ficticios.
+- Mantener Server Components por defecto. Usar `"use client"` solo para estado, eventos, hooks o APIs del navegador.
+- Los elementos interactivos incluyen los estados visuales aplicables: `hover`, `focus-visible`, `disabled`, `loading` o `cursor-pointer`.
 
-- Los componentes reutilizables pueden recibir `className?: string` para personalizar estilos.
-- Recibir mediante props los eventos o acciones configurables (`onClick`, `onChange`, `onSubmit`, etc.).
-- Mantener el estado en el nivel adecuado y evitar duplicarlo.
-- Los elementos interactivos deben incluir estados visuales adecuados (`hover`, `focus`, `disabled`, `loading`, `cursor-pointer`) cuando corresponda.
-- No agregar eventos ficticios para simular funcionalidades no implementadas.
+### Datos y configuración
+
+- Componentes NO DEBEN contener datos mock o de negocio. Ubicarlos tipados en `features/<feature>/data` o recibirlos por props.
+- Datos mock incluyen nombres, fechas, cantidades, publicaciones, etiquetas variables y opciones de navegación.
+- Configuración compartida usa constantes; configuración de entorno usa variables de entorno. Se permiten literales técnicos, SVG y copy propio de componentes genéricos.
 
 ### Estilos
 
-- Usar Tailwind CSS como sistema principal de estilos.
-- Usar clases Tailwind directamente para layout y ajustes específicos del componente.
-- Centralizar estilos visuales reutilizables en componentes UI, variantes o utilidades compartidas.
-- Evitar repetir conjuntos grandes de clases Tailwind en múltiples componentes.
-- Preferir reutilizar o extender un componente existente antes que duplicar sus estilos.
-- Mantener colores y tokens visuales compartidos centralizados y con nombres semánticos.
+- Usar Tailwind para la mayoría de estilos y layout, conforme a la guía local de Next.js.
+- Usar CSS Modules colocados junto al componente cuando estilos o variantes complejos no sean claros con utilities.
+- `globals.css` se reserva para Tailwind, reset, fuentes y tokens globales.
+- Colores, sombras y gradientes compartidos usan tokens semánticos. No usar estilos inline salvo valores calculados dinámicamente.
 
-### Valores y configuración
+## Verificación obligatoria
 
-- Evitar valores hardcodeados de configuración o negocio.
-- Usar constantes, configuración o variables de entorno cuando corresponda.
-- Se permiten valores hardcodeados en mocks y detalles simples de implementación.
-
-## Principios generales
-
-- Priorizar simplicidad, legibilidad y mantenibilidad.
-- Favorecer reutilización real, bajo acoplamiento y alta cohesión.
-- Mantener la lógica de negocio fuera de componentes visuales cuando sea posible.
-- Evitar sobreingeniería y abstracciones prematuras.
+Antes de finalizar, revisar el diff por datos mock en componentes, estilos duplicados o hardcodeados, JSDoc incompleto y límites Server/Client. Ejecutar `npx eslint app`, `npx tsc --noEmit --incremental false` y `npm run build` cuando apliquen; estas herramientas no sustituyen la revisión arquitectónica.
