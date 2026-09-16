@@ -8,17 +8,19 @@ import {
   KidProfileHeader,
 } from "@/app/features/kids";
 import { calculateAge } from "@/app/features/kids/utils";
+import { getTodayIsoDate } from "@/app/shared";
 import { notFound } from "next/navigation";
 import styles from "@/app/features/kids/components/kid-profile.module.css";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
 
-function getTodayIsoDate(): string {
-  const today = new Date();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-
-  return `${today.getFullYear()}-${month}-${day}`;
+/**
+ * Returns the canonical kid slugs generated at build time.
+ *
+ * @returns The eight static profile route parameters.
+ */
+export function generateStaticParams(): Array<{ slug: string }> {
+  return kids.map((kid) => ({ slug: kid.slug }));
 }
 
 /**
