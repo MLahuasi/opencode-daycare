@@ -1,3 +1,47 @@
+.page {
+  min-height: 100%;
+  padding: 34px clamp(24px, 5vw, 68px) 80px;
+}
+
+.container {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.backLink {
+  justify-content: flex-start;
+  margin-bottom: 20px;
+  padding: 0;
+  color: var(--color-muted);
+}
+
+.backLink:hover:not(:disabled) {
+  background: transparent;
+  color: var(--color-ink);
+}
+
+.profileColumns {
+  display: flex;
+  align-items: flex-start;
+  gap: 26px;
+}
+
+.profileMainColumn {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profileSideColumn {
+  display: flex;
+  width: 300px;
+  flex: none;
+  flex-direction: column;
+  gap: 14px;
+}
+
 .profileHeader {
   display: flex;
   align-items: flex-start;
@@ -189,6 +233,18 @@
 }
 
 @media (max-width: 560px) {
+  .page {
+    padding: 28px 16px 40px;
+  }
+
+  .profileColumns {
+    flex-direction: column;
+  }
+
+  .profileSideColumn {
+    width: 100%;
+  }
+
   .profileHeader {
     flex-wrap: wrap;
   }
