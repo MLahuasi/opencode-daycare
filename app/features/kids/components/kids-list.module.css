@@ -8,6 +8,10 @@
   margin: 0 auto;
 }
 
+.filter {
+  width: 100%;
+}
+
 .header {
   display: flex;
   align-items: flex-end;
@@ -37,6 +41,10 @@
   margin: 4px 0 0;
   color: var(--color-muted);
   font-size: 14px;
+}
+
+.search {
+  margin-bottom: 26px;
 }
 
 .addButton {

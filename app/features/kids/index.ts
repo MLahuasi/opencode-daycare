@@ -1,6 +1,7 @@
 export {
   KidCard,
   KidsEmptyState,
+  KidsFilter,
   KidsHeader,
   KidsRoomGroup,
 } from "./components";
