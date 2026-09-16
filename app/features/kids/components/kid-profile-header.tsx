@@ -31,7 +31,7 @@ export function KidProfileHeader({ age, avatarTone, kid }: KidProfileHeaderProps
         <h1>{kid.name}</h1>
         <p>{age} años · Sala {kid.room}</p>
       </div>
-      <Button className={styles.editButton} variant="soft">
+      <Button className={styles.editButton} variant="ghost">
         Editar
       </Button>
     </header>

@@ -20,6 +20,17 @@ const statusVariants: Record<ParentStatus, "green" | "neutral" | "yellow"> = {
   pending: "yellow",
 };
 
+function getParentTone(relationship: ParentRelationship): "blue" | "green" | "purple" {
+  switch (relationship) {
+    case "father":
+      return "blue";
+    case "guardian":
+      return "green";
+    default:
+      return "purple";
+  }
+}
+
 type KidParentsProps = {
   parents: readonly Parent[];
 };
@@ -38,7 +49,13 @@ export function KidParents({ parents }: KidParentsProps) {
       <div className={styles.parentsList}>
         {parents.map((parent) => (
           <div className={styles.parent} key={parent.id}>
-            <Avatar aria-hidden="true" initial={parent.name.charAt(0).toUpperCase()} size="sm" tone="purple" />
+            <Avatar
+              aria-hidden="true"
+              className={styles.parentAvatar}
+              initial={parent.name.charAt(0).toUpperCase()}
+              size="sm"
+              tone={getParentTone(parent.relationship)}
+            />
             <div className={styles.parentDetails}>
               <strong>{parent.name}</strong>
               <span>{relationshipLabels[parent.relationship]}</span>
@@ -50,7 +67,7 @@ export function KidParents({ parents }: KidParentsProps) {
           <p className={styles.noParents}>Todavía no hay padres vinculados.</p>
         ) : null}
         <Button className={styles.linkParentButton} variant="ghost">
-          <span aria-hidden="true">+</span>
+          <span aria-hidden="true" className={styles.parentLinkIcon}>+</span>
           Vincular otro padre
         </Button>
       </div>

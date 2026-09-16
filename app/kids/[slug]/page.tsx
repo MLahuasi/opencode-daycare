@@ -51,7 +51,9 @@ export default async function KidProfilePage({
     <main className={styles.page}>
       <div className={styles.container}>
         <LinkButton className={styles.backLink} href="/kids" variant="ghost">
-          <span aria-hidden="true">←</span>
+          <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" viewBox="0 0 24 24">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
           Volver a Niños
         </LinkButton>
         <div className={styles.profileColumns}>

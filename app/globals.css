@@ -42,6 +42,10 @@
   --color-photo-border: #dbcdba;
   --color-photo: #b0a290;
   --color-card-divider: #f0e6d8;
+  --color-medical-background: #fbdad6;
+  --color-medical-icon: #f4a8a0;
+  --color-medical-text: #c5413a;
+  --color-medical-body: #b25249;
   --shadow-card: 0 4px 16px -12px rgb(120 90 60 / 50%);
   --shadow-composer: 0 4px 14px -10px rgb(120 90 60 / 40%);
   --shadow-coral-button: 0 8px 18px -8px rgb(238 129 100 / 75%);

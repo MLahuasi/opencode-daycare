@@ -16,7 +16,7 @@ export const parents: readonly Parent[] = [
     email: "diego.fernandez@example.com",
     relationship: "father",
     code: "DF-2049",
-    status: "active",
+    status: "pending",
   },
   {
     id: "parent-carolina-mendez",

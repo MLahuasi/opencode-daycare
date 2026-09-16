@@ -30,6 +30,7 @@ export type Kid = {
 export type KidListItem = {
   slug: string;
   name: string;
+  room: string;
   initial: string;
   age: number;
   parentCount: number;

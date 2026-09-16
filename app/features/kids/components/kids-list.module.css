@@ -37,12 +37,6 @@
   text-transform: uppercase;
 }
 
-.headerSummary {
-  margin: 4px 0 0;
-  color: var(--color-muted);
-  font-size: 14px;
-}
-
 .search {
   margin-bottom: 26px;
 }
@@ -58,7 +52,7 @@
 }
 
 .roomSection {
-  margin-top: 26px;
+  margin-top: 0;
 }
 
 .roomHeading {

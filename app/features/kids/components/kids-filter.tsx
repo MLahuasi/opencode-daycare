@@ -3,8 +3,8 @@
 import { SearchField } from "@/app/components/ui";
 import { normalizeName } from "@/app/features/kids/utils";
 import type { KidListItem } from "@/app/features/kids/types";
-import { KidCard } from "./kid-card";
 import { KidsEmptyState } from "./kids-empty-state";
+import { KidsRoomGroup } from "./kids-room-group";
 import styles from "./kids-list.module.css";
 import { useState } from "react";
 
@@ -36,9 +36,7 @@ export function KidsFilter({ items }: KidsFilterProps) {
         value={query}
       />
       {filteredItems.length > 0 ? (
-        <div className={styles.grid}>
-          {filteredItems.map((item) => <KidCard key={item.slug} kid={item} />)}
-        </div>
+        <KidsRoomGroup kids={filteredItems} room={filteredItems[0].room} />
       ) : (
         <KidsEmptyState />
       )}

@@ -66,13 +66,13 @@ function NavigationIcon({ name }: { name: StaffNavigationIcon }) {
 }
 
 /**
- * Renders one navigation control while keeping only Kids navigable.
+ * Renders one navigation control using the route configured by its item.
  *
  * @param props - Navigation control options.
  * @param props.activeSection - Currently active section.
  * @param props.item - Navigation item configuration.
  * @param props.mobile - Whether the compact mobile treatment is used.
- * @returns A presentational button or the real Kids route link.
+ * @returns A presentational button or a configured application route link.
  */
 function NavigationControl({ activeSection, item, mobile = false }: NavigationControlProps) {
   const active = item.icon === activeSection;
@@ -84,12 +84,12 @@ function NavigationControl({ activeSection, item, mobile = false }: NavigationCo
     </>
   );
 
-  if (item.icon === "children") {
+  if (item.href) {
     return (
       <LinkButton
         aria-current={active ? "page" : undefined}
         className={className}
-        href="/kids"
+        href={item.href}
         variant="ghost"
       >
         {content}

@@ -15,6 +15,7 @@ function toKidListItem(
   return {
     slug: kid.slug,
     name: kid.name,
+    room: kid.room,
     initial: kid.name.trim().charAt(0).toUpperCase(),
     age: calculateAge(kid.birthDate, asOfDate),
     parentCount: kid.parentIds.length,
@@ -31,20 +32,12 @@ function toKidListItem(
 export default function KidsPage() {
   const today = getTodayIsoDate();
   const listItems = kids.map((kid, index) => toKidListItem(kid, index, today));
-  const room = kids[0]?.room ?? "";
 
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <KidsHeader room={room} totalCount={listItems.length} />
-        <section aria-labelledby="kids-room-heading" className={styles.roomSection}>
-          <div className={styles.roomHeading}>
-            <h2 id="kids-room-heading">{room}</h2>
-            <span>{listItems.length} niños</span>
-            <i aria-hidden="true" />
-          </div>
-          <KidsFilter items={listItems} />
-        </section>
+        <KidsHeader />
+        <KidsFilter items={listItems} />
       </div>
     </main>
   );
