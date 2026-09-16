@@ -1,0 +1,46 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.coral {
+  background: var(--color-coral-soft);
+  color: var(--color-coral-dark);
+}
+
+.pink {
+  background: var(--color-avatar-pink-background);
+  color: var(--color-avatar-pink);
+}
+
+.green {
+  background: var(--color-achievement-background);
+  color: var(--color-achievement);
+}
+
+.yellow {
+  background: var(--color-avatar-yellow-background);
+  color: var(--color-avatar-yellow);
+}
+
+.blue {
+  background: var(--color-activity-background);
+  color: var(--color-activity);
+}
+
+.purple {
+  background: var(--color-avatar-purple-background);
+  color: var(--color-avatar-purple);
+}
+
+.neutral {
+  background: var(--color-page);
+  color: var(--color-muted);
+}
