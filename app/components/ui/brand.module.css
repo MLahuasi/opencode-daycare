@@ -1,0 +1,55 @@
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 4px 8px 22px;
+  cursor: pointer;
+  transition: opacity 150ms, transform 150ms;
+}
+
+.brand:hover {
+  opacity: 0.85;
+}
+
+.brand:active {
+  transform: translateY(1px);
+}
+
+.mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(
+    155deg,
+    var(--color-brand-start),
+    var(--color-coral-light)
+  );
+  color: var(--color-on-coral);
+}
+
+.mark svg {
+  width: 21px;
+  height: 21px;
+}
+
+.name,
+.room {
+  margin: 0;
+}
+
+.name {
+  color: var(--color-ink);
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.room {
+  margin-top: 2px;
+  color: var(--color-subtle);
+  font-size: 11.5px;
+}

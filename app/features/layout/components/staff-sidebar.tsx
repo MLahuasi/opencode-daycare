@@ -1,4 +1,4 @@
-import { Avatar, Button } from "@/app/components/ui";
+import { Avatar, Brand, Button } from "@/app/components/ui";
 import type { ReactNode } from "react";
 import {
   staffSidebarMock,
@@ -68,18 +68,7 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
   return (
     <>
       <aside className={`${styles.sidebar} ${className}`} aria-label={staffSidebarMock.navigationLabel}>
-        <div className={styles.brand}>
-          <div className={styles.brandMark} aria-hidden="true">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="4" />
-              <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-            </svg>
-          </div>
-          <div>
-            <p className={styles.brandName}>{staffSidebarMock.brand.name}</p>
-            <p className={styles.roomName}>{staffSidebarMock.brand.room}</p>
-          </div>
-        </div>
+        <Brand name={staffSidebarMock.brand.name} room={staffSidebarMock.brand.room} />
 
         <Button className={styles.newPostButton}>
           <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
@@ -110,7 +99,7 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
           />
           <div className={styles.profileDetails}>
             <p>{staffSidebarMock.profile.name}</p>
-            <span>{staffSidebarMock.profile.role}</span>
+            <span className={styles.profileRole}>{staffSidebarMock.profile.role}</span>
           </div>
           <Button aria-label={staffSidebarMock.logoutLabel} className={styles.logoutButton} variant="ghost">
             <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
