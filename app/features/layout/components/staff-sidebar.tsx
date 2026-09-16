@@ -1,13 +1,21 @@
-import { Avatar, Brand, Button } from "@/app/components/ui";
+import { Avatar, Brand, Button, LinkButton } from "@/app/components/ui";
 import type { ReactNode } from "react";
-import {
-  staffSidebarMock,
-  type StaffNavigationIcon,
-} from "@/app/data/mocks";
+import { staffSidebarMock } from "@/app/data/mocks";
+import type {
+  StaffNavigationIcon,
+  StaffNavigationSection,
+} from "@/app/features/layout/types";
 import styles from "./staff-sidebar.module.css";
 
 type StaffSidebarProps = {
+  activeSection?: StaffNavigationSection;
   className?: string;
+};
+
+type NavigationControlProps = {
+  activeSection: StaffNavigationSection;
+  item: (typeof staffSidebarMock.navigationItems)[number];
+  mobile?: boolean;
 };
 
 /**
@@ -58,13 +66,56 @@ function NavigationIcon({ name }: { name: StaffNavigationIcon }) {
 }
 
 /**
+ * Renders one navigation control while keeping only Kids navigable.
+ *
+ * @param props - Navigation control options.
+ * @param props.activeSection - Currently active section.
+ * @param props.item - Navigation item configuration.
+ * @param props.mobile - Whether the compact mobile treatment is used.
+ * @returns A presentational button or the real Kids route link.
+ */
+function NavigationControl({ activeSection, item, mobile = false }: NavigationControlProps) {
+  const active = item.icon === activeSection;
+  const className = `${mobile ? styles.mobileNavigationButton : styles.navigationButton} ${active ? (mobile ? styles.mobileNavigationButtonActive : styles.navigationButtonActive) : ""}`;
+  const content = (
+    <>
+      <NavigationIcon name={item.icon} />
+      {mobile ? <span>{item.label}</span> : item.label}
+    </>
+  );
+
+  if (item.icon === "children") {
+    return (
+      <LinkButton
+        aria-current={active ? "page" : undefined}
+        className={className}
+        href="/kids"
+        variant="ghost"
+      >
+        {content}
+      </LinkButton>
+    );
+  }
+
+  return (
+    <Button
+      aria-current={active ? "page" : undefined}
+      className={className}
+      variant="ghost"
+    >
+      {content}
+    </Button>
+  );
+}
+
+/**
  * Renders the desktop staff sidebar and the mobile bottom navigation.
  *
  * @param props - Sidebar customization options.
  * @param props.className - Optional classes applied to the desktop sidebar.
  * @returns The responsive staff navigation.
  */
-export function StaffSidebar({ className = "" }: StaffSidebarProps) {
+export function StaffSidebar({ activeSection = "feed", className = "" }: StaffSidebarProps) {
   return (
     <>
       <aside className={`${styles.sidebar} ${className}`} aria-label={staffSidebarMock.navigationLabel}>
@@ -78,16 +129,8 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
         </Button>
 
         <nav className={styles.navigation} aria-label={staffSidebarMock.sectionsLabel}>
-          {staffSidebarMock.navigationItems.map(({ active, icon, label }) => (
-            <Button
-              aria-current={active ? "page" : undefined}
-              className={`${styles.navigationButton} ${active ? styles.navigationButtonActive : ""}`}
-              key={label}
-              variant="ghost"
-            >
-              <NavigationIcon name={icon} />
-              {label}
-            </Button>
+          {staffSidebarMock.navigationItems.map((item) => (
+            <NavigationControl activeSection={activeSection} item={item} key={item.label} />
           ))}
         </nav>
 
@@ -110,16 +153,8 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
       </aside>
 
       <nav className={styles.mobileNavigation} aria-label={staffSidebarMock.mobileNavigationLabel}>
-        {staffSidebarMock.navigationItems.map(({ active, icon, label }) => (
-          <Button
-            aria-current={active ? "page" : undefined}
-            className={`${styles.mobileNavigationButton} ${active ? styles.mobileNavigationButtonActive : ""}`}
-            key={label}
-            variant="ghost"
-          >
-            <NavigationIcon name={icon} />
-            <span>{label}</span>
-          </Button>
+        {staffSidebarMock.navigationItems.map((item) => (
+          <NavigationControl activeSection={activeSection} item={item} key={item.label} mobile />
         ))}
       </nav>
     </>
