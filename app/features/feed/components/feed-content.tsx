@@ -1,5 +1,5 @@
 import { Button } from "@/app/components/ui/button";
-import { feedOverview, feedPosts } from "../data/feed-mock";
+import { feedOverview, feedPosts } from "@/app/data/mocks";
 import { FeedPostCard } from "./feed-post-card";
 import styles from "./feed-content.module.css";
 

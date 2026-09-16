@@ -1,1 +1,1 @@
-export { feedOverview, feedPosts } from "@/app/features/feed/data/feed-mock";
+export { feedOverview, feedPosts } from "./feed-mock";

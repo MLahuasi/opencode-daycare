@@ -1,4 +1,4 @@
-import type { FeedPost } from "../types/feed";
+import type { FeedPost } from "@/app/features/feed/types/feed";
 
 export const feedOverview = {
   roomLabel: "Guardería · Sala Soles",
