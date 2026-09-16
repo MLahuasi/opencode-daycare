@@ -30,9 +30,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Arquitectura
 
-- Usar feature-first: `components/ui` para UI genérica, `shared` para código transversal y `features/<domain>` para cada dominio.
-- Una feature puede contener `components`, `data`, `types`, `schemas`, `actions`, `services` y `utils`.
-- Las features no dependen de internals de otras features. Exponer su API pública mediante `index.ts` y mover lo común a `shared`.
+- Usar feature-first: `app/components/ui` para UI genérica, `app/shared` para código transversal, `app/data/mocks` para fixtures y `app/features/<domain>` para cada dominio.
+- Una feature puede contener `components`, `types`, `schemas`, `actions`, `services` y `utils`.
+- Las features no dependen de internals de otras features. Exponer su API pública mediante `index.ts`.
+- `app/components/ui/index.ts` expone la API pública de los componentes reutilizables.
+- Consumir componentes UI desde `@/app/components/ui`, sin imports profundos a sus archivos internos.
+- Mantener componentes específicos de negocio dentro de `app/features/<domain>/components`.
 - Los archivos especiales de App Router mantienen su convención de Next.js; la organización interna no crea rutas sin `page` o `route`.
 
 ## Código
@@ -48,14 +51,27 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ### React
 
-- Componentes reutilizables DEBEN aceptar y combinar `className?: string`.
-- Eventos configurables se reciben por props; no agregar handlers, enlaces ni navegación ficticios.
+- Los componentes reutilizables viven en `app/components/ui/` y se exportan explícitamente desde su barrel.
+- Los componentes reutilizables DEBEN aceptar y combinar `className?: string`.
+- Cuando corresponda, las props extienden los atributos nativos del elemento HTML que renderiza el componente.
+- Usar `Omit` para resolver conflictos entre atributos nativos y props propias.
+- Las props específicas permanecen junto al componente. Exportar sus tipos desde el barrel solo cuando formen parte de la API pública.
+- Los componentes UI son presentacionales y no contienen datos mock, lógica de negocio ni tipos de dominio.
+- Los modelos de dominio viven en `app/features/<domain>/types/`.
+- Eventos configurables y destinos se reciben mediante props; no agregar handlers, enlaces ni navegación ficticios.
 - Mantener Server Components por defecto. Usar `"use client"` solo para estado, eventos, hooks o APIs del navegador.
 - Los elementos interactivos incluyen los estados visuales aplicables: `hover`, `focus-visible`, `disabled`, `loading` o `cursor-pointer`.
 
 ### Datos y configuración
 
-- Componentes NO DEBEN contener datos mock o de negocio. Ubicarlos tipados en `features/<feature>/data` o recibirlos por props.
+- Todos los mocks y fixtures viven en `app/data/mocks/<domain>/`.
+- Cada dominio de mocks expone un `index.ts`; `app/data/mocks/index.ts` es la API pública raíz.
+- La aplicación y los tests consumen mocks desde `@/app/data/mocks`.
+- Los mocks importan sus contratos desde `app/features/<domain>/types/`.
+- No declarar ni duplicar tipos de dominio dentro de los archivos mock.
+- Los fixtures son deterministas: IDs, fechas, códigos y relaciones permanecen estables entre ejecuciones.
+- Los componentes NO DEBEN contener datos mock o de negocio. Recibirlos por props o consumirlos desde la capa de datos correspondiente.
+- Los Client Components reciben solo los datos necesarios mediante props y no importan colecciones completas de fixtures.
 - Datos mock incluyen nombres, fechas, cantidades, publicaciones, etiquetas variables y opciones de navegación.
 - Configuración compartida usa constantes; configuración de entorno usa variables de entorno. Se permiten literales técnicos, SVG y copy propio de componentes genéricos.
 
@@ -63,9 +79,20 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - Usar Tailwind para la mayoría de estilos y layout, conforme a la guía local de Next.js.
 - Usar CSS Modules colocados junto al componente cuando estilos o variantes complejos no sean claros con utilities.
-- `globals.css` se reserva para Tailwind, reset, fuentes y tokens globales.
-- Colores, sombras y gradientes compartidos usan tokens semánticos. No usar estilos inline salvo valores calculados dinámicamente.
+- `app/globals.css` contiene Tailwind, reset, fuentes y tokens visuales globales.
+- Todo color, sombra y gradiente se declara como token semántico en `app/globals.css`.
+- No usar valores hexadecimales, `rgb()`, `hsl()` ni colores arbitrarios directamente en componentes o CSS Modules.
+- Los CSS Modules consumen colores mediante `var(--token-semantico)`.
+- Los SVG reutilizables usan `currentColor` cuando corresponda.
+- No usar estilos inline salvo para valores calculados dinámicamente.
 
 ## Verificación obligatoria
 
-Antes de finalizar, revisar el diff por datos mock en componentes, estilos duplicados o hardcodeados, JSDoc incompleto y límites Server/Client. Ejecutar `npx eslint app`, `npx tsc --noEmit --incremental false` y `npm run build` cuando apliquen; estas herramientas no sustituyen la revisión arquitectónica.
+Antes de finalizar:
+
+- Confirmar que todos los fixtures están dentro de `app/data/mocks/`.
+- Confirmar que mocks y componentes UI se consumen mediante sus barrels públicos.
+- Revisar que los modelos de dominio estén definidos en `app/features/<domain>/types/`.
+- Buscar colores literales fuera de `app/globals.css`.
+- Revisar datos hardcodeados, estilos duplicados, JSDoc incompleto, soporte de `className` y límites Server/Client.
+- Ejecutar `npx eslint app`, `npx tsc --noEmit --incremental false` y `npm run build` cuando apliquen; estas herramientas no sustituyen la revisión arquitectónica.

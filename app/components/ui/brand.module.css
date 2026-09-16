@@ -3,16 +3,6 @@
   align-items: center;
   gap: 11px;
   padding: 4px 8px 22px;
-  cursor: pointer;
-  transition: opacity 150ms, transform 150ms;
-}
-
-.brand:hover {
-  opacity: 0.85;
-}
-
-.brand:active {
-  transform: translateY(1px);
 }
 
 .mark {

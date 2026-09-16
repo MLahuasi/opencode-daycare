@@ -1,6 +1,6 @@
 # SPEC 02 — UI compartida y centralización de mocks
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 01
 > **Date:** 2026-09-16
 > **Objective:** Centralizar los mocks de la aplicación y extraer componentes UI reutilizables sin cambiar el comportamiento observable del Home del feed.
@@ -66,18 +66,18 @@ Los tipos continuarán en sus features correspondientes. Los fixtures importará
 
 ## Acceptance criteria
 
-- [ ] Existe `app/data/mocks/index.ts` y exporta los fixtures públicos de Feed, Layout y Kids.
-- [ ] Los mocks de Feed y StaffSidebar ya no se almacenan dentro de `features/<domain>/data`.
-- [ ] Los imports de la aplicación consumen los mocks desde `@/app/data/mocks`.
-- [ ] Los tipos de Feed y Layout permanecen en sus directorios de `features` y no se duplican dentro de los mocks.
-- [ ] Existen componentes reutilizables `Avatar`, `Badge`, `SearchField` y `LinkButton` bajo `app/components/ui/`.
-- [ ] Los componentes reutilizables aceptan y combinan `className`.
-- [ ] Los componentes reutilizables tienen JSDoc completo para sus props propias y retorno.
-- [ ] `/` conserva el copy, datos, estilos, responsive, landmarks y accesibilidad definidos en SPEC 01.
-- [ ] La refactorización no introduce navegación ficticia, handlers de negocio ni estado de cliente innecesario.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
+- [x] Existe `app/data/mocks/index.ts` y exporta los fixtures públicos de Feed, Layout y Kids.
+- [x] Los mocks de Feed y StaffSidebar ya no se almacenan dentro de `features/<domain>/data`.
+- [x] Los imports de la aplicación consumen los mocks desde `@/app/data/mocks`.
+- [x] Los tipos de Feed y Layout permanecen en sus directorios de `features` y no se duplican dentro de los mocks.
+- [x] Existen componentes reutilizables `Avatar`, `Badge`, `SearchField` y `LinkButton` bajo `app/components/ui/`.
+- [x] Los componentes reutilizables aceptan y combinan `className`.
+- [x] Los componentes reutilizables tienen JSDoc completo para sus props propias y retorno.
+- [x] `/` conserva el copy, datos, estilos, responsive, landmarks y accesibilidad definidos en SPEC 01.
+- [x] La refactorización no introduce navegación ficticia, handlers de negocio ni estado de cliente innecesario.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
 
 ## Decisions
 
