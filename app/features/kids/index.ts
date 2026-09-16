@@ -1,3 +1,10 @@
+export {
+  KidCard,
+  KidsEmptyState,
+  KidsHeader,
+  KidsRoomGroup,
+} from "./components";
+
 export type {
   Kid,
   KidListItem,
