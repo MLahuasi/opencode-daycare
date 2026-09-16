@@ -1,5 +1,10 @@
 export { KidCard } from "./kid-card";
+export { KidBasicInfo } from "./kid-basic-info";
 export { KidsEmptyState } from "./kids-empty-state";
 export { KidsFilter } from "./kids-filter";
 export { KidsHeader } from "./kids-header";
 export { KidsRoomGroup } from "./kids-room-group";
+export { KidMedicalNotes } from "./kid-medical-notes";
+export { KidParents } from "./kid-parents";
+export { KidProfileActions } from "./kid-profile-actions";
+export { KidProfileHeader } from "./kid-profile-header";

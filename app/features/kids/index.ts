@@ -4,6 +4,11 @@ export {
   KidsFilter,
   KidsHeader,
   KidsRoomGroup,
+  KidBasicInfo,
+  KidMedicalNotes,
+  KidParents,
+  KidProfileActions,
+  KidProfileHeader,
 } from "./components";
 
 export type {
