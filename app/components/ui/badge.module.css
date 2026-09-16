@@ -40,6 +40,11 @@
   color: var(--color-avatar-purple);
 }
 
+.announcement {
+  background: var(--color-announcement-background);
+  color: var(--color-announcement);
+}
+
 .neutral {
   background: var(--color-page);
   color: var(--color-muted);

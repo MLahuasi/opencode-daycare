@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import styles from "./badge.module.css";
 
-type BadgeVariant = "coral" | "pink" | "green" | "yellow" | "blue" | "purple" | "neutral";
+export type BadgeVariant = "coral" | "pink" | "green" | "yellow" | "blue" | "purple" | "announcement" | "neutral";
 
 type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
   children: ReactNode;

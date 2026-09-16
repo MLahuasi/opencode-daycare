@@ -1,4 +1,4 @@
-import { Button } from "@/app/components/ui/button";
+import { Avatar, Button } from "@/app/components/ui";
 import { feedOverview, feedPosts } from "@/app/data/mocks";
 import { FeedPostCard } from "./feed-post-card";
 import styles from "./feed-content.module.css";
@@ -39,7 +39,7 @@ export function FeedContent({ className = "" }: FeedContentProps) {
         </header>
 
         <Button className={styles.composer} variant="ghost">
-          <span className={styles.avatar} aria-hidden="true">C</span>
+          <Avatar aria-hidden="true" className={styles.avatar} initial="C" />
           <span className={styles.composerText}>{feedOverview.composerPrompt}</span>
           <span className={styles.camera} aria-hidden="true">
             <CameraIcon />

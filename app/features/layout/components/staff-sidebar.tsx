@@ -1,4 +1,4 @@
-import { Button } from "@/app/components/ui/button";
+import { Avatar, Button } from "@/app/components/ui";
 import type { ReactNode } from "react";
 import {
   staffSidebarMock,
@@ -103,7 +103,11 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
         </nav>
 
         <div className={styles.profile}>
-          <div className={styles.avatar} aria-hidden="true">{staffSidebarMock.profile.initial}</div>
+          <Avatar
+            aria-hidden="true"
+            className={styles.avatar}
+            initial={staffSidebarMock.profile.initial}
+          />
           <div className={styles.profileDetails}>
             <p>{staffSidebarMock.profile.name}</p>
             <span>{staffSidebarMock.profile.role}</span>
