@@ -1,10 +1,4 @@
-export type StaffNavigationIcon = "feed" | "children" | "alerts" | "account";
-
-export type StaffNavigationItem = {
-  label: string;
-  icon: StaffNavigationIcon;
-  active?: boolean;
-};
+import type { StaffNavigationItem } from "@/app/features/layout/types";
 
 export const staffSidebarMock = {
   navigationLabel: "Navegación principal",

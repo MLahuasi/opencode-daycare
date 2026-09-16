@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import {
   staffSidebarMock,
   type StaffNavigationIcon,
-} from "../data/staff-sidebar-mock";
+} from "@/app/data/mocks";
 import styles from "./staff-sidebar.module.css";
 
 type StaffSidebarProps = {

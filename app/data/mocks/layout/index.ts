@@ -1,5 +1,5 @@
-export { staffSidebarMock } from "@/app/features/layout/data/staff-sidebar-mock";
+export { staffSidebarMock } from "./staff-sidebar-mock";
 export type {
   StaffNavigationIcon,
   StaffNavigationItem,
-} from "@/app/features/layout/data/staff-sidebar-mock";
+} from "@/app/features/layout/types";
