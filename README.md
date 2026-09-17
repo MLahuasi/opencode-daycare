@@ -124,6 +124,7 @@ Specs existentes:
 | `02-shared-ui-and-mocks.md` | `Implemented` | UI reutilizable y mocks centralizados |
 | `03-kids-and-profiles.md` | `Implemented` | Listado, perfiles, búsqueda y 404 de Kids |
 | `04-kid-allergy-tags.md` | `Implemented` | Badges de alergias y proyección segura |
+| `05-account-activation-and-login.md` | `Approved` | Login, activación y modelos de identidad |
 
 ## Flujo Spec Driven Development
 
