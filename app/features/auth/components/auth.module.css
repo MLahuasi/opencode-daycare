@@ -1,0 +1,51 @@
+.shell { display: grid; grid-template-columns: 1.05fr 1fr; min-height: 100vh; background: var(--color-page); }
+.brandPanel { position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; padding: 56px 60px; color: var(--color-on-coral); background: var(--gradient-auth-panel); }
+.brandOrbTop, .brandOrbBottom { position: absolute; border-radius: 50%; background: var(--color-auth-orb); }
+.brandOrbTop { width: 420px; height: 420px; top: -140px; right: -120px; }
+.brandOrbBottom { width: 300px; height: 300px; bottom: -110px; left: -80px; }
+.brandHeader, .brandMessage, .brandEyebrow { position: relative; }
+.brandHeader { display: flex; align-items: center; gap: 13px; padding: 0; cursor: default; }
+.activationMark svg { width: 26px; height: 26px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2; }
+.brandMessage { max-width: 430px; }
+.brandMessage h1, .formContent h2, .activationContent h1 { margin: 0; font-family: var(--font-fredoka), sans-serif; font-weight: 600; color: var(--color-ink); }
+.brandMessage h1 { margin-bottom: 18px; color: inherit; font-size: 42px; line-height: 1.12; }
+.brandMessage p, .brandEyebrow { margin: 0; color: var(--color-auth-copy); font-size: 17px; line-height: 1.6; }
+.brandEyebrow { font-size: 14px; }
+.formPanel { display: flex; align-items: center; justify-content: center; padding: 40px; }
+.formContent, .activationContent { width: 100%; max-width: 392px; }
+.formContent h2 { margin-bottom: 6px; font-size: 30px; }
+.formIntro, .activationIntro, .formFooter { color: var(--color-muted); }
+.formIntro { margin: 0 0 28px; font-size: 15px; }
+.field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.field > span:first-child { color: var(--color-muted); font-size: 12px; font-weight: 700; letter-spacing: .7px; }
+.field input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--color-border); border-radius: 14px; background: var(--color-surface); color: var(--color-ink); }
+.field input:focus-visible { outline: 3px solid var(--color-auth-focus); outline-offset: 2px; }
+.field input[readonly] { background: var(--color-auth-readonly); cursor: default; }
+.forgotPassword { margin: -1px 0 20px; color: var(--color-coral-dark); font-size: 13.5px; font-weight: 700; text-align: right; }
+.primaryButton { width: 100%; padding: 15px; border: 0; border-radius: 15px; background: var(--gradient-coral-button); color: var(--color-on-coral); box-shadow: var(--shadow-coral-button); cursor: pointer; font-size: 16px; font-weight: 800; }
+.primaryButton:hover { filter: brightness(.98); }
+.primaryButton:focus-visible { outline: 3px solid var(--color-auth-focus); outline-offset: 3px; }
+.primaryButton:disabled { cursor: not-allowed; opacity: .55; }
+.formFooter { margin: 24px 0 0; font-size: 14.5px; text-align: center; }
+.inlineLink { display: inline; padding: 0; color: var(--color-coral-dark); font-size: inherit; font-weight: 800; }
+.activationContent { max-width: 440px; }
+.activationMark { display: grid; width: 58px; height: 58px; margin-bottom: 22px; place-items: center; border-radius: 18px; background: var(--gradient-brand-mark); color: var(--color-on-coral); box-shadow: var(--shadow-auth-mark); }
+.activationMark svg { width: 30px; height: 30px; }
+.activationContent h1 { margin-bottom: 8px; font-size: 32px; line-height: 1.15; }
+.activationIntro { margin: 0 0 26px; font-size: 15.5px; line-height: 1.55; }
+.kidCard { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; padding: 14px 16px; border: 1.5px solid var(--color-border); border-radius: 16px; background: var(--color-surface); }
+.kidInitial { display: grid; flex: none; width: 44px; height: 44px; place-items: center; border-radius: 50%; background: var(--color-child-avatar-background); color: var(--color-child-avatar); font-family: var(--font-fredoka), sans-serif; font-size: 19px; font-weight: 600; }
+.kidCard div:last-child { display: flex; flex-direction: column; gap: 2px; }
+.kidCard span { color: var(--color-muted); font-size: 13px; }
+.kidCard strong { font-family: var(--font-fredoka), sans-serif; font-size: 17px; font-weight: 600; }
+.invitationError, .validationError { color: var(--color-auth-error); font-size: 13px; line-height: 1.4; }
+.invitationError { margin: 0 0 18px; padding: 12px 14px; border-radius: 12px; background: var(--color-auth-error-background); }
+.fieldHint { color: var(--color-muted); font-size: 12px; line-height: 1.4; }
+.validationError { margin-top: -2px; }
+.consentField { display: grid; grid-template-columns: 24px 24px 1fr; gap: 12px; align-items: start; margin: 0 0 24px; padding: 14px 16px; border-radius: 14px; background: var(--color-auth-consent-background); color: var(--color-auth-consent-text); cursor: pointer; font-size: 14px; line-height: 1.45; }
+.consentField input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.consentBox { display: grid; width: 24px; height: 24px; margin-top: 1px; place-items: center; border-radius: 8px; background: var(--color-auth-checkbox); }
+.consentBox svg { width: 15px; height: 15px; stroke: var(--color-on-coral); stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; }
+.consentField input:not(:checked) + .consentBox { background: var(--color-auth-checkbox-empty); }
+.consentField input:focus-visible + .consentBox { outline: 3px solid var(--color-auth-focus); outline-offset: 2px; }
+@media (max-width: 767px) { .shell { display: block; } .brandPanel { min-height: 280px; padding: 28px 24px 32px; } .brandMessage h1 { margin-bottom: 10px; font-size: 30px; } .brandMessage p { font-size: 15px; } .brandEyebrow { display: none; } .formPanel { align-items: flex-start; padding: 34px 24px 48px; } }

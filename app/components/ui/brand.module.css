@@ -31,6 +31,14 @@
   margin: 0;
 }
 
+.inverse .name {
+  color: var(--color-on-coral);
+}
+
+.inverse .mark {
+  background: var(--color-auth-mark);
+}
+
 .name {
   color: var(--color-ink);
   font-family: var(--font-fredoka), sans-serif;

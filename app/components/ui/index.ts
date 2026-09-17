@@ -2,6 +2,8 @@ export { Avatar } from "./avatar";
 export { Badge } from "./badge";
 export { Brand } from "./brand";
 export { Button } from "./button";
+export { CheckboxField } from "./checkbox-field";
+export { FormField } from "./form-field";
 export { LinkButton } from "./link-button";
 export { SearchField } from "./search-field";
 export type { BadgeVariant } from "./badge";
