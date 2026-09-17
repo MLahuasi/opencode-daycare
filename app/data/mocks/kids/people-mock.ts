@@ -1,77 +1,75 @@
-import type { Parent } from "@/app/features/kids";
+import type { Person } from "@/app/features/kids";
 
-/** Canonical parent fixtures referenced by kid parent IDs. */
-export const parents: readonly Parent[] = [
+/** Canonical people fixtures referenced by Kids and Auth mocks. */
+export const people: readonly Person[] = [
   {
     id: "parent-lucia-fernandez",
     name: "Lucía Fernández",
     email: "lucia.fernandez@example.com",
-    relationship: "mother",
-    code: "LF-2048",
-    status: "active",
+    role: "parent",
+    status: "pending",
   },
   {
     id: "parent-diego-fernandez",
     name: "Diego Fernández",
     email: "diego.fernandez@example.com",
-    relationship: "father",
-    code: "DF-2049",
-    status: "pending",
+    role: "parent",
+    status: "active",
   },
   {
     id: "parent-carolina-mendez",
     name: "Carolina Méndez",
     email: "carolina.mendez@example.com",
-    relationship: "mother",
-    code: "CM-3172",
+    role: "parent",
     status: "active",
   },
   {
     id: "parent-mariana-ruiz",
     name: "Mariana Ruiz",
     email: "mariana.ruiz@example.com",
-    relationship: "mother",
-    code: "MR-4261",
+    role: "parent",
     status: "active",
   },
   {
     id: "parent-federico-ruiz",
     name: "Federico Ruiz",
     email: "federico.ruiz@example.com",
-    relationship: "father",
-    code: "FR-4262",
+    role: "parent",
     status: "pending",
   },
   {
     id: "parent-julieta-diaz",
     name: "Julieta Díaz",
     email: "julieta.diaz@example.com",
-    relationship: "guardian",
-    code: "JD-5180",
+    role: "parent",
     status: "active",
   },
   {
     id: "parent-nicolas-castro",
     name: "Nicolás Castro",
     email: "nicolas.castro@example.com",
-    relationship: "father",
-    code: "NC-6034",
+    role: "parent",
     status: "inactive",
   },
   {
     id: "parent-paula-romero",
     name: "Paula Romero",
     email: "paula.romero@example.com",
-    relationship: "mother",
-    code: "PR-7146",
+    role: "parent",
     status: "active",
   },
   {
     id: "parent-ines-vega",
     name: "Inés Vega",
     email: "ines.vega@example.com",
-    relationship: "mother",
-    code: "IV-8291",
+    role: "parent",
+    status: "active",
+  },
+  {
+    id: "person-caro-gimenez",
+    name: "Caro Giménez",
+    email: "caro@opendaycare.com",
+    role: "personal",
     status: "active",
   },
 ];
