@@ -1,6 +1,6 @@
 # SPEC 03 — Listado de niños y perfiles
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 02
 > **Date:** 2026-09-16
 > **Objective:** Implementar el listado `/kids` y los perfiles `/kids/[slug]` con datos mock tipados, filtrado local y navegación accesible basada en las plantillas de niños y perfil de niño.
@@ -26,7 +26,7 @@
 - Mostrar un grid sin tarjetas cuando el filtro no encuentre coincidencias, conservando el buscador y el encabezado.
 - Hacer navegables las tarjetas hacia el slug canónico correspondiente y permitir regresar a `/kids`.
 - Actualizar `StaffSidebar` para que solo Niños tenga navegación real hacia `/kids` y sea la sección activa en `/kids` y `/kids/[slug]`.
-- Mantener Feed, Avisos y Mi cuenta como controles presentacionales sin destinos ficticios.
+- Mantener Feed con navegación real hacia `/`; Avisos y Mi cuenta permanecen como controles presentacionales sin destinos ficticios.
 - Reutilizar `Button`, `Avatar`, `Badge`, `SearchField` y `LinkButton` de `app/components/ui/` cuando corresponda.
 - Mantener los controles secundarios como botones presentacionales sin CRUD ni navegación.
 - Adaptar las páginas a móvil usando la navegación inferior existente y contenido apilado.
@@ -105,40 +105,40 @@ El servidor proyectará `Kid[]` y `Parent[]` a datos mínimos antes de entregar 
 
 ## Acceptance criteria
 
-- [ ] `/kids` carga sin errores de servidor, consola o hidratación.
-- [ ] `/kids` muestra los ocho niños definidos por el mock y conserva la composición visual principal de `ninos.dc.html`.
-- [ ] Cada tarjeta deriva su inicial, edad, cantidad de padres y cualquier etiqueta no médica desde los datos mock.
-- [ ] El listado no muestra ni serializa `medicalNotes` ni ningún resumen médico.
-- [ ] Las tarjetas navegan a un slug ASCII único bajo `/kids/[slug]`.
-- [ ] Los ocho slugs conocidos muestran un perfil completo basado en los datos del mock.
-- [ ] El perfil muestra nombre, edad calculada desde `birthDate`, sala, ingreso y `medicalNotes` del niño.
-- [ ] El perfil muestra los padres asociados mediante `parentIds`, incluyendo nombre, parentesco traducido y estado traducido.
-- [ ] El perfil no expone funcionalidades para modificar datos.
-- [ ] El perfil permite regresar funcionalmente a `/kids`.
-- [ ] Un slug desconocido muestra la página 404 propia con un enlace funcional a `/kids`.
-- [ ] La 404 conserva el layout de Kids, StaffSidebar, navegación móvil, un único H1 y el enlace de regreso.
-- [ ] `generateStaticParams()` devuelve los ocho slugs canónicos.
-- [ ] El buscador filtra localmente por nombre ignorando mayúsculas, minúsculas y tildes.
-- [ ] La consulta se recorta con `trim()` y una consulta vacía muestra todos los niños.
-- [ ] Un filtro sin coincidencias deja el grid sin tarjetas y conserva visibles el buscador y el encabezado.
-- [ ] El Client Component del filtro recibe únicamente `KidListItem[]` y no importa mocks ni datos sensibles.
-- [ ] `email`, `code`, `medicalNotes` y `parentIds` no aparecen en el payload ni en el HTML del listado.
-- [ ] En `/kids` y `/kids/[slug]`, StaffSidebar marca Niños con `aria-current="page"`.
-- [ ] En `/`, StaffSidebar mantiene Feed como sección activa.
-- [ ] Solo Niños tiene navegación real hacia `/kids`; las demás opciones no tienen destinos ficticios.
-- [ ] Agregar niño, Editar, Resumen del día y Vincular otro padre no navegan ni ejecutan CRUD.
-- [ ] Los controles presentacionales con interacción futura definida usan elementos semánticos adecuados y estados visuales aplicables.
-- [ ] La experiencia funciona en escritorio y móvil con la navegación inferior existente.
-- [ ] Todos los fixtures están dentro de `app/data/mocks/kids/` y se consumen mediante barrels públicos.
-- [ ] Los modelos de Kids están en `app/features/kids/types/` y los componentes específicos en `app/features/kids/components/`.
-- [ ] Los componentes reutilizables se importan desde `@/app/components/ui` y aceptan `className` cuando corresponda.
-- [ ] Las APIs exportadas y componentes reutilizables tienen JSDoc completo.
-- [ ] No existen colores, sombras o gradientes literales fuera de `app/globals.css`.
-- [ ] No se implementan API, base de datos, persistencia ni datos hardcodeados en páginas o componentes.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] Las capturas de verificación se almacenan bajo `.playwright-mcp/Kids/`.
+- [x] `/kids` carga sin errores de servidor, consola o hidratación.
+- [x] `/kids` muestra los ocho niños definidos por el mock y conserva la composición visual principal de `ninos.dc.html`.
+- [x] Cada tarjeta deriva su inicial, edad, cantidad de padres y cualquier etiqueta no médica desde los datos mock.
+- [x] El listado no muestra ni serializa `medicalNotes` ni ningún resumen médico.
+- [x] Las tarjetas navegan a un slug ASCII único bajo `/kids/[slug]`.
+- [x] Los ocho slugs conocidos muestran un perfil completo basado en los datos del mock.
+- [x] El perfil muestra nombre, edad calculada desde `birthDate`, sala, ingreso y `medicalNotes` del niño.
+- [x] El perfil muestra los padres asociados mediante `parentIds`, incluyendo nombre, parentesco traducido y estado traducido.
+- [x] El perfil no expone funcionalidades para modificar datos.
+- [x] El perfil permite regresar funcionalmente a `/kids`.
+- [x] Un slug desconocido muestra la página 404 propia con un enlace funcional a `/kids`.
+- [x] La 404 conserva el layout de Kids, StaffSidebar, navegación móvil, un único H1 y el enlace de regreso.
+- [x] `generateStaticParams()` devuelve los ocho slugs canónicos.
+- [x] El buscador filtra localmente por nombre ignorando mayúsculas, minúsculas y tildes.
+- [x] La consulta se recorta con `trim()` y una consulta vacía muestra todos los niños.
+- [x] Un filtro sin coincidencias deja el grid sin tarjetas y conserva visibles el buscador y el encabezado.
+- [x] El Client Component del filtro recibe únicamente `KidListItem[]` y no importa mocks ni datos sensibles.
+- [x] `email`, `code`, `medicalNotes` y `parentIds` no aparecen en el payload ni en el HTML del listado.
+- [x] En `/kids` y `/kids/[slug]`, StaffSidebar marca Niños con `aria-current="page"`.
+- [x] En `/`, StaffSidebar mantiene Feed como sección activa.
+- [x] Solo Niños tiene navegación real hacia `/kids`; las demás opciones no tienen destinos ficticios.
+- [x] Agregar niño, Editar, Resumen del día y Vincular otro padre no navegan ni ejecutan CRUD.
+- [x] Los controles presentacionales con interacción futura definida usan elementos semánticos adecuados y estados visuales aplicables.
+- [x] La experiencia funciona en escritorio y móvil con la navegación inferior existente.
+- [x] Todos los fixtures están dentro de `app/data/mocks/kids/` y se consumen mediante barrels públicos.
+- [x] Los modelos de Kids están en `app/features/kids/types/` y los componentes específicos en `app/features/kids/components/`.
+- [x] Los componentes reutilizables se importan desde `@/app/components/ui` y aceptan `className` cuando corresponda.
+- [x] Las APIs exportadas y componentes reutilizables tienen JSDoc completo.
+- [x] No existen colores, sombras o gradientes literales fuera de `app/globals.css`.
+- [x] No se implementan API, base de datos, persistencia ni datos hardcodeados en páginas o componentes.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] Las capturas de verificación se almacenan bajo `.playwright-mcp/Kids/`.
 
 ## Decisions
 
