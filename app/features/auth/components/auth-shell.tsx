@@ -5,7 +5,7 @@ import styles from "./auth.module.css";
 type AuthShellProps = {
   children: ReactNode;
   eyebrow?: string;
-  title: string;
+  title: ReactNode;
   description: string;
 };
 
@@ -15,7 +15,7 @@ type AuthShellProps = {
  * @param props - Authentication shell content.
  * @param props.children - Form content rendered in the right panel.
  * @param props.eyebrow - Optional supporting label in the brand panel.
- * @param props.title - Main title displayed in the brand panel.
+ * @param props.title - Main title content displayed in the brand panel.
  * @param props.description - Supporting copy displayed below the title.
  * @returns A responsive authentication layout.
  */
