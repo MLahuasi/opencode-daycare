@@ -311,7 +311,7 @@
   font-weight: 400;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 1000px) {
   .page {
     padding: 28px 16px 40px;
   }
