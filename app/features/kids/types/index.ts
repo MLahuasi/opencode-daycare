@@ -1,7 +1,11 @@
 export type {
   Kid,
   KidListItem,
-  Parent,
+  KidStatus,
+  LinkedParent,
+  ParentKid,
   ParentRelationship,
-  ParentStatus,
+  Person,
+  PersonRole,
+  PersonStatus,
 } from "./kids";

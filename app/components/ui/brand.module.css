@@ -13,11 +13,7 @@
   flex: none;
   place-items: center;
   border-radius: 12px;
-  background: linear-gradient(
-    155deg,
-    var(--color-brand-start),
-    var(--color-coral-light)
-  );
+  background: var(--gradient-brand-mark);
   color: var(--color-on-coral);
 }
 
@@ -29,6 +25,14 @@
 .name,
 .room {
   margin: 0;
+}
+
+.inverse .name {
+  color: var(--color-on-coral);
+}
+
+.inverse .mark {
+  background: var(--color-auth-mark);
 }
 
 .name {

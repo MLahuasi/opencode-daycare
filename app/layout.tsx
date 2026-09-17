@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fredoka, Nunito } from "next/font/google";
+import { APP_LOCALE } from "@/app/shared";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="es-EC"
+      lang={APP_LOCALE}
       className={`${fredoka.variable} ${nunito.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

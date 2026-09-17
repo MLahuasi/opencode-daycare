@@ -1,5 +1,5 @@
 import { LinkButton } from "@/app/components/ui";
-import { kids, parents } from "@/app/data/mocks";
+import { kids, parentKids, people } from "@/app/data/mocks";
 import {
   KidBasicInfo,
   KidMedicalNotes,
@@ -43,7 +43,23 @@ export default async function KidProfilePage({
     notFound();
   }
 
-  const linkedParents = parents.filter((parent) => kid.parentIds.includes(parent.id));
+  const linkedParents = parentKids
+    .filter((parentKid) => parentKid.kidId === kid.id)
+    .map((parentKid) => {
+      const person = people.find((candidate) => candidate.id === parentKid.parentId);
+
+      if (!person) {
+        return null;
+      }
+
+      return {
+        id: person.id,
+        name: person.name,
+        relationship: parentKid.relationship,
+        status: person.status,
+      };
+    })
+    .filter((parent): parent is NonNullable<typeof parent> => parent !== null);
   const age = calculateAge(kid.birthDate, getTodayIsoDate());
   const avatarTone = AVATAR_TONES[kidIndex % AVATAR_TONES.length];
 

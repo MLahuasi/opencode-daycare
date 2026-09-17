@@ -29,11 +29,7 @@
 }
 
 .coral {
-  background: linear-gradient(
-    180deg,
-    var(--color-coral-button-start),
-    var(--color-coral-button-end)
-  );
+  background: var(--gradient-coral-button);
   box-shadow: var(--shadow-coral-button);
   color: var(--color-on-coral);
 }

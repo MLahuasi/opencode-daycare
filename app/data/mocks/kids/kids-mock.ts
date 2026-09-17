@@ -11,7 +11,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-02-03",
     medicalNotes: "Alergia al maní. Lleva una botella de agua identificada.",
     allergies: "Maní",
-    parentIds: ["parent-lucia-fernandez", "parent-diego-fernandez"],
+    status: "active",
   },
   {
     id: "kid-sofia-mendez",
@@ -22,7 +22,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-03-10",
     medicalNotes: "Sin indicaciones médicas especiales registradas.",
     allergies: "",
-    parentIds: ["parent-carolina-mendez"],
+    status: "active",
   },
   {
     id: "kid-benjamin-ruiz",
@@ -33,7 +33,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-01-13",
     medicalNotes: "Usa lentes para actividades de cerca. Guardar el estuche en su mochila.",
     allergies: "",
-    parentIds: ["parent-mariana-ruiz", "parent-federico-ruiz"],
+    status: "active",
   },
   {
     id: "kid-valentina-soto",
@@ -44,7 +44,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2026-02-02",
     medicalNotes: "No hay notas médicas registradas.",
     allergies: "",
-    parentIds: [],
+    status: "active",
   },
   {
     id: "kid-tomas-diaz",
@@ -55,7 +55,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-04-07",
     medicalNotes: "Sensibilidad a la lactosa. Ofrecer la alternativa indicada en la cocina.",
     allergies: "Lactosa",
-    parentIds: ["parent-julieta-diaz"],
+    status: "active",
   },
   {
     id: "kid-emma-castro",
@@ -66,7 +66,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2026-01-12",
     medicalNotes: "Sin alergias conocidas. Avisar a la familia ante síntomas persistentes.",
     allergies: "",
-    parentIds: ["parent-nicolas-castro"],
+    status: "active",
   },
   {
     id: "kid-lucas-romero",
@@ -77,7 +77,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-02-17",
     medicalNotes: "Cuenta con inhalador de rescate en su bolso, según autorización vigente.",
     allergies: "",
-    parentIds: ["parent-paula-romero"],
+    status: "active",
   },
   {
     id: "kid-olivia-vega",
@@ -88,6 +88,6 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-08-04",
     medicalNotes: "Sin indicaciones médicas especiales registradas.",
     allergies: "",
-    parentIds: ["parent-ines-vega"],
+    status: "active",
   },
 ];

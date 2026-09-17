@@ -3,7 +3,8 @@ import styles from "./brand.module.css";
 
 type BrandProps = HTMLAttributes<HTMLDivElement> & {
   name: string;
-  room: string;
+  room?: string;
+  variant?: "default" | "inverse";
 };
 
 /**
@@ -11,18 +12,20 @@ type BrandProps = HTMLAttributes<HTMLDivElement> & {
  *
  * @param props - Brand content and native div attributes.
  * @param props.name - Name displayed beside the brand mark.
- * @param props.room - Room or context displayed below the name.
+ * @param props.room - Optional room or context displayed below the name.
+ * @param props.variant - Color treatment for the brand identity.
  * @param props.className - Optional classes applied to the brand wrapper.
  * @returns A branded identity block.
  */
 export function Brand({
   className = "",
   name,
-  room,
+  room = "",
+  variant = "default",
   ...props
 }: BrandProps) {
   return (
-    <div className={`${styles.brand} ${className}`} {...props}>
+    <div className={`${styles.brand} ${styles[variant]} ${className}`} {...props}>
       <div className={styles.mark} aria-hidden="true">
         <svg
           fill="none"
@@ -38,7 +41,7 @@ export function Brand({
       </div>
       <div>
         <p className={styles.name}>{name}</p>
-        <p className={styles.room}>{room}</p>
+        {room ? <p className={styles.room}>{room}</p> : null}
       </div>
     </div>
   );

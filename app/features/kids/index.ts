@@ -14,13 +14,18 @@ export {
 export type {
   Kid,
   KidListItem,
-  Parent,
+  KidStatus,
+  LinkedParent,
+  ParentKid,
   ParentRelationship,
-  ParentStatus,
+  Person,
+  PersonRole,
+  PersonStatus,
 } from "./types";
 
 export {
   calculateAge,
+  hasKidPhotoSharingConsent,
   normalizeName,
   normalizeSlug,
   validateUniqueSlugs,

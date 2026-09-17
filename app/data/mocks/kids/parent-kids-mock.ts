@@ -1,0 +1,68 @@
+import type { ParentKid } from "@/app/features/kids";
+
+/** Canonical parent-to-kid relationships and photo consent fixtures. */
+export const parentKids: readonly ParentKid[] = [
+  {
+    id: "parent-kid-lucia-mateo",
+    parentId: "parent-lucia-fernandez",
+    kidId: "kid-mateo-fernandez",
+    relationship: "mother",
+    photoSharingConsent: true,
+  },
+  {
+    id: "parent-kid-diego-mateo",
+    parentId: "parent-diego-fernandez",
+    kidId: "kid-mateo-fernandez",
+    relationship: "father",
+    photoSharingConsent: false,
+  },
+  {
+    id: "parent-kid-carolina-sofia",
+    parentId: "parent-carolina-mendez",
+    kidId: "kid-sofia-mendez",
+    relationship: "mother",
+    photoSharingConsent: true,
+  },
+  {
+    id: "parent-kid-mariana-benjamin",
+    parentId: "parent-mariana-ruiz",
+    kidId: "kid-benjamin-ruiz",
+    relationship: "mother",
+    photoSharingConsent: true,
+  },
+  {
+    id: "parent-kid-federico-benjamin",
+    parentId: "parent-federico-ruiz",
+    kidId: "kid-benjamin-ruiz",
+    relationship: "father",
+    photoSharingConsent: true,
+  },
+  {
+    id: "parent-kid-julieta-tomas",
+    parentId: "parent-julieta-diaz",
+    kidId: "kid-tomas-diaz",
+    relationship: "guardian",
+    photoSharingConsent: true,
+  },
+  {
+    id: "parent-kid-nicolas-emma",
+    parentId: "parent-nicolas-castro",
+    kidId: "kid-emma-castro",
+    relationship: "father",
+    photoSharingConsent: true,
+  },
+  {
+    id: "parent-kid-paula-lucas",
+    parentId: "parent-paula-romero",
+    kidId: "kid-lucas-romero",
+    relationship: "mother",
+    photoSharingConsent: true,
+  },
+  {
+    id: "parent-kid-ines-olivia",
+    parentId: "parent-ines-vega",
+    kidId: "kid-olivia-vega",
+    relationship: "mother",
+    photoSharingConsent: true,
+  },
+];
