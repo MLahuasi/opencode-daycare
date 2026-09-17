@@ -4,3 +4,4 @@ export {
   normalizeSlug,
   validateUniqueSlugs,
 } from "./kids";
+export { hasKidPhotoSharingConsent } from "./consent";
