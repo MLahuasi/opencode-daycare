@@ -11,6 +11,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-02-03",
     medicalNotes: "Alergia al maní. Lleva una botella de agua identificada.",
     allergies: "Maní",
+    status: "active",
     parentIds: ["parent-lucia-fernandez", "parent-diego-fernandez"],
   },
   {
@@ -22,6 +23,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-03-10",
     medicalNotes: "Sin indicaciones médicas especiales registradas.",
     allergies: "",
+    status: "active",
     parentIds: ["parent-carolina-mendez"],
   },
   {
@@ -33,6 +35,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-01-13",
     medicalNotes: "Usa lentes para actividades de cerca. Guardar el estuche en su mochila.",
     allergies: "",
+    status: "active",
     parentIds: ["parent-mariana-ruiz", "parent-federico-ruiz"],
   },
   {
@@ -44,6 +47,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2026-02-02",
     medicalNotes: "No hay notas médicas registradas.",
     allergies: "",
+    status: "active",
     parentIds: [],
   },
   {
@@ -55,6 +59,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-04-07",
     medicalNotes: "Sensibilidad a la lactosa. Ofrecer la alternativa indicada en la cocina.",
     allergies: "Lactosa",
+    status: "active",
     parentIds: ["parent-julieta-diaz"],
   },
   {
@@ -66,6 +71,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2026-01-12",
     medicalNotes: "Sin alergias conocidas. Avisar a la familia ante síntomas persistentes.",
     allergies: "",
+    status: "active",
     parentIds: ["parent-nicolas-castro"],
   },
   {
@@ -77,6 +83,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-02-17",
     medicalNotes: "Cuenta con inhalador de rescate en su bolso, según autorización vigente.",
     allergies: "",
+    status: "active",
     parentIds: ["parent-paula-romero"],
   },
   {
@@ -88,6 +95,7 @@ export const kids: readonly Kid[] = [
     enrollmentDate: "2025-08-04",
     medicalNotes: "Sin indicaciones médicas especiales registradas.",
     allergies: "",
+    status: "active",
     parentIds: ["parent-ines-vega"],
   },
 ];
