@@ -1,6 +1,6 @@
 # SPEC 04 — Etiquetas de alergias en tarjetas
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 03
 > **Date:** 2026-09-16
 > **Objective:** Añadir alergias etiquetadas al modelo de niños y mostrarlas en las tarjetas de `/kids` mediante una proyección segura y reutilizable.
@@ -90,37 +90,37 @@ La función devolverá `[]` para una cadena vacía. Para cada segmento aplicará
 
 ## Acceptance criteria
 
-- [ ] `Kid` declara `allergies: string`.
-- [ ] `KidListItem` declara `allergies: string[]`.
-- [ ] `parseCommaSeparatedTags` está disponible desde `@/app/shared`.
-- [ ] Una cadena vacía produce `[]`.
-- [ ] La utilidad separa por comas, recorta espacios y descarta segmentos vacíos.
-- [ ] La utilidad elimina duplicados sin distinguir mayúsculas y conserva la primera aparición recortada.
-- [ ] La utilidad no considera iguales `Maní` y `mani` por diferencias de tildes.
-- [ ] Mateo tiene `allergies: "Maní"` en el fixture.
-- [ ] Tomás tiene `allergies: "Lactosa"` en el fixture.
-- [ ] Los otros seis niños tienen `allergies: ""`.
-- [ ] Las notas médicas de Mateo son coherentes con la alergia al maní de la plantilla.
-- [ ] `/kids` muestra la etiqueta `MANÍ` en la tarjeta de Mateo.
-- [ ] `/kids` muestra la etiqueta `LACTOSA` en la tarjeta de Tomás.
-- [ ] Las tarjetas no muestran etiquetas de alergia para niños cuyo parser devuelve `[]`.
-- [ ] Todas las etiquetas de una tarjeta se muestran y pueden envolver su contenido en varias líneas.
-- [ ] Las variantes de badges siguen el ciclo `coral`, `pink`, `green`, `yellow`, `blue`, `purple`.
-- [ ] Un niño con alergias y sin padres vinculados muestra sus alergias y `VINCULAR`.
-- [ ] Un niño con alergias y padres vinculados muestra sus alergias sin flecha.
-- [ ] Un niño sin alergias y sin padres vinculados muestra `VINCULAR`.
-- [ ] Un niño sin alergias y con padres vinculados muestra la flecha de navegación.
-- [ ] Las tarjetas continúan navegando al slug canónico correspondiente.
-- [ ] `medicalNotes` continúa sin aparecer ni serializarse en el listado.
-- [ ] El Client Component recibe solamente `KidListItem[]` y no importa mocks.
-- [ ] Los badges de alergia no se agregan al perfil `/kids/[slug]`.
-- [ ] El perfil continúa mostrando `medicalNotes` sin cambios funcionales.
-- [ ] La búsqueda por nombre, la 404 y la navegación existente continúan funcionando.
-- [ ] La experiencia con múltiples etiquetas funciona en escritorio y móvil.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] Las capturas de verificación se almacenan bajo `.playwright-mcp/Kids/`.
+- [x] `Kid` declara `allergies: string`.
+- [x] `KidListItem` declara `allergies: string[]`.
+- [x] `parseCommaSeparatedTags` está disponible desde `@/app/shared`.
+- [x] Una cadena vacía produce `[]`.
+- [x] La utilidad separa por comas, recorta espacios y descarta segmentos vacíos.
+- [x] La utilidad elimina duplicados sin distinguir mayúsculas y conserva la primera aparición recortada.
+- [x] La utilidad no considera iguales `Maní` y `mani` por diferencias de tildes.
+- [x] Mateo tiene `allergies: "Maní"` en el fixture.
+- [x] Tomás tiene `allergies: "Lactosa"` en el fixture.
+- [x] Los otros seis niños tienen `allergies: ""`.
+- [x] Las notas médicas de Mateo son coherentes con la alergia al maní de la plantilla.
+- [x] `/kids` muestra la etiqueta `MANÍ` en la tarjeta de Mateo.
+- [x] `/kids` muestra la etiqueta `LACTOSA` en la tarjeta de Tomás.
+- [x] Las tarjetas no muestran etiquetas de alergia para niños cuyo parser devuelve `[]`.
+- [x] Todas las etiquetas de una tarjeta se muestran y pueden envolver su contenido en varias líneas.
+- [x] Las variantes de badges siguen el ciclo `coral`, `pink`, `green`, `yellow`, `blue`, `purple`.
+- [x] Un niño con alergias y sin padres vinculados muestra sus alergias y `VINCULAR`.
+- [x] Un niño con alergias y padres vinculados muestra sus alergias sin flecha.
+- [x] Un niño sin alergias y sin padres vinculados muestra `VINCULAR`.
+- [x] Un niño sin alergias y con padres vinculados muestra la flecha de navegación.
+- [x] Las tarjetas continúan navegando al slug canónico correspondiente.
+- [x] `medicalNotes` continúa sin aparecer ni serializarse en el listado.
+- [x] El Client Component recibe solamente `KidListItem[]` y no importa mocks.
+- [x] Los badges de alergia no se agregan al perfil `/kids/[slug]`.
+- [x] El perfil continúa mostrando `medicalNotes` sin cambios funcionales.
+- [x] La búsqueda por nombre, la 404 y la navegación existente continúan funcionando.
+- [x] La experiencia con múltiples etiquetas funciona en escritorio y móvil.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] Las capturas de verificación se almacenan bajo `.playwright-mcp/Kids/`.
 
 ## Decisions
 
