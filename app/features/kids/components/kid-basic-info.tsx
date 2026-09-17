@@ -1,8 +1,9 @@
 import type { Kid } from "@/app/features/kids/types";
+import { APP_LOCALE } from "@/app/shared";
 import styles from "./kid-profile.module.css";
 
 function formatDate(value: string): string {
-  return new Intl.DateTimeFormat("es-EC", {
+  return new Intl.DateTimeFormat(APP_LOCALE, {
     day: "numeric",
     month: "short",
     timeZone: "UTC",
@@ -11,7 +12,7 @@ function formatDate(value: string): string {
 }
 
 function formatMonth(value: string): string {
-  return new Intl.DateTimeFormat("es-EC", {
+  return new Intl.DateTimeFormat(APP_LOCALE, {
     month: "short",
     timeZone: "UTC",
     year: "numeric",
