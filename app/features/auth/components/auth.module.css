@@ -131,6 +131,43 @@
   background: var(--color-auth-readonly);
   cursor: default;
 }
+.passwordInput {
+  position: relative;
+}
+.passwordInput input {
+  padding-right: 52px;
+}
+.passwordToggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  transform: translateY(-50%);
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+.passwordToggle:hover {
+  background: var(--color-auth-readonly);
+  color: var(--color-coral-dark);
+}
+.passwordToggle:focus-visible {
+  outline: 3px solid var(--color-auth-focus);
+  outline-offset: 1px;
+}
+.passwordToggle svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
 .forgotPassword {
   margin: -1px 0 20px;
   color: var(--color-coral-dark);
@@ -260,7 +297,7 @@
 }
 .consentField {
   display: grid;
-  grid-template-columns: 24px 24px 1fr;
+  grid-template-columns: 24px minmax(0, 1fr);
   gap: 12px;
   align-items: start;
   margin: 0 0 24px;

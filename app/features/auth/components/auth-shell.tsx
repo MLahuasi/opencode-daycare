@@ -40,7 +40,7 @@ export function AuthShell({
           <h1>{title}</h1>
           <p>{description}</p>
         </div>
-        <p className={styles.brandEyebrow}>Guardería · {eyebrow}</p>
+        <p className={styles.brandEyebrow}>🌿 Guardería {eyebrow}</p>
       </section>
       <section className={styles.formPanel}>{children}</section>
     </div>
