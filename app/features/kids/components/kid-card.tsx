@@ -7,6 +7,15 @@ type KidCardProps = {
   kid: KidListItem;
 };
 
+const ALLERGY_BADGE_VARIANTS = [
+  "coral",
+  "pink",
+  "green",
+  "yellow",
+  "blue",
+  "purple",
+] as const;
+
 function getAvatarTone(value: string): "coral" | "blue" | "pink" | "green" | "yellow" | "purple" {
   switch (value) {
     case "blue":
@@ -49,10 +58,20 @@ export function KidCard({ kid }: KidCardProps) {
           {kid.age} años · {getParentLabel(kid.parentCount)}
         </span>
       </span>
+      {kid.allergies.map((allergy, index) => (
+        <Badge
+          key={`${allergy}-${index}`}
+          variant={ALLERGY_BADGE_VARIANTS[index % ALLERGY_BADGE_VARIANTS.length]}
+        >
+          {allergy}
+        </Badge>
+      ))}
       {kid.shouldLinkParent ? <Badge variant="pink">Vincular</Badge> : null}
-      <span aria-hidden="true" className={styles.cardArrow}>
-        ›
-      </span>
+      {kid.allergies.length === 0 && !kid.shouldLinkParent ? (
+        <span aria-hidden="true" className={styles.cardArrow}>
+          ›
+        </span>
+      ) : null}
     </Link>
   );
 }
