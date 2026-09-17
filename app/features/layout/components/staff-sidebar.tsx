@@ -112,6 +112,7 @@ function NavigationControl({ activeSection, item, mobile = false }: NavigationCo
  * Renders the desktop staff sidebar and the mobile bottom navigation.
  *
  * @param props - Sidebar customization options.
+ * @param props.activeSection - Section marked as the current page in both navigation variants.
  * @param props.className - Optional classes applied to the desktop sidebar.
  * @returns The responsive staff navigation.
  */
