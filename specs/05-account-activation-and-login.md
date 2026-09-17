@@ -1,6 +1,6 @@
 # SPEC 05 — Activación de cuenta e inicio de sesión
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 04
 > **Date:** 2026-09-17
 > **Objective:** Implementar `/login` y `/activate-account` con datos mock, validación de contraseña y navegación, normalizando personas, relaciones familiares, invitaciones y credenciales bajo una configuración global `es-EC`.
@@ -137,40 +137,40 @@ La política de contraseña de activación exigirá mínimo ocho caracteres, una
 
 ## Acceptance criteria
 
-- [ ] `/login` carga sin errores y conserva la composición principal de la plantilla.
-- [ ] `/login` no muestra `INGRESO COMO`, `Personal` ni `Familia`.
-- [ ] Email y contraseña comienzan vacíos y son obligatorios.
-- [ ] Un login válido navega a `/`.
-- [ ] `Activa tu cuenta` navega a `/activate-account`.
-- [ ] `¿Olvidaste tu contraseña?` permanece visible sin navegación ni handler ficticio.
-- [ ] `/activate-account?code=7K4P9` muestra el email canónico y la card de Mateo en Sala Soles.
-- [ ] El código y email precargados son de solo lectura.
-- [ ] `/activate-account` sin query muestra campos vacíos y no muestra la card del niño.
-- [ ] Un código escrito manualmente no resuelve mocks ni carga una card.
-- [ ] Los códigos desconocidos, vencidos y aceptados muestran errores específicos y bloquean la activación.
-- [ ] La contraseña de activación cumple todas las reglas acordadas.
-- [ ] La contraseña de activación requiere confirmación coincidente.
-- [ ] Los errores de contraseña se muestran inline y son accesibles.
-- [ ] El consentimiento de fotos es interactivo y opcional.
-- [ ] Una activación válida navega a `/familia-feed`.
-- [ ] No existe `app/familia-feed/page.tsx`.
-- [ ] `Iniciar sesión` desde activación navega a `/login`.
-- [ ] `Parent` y `ParentStatus` ya no existen en `app/`.
-- [ ] `Person` no contiene `relationship` ni `code`.
-- [ ] `Kid` contiene `status` y no contiene `parentIds`.
-- [ ] Los conteos y perfiles de `/kids` se derivan desde `ParentKid`.
-- [ ] Los ocho niños y sus perfiles continúan funcionando.
-- [ ] La autorización efectiva de Mateo es `false` por consentimiento mixto.
-- [ ] `Credential` no aparece en HTML ni payload de componentes cliente.
-- [ ] `APP_LOCALE` es la única definición de `"es-EC"` en runtime.
-- [ ] No queda voseo visible en `app/`.
-- [ ] No existen colores, sombras o gradientes literales fuera de `app/globals.css`.
-- [ ] Las pantallas funcionan en escritorio y móvil.
-- [ ] No se implementan BDD, API, persistencia, sesiones ni unit tests.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] Las capturas se almacenan bajo `.playwright-mcp/Auth/`.
+- [x] `/login` carga sin errores y conserva la composición principal de la plantilla.
+- [x] `/login` no muestra `INGRESO COMO`, `Personal` ni `Familia`.
+- [x] Email y contraseña comienzan vacíos y son obligatorios.
+- [x] Un login válido navega a `/`.
+- [x] `Activa tu cuenta` navega a `/activate-account`.
+- [x] `¿Olvidaste tu contraseña?` permanece visible sin navegación ni handler ficticio.
+- [x] `/activate-account?code=7K4P9` muestra el email canónico y la card de Mateo en Sala Soles.
+- [x] El código y email precargados son de solo lectura.
+- [x] `/activate-account` sin query muestra campos vacíos y no muestra la card del niño.
+- [x] Un código escrito manualmente no resuelve mocks ni carga una card.
+- [x] Los códigos desconocidos, vencidos y aceptados muestran errores específicos y bloquean la activación.
+- [x] La contraseña de activación cumple todas las reglas acordadas.
+- [x] La contraseña de activación requiere confirmación coincidente.
+- [x] Los errores de contraseña se muestran inline y son accesibles.
+- [x] El consentimiento de fotos es interactivo y opcional.
+- [x] Una activación válida navega a `/familia-feed`.
+- [x] No existe `app/familia-feed/page.tsx`.
+- [x] `Iniciar sesión` desde activación navega a `/login`.
+- [x] `Parent` y `ParentStatus` ya no existen en `app/`.
+- [x] `Person` no contiene `relationship` ni `code`.
+- [x] `Kid` contiene `status` y no contiene `parentIds`.
+- [x] Los conteos y perfiles de `/kids` se derivan desde `ParentKid`.
+- [x] Los ocho niños y sus perfiles continúan funcionando.
+- [x] La autorización efectiva de Mateo es `false` por consentimiento mixto.
+- [x] `Credential` no aparece en HTML ni payload de componentes cliente.
+- [x] `APP_LOCALE` es la única definición de `"es-EC"` en runtime.
+- [x] No queda voseo visible en `app/`.
+- [x] No existen colores, sombras o gradientes literales fuera de `app/globals.css`.
+- [x] Las pantallas funcionan en escritorio y móvil.
+- [x] No se implementan BDD, API, persistencia, sesiones ni unit tests.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] Las capturas se almacenan bajo `.playwright-mcp/Auth/`.
 
 ## Decisions
 

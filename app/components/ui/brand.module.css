@@ -13,11 +13,7 @@
   flex: none;
   place-items: center;
   border-radius: 12px;
-  background: linear-gradient(
-    155deg,
-    var(--color-brand-start),
-    var(--color-coral-light)
-  );
+  background: var(--gradient-brand-mark);
   color: var(--color-on-coral);
 }
 
