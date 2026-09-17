@@ -1,13 +1,21 @@
-import { Button } from "@/app/components/ui/button";
+import { Avatar, Brand, Button, LinkButton } from "@/app/components/ui";
 import type { ReactNode } from "react";
-import {
-  staffSidebarMock,
-  type StaffNavigationIcon,
-} from "../data/staff-sidebar-mock";
+import { staffSidebarMock } from "@/app/data/mocks";
+import type {
+  StaffNavigationIcon,
+  StaffNavigationSection,
+} from "@/app/features/layout/types";
 import styles from "./staff-sidebar.module.css";
 
 type StaffSidebarProps = {
+  activeSection?: StaffNavigationSection;
   className?: string;
+};
+
+type NavigationControlProps = {
+  activeSection: StaffNavigationSection;
+  item: (typeof staffSidebarMock.navigationItems)[number];
+  mobile?: boolean;
 };
 
 /**
@@ -58,28 +66,61 @@ function NavigationIcon({ name }: { name: StaffNavigationIcon }) {
 }
 
 /**
+ * Renders one navigation control using the route configured by its item.
+ *
+ * @param props - Navigation control options.
+ * @param props.activeSection - Currently active section.
+ * @param props.item - Navigation item configuration.
+ * @param props.mobile - Whether the compact mobile treatment is used.
+ * @returns A presentational button or a configured application route link.
+ */
+function NavigationControl({ activeSection, item, mobile = false }: NavigationControlProps) {
+  const active = item.icon === activeSection;
+  const className = `${mobile ? styles.mobileNavigationButton : styles.navigationButton} ${active ? (mobile ? styles.mobileNavigationButtonActive : styles.navigationButtonActive) : ""}`;
+  const content = (
+    <>
+      <NavigationIcon name={item.icon} />
+      {mobile ? <span>{item.label}</span> : item.label}
+    </>
+  );
+
+  if (item.href) {
+    return (
+      <LinkButton
+        aria-current={active ? "page" : undefined}
+        className={className}
+        href={item.href}
+        variant="ghost"
+      >
+        {content}
+      </LinkButton>
+    );
+  }
+
+  return (
+    <Button
+      aria-current={active ? "page" : undefined}
+      className={className}
+      variant="ghost"
+    >
+      {content}
+    </Button>
+  );
+}
+
+/**
  * Renders the desktop staff sidebar and the mobile bottom navigation.
  *
  * @param props - Sidebar customization options.
+ * @param props.activeSection - Section marked as the current page in both navigation variants.
  * @param props.className - Optional classes applied to the desktop sidebar.
  * @returns The responsive staff navigation.
  */
-export function StaffSidebar({ className = "" }: StaffSidebarProps) {
+export function StaffSidebar({ activeSection = "feed", className = "" }: StaffSidebarProps) {
   return (
     <>
       <aside className={`${styles.sidebar} ${className}`} aria-label={staffSidebarMock.navigationLabel}>
-        <div className={styles.brand}>
-          <div className={styles.brandMark} aria-hidden="true">
-            <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="4" />
-              <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-            </svg>
-          </div>
-          <div>
-            <p className={styles.brandName}>{staffSidebarMock.brand.name}</p>
-            <p className={styles.roomName}>{staffSidebarMock.brand.room}</p>
-          </div>
-        </div>
+        <Brand name={staffSidebarMock.brand.name} room={staffSidebarMock.brand.room} />
 
         <Button className={styles.newPostButton}>
           <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
@@ -89,24 +130,20 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
         </Button>
 
         <nav className={styles.navigation} aria-label={staffSidebarMock.sectionsLabel}>
-          {staffSidebarMock.navigationItems.map(({ active, icon, label }) => (
-            <Button
-              aria-current={active ? "page" : undefined}
-              className={`${styles.navigationButton} ${active ? styles.navigationButtonActive : ""}`}
-              key={label}
-              variant="ghost"
-            >
-              <NavigationIcon name={icon} />
-              {label}
-            </Button>
+          {staffSidebarMock.navigationItems.map((item) => (
+            <NavigationControl activeSection={activeSection} item={item} key={item.label} />
           ))}
         </nav>
 
         <div className={styles.profile}>
-          <div className={styles.avatar} aria-hidden="true">{staffSidebarMock.profile.initial}</div>
+          <Avatar
+            aria-hidden="true"
+            className={styles.avatar}
+            initial={staffSidebarMock.profile.initial}
+          />
           <div className={styles.profileDetails}>
             <p>{staffSidebarMock.profile.name}</p>
-            <span>{staffSidebarMock.profile.role}</span>
+            <span className={styles.profileRole}>{staffSidebarMock.profile.role}</span>
           </div>
           <Button aria-label={staffSidebarMock.logoutLabel} className={styles.logoutButton} variant="ghost">
             <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
@@ -117,16 +154,8 @@ export function StaffSidebar({ className = "" }: StaffSidebarProps) {
       </aside>
 
       <nav className={styles.mobileNavigation} aria-label={staffSidebarMock.mobileNavigationLabel}>
-        {staffSidebarMock.navigationItems.map(({ active, icon, label }) => (
-          <Button
-            aria-current={active ? "page" : undefined}
-            className={`${styles.mobileNavigationButton} ${active ? styles.mobileNavigationButtonActive : ""}`}
-            key={label}
-            variant="ghost"
-          >
-            <NavigationIcon name={icon} />
-            <span>{label}</span>
-          </Button>
+        {staffSidebarMock.navigationItems.map((item) => (
+          <NavigationControl activeSection={activeSection} item={item} key={item.label} mobile />
         ))}
       </nav>
     </>

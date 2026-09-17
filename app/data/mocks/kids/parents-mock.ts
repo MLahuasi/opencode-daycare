@@ -1,0 +1,77 @@
+import type { Parent } from "@/app/features/kids";
+
+/** Canonical parent fixtures referenced by kid parent IDs. */
+export const parents: readonly Parent[] = [
+  {
+    id: "parent-lucia-fernandez",
+    name: "Lucía Fernández",
+    email: "lucia.fernandez@example.com",
+    relationship: "mother",
+    code: "LF-2048",
+    status: "active",
+  },
+  {
+    id: "parent-diego-fernandez",
+    name: "Diego Fernández",
+    email: "diego.fernandez@example.com",
+    relationship: "father",
+    code: "DF-2049",
+    status: "pending",
+  },
+  {
+    id: "parent-carolina-mendez",
+    name: "Carolina Méndez",
+    email: "carolina.mendez@example.com",
+    relationship: "mother",
+    code: "CM-3172",
+    status: "active",
+  },
+  {
+    id: "parent-mariana-ruiz",
+    name: "Mariana Ruiz",
+    email: "mariana.ruiz@example.com",
+    relationship: "mother",
+    code: "MR-4261",
+    status: "active",
+  },
+  {
+    id: "parent-federico-ruiz",
+    name: "Federico Ruiz",
+    email: "federico.ruiz@example.com",
+    relationship: "father",
+    code: "FR-4262",
+    status: "pending",
+  },
+  {
+    id: "parent-julieta-diaz",
+    name: "Julieta Díaz",
+    email: "julieta.diaz@example.com",
+    relationship: "guardian",
+    code: "JD-5180",
+    status: "active",
+  },
+  {
+    id: "parent-nicolas-castro",
+    name: "Nicolás Castro",
+    email: "nicolas.castro@example.com",
+    relationship: "father",
+    code: "NC-6034",
+    status: "inactive",
+  },
+  {
+    id: "parent-paula-romero",
+    name: "Paula Romero",
+    email: "paula.romero@example.com",
+    relationship: "mother",
+    code: "PR-7146",
+    status: "active",
+  },
+  {
+    id: "parent-ines-vega",
+    name: "Inés Vega",
+    email: "ines.vega@example.com",
+    relationship: "mother",
+    code: "IV-8291",
+    status: "active",
+  },
+];

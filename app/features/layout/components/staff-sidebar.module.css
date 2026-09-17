@@ -11,49 +11,11 @@
   padding: 24px 16px;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 4px 8px 22px;
-}
-
-.brandMark {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  flex: none;
-  place-items: center;
-  border-radius: 12px;
-  background: linear-gradient(
-    155deg,
-    var(--color-brand-start),
-    var(--color-coral-light)
-  );
-  color: var(--color-on-coral);
-}
-
-.brandMark svg {
-  width: 21px;
-  height: 21px;
-}
-
-.brandName,
-.roomName,
 .profile p {
   margin: 0;
 }
 
-.brandName {
-  color: var(--color-ink);
-  font-family: var(--font-fredoka), sans-serif;
-  font-size: 17px;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.roomName,
-.profile span {
+.profileRole {
   margin-top: 2px;
   color: var(--color-subtle);
   font-size: 11.5px;
@@ -131,7 +93,7 @@
   font-weight: 800;
 }
 
-.profile span {
+.profileRole {
   display: block;
 }
 
@@ -140,6 +102,8 @@
   height: 32px;
   flex: none;
   border-radius: 10px;
+  background: var(--color-page);
+  color: var(--color-muted);
   padding: 0;
 }
 

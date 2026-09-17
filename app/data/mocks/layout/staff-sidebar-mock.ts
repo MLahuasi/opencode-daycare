@@ -1,10 +1,4 @@
-export type StaffNavigationIcon = "feed" | "children" | "alerts" | "account";
-
-export type StaffNavigationItem = {
-  label: string;
-  icon: StaffNavigationIcon;
-  active?: boolean;
-};
+import type { StaffNavigationItem } from "@/app/features/layout/types";
 
 export const staffSidebarMock = {
   navigationLabel: "Navegación principal",
@@ -22,8 +16,8 @@ export const staffSidebarMock = {
   },
   logoutLabel: "Cerrar sesión",
   navigationItems: [
-    { label: "Feed", icon: "feed", active: true },
-    { label: "Niños", icon: "children" },
+    { label: "Feed", icon: "feed", href: "/", active: true },
+    { label: "Niños", icon: "children", href: "/kids" },
     { label: "Avisos", icon: "alerts" },
     { label: "Mi cuenta", icon: "account" },
   ] satisfies readonly StaffNavigationItem[],

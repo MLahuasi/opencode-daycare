@@ -115,7 +115,18 @@
   border-radius: 16px;
   background: var(--color-photo-background);
   color: var(--color-photo);
+  cursor: pointer;
   font-size: 13.5px;
+  transition: border-color 150ms, background-color 150ms, transform 150ms;
+}
+
+.mediaPlaceholder:hover {
+  border-color: var(--color-coral-light);
+  background: var(--color-surface);
+}
+
+.mediaPlaceholder:active {
+  transform: translateY(1px);
 }
 
 .mediaPlaceholder svg {
@@ -152,6 +163,16 @@
 
 .comments {
   color: var(--color-muted);
+  cursor: pointer;
+  transition: color 150ms, transform 150ms;
+}
+
+.comments:hover {
+  color: var(--color-coral-dark);
+}
+
+.comments:active {
+  transform: translateY(1px);
 }
 
 .comments svg {
@@ -162,8 +183,18 @@
 .editLabel {
   margin-left: auto;
   color: var(--color-coral-dark);
+  cursor: pointer;
   font-size: 14px;
   font-weight: 800;
+  transition: color 150ms, transform 150ms;
+}
+
+.editLabel:hover {
+  color: var(--color-coral);
+}
+
+.editLabel:active {
+  transform: translateY(1px);
 }
 
 @media (max-width: 767px) {

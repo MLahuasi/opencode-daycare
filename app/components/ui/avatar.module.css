@@ -1,0 +1,57 @@
+.avatar {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--font-fredoka), sans-serif;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.sm {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.md {
+  width: 48px;
+  height: 48px;
+  font-size: 19px;
+}
+
+.lg {
+  width: 84px;
+  height: 84px;
+  font-size: 34px;
+}
+
+.coral {
+  background: var(--color-coral-light);
+  color: var(--color-on-coral);
+}
+
+.blue {
+  background: var(--color-child-avatar-background);
+  color: var(--color-child-avatar);
+}
+
+.pink {
+  background: var(--color-avatar-pink-background);
+  color: var(--color-avatar-pink);
+}
+
+.green {
+  background: var(--color-avatar-green-background);
+  color: var(--color-avatar-green);
+}
+
+.yellow {
+  background: var(--color-avatar-yellow-background);
+  color: var(--color-avatar-yellow);
+}
+
+.purple {
+  background: var(--color-avatar-purple-background);
+  color: var(--color-avatar-purple);
+}

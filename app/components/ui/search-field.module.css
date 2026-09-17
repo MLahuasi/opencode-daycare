@@ -1,0 +1,46 @@
+.field {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  padding: 12px 16px;
+}
+
+.field:focus-within {
+  border-color: var(--color-coral-light);
+  outline: 2px solid var(--color-coral-soft);
+  outline-offset: 1px;
+}
+
+.field svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--color-photo);
+}
+
+.field input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 15px;
+}
+
+.field input::placeholder {
+  color: var(--color-subtle);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

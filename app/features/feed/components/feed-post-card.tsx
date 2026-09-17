@@ -1,3 +1,4 @@
+import { Avatar, Badge, type BadgeVariant } from "@/app/components/ui";
 import type { FeedPost, PostType } from "../types/feed";
 import styles from "./feed-post-card.module.css";
 
@@ -10,6 +11,12 @@ const postTypeLabels: Record<PostType, string> = {
   achievement: "Logro",
   activity: "Actividad",
   announcement: "Anuncio",
+};
+
+const postTypeBadgeVariants: Record<PostType, BadgeVariant> = {
+  achievement: "green",
+  activity: "blue",
+  announcement: "announcement",
 };
 
 /**
@@ -91,9 +98,13 @@ export function FeedPostCard({ className = "", post }: FeedPostCardProps) {
   return (
     <article className={`${styles.card} ${styles[post.type]} ${className}`}>
       <header className={styles.header}>
-        <div className={styles.avatar}>
-          {isAnnouncement ? <AnnouncementIcon /> : post.initial}
-        </div>
+          {isAnnouncement ? (
+            <div className={styles.avatar}>
+              <AnnouncementIcon />
+            </div>
+          ) : (
+            <Avatar className={styles.avatar} initial={post.initial ?? ""} tone="blue" />
+          )}
         <div className={styles.author}>
           <h2>{post.subject}</h2>
           <p>
@@ -101,10 +112,10 @@ export function FeedPostCard({ className = "", post }: FeedPostCardProps) {
             {post.authorLabel ? ` · ${post.authorLabel}` : ""}
           </p>
         </div>
-        <span className={styles.tag}>
+        <Badge className={styles.tag} variant={postTypeBadgeVariants[post.type]}>
           <PostTypeIcon type={post.type} />
           {postTypeLabels[post.type]}
-        </span>
+        </Badge>
       </header>
 
       <p className={styles.recipient}>Para: {post.recipient}</p>
