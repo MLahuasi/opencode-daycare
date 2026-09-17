@@ -23,6 +23,7 @@ export type Kid = {
   room: string;
   enrollmentDate: string;
   medicalNotes: string;
+  allergies: string;
   parentIds: string[];
 };
 
@@ -36,4 +37,5 @@ export type KidListItem = {
   parentCount: number;
   avatarTone: string;
   shouldLinkParent: boolean;
+  allergies: string[];
 };
