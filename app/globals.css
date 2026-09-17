@@ -49,6 +49,21 @@
   --shadow-card: 0 4px 16px -12px rgb(120 90 60 / 50%);
   --shadow-composer: 0 4px 14px -10px rgb(120 90 60 / 40%);
   --shadow-coral-button: 0 8px 18px -8px rgb(238 129 100 / 75%);
+  --color-auth-orb: rgb(255 255 255 / 12%);
+  --color-auth-mark: rgb(255 255 255 / 22%);
+  --color-auth-copy: rgb(255 255 255 / 92%);
+  --color-auth-focus: #f2937a;
+  --color-auth-readonly: #f4ece1;
+  --color-auth-error: #c5413a;
+  --color-auth-error-background: #fbdad6;
+  --color-auth-consent-background: #fbf1d6;
+  --color-auth-consent-text: #8a7234;
+  --color-auth-checkbox: #5fb97e;
+  --color-auth-checkbox-empty: #e7dac8;
+  --gradient-auth-panel: linear-gradient(155deg, #f6a98e 0%, #f2937a 45%, #ec7e62 100%);
+  --gradient-coral-button: linear-gradient(180deg, #f4977e, #ee8164);
+  --gradient-brand-mark: linear-gradient(155deg, #f8c3a8, #f2937a);
+  --shadow-auth-mark: 0 12px 26px -10px rgb(238 129 100 / 65%);
 }
 
 @theme inline {
