@@ -2,7 +2,7 @@ import { kids } from "@/app/data/mocks";
 import { KidsFilter, KidsHeader } from "@/app/features/kids";
 import { calculateAge } from "@/app/features/kids/utils";
 import type { KidListItem } from "@/app/features/kids/types";
-import { getTodayIsoDate } from "@/app/shared";
+import { getTodayIsoDate, parseCommaSeparatedTags } from "@/app/shared";
 import styles from "@/app/features/kids/components/kids-list.module.css";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
@@ -21,6 +21,7 @@ function toKidListItem(
     parentCount: kid.parentIds.length,
     avatarTone: AVATAR_TONES[index % AVATAR_TONES.length],
     shouldLinkParent: kid.parentIds.length === 0,
+    allergies: parseCommaSeparatedTags(kid.allergies),
   };
 }
 
