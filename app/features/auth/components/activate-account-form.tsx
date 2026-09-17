@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { SubmitEvent } from "react";
+import { useState } from "react";
 import { Button, CheckboxField, FormField } from "@/app/components/ui";
 import { isValidActivationPassword } from "@/app/features/auth";
 import styles from "./auth.module.css";
@@ -40,6 +41,10 @@ const invitationMessages: Record<Exclude<ActivationInvitationState, "none" | "va
 export function ActivateAccountForm({ code, email, invitationState, kid }: ActivateAccountFormProps) {
   const router = useRouter();
   const hasResolvedInvitation = invitationState === "valid";
+  const [validationErrors, setValidationErrors] = useState({
+    confirmation: false,
+    password: false,
+  });
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,17 +52,14 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
     const formData = new FormData(form);
     const password = String(formData.get("password") ?? "");
     const confirmation = String(formData.get("passwordConfirmation") ?? "");
-    const passwordError = form.elements.namedItem("passwordError");
-    const confirmationError = form.elements.namedItem("confirmationError");
+    const passwordIsInvalid = !isValidActivationPassword(password);
+    const confirmationIsInvalid = password !== confirmation;
+    setValidationErrors({
+      confirmation: confirmationIsInvalid,
+      password: passwordIsInvalid,
+    });
 
-    if (passwordError instanceof HTMLElement) {
-      passwordError.hidden = isValidActivationPassword(password);
-    }
-    if (confirmationError instanceof HTMLElement) {
-      confirmationError.hidden = password === confirmation;
-    }
-
-    if (hasResolvedInvitation && isValidActivationPassword(password) && password === confirmation) {
+    if (hasResolvedInvitation && !passwordIsInvalid && !confirmationIsInvalid) {
       router.push("/familia-feed");
     }
   }
@@ -86,13 +88,13 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
           <input autoComplete="email" defaultValue={email} name="email" readOnly={hasResolvedInvitation} required type="email" />
         </FormField>
         <FormField className={styles.field} label="CREAR CONTRASEÑA">
-          <input aria-describedby="passwordError" autoComplete="new-password" name="password" required type="password" />
+          <input aria-describedby="passwordError" aria-invalid={validationErrors.password} autoComplete="new-password" name="password" required type="password" />
           <span className={styles.fieldHint}>Usa al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.</span>
-          <span className={styles.validationError} hidden id="passwordError" role="alert">La contraseña no cumple la política requerida.</span>
+          <span className={styles.validationError} hidden={!validationErrors.password} id="passwordError" role="alert">La contraseña no cumple la política requerida.</span>
         </FormField>
         <FormField className={styles.field} label="CONFIRMAR CONTRASEÑA">
-          <input aria-describedby="confirmationError" autoComplete="new-password" name="passwordConfirmation" required type="password" />
-          <span className={styles.validationError} hidden id="confirmationError" role="alert">Las contraseñas no coinciden.</span>
+          <input aria-describedby="confirmationError" aria-invalid={validationErrors.confirmation} autoComplete="new-password" name="passwordConfirmation" required type="password" />
+          <span className={styles.validationError} hidden={!validationErrors.confirmation} id="confirmationError" role="alert">Las contraseñas no coinciden.</span>
         </FormField>
         <CheckboxField
           className={styles.consentField}
