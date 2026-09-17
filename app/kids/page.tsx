@@ -1,4 +1,4 @@
-import { kids } from "@/app/data/mocks";
+import { kids, parentKids } from "@/app/data/mocks";
 import { KidsFilter, KidsHeader } from "@/app/features/kids";
 import { calculateAge } from "@/app/features/kids/utils";
 import type { KidListItem } from "@/app/features/kids/types";
@@ -18,9 +18,9 @@ function toKidListItem(
     room: kid.room,
     initial: kid.name.trim().charAt(0).toUpperCase(),
     age: calculateAge(kid.birthDate, asOfDate),
-    parentCount: kid.parentIds.length,
+    parentCount: parentKids.filter((parentKid) => parentKid.kidId === kid.id).length,
     avatarTone: AVATAR_TONES[index % AVATAR_TONES.length],
-    shouldLinkParent: kid.parentIds.length === 0,
+    shouldLinkParent: parentKids.every((parentKid) => parentKid.kidId !== kid.id),
     allergies: parseCommaSeparatedTags(kid.allergies),
   };
 }

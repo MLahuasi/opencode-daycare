@@ -2,6 +2,7 @@ export type {
   Kid,
   KidListItem,
   KidStatus,
+  LinkedParent,
   ParentKid,
   ParentRelationship,
   Person,

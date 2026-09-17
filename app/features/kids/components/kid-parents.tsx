@@ -1,5 +1,5 @@
 import { Avatar, Badge, Button } from "@/app/components/ui";
-import type { Parent, ParentRelationship, ParentStatus } from "@/app/features/kids/types";
+import type { LinkedParent, ParentRelationship, PersonStatus } from "@/app/features/kids/types";
 import styles from "./kid-profile.module.css";
 
 const relationshipLabels: Record<ParentRelationship, string> = {
@@ -8,13 +8,13 @@ const relationshipLabels: Record<ParentRelationship, string> = {
   mother: "Mamá",
 };
 
-const statusLabels: Record<ParentStatus, string> = {
+const statusLabels: Record<PersonStatus, string> = {
   active: "Activa",
   inactive: "Inactiva",
   pending: "Pendiente",
 };
 
-const statusVariants: Record<ParentStatus, "green" | "neutral" | "yellow"> = {
+const statusVariants: Record<PersonStatus, "green" | "neutral" | "yellow"> = {
   active: "green",
   inactive: "neutral",
   pending: "yellow",
@@ -32,14 +32,14 @@ function getParentTone(relationship: ParentRelationship): "blue" | "green" | "pu
 }
 
 type KidParentsProps = {
-  parents: readonly Parent[];
+  parents: readonly LinkedParent[];
 };
 
 /**
  * Renders the parents linked to a kid and a non-functional linking control.
  *
  * @param props - Linked parent options.
- * @param props.parents - Parent entities resolved by the server.
+  * @param props.parents - Linked person records resolved by the server.
  * @returns The linked parents panel.
  */
 export function KidParents({ parents }: KidParentsProps) {

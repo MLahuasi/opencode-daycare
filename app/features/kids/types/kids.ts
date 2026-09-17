@@ -28,6 +28,11 @@ export type ParentKid = {
   photoSharingConsent: boolean;
 };
 
+/** Minimal person data required to render a linked parent in a kid profile. */
+export type LinkedParent = Pick<Person, "id" | "name" | "status"> & {
+  relationship: ParentRelationship;
+};
+
 /** Canonical persisted information for a kid. */
 export type Kid = {
   id: string;
