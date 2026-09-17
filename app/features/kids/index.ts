@@ -14,9 +14,12 @@ export {
 export type {
   Kid,
   KidListItem,
-  Parent,
+  KidStatus,
+  ParentKid,
   ParentRelationship,
-  ParentStatus,
+  Person,
+  PersonRole,
+  PersonStatus,
 } from "./types";
 
 export {
