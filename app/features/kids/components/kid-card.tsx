@@ -58,15 +58,19 @@ export function KidCard({ kid }: KidCardProps) {
           {kid.age} años · {getParentLabel(kid.parentCount)}
         </span>
       </span>
-      {kid.allergies.map((allergy, index) => (
-        <Badge
-          key={`${allergy}-${index}`}
-          variant={ALLERGY_BADGE_VARIANTS[index % ALLERGY_BADGE_VARIANTS.length]}
-        >
-          {allergy}
-        </Badge>
-      ))}
-      {kid.shouldLinkParent ? <Badge variant="pink">Vincular</Badge> : null}
+      {kid.allergies.length > 0 || kid.shouldLinkParent ? (
+        <span className={styles.cardBadges}>
+          {kid.allergies.map((allergy, index) => (
+            <Badge
+              key={`${allergy}-${index}`}
+              variant={ALLERGY_BADGE_VARIANTS[index % ALLERGY_BADGE_VARIANTS.length]}
+            >
+              {allergy}
+            </Badge>
+          ))}
+          {kid.shouldLinkParent ? <Badge variant="pink">Vincular</Badge> : null}
+        </span>
+      ) : null}
       {kid.allergies.length === 0 && !kid.shouldLinkParent ? (
         <span aria-hidden="true" className={styles.cardArrow}>
           ›

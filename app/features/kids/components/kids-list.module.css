@@ -120,6 +120,15 @@
   flex: 1;
 }
 
+.cardBadges {
+  display: flex;
+  max-width: 42%;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
 .cardName,
 .cardMeta {
   display: block;
@@ -187,5 +196,15 @@
 
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .card {
+    flex-wrap: wrap;
+  }
+
+  .cardBadges {
+    max-width: none;
+    justify-content: flex-start;
+    margin-left: 58px;
   }
 }
