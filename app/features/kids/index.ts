@@ -32,3 +32,19 @@ export {
   normalizeSlug,
   validateUniqueSlugs,
 } from "./utils";
+
+export {
+  validateKidAllergies,
+  validateKidBirthDate,
+  validateKidForm,
+  validateKidMedicalNotes,
+  validateKidName,
+  validateKidRoomId,
+} from "./schemas";
+
+export type {
+  KidFieldValidationResult,
+  KidFormErrors,
+  KidFormInput,
+  KidFormValidationResult,
+} from "./schemas";
