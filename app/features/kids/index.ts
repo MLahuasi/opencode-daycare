@@ -5,6 +5,7 @@ export {
   KidsHeader,
   KidsRoomGroup,
   KidBasicInfo,
+  KidForm,
   KidMedicalNotes,
   KidParents,
   KidProfileActions,
