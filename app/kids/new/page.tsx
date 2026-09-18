@@ -1,5 +1,6 @@
 import { KidForm } from "@/app/features/kids";
 import type { KidFormValues } from "@/app/features/kids";
+import { createKidAction } from "@/app/features/kids/actions";
 import { getRooms } from "@/app/features/kids/services";
 
 const EMPTY_KID_FORM_VALUES: KidFormValues = {
@@ -21,6 +22,7 @@ export default async function NewKidPage() {
   return (
     <main className="flex min-h-screen items-start justify-center px-6 py-10 max-sm:px-4 max-sm:py-6">
       <KidForm
+        action={createKidAction}
         cancelHref="/kids"
         heading="Agregar niño"
         initialValues={EMPTY_KID_FORM_VALUES}

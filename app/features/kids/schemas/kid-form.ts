@@ -4,20 +4,17 @@ import type { KidFormValues, Room } from "../types";
 const DISPLAY_DATE_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/;
 const MAX_NAME_LENGTH = 120;
 
-/** Raw values accepted by the shared kid form validator. */
-export type KidFormInput = Partial<Record<keyof KidFormValues, unknown>>;
+type KidFormInput = Partial<Record<keyof KidFormValues, unknown>>;
 
 /** Field-level validation errors returned by the kid form validator. */
 export type KidFormErrors = Partial<Record<keyof KidFormValues, string>>;
 
-/** A normalized field value and its optional validation error. */
-export type KidFieldValidationResult = {
+type KidFieldValidationResult = {
   value: string;
   error?: string;
 };
 
-/** Result returned after validating all editable kid fields. */
-export type KidFormValidationResult =
+type KidFormValidationResult =
   | { success: true; data: KidFormValues }
   | { success: false; errors: KidFormErrors };
 
@@ -38,7 +35,7 @@ function isValidCalendarDate(year: number, month: number, day: number): boolean 
  * @param value - Unknown name value received from a form.
  * @returns The normalized name and an error when it is invalid.
  */
-export function validateKidName(value: unknown): KidFieldValidationResult {
+function validateKidName(value: unknown): KidFieldValidationResult {
   if (typeof value !== "string") {
     return { value: "", error: "Ingresa el nombre completo." };
   }
@@ -73,7 +70,7 @@ export function validateKidName(value: unknown): KidFieldValidationResult {
  * @param todayIsoDate - Current local date in `YYYY-MM-DD` format.
  * @returns The ISO birth date and an error when it is invalid.
  */
-export function validateKidBirthDate(
+function validateKidBirthDate(
   value: unknown,
   todayIsoDate = getTodayIsoDate(),
 ): KidFieldValidationResult {
@@ -115,7 +112,7 @@ export function validateKidBirthDate(
  * @param rooms - Available rooms accepted by the form.
  * @returns The room identifier and an error when it is invalid.
  */
-export function validateKidRoomId(
+function validateKidRoomId(
   value: unknown,
   rooms: readonly Room[],
 ): KidFieldValidationResult {
@@ -138,7 +135,7 @@ export function validateKidRoomId(
  * @param value - Unknown allergy value received from a form.
  * @returns Deduplicated comma-separated allergies and an error for malformed input.
  */
-export function validateKidAllergies(value: unknown): KidFieldValidationResult {
+function validateKidAllergies(value: unknown): KidFieldValidationResult {
   if (value === undefined || value === null || value === "") {
     return { value: "" };
   }
@@ -156,7 +153,7 @@ export function validateKidAllergies(value: unknown): KidFieldValidationResult {
  * @param value - Unknown medical notes received from a form.
  * @returns Trimmed medical notes and an error for malformed input.
  */
-export function validateKidMedicalNotes(value: unknown): KidFieldValidationResult {
+function validateKidMedicalNotes(value: unknown): KidFieldValidationResult {
   if (value === undefined || value === null || value === "") {
     return { value: "" };
   }

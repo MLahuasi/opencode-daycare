@@ -1,5 +1,6 @@
 import { KidForm } from "@/app/features/kids";
 import type { KidFormValues } from "@/app/features/kids";
+import { updateKidAction } from "@/app/features/kids/actions";
 import { getKidById, getRooms } from "@/app/features/kids/services";
 import { notFound } from "next/navigation";
 
@@ -29,10 +30,12 @@ export default async function EditKidPage({
     allergies: kid.allergies,
     medicalNotes: kid.medicalNotes,
   };
+  const updateAction = updateKidAction.bind(null, kid.id);
 
   return (
     <main className="flex min-h-screen items-start justify-center px-6 py-10 max-sm:px-4 max-sm:py-6">
       <KidForm
+        action={updateAction}
         cancelHref={`/kids/${kid.slug}`}
         heading="Editar niño"
         initialValues={initialValues}
