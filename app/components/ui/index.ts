@@ -6,4 +6,5 @@ export { CheckboxField } from "./checkbox-field";
 export { FormField } from "./form-field";
 export { LinkButton } from "./link-button";
 export { SearchField } from "./search-field";
+export { TagsInput } from "./tags-input";
 export type { BadgeVariant } from "./badge";

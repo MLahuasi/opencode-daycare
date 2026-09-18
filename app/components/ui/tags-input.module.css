@@ -1,0 +1,102 @@
+.root {
+  display: flex;
+  min-height: 48px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  padding: 8px 12px;
+  transition: border-color 150ms ease;
+}
+
+.root:focus-within {
+  border-color: var(--color-coral-light);
+  outline: 2px solid var(--color-coral-soft);
+  outline-offset: 1px;
+}
+
+.root[data-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+.root[data-invalid="true"]:focus-within {
+  outline-color: var(--color-error-background);
+}
+
+.root[data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.tag {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  background: var(--color-coral-soft);
+  padding: 5px 6px 5px 10px;
+  color: var(--color-coral-dark);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.tag > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag button {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  cursor: pointer;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: currentColor;
+}
+
+.tag button:hover:not(:disabled) {
+  background: var(--color-coral-soft-hover);
+}
+
+.tag button:focus-visible {
+  outline: 2px solid var(--color-coral-dark);
+  outline-offset: 1px;
+}
+
+.tag button:disabled {
+  cursor: not-allowed;
+}
+
+.tag svg {
+  width: 13px;
+  height: 13px;
+}
+
+.input {
+  min-width: min(180px, 100%);
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.input::placeholder {
+  color: var(--color-subtle);
+}
+
+.input:disabled,
+.input:read-only {
+  cursor: not-allowed;
+}
