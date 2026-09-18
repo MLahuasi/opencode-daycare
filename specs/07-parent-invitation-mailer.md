@@ -16,6 +16,7 @@ La implementación de referencia recrea varias responsabilidades que el paquete 
 **In:**
 
 - Instalar `@jmlq/mailer` desde npm usando el rango guardado por npm para la versión publicada `0.0.1-beta.1`.
+- Instalar `nodemailer` como dependencia directa usando el rango `^7.0.6` requerido por `@jmlq/mailer`, sin importarlo directamente en la aplicación.
 - Conservar `package-lock.json` como resolución canónica de la dependencia instalada.
 - Crear la capa `app/infrastructure/adapters/jmlq/mailer/`.
 - Marcar la integración como server-only para impedir su inclusión en Client Components.
@@ -142,7 +143,7 @@ MAIL_TEMPLATE_EXTENSION=html
 
 ## Implementation plan
 
-1. Instalar `@jmlq/mailer` con npm y actualizar `package.json` y `package-lock.json` con el rango generado para `0.0.1-beta.1`.
+1. Instalar `@jmlq/mailer` y `nodemailer` con npm, y actualizar `package.json` y `package-lock.json` con los rangos `^0.0.1-beta.1` y `^7.0.6`, respectivamente.
 2. Añadir `!.env.template` a `.gitignore` sin permitir el versionado de otros archivos `.env*`.
 3. Crear `.env.template` con la sección `SETTINGS @jmlq/mailer` y las ocho variables acordadas, sin incluir secretos reales.
 4. Crear los directorios y barrels de `app/infrastructure/adapters/jmlq/mailer/` hasta `app/infrastructure/index.ts`.
@@ -163,7 +164,9 @@ MAIL_TEMPLATE_EXTENSION=html
 
 - [ ] La spec se implementa únicamente después de pasar a estado `Approved`.
 - [ ] `package.json` declara `@jmlq/mailer` con el rango de npm correspondiente a `0.0.1-beta.1`.
+- [ ] `package.json` declara `nodemailer` como dependencia directa con el rango `^7.0.6`.
 - [ ] `package-lock.json` fija la versión resuelta de `@jmlq/mailer`.
+- [ ] `package-lock.json` fija la versión resuelta de `nodemailer`.
 - [ ] La aplicación usa `createMailer`, `NodemailerService` y `FileEmailTemplate` desde el export público de `@jmlq/mailer`.
 - [ ] La aplicación no importa Nodemailer directamente.
 - [ ] La aplicación no duplica el renderer de archivos de la implementación de referencia.
@@ -229,6 +232,7 @@ MAIL_TEMPLATE_EXTENSION=html
 - **Sí:** usar la API publicada de `@jmlq/mailer` porque ya ofrece composición, transporte Nodemailer y renderer de archivos.
 - **No:** copiar literalmente `mailer.adapter.ts`, `mailer.file-template.renderer.ts` y los tipos de la referencia porque duplicaría responsabilidades del paquete instalado.
 - **Sí:** instalar el rango que npm genera para `0.0.1-beta.1` porque se decidió permitir actualizaciones compatibles.
+- **Sí:** declarar `nodemailer` con el rango directo `^7.0.6` requerido por el paquete para hacer explícita la dependencia de runtime, sin consumir su API directamente.
 - **Sí:** conservar `package-lock.json` para que las instalaciones reproducibles usen la resolución validada.
 - **Sí:** ubicar la integración en `app/infrastructure/adapters/jmlq/mailer/` para mantener todo el runtime bajo `app/` y respetar nombres de directorio en minúsculas.
 - **No:** crear `Infrastructure/` con mayúscula en la raíz.
