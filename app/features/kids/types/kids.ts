@@ -52,6 +52,12 @@ export type Kid = {
   status: KidStatus;
 };
 
+/** Editable kid values shared by the Add and Edit flows. */
+export type KidFormValues = Pick<
+  Kid,
+  "allergies" | "birthDate" | "medicalNotes" | "name" | "roomId"
+>;
+
 /** Safe, derived data used by the client-side kid list and filter. */
 export type KidListItem = {
   slug: string;

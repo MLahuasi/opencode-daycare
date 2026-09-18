@@ -13,6 +13,7 @@ export {
 
 export type {
   Kid,
+  KidFormValues,
   KidListItem,
   KidStatus,
   LinkedParent,

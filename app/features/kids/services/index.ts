@@ -1,4 +1,5 @@
 export {
+  createKid,
   getKidById,
   getKidBySlug,
   getKidRoom,
@@ -7,4 +8,5 @@ export {
   getParentKids,
   getPeople,
   getRooms,
+  updateKid,
 } from "./kids-service";
