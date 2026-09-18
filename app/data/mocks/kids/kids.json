@@ -86,5 +86,16 @@
     "medicalNotes": "Sin indicaciones médicas especiales registradas.",
     "allergies": "",
     "status": "active"
+  },
+  {
+    "id": "54f37876-e15f-4aef-a517-c1f6b2e4b31d",
+    "slug": "martina-lopez",
+    "name": "Martina López Vega",
+    "birthDate": "2023-05-15",
+    "roomId": "room-patitos",
+    "allergies": "Polen, Ácaros",
+    "medicalNotes": "Tienes alergia al mani, camarones y gluten, debe tomar un antiestaminico una vez al dia despues del almuerzo",
+    "enrollmentDate": "2026-09-18",
+    "status": "active"
   }
 ]
