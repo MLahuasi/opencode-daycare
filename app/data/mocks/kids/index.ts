@@ -1,3 +1,2 @@
-export { kids } from "./kids-mock";
-export { parentKids } from "./parent-kids-mock";
-export { people } from "./people-mock";
+// Persisted kid fixtures are intentionally accessed through the server-only Kids service.
+export {};

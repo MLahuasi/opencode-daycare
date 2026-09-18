@@ -21,6 +21,7 @@ function formatMonth(value: string): string {
 
 type KidBasicInfoProps = {
   kid: Kid;
+  roomName: string;
 };
 
 /**
@@ -28,9 +29,10 @@ type KidBasicInfoProps = {
  *
  * @param props - Basic information options.
  * @param props.kid - Kid whose dates and room are displayed.
+ * @param props.roomName - Display name resolved from the kid's room reference.
  * @returns A basic information definition list.
  */
-export function KidBasicInfo({ kid }: KidBasicInfoProps) {
+export function KidBasicInfo({ kid, roomName }: KidBasicInfoProps) {
   return (
     <dl className={styles.basicInfo}>
       <div>
@@ -39,7 +41,7 @@ export function KidBasicInfo({ kid }: KidBasicInfoProps) {
       </div>
       <div>
         <dt>Sala</dt>
-        <dd>{kid.room}</dd>
+        <dd>{roomName}</dd>
       </div>
       <div>
         <dt>Ingreso</dt>

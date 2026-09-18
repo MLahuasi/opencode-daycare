@@ -1,5 +1,4 @@
 import { LinkButton } from "@/app/components/ui";
-import { kids, parentKids, people } from "@/app/data/mocks";
 import {
   KidBasicInfo,
   KidMedicalNotes,
@@ -7,6 +6,11 @@ import {
   KidProfileActions,
   KidProfileHeader,
 } from "@/app/features/kids";
+import {
+  getKidRoom,
+  getKids,
+  getLinkedParentsByKidId,
+} from "@/app/features/kids/services";
 import { calculateAge } from "@/app/features/kids/utils";
 import { getTodayIsoDate } from "@/app/shared";
 import { notFound } from "next/navigation";
@@ -17,9 +21,11 @@ const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
 /**
  * Returns the canonical kid slugs generated at build time.
  *
- * @returns The eight static profile route parameters.
+ * @returns The canonical profile route parameters.
  */
-export function generateStaticParams(): Array<{ slug: string }> {
+export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
+  const kids = await getKids();
+
   return kids.map((kid) => ({ slug: kid.slug }));
 }
 
@@ -36,6 +42,7 @@ export default async function KidProfilePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const kids = await getKids();
   const kidIndex = kids.findIndex((candidate) => candidate.slug === slug);
   const kid = kids[kidIndex];
 
@@ -43,23 +50,11 @@ export default async function KidProfilePage({
     notFound();
   }
 
-  const linkedParents = parentKids
-    .filter((parentKid) => parentKid.kidId === kid.id)
-    .map((parentKid) => {
-      const person = people.find((candidate) => candidate.id === parentKid.parentId);
-
-      if (!person) {
-        return null;
-      }
-
-      return {
-        id: person.id,
-        name: person.name,
-        relationship: parentKid.relationship,
-        status: person.status,
-      };
-    })
-    .filter((parent): parent is NonNullable<typeof parent> => parent !== null);
+  const [room, linkedParents] = await Promise.all([
+    getKidRoom(kid),
+    getLinkedParentsByKidId(kid.id),
+  ]);
+  const roomName = room?.name ?? "Sin sala asignada";
   const age = calculateAge(kid.birthDate, getTodayIsoDate());
   const avatarTone = AVATAR_TONES[kidIndex % AVATAR_TONES.length];
 
@@ -79,9 +74,10 @@ export default async function KidProfilePage({
               avatarTone={avatarTone}
               editHref={`/kids/${kid.id}/edit`}
               kid={kid}
+              roomName={roomName}
             />
             <KidMedicalNotes notes={kid.medicalNotes} />
-            <KidBasicInfo kid={kid} />
+            <KidBasicInfo kid={kid} roomName={roomName} />
           </div>
           <div className={styles.profileSideColumn}>
             <KidProfileActions />

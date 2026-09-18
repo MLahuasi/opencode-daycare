@@ -1,21 +1,23 @@
-import { kids, parentKids } from "@/app/data/mocks";
 import { KidsFilter, KidsHeader } from "@/app/features/kids";
+import { getKids, getParentKids, getRooms } from "@/app/features/kids/services";
 import { calculateAge } from "@/app/features/kids/utils";
-import type { KidListItem } from "@/app/features/kids/types";
+import type { Kid, KidListItem, ParentKid, Room } from "@/app/features/kids/types";
 import { getTodayIsoDate, parseCommaSeparatedTags } from "@/app/shared";
 import styles from "@/app/features/kids/components/kids-list.module.css";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
 
 function toKidListItem(
-  kid: (typeof kids)[number],
+  kid: Kid,
   index: number,
   asOfDate: string,
+  parentKids: readonly ParentKid[],
+  rooms: readonly Room[],
 ): KidListItem {
   return {
     slug: kid.slug,
     name: kid.name,
-    room: kid.room,
+    room: rooms.find((room) => room.id === kid.roomId)?.name ?? "Sin sala asignada",
     initial: kid.name.trim().charAt(0).toUpperCase(),
     age: calculateAge(kid.birthDate, asOfDate),
     parentCount: parentKids.filter((parentKid) => parentKid.kidId === kid.id).length,
@@ -30,9 +32,16 @@ function toKidListItem(
  *
  * @returns The Kids list page with a safe DTO payload for the client filter.
  */
-export default function KidsPage() {
+export default async function KidsPage() {
+  const [kids, parentKids, rooms] = await Promise.all([
+    getKids(),
+    getParentKids(),
+    getRooms(),
+  ]);
   const today = getTodayIsoDate();
-  const listItems = kids.map((kid, index) => toKidListItem(kid, index, today));
+  const listItems = kids.map((kid, index) =>
+    toKidListItem(kid, index, today, parentKids, rooms),
+  );
 
   return (
     <main className={styles.page}>

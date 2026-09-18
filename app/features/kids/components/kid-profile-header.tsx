@@ -7,6 +7,7 @@ type KidProfileHeaderProps = {
   avatarTone: "coral" | "blue" | "pink" | "green" | "yellow" | "purple";
   editHref: string;
   kid: Kid;
+  roomName: string;
 };
 
 /**
@@ -17,9 +18,16 @@ type KidProfileHeaderProps = {
  * @param props.avatarTone - Visual tone assigned to the kid's avatar.
  * @param props.editHref - Destination for editing the current kid.
  * @param props.kid - Canonical kid data used for identity fields.
+ * @param props.roomName - Display name resolved from the kid's room reference.
  * @returns The profile identity header.
  */
-export function KidProfileHeader({ age, avatarTone, editHref, kid }: KidProfileHeaderProps) {
+export function KidProfileHeader({
+  age,
+  avatarTone,
+  editHref,
+  kid,
+  roomName,
+}: KidProfileHeaderProps) {
   return (
     <header className={styles.profileHeader}>
       <Avatar
@@ -31,7 +39,7 @@ export function KidProfileHeader({ age, avatarTone, editHref, kid }: KidProfileH
       />
       <div className={styles.profileIdentity}>
         <h1>{kid.name}</h1>
-        <p>{age} años · Sala {kid.room}</p>
+        <p>{age} años · Sala {roomName}</p>
       </div>
       <LinkButton className={styles.editButton} href={editHref} variant="ghost">
         Editar
