@@ -1,10 +1,11 @@
-import { Avatar, Button } from "@/app/components/ui";
+import { Avatar, LinkButton } from "@/app/components/ui";
 import type { Kid } from "@/app/features/kids/types";
 import styles from "./kid-profile.module.css";
 
 type KidProfileHeaderProps = {
   age: number;
   avatarTone: "coral" | "blue" | "pink" | "green" | "yellow" | "purple";
+  editHref: string;
   kid: Kid;
 };
 
@@ -14,10 +15,11 @@ type KidProfileHeaderProps = {
  * @param props - Profile identity options.
  * @param props.age - Age derived from the kid's birth date.
  * @param props.avatarTone - Visual tone assigned to the kid's avatar.
+ * @param props.editHref - Destination for editing the current kid.
  * @param props.kid - Canonical kid data used for identity fields.
  * @returns The profile identity header.
  */
-export function KidProfileHeader({ age, avatarTone, kid }: KidProfileHeaderProps) {
+export function KidProfileHeader({ age, avatarTone, editHref, kid }: KidProfileHeaderProps) {
   return (
     <header className={styles.profileHeader}>
       <Avatar
@@ -31,9 +33,9 @@ export function KidProfileHeader({ age, avatarTone, kid }: KidProfileHeaderProps
         <h1>{kid.name}</h1>
         <p>{age} años · Sala {kid.room}</p>
       </div>
-      <Button className={styles.editButton} variant="ghost">
+      <LinkButton className={styles.editButton} href={editHref} variant="ghost">
         Editar
-      </Button>
+      </LinkButton>
     </header>
   );
 }

@@ -37,7 +37,7 @@ export default function KidsPage() {
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <KidsHeader />
+        <KidsHeader addHref="/kids/new" />
         <KidsFilter items={listItems} />
       </div>
     </main>

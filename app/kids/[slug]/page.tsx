@@ -74,7 +74,12 @@ export default async function KidProfilePage({
         </LinkButton>
         <div className={styles.profileColumns}>
           <div className={styles.profileMainColumn}>
-            <KidProfileHeader age={age} avatarTone={avatarTone} kid={kid} />
+            <KidProfileHeader
+              age={age}
+              avatarTone={avatarTone}
+              editHref={`/kids/${kid.id}/edit`}
+              kid={kid}
+            />
             <KidMedicalNotes notes={kid.medicalNotes} />
             <KidBasicInfo kid={kid} />
           </div>
