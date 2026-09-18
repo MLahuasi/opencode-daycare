@@ -5,6 +5,7 @@ export {
   KidsHeader,
   KidsRoomGroup,
   KidBasicInfo,
+  KidForm,
   KidMedicalNotes,
   KidParents,
   KidProfileActions,
@@ -13,6 +14,7 @@ export {
 
 export type {
   Kid,
+  KidFormValues,
   KidListItem,
   KidStatus,
   LinkedParent,
@@ -21,6 +23,7 @@ export type {
   Person,
   PersonRole,
   PersonStatus,
+  Room,
 } from "./types";
 
 export {

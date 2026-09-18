@@ -3,7 +3,13 @@ import type {
   ActivationInvitationState,
   ActivationKidCardData,
 } from "@/app/features/auth";
-import { invitations, kids, parentKids, people } from "@/app/data/mocks";
+import { invitations } from "@/app/data/mocks";
+import {
+  getKids,
+  getParentKids,
+  getPeople,
+  getRooms,
+} from "@/app/features/kids/services";
 
 type ActivationSearchParams = {
   code?: string | string[];
@@ -16,7 +22,7 @@ type ActivationResolution = {
   kid: ActivationKidCardData | null;
 };
 
-function resolveActivation(code: string | undefined): ActivationResolution {
+async function resolveActivation(code: string | undefined): Promise<ActivationResolution> {
   if (!code) {
     return { code: "", email: "", invitationState: "none", kid: null };
   }
@@ -35,11 +41,18 @@ function resolveActivation(code: string | undefined): ActivationResolution {
     return { code, email: "", invitationState: "expired", kid: null };
   }
 
+  const [kids, parentKids, people, rooms] = await Promise.all([
+    getKids(),
+    getParentKids(),
+    getPeople(),
+    getRooms(),
+  ]);
   const person = people.find((candidate) => candidate.id === invitation.personId);
   const parentKid = parentKids.find((candidate) => candidate.parentId === invitation.personId);
   const kid = parentKid ? kids.find((candidate) => candidate.id === parentKid.kidId) : undefined;
+  const room = kid ? rooms.find((candidate) => candidate.id === kid.roomId) : undefined;
 
-  if (!person || !kid) {
+  if (!person || !kid || !room) {
     return { code, email: "", invitationState: "unknown", kid: null };
   }
 
@@ -50,7 +63,7 @@ function resolveActivation(code: string | undefined): ActivationResolution {
     kid: {
       initial: kid.name.trim().charAt(0).toUpperCase(),
       name: kid.name,
-      room: kid.room,
+      room: room.name,
     },
   };
 }
@@ -70,7 +83,7 @@ export default async function ActivateAccountPage({
   const params = await searchParams;
   const rawCode = params.code;
   const code = Array.isArray(rawCode) ? rawCode[0] : rawCode;
-  const resolution = resolveActivation(code);
+  const resolution = await resolveActivation(code);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[var(--color-page)] p-10 max-sm:p-6">

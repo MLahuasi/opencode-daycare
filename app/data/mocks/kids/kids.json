@@ -1,0 +1,101 @@
+[
+  {
+    "id": "kid-mateo-fernandez",
+    "slug": "mateo-fernandez",
+    "name": "Mateo Fernández",
+    "birthDate": "2022-09-14",
+    "roomId": "room-soles",
+    "enrollmentDate": "2025-02-03",
+    "medicalNotes": "Alergia al maní y sensibilidad a la lactosa. Lleva una botella de agua identificada.",
+    "allergies": "Maní, Lactosa",
+    "status": "active"
+  },
+  {
+    "id": "kid-sofia-mendez",
+    "slug": "sofia-mendez",
+    "name": "Sofía Méndez",
+    "birthDate": "2023-08-22",
+    "roomId": "room-soles",
+    "enrollmentDate": "2025-03-10",
+    "medicalNotes": "Alergia al polen. Avisar a la familia ante síntomas persistentes.",
+    "allergies": "Polen",
+    "status": "active"
+  },
+  {
+    "id": "kid-benjamin-ruiz",
+    "slug": "benjamin-ruiz",
+    "name": "Benjamín Ruiz",
+    "birthDate": "2022-11-06",
+    "roomId": "room-soles",
+    "enrollmentDate": "2025-01-13",
+    "medicalNotes": "Usa lentes para actividades de cerca. Guardar el estuche en su mochila.",
+    "allergies": "",
+    "status": "active"
+  },
+  {
+    "id": "kid-valentina-soto",
+    "slug": "valentina-soto",
+    "name": "Valentina Soto",
+    "birthDate": "2023-07-19",
+    "roomId": "room-soles",
+    "enrollmentDate": "2026-02-02",
+    "medicalNotes": "No hay notas médicas registradas.",
+    "allergies": "",
+    "status": "active"
+  },
+  {
+    "id": "kid-tomas-diaz",
+    "slug": "tomas-diaz",
+    "name": "Tomás Díaz",
+    "birthDate": "2022-12-18",
+    "roomId": "room-soles",
+    "enrollmentDate": "2025-04-07",
+    "medicalNotes": "Sensibilidad a la lactosa y alergia al maní. Ofrecer las alternativas indicadas en la cocina.",
+    "allergies": "Lactosa, Maní",
+    "status": "active"
+  },
+  {
+    "id": "kid-emma-castro",
+    "slug": "emma-castro",
+    "name": "Emma Castro",
+    "birthDate": "2023-10-03",
+    "roomId": "room-soles",
+    "enrollmentDate": "2026-01-12",
+    "medicalNotes": "Sin alergias conocidas. Avisar a la familia ante síntomas persistentes.",
+    "allergies": "",
+    "status": "active"
+  },
+  {
+    "id": "kid-lucas-romero",
+    "slug": "lucas-romero",
+    "name": "Lucas Romero",
+    "birthDate": "2022-10-27",
+    "roomId": "room-soles",
+    "enrollmentDate": "2025-02-17",
+    "medicalNotes": "Evitar alimentos con gluten. Cuenta con inhalador de rescate en su bolso, según autorización vigente.",
+    "allergies": "Gluten",
+    "status": "active"
+  },
+  {
+    "id": "kid-olivia-vega",
+    "slug": "olivia-vega",
+    "name": "Olivia Vega",
+    "birthDate": "2023-06-11",
+    "roomId": "room-soles",
+    "enrollmentDate": "2025-08-04",
+    "medicalNotes": "Sin indicaciones médicas especiales registradas.",
+    "allergies": "",
+    "status": "active"
+  },
+  {
+    "id": "54f37876-e15f-4aef-a517-c1f6b2e4b31d",
+    "slug": "martina-lopez",
+    "name": "Martina López Vega",
+    "birthDate": "2023-05-15",
+    "roomId": "room-patitos",
+    "allergies": "Polen, Ácaros",
+    "medicalNotes": "Tienes alergia al mani, camarones y gluten, debe tomar un antiestaminico una vez al dia despues del almuerzo",
+    "enrollmentDate": "2026-09-18",
+    "status": "active"
+  }
+]

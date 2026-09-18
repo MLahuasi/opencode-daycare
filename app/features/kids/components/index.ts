@@ -1,5 +1,6 @@
 export { KidCard } from "./kid-card";
 export { KidBasicInfo } from "./kid-basic-info";
+export { KidForm } from "./kid-form";
 export { KidsEmptyState } from "./kids-empty-state";
 export { KidsFilter } from "./kids-filter";
 export { KidsHeader } from "./kids-header";

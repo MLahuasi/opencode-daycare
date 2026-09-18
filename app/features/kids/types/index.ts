@@ -1,5 +1,6 @@
 export type {
   Kid,
+  KidFormValues,
   KidListItem,
   KidStatus,
   LinkedParent,
@@ -8,4 +9,5 @@ export type {
   Person,
   PersonRole,
   PersonStatus,
+  Room,
 } from "./kids";

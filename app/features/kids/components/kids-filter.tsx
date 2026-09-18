@@ -25,6 +25,17 @@ export function KidsFilter({ items }: KidsFilterProps) {
   const filteredItems = normalizedQuery
     ? items.filter((item) => normalizeName(item.name).includes(normalizedQuery))
     : items;
+  const itemsByRoom = new Map<string, KidListItem[]>();
+
+  for (const item of filteredItems) {
+    const roomItems = itemsByRoom.get(item.room);
+
+    if (roomItems) {
+      roomItems.push(item);
+    } else {
+      itemsByRoom.set(item.room, [item]);
+    }
+  }
 
   return (
     <div className={styles.filter}>
@@ -36,7 +47,9 @@ export function KidsFilter({ items }: KidsFilterProps) {
         value={query}
       />
       {filteredItems.length > 0 ? (
-        <KidsRoomGroup kids={filteredItems} room={filteredItems[0].room} />
+        Array.from(itemsByRoom, ([room, roomItems]) => (
+          <KidsRoomGroup key={room} kids={roomItems} room={room} />
+        ))
       ) : (
         <KidsEmptyState />
       )}

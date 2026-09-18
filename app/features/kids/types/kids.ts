@@ -10,6 +10,12 @@ export type PersonStatus = "active" | "inactive" | "pending";
 /** Lifecycle status assigned to a kid. */
 export type KidStatus = "active" | "inactive";
 
+/** A daycare room available for kid assignment. */
+export type Room = {
+  id: string;
+  name: string;
+};
+
 /** A person who participates in the daycare community. */
 export type Person = {
   id: string;
@@ -39,12 +45,18 @@ export type Kid = {
   slug: string;
   name: string;
   birthDate: string;
-  room: string;
+  roomId: string;
   enrollmentDate: string;
   medicalNotes: string;
   allergies: string;
   status: KidStatus;
 };
+
+/** Editable kid values shared by the Add and Edit flows. */
+export type KidFormValues = Pick<
+  Kid,
+  "allergies" | "birthDate" | "medicalNotes" | "name" | "roomId"
+>;
 
 /** Safe, derived data used by the client-side kid list and filter. */
 export type KidListItem = {

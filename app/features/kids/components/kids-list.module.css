@@ -55,6 +55,10 @@
   margin-top: 0;
 }
 
+.roomSection + .roomSection {
+  margin-top: 28px;
+}
+
 .roomHeading {
   display: flex;
   align-items: center;

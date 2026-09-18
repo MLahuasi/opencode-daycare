@@ -46,9 +46,13 @@
   --color-medical-icon: #f4a8a0;
   --color-medical-text: #c5413a;
   --color-medical-body: #b25249;
+  --color-error: var(--color-medical-text);
+  --color-error-background: var(--color-medical-background);
+  --color-form-card: #fbf4ec;
   --shadow-card: 0 4px 16px -12px rgb(120 90 60 / 50%);
   --shadow-composer: 0 4px 14px -10px rgb(120 90 60 / 40%);
   --shadow-coral-button: 0 8px 18px -8px rgb(238 129 100 / 75%);
+  --shadow-form-card: 0 20px 50px -24px rgb(63 54 46 / 35%);
   --color-auth-orb: rgb(255 255 255 / 12%);
   --color-auth-mark: rgb(255 255 255 / 22%);
   --color-auth-copy: rgb(255 255 255 / 92%);
