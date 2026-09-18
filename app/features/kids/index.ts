@@ -21,6 +21,7 @@ export type {
   Person,
   PersonRole,
   PersonStatus,
+  Room,
 } from "./types";
 
 export {

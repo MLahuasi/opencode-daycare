@@ -10,6 +10,12 @@ export type PersonStatus = "active" | "inactive" | "pending";
 /** Lifecycle status assigned to a kid. */
 export type KidStatus = "active" | "inactive";
 
+/** A daycare room available for kid assignment. */
+export type Room = {
+  id: string;
+  name: string;
+};
+
 /** A person who participates in the daycare community. */
 export type Person = {
   id: string;
@@ -39,7 +45,7 @@ export type Kid = {
   slug: string;
   name: string;
   birthDate: string;
-  room: string;
+  roomId: string;
   enrollmentDate: string;
   medicalNotes: string;
   allergies: string;

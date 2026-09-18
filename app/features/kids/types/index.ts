@@ -8,4 +8,5 @@ export type {
   Person,
   PersonRole,
   PersonStatus,
+  Room,
 } from "./kids";
