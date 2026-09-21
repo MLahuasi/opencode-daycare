@@ -96,9 +96,12 @@ open-daycare/
 │   │   ├── feed/            Componentes y tipos del feed
 │   │   ├── kids/            Listado, perfiles y tipos de niños
 │   │   └── layout/          Sidebar y navegación
-│   ├── shared/              Utilidades transversales
+│   ├── infrastructure/
+│   │   └── adapters/jmlq/   Integraciones server-only con paquetes JMLQ
+│   ├── shared/              Utilidades y configuración transversal
 │   ├── page.tsx             Ruta raíz
 │   └── kids/                Rutas de niños
+├── templates/               Plantillas HTML requeridas en runtime
 ├── specs/                   Contratos funcionales versionados
 ├── .agents/skills/          Skills del flujo SDD
 ├── .opencode/               Agentes y comandos personalizados
@@ -124,6 +127,13 @@ flowchart TD
     ROUTES --> FEATURES["features/feed<br/>features/kids<br/>features/layout"]
     FEATURES --> MOCKS["data/mocks"]
     FEATURES --> SHARED[shared]
+
+    APP --> INFRA["app/infrastructure<br/>server-only"]
+    INFRA --> MAILER["sendParentInvitationEmail"]
+    MAILER --> PACKAGE["@jmlq/mailer"]
+    MAILER --> TEMPLATE["templates/<br/>parent-invitation.html"]
+    PACKAGE --> SMTP["Servidor SMTP"]
+    KIDS["features/kids"] -. "Integración futura<br/>no implementada" .-> MAILER
 
     U --> SPEC["/spec"]
     SPEC --> FILE["specs/NN-slug.md"]
