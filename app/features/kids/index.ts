@@ -20,7 +20,6 @@ export type {
   LinkedParent,
   ParentKid,
   ParentRelationship,
-  Room,
 } from "./types";
 
 export {

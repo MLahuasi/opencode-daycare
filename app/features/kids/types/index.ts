@@ -4,5 +4,4 @@ export type {
   LinkedParent,
   ParentKid,
   ParentRelationship,
-  Room,
 } from "./kids";

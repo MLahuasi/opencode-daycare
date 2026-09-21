@@ -5,12 +5,12 @@ import { open, readFile, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { getTodayIsoDate } from "@/app/shared";
 import type { Person } from "@/app/features/people";
+import type { Room } from "@/app/features/rooms";
 import type {
   Kid,
   KidFormValues,
   LinkedParent,
   ParentKid,
-  Room,
 } from "../types";
 import { normalizeSlug } from "../utils";
 

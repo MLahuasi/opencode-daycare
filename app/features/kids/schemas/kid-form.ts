@@ -1,5 +1,6 @@
 import { getTodayIsoDate, parseCommaSeparatedTags } from "@/app/shared";
-import type { KidFormValues, Room } from "../types";
+import type { Room } from "@/app/features/rooms";
+import type { KidFormValues } from "../types";
 
 const DISPLAY_DATE_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/;
 const MAX_NAME_LENGTH = 120;
