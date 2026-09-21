@@ -7,7 +7,8 @@ import { getTodayIsoDate } from "@/app/shared";
 import type { Person } from "@/app/features/people";
 import type { Room } from "@/app/features/rooms";
 import type { LinkedParent, ParentKid } from "@/app/features/family";
-import type { Kid, KidFormValues } from "../types";
+import type { KidFormValues } from "../schemas";
+import type { Kid } from "../types";
 import { normalizeSlug } from "../utils";
 
 type KidCollectionFile =

@@ -12,12 +12,9 @@ export {
   KidProfileHeader,
 } from "./components";
 
-export type {
-  Kid,
-  KidFormValues,
-  KidListItem,
-  KidStatus,
-} from "./types";
+export type { Kid, KidListItem, KidStatus } from "./types";
+
+export type { KidFormValues } from "./schemas";
 
 export {
   calculateAge,

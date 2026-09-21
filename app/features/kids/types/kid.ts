@@ -13,9 +13,3 @@ export type Kid = {
   allergies: string;
   status: KidStatus;
 };
-
-/** Editable kid values shared by the Add and Edit flows. */
-export type KidFormValues = Pick<
-  Kid,
-  "allergies" | "birthDate" | "medicalNotes" | "name" | "roomId"
->;
