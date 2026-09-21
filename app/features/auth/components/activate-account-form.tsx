@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import type { FormEvent, SubmitEvent } from "react";
 import { useState } from "react";
 import { Button, CheckboxField, FormField } from "@/app/components/ui";
-import { isValidActivationPassword } from "@/app/features/auth";
+import { isValidActivationPassword } from "../utils/password";
 import styles from "./auth.module.css";
 
 export type ActivationKidCardData = {
