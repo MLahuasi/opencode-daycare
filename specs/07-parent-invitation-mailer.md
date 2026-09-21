@@ -17,6 +17,7 @@ La implementación de referencia recrea varias responsabilidades que el paquete 
 
 - Instalar `@jmlq/mailer` desde npm usando el rango guardado por npm para la versión publicada `0.0.1-beta.1`.
 - Instalar `nodemailer` como dependencia directa usando el rango `^7.0.6` requerido por `@jmlq/mailer`, sin importarlo directamente en la aplicación.
+- Instalar `env-var` con el rango `^7.5.0` para centralizar la lectura y validación tipada del entorno.
 - Conservar `package-lock.json` como resolución canónica de la dependencia instalada.
 - Crear la capa `app/infrastructure/adapters/jmlq/mailer/`.
 - Marcar la integración como server-only para impedir su inclusión en Client Components.
@@ -25,6 +26,8 @@ La implementación de referencia recrea varias responsabilidades que el paquete 
 - Componer ambos mediante `createMailer` de `@jmlq/mailer`.
 - Crear una instancia singleton de inicialización diferida.
 - Validar la configuración solamente cuando se solicite el primer envío.
+- Crear una configuración server-only compartida y extensible mediante `getEnvironment()`, organizada por secciones tipadas.
+- Mantener la carga de archivos `.env*` a cargo de Next.js, sin instalar ni inicializar `dotenv`.
 - Permitir que lint, typecheck y build terminen sin credenciales SMTP reales.
 - Producir un error explícito al intentar enviar con configuración ausente o inválida.
 - Crear y versionar `.env.template` con únicamente las variables utilizadas por esta integración.
@@ -32,7 +35,7 @@ La implementación de referencia recrea varias responsabilidades que el paquete 
 - Configurar `MAILER_EMAIL`, `MAILER_SECRET_KEY`, `MAILER_FROM`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_SECURE`, `MAIL_TEMPLATE_PATH` y `MAIL_TEMPLATE_EXTENSION`.
 - Usar `templates` como valor de ejemplo para `MAIL_TEMPLATE_PATH`.
 - Usar `html` como valor de ejemplo para `MAIL_TEMPLATE_EXTENSION`.
-- Resolver la ruta de plantillas desde el directorio de trabajo del proyecto.
+- Resolver la ruta de plantillas desde el directorio de trabajo del proyecto dentro de la configuración compartida.
 - Crear `templates/parent-invitation.html`.
 - Diseñar la plantilla con el branding coral, crema, tipografía redondeada y marca solar de OpenDayCare.
 - Mantener la plantilla autocontenida y compatible con clientes de correo mediante estructura y estilos propios de email HTML.
@@ -143,12 +146,12 @@ MAIL_TEMPLATE_EXTENSION=html
 
 ## Implementation plan
 
-1. Instalar `@jmlq/mailer` y `nodemailer` con npm, y actualizar `package.json` y `package-lock.json` con los rangos `^0.0.1-beta.1` y `^7.0.6`, respectivamente.
+1. Instalar `@jmlq/mailer`, `nodemailer` y `env-var` con npm, y actualizar `package.json` y `package-lock.json` con los rangos `^0.0.1-beta.1`, `^7.0.6` y `^7.5.0`, respectivamente.
 2. Añadir `!.env.template` a `.gitignore` sin permitir el versionado de otros archivos `.env*`.
 3. Crear `.env.template` con la sección `SETTINGS @jmlq/mailer` y las ocho variables acordadas, sin incluir secretos reales.
 4. Crear los directorios y barrels de `app/infrastructure/adapters/jmlq/mailer/` hasta `app/infrastructure/index.ts`.
-5. Crear `mailer.config.ts` con lectura server-only, validación diferida de strings, puerto y booleano, y resolución de la ruta de plantillas desde `process.cwd()`.
-6. Crear `mailer.singleton.ts` para construir una única instancia mediante `NodemailerService`, `FileEmailTemplate` y `createMailer` sin importar Nodemailer directamente ni duplicar el renderer.
+5. Crear `getEnvironment()` bajo `app/shared/config/server/` para la lectura server-only, compartida, extensible y diferida mediante `env-var`; resolver allí la ruta de plantillas desde `process.cwd()`.
+6. Crear `mailer.singleton.ts` para consumir directamente `getEnvironment().mailer` y construir una única instancia mediante `NodemailerService`, `FileEmailTemplate` y `createMailer` sin importar Nodemailer directamente ni duplicar el renderer.
 7. Crear `parent-invitation-email.ts` con los tipos públicos, validación de URL HTTP/HTTPS, validación de fecha, escaping de HTML y formato UTC con `APP_LOCALE`.
 8. Implementar `sendParentInvitationEmail` con el asunto acordado, `templateId: "parent-invitation"`, los cuatro datos de plantilla, texto plano y retorno del `messageId`.
 9. Crear `templates/parent-invitation.html` con estructura compatible con email, estilos autocontenidos, branding de OpenDayCare, CTA y enlace alternativo.
@@ -165,6 +168,7 @@ MAIL_TEMPLATE_EXTENSION=html
 - [ ] La spec se implementa únicamente después de pasar a estado `Approved`.
 - [ ] `package.json` declara `@jmlq/mailer` con el rango de npm correspondiente a `0.0.1-beta.1`.
 - [ ] `package.json` declara `nodemailer` como dependencia directa con el rango `^7.0.6`.
+- [ ] `package.json` declara `env-var` con el rango `^7.5.0`.
 - [ ] `package-lock.json` fija la versión resuelta de `@jmlq/mailer`.
 - [ ] `package-lock.json` fija la versión resuelta de `nodemailer`.
 - [ ] La aplicación usa `createMailer`, `NodemailerService` y `FileEmailTemplate` desde el export público de `@jmlq/mailer`.
@@ -183,6 +187,10 @@ MAIL_TEMPLATE_EXTENSION=html
 - [ ] `MAIL_TEMPLATE_EXTENSION` usa `html` como valor de ejemplo.
 - [ ] La ruta de plantillas se resuelve desde `process.cwd()`.
 - [ ] La configuración se lee y valida al solicitar el primer envío, no al importar el módulo.
+- [ ] `getEnvironment()` vive en `app/shared/config/server/`, está marcado como server-only y permite añadir futuras secciones tipadas.
+- [ ] El adapter consume directamente `getEnvironment().mailer` sin una capa adicional de configuración específica.
+- [ ] La configuración validada se reutiliza y una validación fallida no guarda estado parcial.
+- [ ] La aplicación no instala ni inicializa `dotenv`; Next.js conserva la responsabilidad de cargar `.env*`.
 - [ ] Lint, typecheck y build pueden ejecutarse sin secretos SMTP configurados.
 - [ ] Un intento de envío sin una variable requerida produce un error que identifica la configuración inválida.
 - [ ] `MAIL_PORT` rechaza valores vacíos, no numéricos, fraccionarios, cero o negativos.
@@ -233,6 +241,9 @@ MAIL_TEMPLATE_EXTENSION=html
 - **No:** copiar literalmente `mailer.adapter.ts`, `mailer.file-template.renderer.ts` y los tipos de la referencia porque duplicaría responsabilidades del paquete instalado.
 - **Sí:** instalar el rango que npm genera para `0.0.1-beta.1` porque se decidió permitir actualizaciones compatibles.
 - **Sí:** declarar `nodemailer` con el rango directo `^7.0.6` requerido por el paquete para hacer explícita la dependencia de runtime, sin consumir su API directamente.
+- **Sí:** usar `env-var` desde una función compartida y diferida para centralizar configuración tipada sin impedir builds que no realizan envíos.
+- **No:** crear un wrapper `getMailerConfig()` porque `getEnvironment().mailer` ya ofrece el contrato validado que necesita el adapter.
+- **No:** usar `dotenv` porque Next.js ya carga los archivos `.env*` y una segunda carga sería redundante.
 - **Sí:** conservar `package-lock.json` para que las instalaciones reproducibles usen la resolución validada.
 - **Sí:** ubicar la integración en `app/infrastructure/adapters/jmlq/mailer/` para mantener todo el runtime bajo `app/` y respetar nombres de directorio en minúsculas.
 - **No:** crear `Infrastructure/` con mayúscula en la raíz.
