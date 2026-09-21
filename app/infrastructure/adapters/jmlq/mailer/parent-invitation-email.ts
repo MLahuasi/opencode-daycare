@@ -92,7 +92,7 @@ function formatExpirationDate(expiresAt: Date): string {
  * @param input.expiresAt - Invitation expiration instant.
  * @returns Sanitized template data and the plain-text alternative.
  */
-export function prepareParentInvitationEmail(
+function prepareParentInvitationEmail(
   input: ParentInvitationEmailInput,
 ): PreparedParentInvitationEmail {
   const activationLink = normalizeActivationLink(input.activationLink);

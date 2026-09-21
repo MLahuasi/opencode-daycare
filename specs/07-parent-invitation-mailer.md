@@ -1,6 +1,6 @@
 # SPEC 07 — Correo de invitación para padres
 
-> **Status:** Approved
+> **Status:** Implement
 > **Depends on:** None
 > **Date:** 2026-09-18
 > **Objective:** Integrar `@jmlq/mailer` mediante una capa server-only y una plantilla con branding de OpenDayCare para preparar el envío seguro de invitaciones de activación a padres vinculados con un niño.
@@ -165,75 +165,75 @@ MAIL_TEMPLATE_EXTENSION=html
 
 ## Acceptance criteria
 
-- [ ] La spec se implementa únicamente después de pasar a estado `Approved`.
-- [ ] `package.json` declara `@jmlq/mailer` con el rango de npm correspondiente a `0.0.1-beta.1`.
-- [ ] `package.json` declara `nodemailer` como dependencia directa con el rango `^7.0.6`.
-- [ ] `package.json` declara `env-var` con el rango `^7.5.0`.
-- [ ] `package-lock.json` fija la versión resuelta de `@jmlq/mailer`.
-- [ ] `package-lock.json` fija la versión resuelta de `nodemailer`.
-- [ ] La aplicación usa `createMailer`, `NodemailerService` y `FileEmailTemplate` desde el export público de `@jmlq/mailer`.
-- [ ] La aplicación no importa Nodemailer directamente.
-- [ ] La aplicación no duplica el renderer de archivos de la implementación de referencia.
-- [ ] Existe `app/infrastructure/adapters/jmlq/mailer/`.
-- [ ] Existe una API pública en `app/infrastructure/index.ts`.
-- [ ] Los futuros consumidores pueden importar `sendParentInvitationEmail` desde `@/app/infrastructure`.
-- [ ] La configuración, el singleton y la función de envío están marcados como server-only.
-- [ ] Ningún Client Component importa la capa Infrastructure.
-- [ ] `.gitignore` continúa ignorando `.env*` y permite únicamente `.env.template`.
-- [ ] `.env.template` no contiene credenciales reales.
-- [ ] `.env.template` contiene exactamente las ocho variables de mailer acordadas.
-- [ ] `.env.template` no añade driver, service, límites de adjuntos ni alertas.
-- [ ] `MAIL_TEMPLATE_PATH` usa `templates` como valor de ejemplo.
-- [ ] `MAIL_TEMPLATE_EXTENSION` usa `html` como valor de ejemplo.
-- [ ] La ruta de plantillas se resuelve desde `process.cwd()`.
-- [ ] La configuración se lee y valida al solicitar el primer envío, no al importar el módulo.
-- [ ] `getEnvironment()` vive en `app/shared/config/server/`, está marcado como server-only y permite añadir futuras secciones tipadas.
-- [ ] El adapter consume directamente `getEnvironment().mailer` sin una capa adicional de configuración específica.
-- [ ] La configuración validada se reutiliza y una validación fallida no guarda estado parcial.
-- [ ] La aplicación no instala ni inicializa `dotenv`; Next.js conserva la responsabilidad de cargar `.env*`.
-- [ ] Lint, typecheck y build pueden ejecutarse sin secretos SMTP configurados.
-- [ ] Un intento de envío sin una variable requerida produce un error que identifica la configuración inválida.
-- [ ] `MAIL_PORT` rechaza valores vacíos, no numéricos, fraccionarios, cero o negativos.
-- [ ] `MAIL_SECURE` rechaza valores diferentes de `true` y `false`.
-- [ ] El mailer se construye una sola vez por proceso después de una configuración válida.
-- [ ] Existe `templates/parent-invitation.html`.
-- [ ] El ID lógico usado para renderizar la plantilla es `parent-invitation`.
-- [ ] La plantilla contiene `{{parentName}}`, `{{kidName}}`, `{{activationLink}}` y `{{expiresAt}}`.
-- [ ] La plantilla presenta el nombre OpenDayCare y una identidad visual coherente con el coral, crema y marca solar del runtime.
-- [ ] La plantilla funciona sin depender de `app/globals.css`, Tailwind, CSS Modules, JavaScript o assets remotos.
-- [ ] Los colores literales y estilos inline del correo están limitados a `templates/parent-invitation.html` y constan como excepción documentada.
-- [ ] La plantilla tiene un ancho legible en escritorio y se adapta a pantallas móviles.
-- [ ] El CTA visible dice `Activar mi cuenta`.
-- [ ] El enlace de activación aparece también como texto seleccionable y copiable.
-- [ ] `ParentInvitationEmailInput` contiene exactamente `recipientEmail`, `parentName`, `kidName`, `activationLink` y `expiresAt`.
-- [ ] `sendParentInvitationEmail` usa el asunto `Activa tu acceso a OpenDayCare`.
-- [ ] El asunto no contiene el nombre del padre ni del niño.
-- [ ] `sendParentInvitationEmail` rechaza enlaces relativos.
-- [ ] `sendParentInvitationEmail` rechaza protocolos distintos de HTTP y HTTPS.
-- [ ] `sendParentInvitationEmail` rechaza una fecha de vencimiento inválida.
-- [ ] La fecha de vencimiento se renderiza como fecha larga en `es-EC` y UTC, sin hora.
-- [ ] El nombre del padre, el nombre del niño, el enlace y la fecha se escapan antes de insertarse en HTML.
-- [ ] El cuerpo de texto plano conserva el enlace HTTP/HTTPS normalizado sin entidades HTML.
-- [ ] El email contiene un cuerpo HTML renderizado y una alternativa de texto plano.
-- [ ] Un envío exitoso devuelve un objeto con `messageId` no vacío.
-- [ ] Los errores de configuración, plantilla y SMTP no se convierten en resultados exitosos ni se omiten silenciosamente.
-- [ ] El secreto SMTP no aparece en HTML, texto plano, mensajes de error controlados, logs ni módulos cliente.
-- [ ] Un render con datos controlados no conserva secuencias `{{...}}` pendientes.
-- [ ] El render controlado contiene el padre, niño, fecha, CTA y enlace suministrados.
-- [ ] `README.md` documenta la configuración mínima del mailer y su límite server-only.
-- [ ] El diagrama feature-first de `README.md` incluye `app/infrastructure`, `@jmlq/mailer`, `templates/` y SMTP.
-- [ ] La relación desde Kids hacia `sendParentInvitationEmail` aparece etiquetada como integración futura o no implementada.
-- [ ] El diagrama no afirma que el flujo de vinculación ya envía correos.
-- [ ] No se modifica la persistencia de `Person`, `ParentKid`, `Kid` o `Invitation`.
-- [ ] No se implementa UI, Server Action, Route Handler ni servicio de Kids que invoque el mailer.
-- [ ] No se requiere un envío SMTP real para aprobar esta spec.
-- [ ] No se instala un framework de testing.
-- [ ] No se introducen colores literales nuevos fuera de `app/globals.css` y la excepción `templates/parent-invitation.html`.
-- [ ] Las APIs exportadas incluyen JSDoc con descripción, parámetros y retorno.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
+- [x] La spec se implementa únicamente después de pasar a estado `Approved`.
+- [x] `package.json` declara `@jmlq/mailer` con el rango de npm correspondiente a `0.0.1-beta.1`.
+- [x] `package.json` declara `nodemailer` como dependencia directa con el rango `^7.0.6`.
+- [x] `package.json` declara `env-var` con el rango `^7.5.0`.
+- [x] `package-lock.json` fija la versión resuelta de `@jmlq/mailer`.
+- [x] `package-lock.json` fija la versión resuelta de `nodemailer`.
+- [x] La aplicación usa `createMailer`, `NodemailerService` y `FileEmailTemplate` desde el export público de `@jmlq/mailer`.
+- [x] La aplicación no importa Nodemailer directamente.
+- [x] La aplicación no duplica el renderer de archivos de la implementación de referencia.
+- [x] Existe `app/infrastructure/adapters/jmlq/mailer/`.
+- [x] Existe una API pública en `app/infrastructure/index.ts`.
+- [x] Los futuros consumidores pueden importar `sendParentInvitationEmail` desde `@/app/infrastructure`.
+- [x] La configuración, el singleton y la función de envío están marcados como server-only.
+- [x] Ningún Client Component importa la capa Infrastructure.
+- [x] `.gitignore` continúa ignorando `.env*` y permite únicamente `.env.template`.
+- [x] `.env.template` no contiene credenciales reales.
+- [x] `.env.template` contiene exactamente las ocho variables de mailer acordadas.
+- [x] `.env.template` no añade driver, service, límites de adjuntos ni alertas.
+- [x] `MAIL_TEMPLATE_PATH` usa `templates` como valor de ejemplo.
+- [x] `MAIL_TEMPLATE_EXTENSION` usa `html` como valor de ejemplo.
+- [x] La ruta de plantillas se resuelve desde `process.cwd()`.
+- [x] La configuración se lee y valida al solicitar el primer envío, no al importar el módulo.
+- [x] `getEnvironment()` vive en `app/shared/config/server/`, está marcado como server-only y permite añadir futuras secciones tipadas.
+- [x] El adapter consume directamente `getEnvironment().mailer` sin una capa adicional de configuración específica.
+- [x] La configuración validada se reutiliza y una validación fallida no guarda estado parcial.
+- [x] La aplicación no instala ni inicializa `dotenv`; Next.js conserva la responsabilidad de cargar `.env*`.
+- [x] Lint, typecheck y build pueden ejecutarse sin secretos SMTP configurados.
+- [x] Un intento de envío sin una variable requerida produce un error que identifica la configuración inválida.
+- [x] `MAIL_PORT` rechaza valores vacíos, no numéricos, fraccionarios, cero o negativos.
+- [x] `MAIL_SECURE` rechaza valores diferentes de `true` y `false`.
+- [x] El mailer se construye una sola vez por proceso después de una configuración válida.
+- [x] Existe `templates/parent-invitation.html`.
+- [x] El ID lógico usado para renderizar la plantilla es `parent-invitation`.
+- [x] La plantilla contiene `{{parentName}}`, `{{kidName}}`, `{{activationLink}}` y `{{expiresAt}}`.
+- [x] La plantilla presenta el nombre OpenDayCare y una identidad visual coherente con el coral, crema y marca solar del runtime.
+- [x] La plantilla funciona sin depender de `app/globals.css`, Tailwind, CSS Modules, JavaScript o assets remotos.
+- [x] Los colores literales y estilos inline del correo están limitados a `templates/parent-invitation.html` y constan como excepción documentada.
+- [x] La plantilla tiene un ancho legible en escritorio y se adapta a pantallas móviles.
+- [x] El CTA visible dice `Activar mi cuenta`.
+- [x] El enlace de activación aparece también como texto seleccionable y copiable.
+- [x] `ParentInvitationEmailInput` contiene exactamente `recipientEmail`, `parentName`, `kidName`, `activationLink` y `expiresAt`.
+- [x] `sendParentInvitationEmail` usa el asunto `Activa tu acceso a OpenDayCare`.
+- [x] El asunto no contiene el nombre del padre ni del niño.
+- [x] `sendParentInvitationEmail` rechaza enlaces relativos.
+- [x] `sendParentInvitationEmail` rechaza protocolos distintos de HTTP y HTTPS.
+- [x] `sendParentInvitationEmail` rechaza una fecha de vencimiento inválida.
+- [x] La fecha de vencimiento se renderiza como fecha larga en `es-EC` y UTC, sin hora.
+- [x] El nombre del padre, el nombre del niño, el enlace y la fecha se escapan antes de insertarse en HTML.
+- [x] El cuerpo de texto plano conserva el enlace HTTP/HTTPS normalizado sin entidades HTML.
+- [x] El email contiene un cuerpo HTML renderizado y una alternativa de texto plano.
+- [x] Un envío exitoso devuelve un objeto con `messageId` no vacío.
+- [x] Los errores de configuración, plantilla y SMTP no se convierten en resultados exitosos ni se omiten silenciosamente.
+- [x] El secreto SMTP no aparece en HTML, texto plano, mensajes de error controlados, logs ni módulos cliente.
+- [x] Un render con datos controlados no conserva secuencias `{{...}}` pendientes.
+- [x] El render controlado contiene el padre, niño, fecha, CTA y enlace suministrados.
+- [x] `README.md` documenta la configuración mínima del mailer y su límite server-only.
+- [x] El diagrama feature-first de `README.md` incluye `app/infrastructure`, `@jmlq/mailer`, `templates/` y SMTP.
+- [x] La relación desde Kids hacia `sendParentInvitationEmail` aparece etiquetada como integración futura o no implementada.
+- [x] El diagrama no afirma que el flujo de vinculación ya envía correos.
+- [x] No se modifica la persistencia de `Person`, `ParentKid`, `Kid` o `Invitation`.
+- [x] No se implementa UI, Server Action, Route Handler ni servicio de Kids que invoque el mailer.
+- [x] No se requiere un envío SMTP real para aprobar esta spec.
+- [x] No se instala un framework de testing.
+- [x] No se introducen colores literales nuevos fuera de `app/globals.css` y la excepción `templates/parent-invitation.html`.
+- [x] Las APIs exportadas incluyen JSDoc con descripción, parámetros y retorno.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
 
 ## Decisions
 

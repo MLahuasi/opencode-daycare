@@ -28,6 +28,16 @@ function readRequiredString(name: string): string {
   return value;
 }
 
+function readPositivePort(): number {
+  const port = env.get("MAIL_PORT").required().asIntPositive();
+
+  if (port === 0) {
+    throw new Error("[environment] MAIL_PORT must be a positive integer");
+  }
+
+  return port;
+}
+
 /**
  * Reads, validates, and caches the application's server-side environment.
  * Add new typed sections here as infrastructure requirements grow.
@@ -50,7 +60,7 @@ export function getEnvironment(): Environment {
       MAILER_SECRET_KEY: readRequiredString("MAILER_SECRET_KEY"),
       MAILER_FROM: readRequiredString("MAILER_FROM"),
       MAIL_HOST: readRequiredString("MAIL_HOST"),
-      MAIL_PORT: env.get("MAIL_PORT").required().asIntPositive(),
+      MAIL_PORT: readPositivePort(),
       MAIL_SECURE: secure === "true",
       MAIL_TEMPLATE_PATH: path.resolve(
         process.cwd(),
