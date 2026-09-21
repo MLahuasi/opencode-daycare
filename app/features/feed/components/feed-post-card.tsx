@@ -1,5 +1,5 @@
 import { Avatar, Badge, type BadgeVariant } from "@/app/components/ui";
-import type { FeedPost, PostType } from "../types/feed";
+import type { FeedPost, PostType } from "../types";
 import styles from "./feed-post-card.module.css";
 
 type FeedPostCardProps = {

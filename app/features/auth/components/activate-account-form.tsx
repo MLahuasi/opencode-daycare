@@ -4,16 +4,12 @@ import { useRouter } from "next/navigation";
 import type { FormEvent, SubmitEvent } from "react";
 import { useState } from "react";
 import { Button, CheckboxField, FormField } from "@/app/components/ui";
+import type {
+  ActivationInvitationState,
+  ActivationKidCardData,
+} from "../types";
 import { isValidActivationPassword } from "../utils/password";
 import styles from "./auth.module.css";
-
-export type ActivationKidCardData = {
-  initial: string;
-  name: string;
-  room: string;
-};
-
-export type ActivationInvitationState = "none" | "valid" | "unknown" | "expired" | "accepted";
 
 type ActivateAccountFormProps = {
   code: string;

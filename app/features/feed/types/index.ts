@@ -1,0 +1,1 @@
+export type { FeedPost, PostType } from "./feed";
