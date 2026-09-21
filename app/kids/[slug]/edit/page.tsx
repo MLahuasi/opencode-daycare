@@ -1,7 +1,6 @@
 import { KidForm } from "@/app/features/kids";
 import type { KidFormValues } from "@/app/features/kids";
-import { updateKidAction } from "@/app/features/kids/actions";
-import { getKidById, getRooms } from "@/app/features/kids/services";
+import { getKidById, getRooms, updateKidAction } from "@/app/features/kids/server";
 import { notFound } from "next/navigation";
 
 /**

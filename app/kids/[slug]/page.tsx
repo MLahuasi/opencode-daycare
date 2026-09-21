@@ -1,5 +1,6 @@
 import { LinkButton } from "@/app/components/ui";
 import {
+  calculateAge,
   KidBasicInfo,
   KidMedicalNotes,
   KidParents,
@@ -10,8 +11,7 @@ import {
   getKidRoom,
   getKids,
   getLinkedParentsByKidId,
-} from "@/app/features/kids/services";
-import { calculateAge } from "@/app/features/kids/utils";
+} from "@/app/features/kids/server";
 import { getTodayIsoDate } from "@/app/shared";
 import { notFound } from "next/navigation";
 import styles from "@/app/features/kids/components/kid-profile.module.css";

@@ -1,7 +1,10 @@
-import { KidsFilter, KidsHeader } from "@/app/features/kids";
-import { getKids, getParentKids, getRooms } from "@/app/features/kids/services";
-import { calculateAge } from "@/app/features/kids/utils";
-import type { Kid, KidListItem, ParentKid, Room } from "@/app/features/kids/types";
+import {
+  calculateAge,
+  KidsFilter,
+  KidsHeader,
+} from "@/app/features/kids";
+import type { Kid, KidListItem, ParentKid, Room } from "@/app/features/kids";
+import { getKids, getParentKids, getRooms } from "@/app/features/kids/server";
 import { getTodayIsoDate, parseCommaSeparatedTags } from "@/app/shared";
 import styles from "@/app/features/kids/components/kids-list.module.css";
 

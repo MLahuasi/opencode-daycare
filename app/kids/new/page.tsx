@@ -1,7 +1,6 @@
 import { KidForm } from "@/app/features/kids";
 import type { KidFormValues } from "@/app/features/kids";
-import { createKidAction } from "@/app/features/kids/actions";
-import { getRooms } from "@/app/features/kids/services";
+import { createKidAction, getRooms } from "@/app/features/kids/server";
 
 const EMPTY_KID_FORM_VALUES: KidFormValues = {
   name: "",

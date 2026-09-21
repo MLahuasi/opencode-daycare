@@ -9,7 +9,7 @@ import {
   getParentKids,
   getPeople,
   getRooms,
-} from "@/app/features/kids/services";
+} from "@/app/features/kids/server";
 
 type ActivationSearchParams = {
   code?: string | string[];
