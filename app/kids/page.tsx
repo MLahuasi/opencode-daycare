@@ -3,7 +3,8 @@ import {
   KidsFilter,
   KidsHeader,
 } from "@/app/features/kids";
-import type { Kid, KidListItem, ParentKid } from "@/app/features/kids";
+import type { Kid, KidListItem } from "@/app/features/kids";
+import type { ParentKid } from "@/app/features/family";
 import type { Room } from "@/app/features/rooms";
 import { getKids, getParentKids, getRooms } from "@/app/features/kids/server";
 import { getTodayIsoDate, parseCommaSeparatedTags } from "@/app/shared";

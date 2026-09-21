@@ -6,12 +6,8 @@ import path from "node:path";
 import { getTodayIsoDate } from "@/app/shared";
 import type { Person } from "@/app/features/people";
 import type { Room } from "@/app/features/rooms";
-import type {
-  Kid,
-  KidFormValues,
-  LinkedParent,
-  ParentKid,
-} from "../types";
+import type { LinkedParent, ParentKid } from "@/app/features/family";
+import type { Kid, KidFormValues } from "../types";
 import { normalizeSlug } from "../utils";
 
 type KidCollectionFile =

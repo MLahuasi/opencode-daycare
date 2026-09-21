@@ -17,9 +17,6 @@ export type {
   KidFormValues,
   KidListItem,
   KidStatus,
-  LinkedParent,
-  ParentKid,
-  ParentRelationship,
 } from "./types";
 
 export {
