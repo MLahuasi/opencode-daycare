@@ -40,6 +40,42 @@ Comandos disponibles:
 | `npm run start` | Servidor con el build generado |
 | `npm run lint` | Ejecución de ESLint |
 
+## Configuración de correo
+
+La integración con `@jmlq/mailer` es exclusivamente server-only y se expone a
+la aplicación mediante `@/app/infrastructure`. Next.js carga las variables desde
+los archivos `.env*`; la aplicación no inicializa `dotenv` por separado.
+
+Define la configuración SMTP en un archivo local ignorado por Git, por ejemplo
+`.env.local`, usando `.env.template` como referencia:
+
+```dotenv
+MAILER_EMAIL=example@gmail.com
+MAILER_SECRET_KEY=app_password_here
+MAILER_FROM=example@gmail.com
+
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_SECURE=false
+
+MAIL_TEMPLATE_PATH=templates
+MAIL_TEMPLATE_EXTENSION=html
+```
+
+`MAIL_PORT` debe ser un entero positivo y `MAIL_SECURE` acepta únicamente
+`true` o `false`. `MAIL_TEMPLATE_PATH` se resuelve desde el directorio de trabajo
+del proyecto; por tanto, `templates` apunta a la carpeta raíz `templates/`.
+
+Las variables se validan al solicitar el mailer por primera vez, no durante la
+importación, lint, typecheck o build. Un intento de envío con configuración
+ausente o inválida falla con un error explícito. Las credenciales reales nunca
+se versionan: `.gitignore` permite únicamente el archivo de ejemplo
+`.env.template`.
+
+La plantilla `templates/parent-invitation.html` forma parte de los archivos
+necesarios en runtime. Un despliegue que empaquete solo el output de Next.js,
+como `output: "standalone"`, debe incluir también la carpeta `templates/`.
+
 ## Rutas actuales
 
 - `/`: feed del personal de Sala Soles.
@@ -60,9 +96,12 @@ open-daycare/
 │   │   ├── feed/            Componentes y tipos del feed
 │   │   ├── kids/            Listado, perfiles y tipos de niños
 │   │   └── layout/          Sidebar y navegación
-│   ├── shared/              Utilidades transversales
+│   ├── infrastructure/
+│   │   └── adapters/jmlq/   Integraciones server-only con paquetes JMLQ
+│   ├── shared/              Utilidades y configuración transversal
 │   ├── page.tsx             Ruta raíz
 │   └── kids/                Rutas de niños
+├── templates/               Plantillas HTML requeridas en runtime
 ├── specs/                   Contratos funcionales versionados
 ├── .agents/skills/          Skills del flujo SDD
 ├── .opencode/               Agentes y comandos personalizados
@@ -88,6 +127,13 @@ flowchart TD
     ROUTES --> FEATURES["features/feed<br/>features/kids<br/>features/layout"]
     FEATURES --> MOCKS["data/mocks"]
     FEATURES --> SHARED[shared]
+
+    APP --> INFRA["app/infrastructure<br/>server-only"]
+    INFRA --> MAILER["sendParentInvitationEmail"]
+    MAILER --> PACKAGE["@jmlq/mailer"]
+    MAILER --> TEMPLATE["templates/<br/>parent-invitation.html"]
+    PACKAGE --> SMTP["Servidor SMTP"]
+    KIDS["features/kids"] -. "Integración futura<br/>no implementada" .-> MAILER
 
     U --> SPEC["/spec"]
     SPEC --> FILE["specs/NN-slug.md"]
