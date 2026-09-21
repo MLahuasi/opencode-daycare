@@ -1,4 +1,4 @@
-import type { StaffNavigationItem } from "@/app/features/layout";
+import type { StaffNavigationItem } from "@/app/components/layout";
 
 export const staffSidebarMock = {
   navigationLabel: "Navegación principal",

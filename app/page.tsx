@@ -1,5 +1,5 @@
 import { FeedContent } from "@/app/features/feed";
-import { StaffSidebar } from "@/app/features/layout";
+import { StaffSidebar } from "@/app/components/layout";
 
 /**
  * Renders the static staff feed home page.

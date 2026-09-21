@@ -1,6 +1,6 @@
-export { StaffSidebar } from "./components/staff-sidebar";
+export { StaffSidebar } from "@/app/components/layout";
 export type {
   StaffNavigationIcon,
   StaffNavigationItem,
   StaffNavigationSection,
-} from "./types";
+} from "@/app/components/layout";

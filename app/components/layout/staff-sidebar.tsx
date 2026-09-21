@@ -4,7 +4,7 @@ import { staffSidebarMock } from "@/app/data/mocks";
 import type {
   StaffNavigationIcon,
   StaffNavigationSection,
-} from "../types";
+} from "./staff-navigation";
 import styles from "./staff-sidebar.module.css";
 
 type StaffSidebarProps = {

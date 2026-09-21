@@ -2,4 +2,4 @@ export type {
   StaffNavigationIcon,
   StaffNavigationItem,
   StaffNavigationSection,
-} from "./staff-sidebar";
+} from "@/app/components/layout";

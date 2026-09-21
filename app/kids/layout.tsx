@@ -1,4 +1,4 @@
-import { StaffSidebar } from "@/app/features/layout";
+import { StaffSidebar } from "@/app/components/layout";
 import type { ReactNode } from "react";
 
 /**
