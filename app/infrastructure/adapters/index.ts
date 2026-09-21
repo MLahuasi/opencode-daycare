@@ -1,1 +1,5 @@
-export * from "./jmlq";
+export { sendParentInvitationEmail } from "./jmlq";
+export type {
+  ParentInvitationEmailInput,
+  ParentInvitationEmailResult,
+} from "./jmlq";
