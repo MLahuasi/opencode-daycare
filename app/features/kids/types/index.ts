@@ -1,8 +1,6 @@
+export type { Kid, KidFormValues, KidStatus } from "./kid";
+export type { KidListItem } from "./kid-list-item";
 export type {
-  Kid,
-  KidFormValues,
-  KidListItem,
-  KidStatus,
   LinkedParent,
   ParentKid,
   ParentRelationship,

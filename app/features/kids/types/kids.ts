@@ -7,9 +7,6 @@ export type PersonRole = "parent" | "personal";
 /** Account lifecycle status assigned to a person. */
 export type PersonStatus = "active" | "inactive" | "pending";
 
-/** Lifecycle status assigned to a kid. */
-export type KidStatus = "active" | "inactive";
-
 /** A daycare room available for kid assignment. */
 export type Room = {
   id: string;
@@ -37,36 +34,4 @@ export type ParentKid = {
 /** Minimal person data required to render a linked parent in a kid profile. */
 export type LinkedParent = Pick<Person, "id" | "name" | "status"> & {
   relationship: ParentRelationship;
-};
-
-/** Canonical persisted information for a kid. */
-export type Kid = {
-  id: string;
-  slug: string;
-  name: string;
-  birthDate: string;
-  roomId: string;
-  enrollmentDate: string;
-  medicalNotes: string;
-  allergies: string;
-  status: KidStatus;
-};
-
-/** Editable kid values shared by the Add and Edit flows. */
-export type KidFormValues = Pick<
-  Kid,
-  "allergies" | "birthDate" | "medicalNotes" | "name" | "roomId"
->;
-
-/** Safe, derived data used by the client-side kid list and filter. */
-export type KidListItem = {
-  slug: string;
-  name: string;
-  room: string;
-  initial: string;
-  age: number;
-  parentCount: number;
-  avatarTone: string;
-  shouldLinkParent: boolean;
-  allergies: string[];
 };
