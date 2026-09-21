@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <title>Activa tu acceso a OpenDayCare</title>
+    <style>
+      @media screen and (max-width: 620px) {
+        .email-shell {
+          width: 100% !important;
+        }
+
+        .email-content {
+          padding: 32px 24px !important;
+        }
+
+        .email-header {
+          padding: 24px !important;
+        }
+
+        .email-button {
+          display: block !important;
+          text-align: center !important;
+        }
+      }
+    </style>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #f6ecdf">
+    <div
+      style="display: none; max-height: 0; overflow: hidden; opacity: 0; mso-hide: all"
+    >
+      Activa tu acceso para acompa&ntilde;ar a tu familia en OpenDayCare.
+    </div>
+
+    <table
+      role="presentation"
+      width="100%"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      bgcolor="#f6ecdf"
+      style="width: 100%; background-color: #f6ecdf"
+    >
+      <tr>
+        <td align="center" style="padding: 32px 16px">
+          <table
+            class="email-shell"
+            role="presentation"
+            width="600"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            bgcolor="#fffdf9"
+            style="
+              width: 100%;
+              max-width: 600px;
+              overflow: hidden;
+              background-color: #fffdf9;
+              border: 1px solid #ece0d0;
+              border-radius: 24px;
+            "
+          >
+            <tr>
+              <td
+                class="email-header"
+                bgcolor="#e0654a"
+                style="padding: 28px 40px; background-color: #e0654a"
+              >
+                <table
+                  role="presentation"
+                  cellspacing="0"
+                  cellpadding="0"
+                  border="0"
+                >
+                  <tr>
+                    <td
+                      width="48"
+                      height="48"
+                      align="center"
+                      valign="middle"
+                      bgcolor="#fffdf9"
+                      style="
+                        width: 48px;
+                        height: 48px;
+                        background-color: #fffdf9;
+                        color: #e0654a;
+                        border-radius: 16px;
+                        font-family: Arial, sans-serif;
+                        font-size: 30px;
+                        line-height: 48px;
+                      "
+                    >
+                      &#9728;
+                    </td>
+                    <td style="padding-left: 14px">
+                      <p
+                        style="
+                          margin: 0;
+                          color: #ffffff;
+                          font-family: 'Trebuchet MS', Arial, sans-serif;
+                          font-size: 24px;
+                          font-weight: 700;
+                          line-height: 30px;
+                        "
+                      >
+                        OpenDayCare
+                      </p>
+                      <p
+                        style="
+                          margin: 2px 0 0;
+                          color: #fbe3d8;
+                          font-family: 'Trebuchet MS', Arial, sans-serif;
+                          font-size: 13px;
+                          line-height: 18px;
+                        "
+                      >
+                        Crecemos juntos
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                class="email-content"
+                style="padding: 44px 40px; font-family: 'Trebuchet MS', Arial, sans-serif"
+              >
+                <p
+                  style="
+                    margin: 0 0 10px;
+                    color: #e0654a;
+                    font-size: 13px;
+                    font-weight: 700;
+                    letter-spacing: 1.2px;
+                    line-height: 18px;
+                    text-transform: uppercase;
+                  "
+                >
+                  Invitaci&oacute;n familiar
+                </p>
+                <h1
+                  style="
+                    margin: 0 0 20px;
+                    color: #3f362e;
+                    font-size: 30px;
+                    line-height: 38px;
+                  "
+                >
+                  Hola, {{parentName}}
+                </h1>
+                <p
+                  style="
+                    margin: 0 0 16px;
+                    color: #4a4038;
+                    font-size: 17px;
+                    line-height: 28px;
+                  "
+                >
+                  Te invitamos a activar tu acceso para acompa&ntilde;ar el d&iacute;a a
+                  d&iacute;a de <strong>{{kidName}}</strong> en OpenDayCare.
+                </p>
+                <p
+                  style="
+                    margin: 0 0 28px;
+                    color: #4a4038;
+                    font-size: 16px;
+                    line-height: 26px;
+                  "
+                >
+                  Esta invitaci&oacute;n estar&aacute; disponible hasta el
+                  <strong>{{expiresAt}}</strong>.
+                </p>
+
+                <table
+                  role="presentation"
+                  cellspacing="0"
+                  cellpadding="0"
+                  border="0"
+                  style="margin: 0 0 30px"
+                >
+                  <tr>
+                    <td bgcolor="#e0654a" style="border-radius: 12px">
+                      <a
+                        class="email-button"
+                        href="{{activationLink}}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style="
+                          display: inline-block;
+                          padding: 15px 26px;
+                          color: #ffffff;
+                          font-family: 'Trebuchet MS', Arial, sans-serif;
+                          font-size: 16px;
+                          font-weight: 700;
+                          line-height: 20px;
+                          text-decoration: none;
+                        "
+                      >
+                        Activar mi cuenta
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellspacing="0"
+                  cellpadding="0"
+                  border="0"
+                  bgcolor="#fbe3d8"
+                  style="width: 100%; background-color: #fbe3d8; border-radius: 14px"
+                >
+                  <tr>
+                    <td style="padding: 18px 20px">
+                      <p
+                        style="
+                          margin: 0 0 8px;
+                          color: #4a4038;
+                          font-size: 13px;
+                          line-height: 20px;
+                        "
+                      >
+                        Si el bot&oacute;n no funciona, copia y pega este enlace en tu
+                        navegador:
+                      </p>
+                      <p
+                        style="
+                          margin: 0;
+                          font-family: Consolas, Monaco, monospace;
+                          font-size: 12px;
+                          line-height: 19px;
+                          word-break: break-all;
+                        "
+                      >
+                        <a
+                          href="{{activationLink}}"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style="color: #c5503a; text-decoration: underline"
+                        >{{activationLink}}</a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <p
+                  style="
+                    margin: 28px 0 0;
+                    color: #94887b;
+                    font-size: 13px;
+                    line-height: 21px;
+                  "
+                >
+                  Si no esperabas esta invitaci&oacute;n, puedes ignorar este correo de
+                  forma segura.
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                align="center"
+                style="
+                  padding: 22px 30px;
+                  border-top: 1px solid #ece0d0;
+                  color: #94887b;
+                  font-family: 'Trebuchet MS', Arial, sans-serif;
+                  font-size: 12px;
+                  line-height: 18px;
+                "
+              >
+                OpenDayCare &middot; Cuidado, comunidad y momentos que importan.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
