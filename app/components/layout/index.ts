@@ -6,6 +6,7 @@
  */
 export { StaffSidebar } from "./staff-sidebar";
 export type {
+  StaffNavigationConfig,
   StaffNavigationIcon,
   StaffNavigationItem,
   StaffNavigationSection,

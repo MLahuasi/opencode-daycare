@@ -1,4 +1,5 @@
 import { StaffSidebar } from "@/app/components/layout";
+import { staffNavigationConfig } from "@/app/shared/config";
 import type { ReactNode } from "react";
 
 /**
@@ -11,7 +12,7 @@ import type { ReactNode } from "react";
 export default function KidsLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen bg-[var(--color-page)]">
-      <StaffSidebar activeSection="children" />
+      <StaffSidebar activeSection="children" navigation={staffNavigationConfig} />
       <div className="min-w-0 flex-1 pb-20 md:pb-0">{children}</div>
     </div>
   );

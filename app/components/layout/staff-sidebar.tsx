@@ -1,8 +1,9 @@
 import { Avatar, Brand, Button, LinkButton } from "@/app/components/ui";
 import type { ReactNode } from "react";
-import { staffSidebarMock } from "@/app/data/mocks";
 import type {
+  StaffNavigationConfig,
   StaffNavigationIcon,
+  StaffNavigationItem,
   StaffNavigationSection,
 } from "./staff-navigation";
 import styles from "./staff-sidebar.module.css";
@@ -10,11 +11,12 @@ import styles from "./staff-sidebar.module.css";
 type StaffSidebarProps = {
   activeSection?: StaffNavigationSection;
   className?: string;
+  navigation: StaffNavigationConfig;
 };
 
 type NavigationControlProps = {
   activeSection: StaffNavigationSection;
-  item: (typeof staffSidebarMock.navigationItems)[number];
+  item: StaffNavigationItem;
   mobile?: boolean;
 };
 
@@ -116,21 +118,21 @@ function NavigationControl({ activeSection, item, mobile = false }: NavigationCo
  * @param props.className - Optional classes applied to the desktop sidebar.
  * @returns The responsive staff navigation.
  */
-export function StaffSidebar({ activeSection = "feed", className = "" }: StaffSidebarProps) {
+export function StaffSidebar({ activeSection = "feed", className = "", navigation }: StaffSidebarProps) {
   return (
     <>
-      <aside className={`${styles.sidebar} ${className}`} aria-label={staffSidebarMock.navigationLabel}>
-        <Brand name={staffSidebarMock.brand.name} room={staffSidebarMock.brand.room} />
+      <aside className={`${styles.sidebar} ${className}`} aria-label={navigation.navigationLabel}>
+        <Brand name={navigation.brand.name} room={navigation.brand.room} />
 
         <Button className={styles.newPostButton}>
           <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
             <path d="M12 5v14M5 12h14" />
           </svg>
-          {staffSidebarMock.newPostLabel}
+          {navigation.newPostLabel}
         </Button>
 
-        <nav className={styles.navigation} aria-label={staffSidebarMock.sectionsLabel}>
-          {staffSidebarMock.navigationItems.map((item) => (
+        <nav className={styles.navigation} aria-label={navigation.sectionsLabel}>
+          {navigation.navigationItems.map((item) => (
             <NavigationControl activeSection={activeSection} item={item} key={item.label} />
           ))}
         </nav>
@@ -139,13 +141,13 @@ export function StaffSidebar({ activeSection = "feed", className = "" }: StaffSi
           <Avatar
             aria-hidden="true"
             className={styles.avatar}
-            initial={staffSidebarMock.profile.initial}
+            initial={navigation.profile.initial}
           />
           <div className={styles.profileDetails}>
-            <p>{staffSidebarMock.profile.name}</p>
-            <span className={styles.profileRole}>{staffSidebarMock.profile.role}</span>
+            <p>{navigation.profile.name}</p>
+            <span className={styles.profileRole}>{navigation.profile.role}</span>
           </div>
-          <Button aria-label={staffSidebarMock.logoutLabel} className={styles.logoutButton} variant="ghost">
+          <Button aria-label={navigation.logoutLabel} className={styles.logoutButton} variant="ghost">
             <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
             </svg>
@@ -153,8 +155,8 @@ export function StaffSidebar({ activeSection = "feed", className = "" }: StaffSi
         </div>
       </aside>
 
-      <nav className={styles.mobileNavigation} aria-label={staffSidebarMock.mobileNavigationLabel}>
-        {staffSidebarMock.navigationItems.map((item) => (
+      <nav className={styles.mobileNavigation} aria-label={navigation.mobileNavigationLabel}>
+        {navigation.navigationItems.map((item) => (
           <NavigationControl activeSection={activeSection} item={item} key={item.label} mobile />
         ))}
       </nav>
