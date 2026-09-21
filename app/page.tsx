@@ -1,6 +1,7 @@
 import { FeedContent } from "@/app/features/feed";
 import { StaffSidebar } from "@/app/components/layout";
 import { staffNavigationConfig } from "@/app/shared/config";
+import { feedOverview, feedPosts } from "@/app/data/mocks";
 
 /**
  * Renders the static staff feed home page.
@@ -11,7 +12,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen bg-[var(--color-page)]">
       <StaffSidebar navigation={staffNavigationConfig} />
-      <FeedContent />
+      <FeedContent overview={feedOverview} posts={feedPosts} />
     </div>
   );
 }

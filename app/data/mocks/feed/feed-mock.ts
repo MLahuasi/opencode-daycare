@@ -1,4 +1,4 @@
-import type { FeedPost } from "@/app/features/feed";
+import type { FeedOverview, FeedPost } from "@/app/features/feed";
 
 export const feedOverview = {
   roomLabel: "Guardería · Sala Soles",
@@ -7,7 +7,7 @@ export const feedOverview = {
   date: "martes 17 jun",
   composerPrompt: "Comparte un momento…",
   publishedTodayLabel: "Publicado hoy",
-} as const;
+} satisfies FeedOverview;
 
 export const feedPosts: readonly FeedPost[] = [
   {
