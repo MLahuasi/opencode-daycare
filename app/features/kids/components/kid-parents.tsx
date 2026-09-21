@@ -1,5 +1,6 @@
 import { Avatar, Badge, Button } from "@/app/components/ui";
-import type { LinkedParent, ParentRelationship, PersonStatus } from "../types";
+import type { PersonStatus } from "@/app/features/people";
+import type { LinkedParent, ParentRelationship } from "../types";
 import styles from "./kid-profile.module.css";
 
 const relationshipLabels: Record<ParentRelationship, string> = {

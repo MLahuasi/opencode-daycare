@@ -1,25 +1,12 @@
+import type { Person } from "@/app/features/people";
+
 /** Relationship a parent can have with a child. */
 export type ParentRelationship = "mother" | "father" | "guardian";
-
-/** Role assigned to a person in the daycare. */
-export type PersonRole = "parent" | "personal";
-
-/** Account lifecycle status assigned to a person. */
-export type PersonStatus = "active" | "inactive" | "pending";
 
 /** A daycare room available for kid assignment. */
 export type Room = {
   id: string;
   name: string;
-};
-
-/** A person who participates in the daycare community. */
-export type Person = {
-  id: string;
-  name: string;
-  email: string;
-  role: PersonRole;
-  status: PersonStatus;
 };
 
 /** A parent-to-kid relationship and its photo sharing consent. */

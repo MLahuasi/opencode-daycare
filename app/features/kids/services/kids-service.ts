@@ -4,12 +4,12 @@ import { randomUUID } from "node:crypto";
 import { open, readFile, rename, rm } from "node:fs/promises";
 import path from "node:path";
 import { getTodayIsoDate } from "@/app/shared";
+import type { Person } from "@/app/features/people";
 import type {
   Kid,
   KidFormValues,
   LinkedParent,
   ParentKid,
-  Person,
   Room,
 } from "../types";
 import { normalizeSlug } from "../utils";
