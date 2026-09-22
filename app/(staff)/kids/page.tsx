@@ -9,6 +9,7 @@ import type { ParentKid } from "@/app/features/family";
 import type { Room } from "@/app/features/rooms";
 import { getKids, getParentKids, getRooms } from "@/app/features/kids/server";
 import { getTodayIsoDate, parseCommaSeparatedTags } from "@/app/shared";
+import { requireStaffSession } from "@/auth";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
 
@@ -38,6 +39,8 @@ function toKidListItem(
  * @returns The Kids list page with a safe DTO payload for the client filter.
  */
 export default async function KidsPage() {
+  await requireStaffSession();
+
   const [kids, parentKids, rooms] = await Promise.all([
     getKids(),
     getParentKids(),

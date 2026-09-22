@@ -84,7 +84,9 @@ export const authOptions: NextAuthOptions = {
       options: {
         httpOnly: authEnvironment.AUTH_SESSION_COOKIE_HTTP_ONLY,
         sameSite: authEnvironment.AUTH_SESSION_COOKIE_SAME_SITE,
-        secure: authEnvironment.AUTH_SESSION_COOKIE_SECURE,
+        secure:
+          process.env.NODE_ENV === "production" ||
+          authEnvironment.AUTH_SESSION_COOKIE_SECURE,
         path: authEnvironment.AUTH_SESSION_COOKIE_PATH,
       },
     },

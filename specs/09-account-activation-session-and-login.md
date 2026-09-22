@@ -1,6 +1,6 @@
 # SPEC 09 — Activación, sesión e inicio de sesión
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 05, SPEC 08
 > **Date:** 2026-09-22
 > **Objective:** Completar la activación persistente y el inicio de sesión con credenciales, sesiones seguras y autorización por rol antes de habilitar la vinculación de padres.
@@ -85,40 +85,40 @@ La invitación válida existente de Lucía perderá su relación pendiente en `p
 
 ## Acceptance criteria
 
-- [ ] `package.json` declara `next-auth` y `bcryptjs`.
-- [ ] `package-lock.json` contiene las versiones resueltas.
-- [ ] `.env.template` contiene `AUTH_SECRET` sin secretos reales.
-- [ ] `Invitation` contiene `kidId`, `relationship`, `sentAt` y fechas ISO.
-- [ ] Las fechas vencidas se detectan correctamente al leer JSON.
-- [ ] La invitación válida de Lucía identifica explícitamente a Mateo.
-- [ ] La invitación válida de Lucía no tiene una relación `ParentKid` previa.
-- [ ] NextAuth v4 expone el Route Handler `app/api/auth/[...nextauth]/route.ts` para el App Router.
-- [ ] NextAuth v4 usa Credentials Provider con email y contraseña.
-- [ ] La sesión dura como máximo siete días.
-- [ ] La cookie de sesión es HttpOnly, Secure en producción y SameSite Lax.
-- [ ] Los hashes nunca llegan a componentes cliente ni HTML.
-- [ ] Una activación válida crea o actualiza Credential con bcrypt.
-- [ ] Una activación válida cambia la persona a `active`.
-- [ ] Una activación válida crea exactamente una relación `ParentKid`.
-- [ ] El consentimiento sin marcar se persiste como `false`.
-- [ ] El consentimiento marcado se persiste como `true`.
-- [ ] Una activación válida marca `acceptedAt`.
-- [ ] Un fallo durante la activación restaura las colecciones modificadas.
-- [ ] Una activación válida redirige a `/auth/login?activated=1`.
-- [ ] Login muestra el aviso de activación cuando `activated=1`.
-- [ ] Login rechaza email o contraseña incorrectos con un mensaje genérico.
-- [ ] Login rechaza cuentas inexistentes, inactivas y hashes mock.
-- [ ] Login válido crea sesión y redirige a `/home`.
-- [ ] Cerrar sesión invalida la sesión y vuelve a `/auth/login`.
-- [ ] Una persona eliminada o inactiva no puede seguir usando una sesión válida.
-- [ ] `/kids/**` requiere una sesión con rol `personal`.
-- [ ] Un padre autenticado que abre `/kids/**` es redirigido a `/home`.
-- [ ] `/home` no muestra el feed de personal a un padre durante esta spec.
-- [ ] No se implementa rate limiting.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
+- [x] `package.json` declara `next-auth` y `bcryptjs`.
+- [x] `package-lock.json` contiene las versiones resueltas.
+- [x] `.env.template` contiene `AUTH_SECRET` sin secretos reales.
+- [x] `Invitation` contiene `kidId`, `relationship`, `sentAt` y fechas ISO.
+- [x] Las fechas vencidas se detectan correctamente al leer JSON.
+- [x] La invitación válida de Lucía identifica explícitamente a Mateo.
+- [x] La invitación válida de Lucía no tiene una relación `ParentKid` previa.
+- [x] NextAuth v4 expone el Route Handler `app/api/auth/[...nextauth]/route.ts` para el App Router.
+- [x] NextAuth v4 usa Credentials Provider con email y contraseña.
+- [x] La sesión dura como máximo siete días.
+- [x] La cookie de sesión es HttpOnly, Secure en producción y SameSite Lax.
+- [x] Los hashes nunca llegan a componentes cliente ni HTML.
+- [x] Una activación válida crea o actualiza Credential con bcrypt.
+- [x] Una activación válida cambia la persona a `active`.
+- [x] Una activación válida crea exactamente una relación `ParentKid`.
+- [x] El consentimiento sin marcar se persiste como `false`.
+- [x] El consentimiento marcado se persiste como `true`.
+- [x] Una activación válida marca `acceptedAt`.
+- [x] Un fallo durante la activación restaura las colecciones modificadas.
+- [x] Una activación válida redirige a `/auth/login?activated=1`.
+- [x] Login muestra el aviso de activación cuando `activated=1`.
+- [x] Login rechaza email o contraseña incorrectos con un mensaje genérico.
+- [x] Login rechaza cuentas inexistentes, inactivas y hashes mock.
+- [x] Login válido crea sesión y redirige a `/home`.
+- [x] Cerrar sesión invalida la sesión y vuelve a `/auth/login`.
+- [x] Una persona eliminada o inactiva no puede seguir usando una sesión válida.
+- [x] `/kids/**` requiere una sesión con rol `personal`.
+- [x] Un padre autenticado que abre `/kids/**` es redirigido a `/home`.
+- [x] `/home` no muestra el feed de personal a un padre durante esta spec.
+- [x] No se implementa rate limiting.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
 
 ## Decisions
 
