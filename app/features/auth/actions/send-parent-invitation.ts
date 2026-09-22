@@ -91,13 +91,20 @@ export async function sendParentInvitationAction(
   const activationUrl = new URL("/auth/activate-account", APP_URL);
   activationUrl.searchParams.set("code", parentInvitation.invitation.code);
 
-  await sendParentInvitationEmail({
-    activationLink: activationUrl.toString(),
-    expiresAt: new Date(parentInvitation.invitation.expiresAt),
-    kidName: kid.name,
-    parentName: parentInvitation.parent.name,
-    recipientEmail: parentInvitation.parent.email,
-  });
+  try {
+    await sendParentInvitationEmail({
+      activationLink: activationUrl.toString(),
+      expiresAt: new Date(parentInvitation.invitation.expiresAt),
+      kidName: kid.name,
+      parentName: parentInvitation.parent.name,
+      recipientEmail: parentInvitation.parent.email,
+    });
+  } catch {
+    return {
+      errors: {},
+      message: "No pudimos enviar la invitación. Puedes intentarlo nuevamente.",
+    };
+  }
 
   await markInvitationSent(
     parentInvitation.invitation.id,
