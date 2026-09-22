@@ -11,3 +11,8 @@ export {
   isInvitationExpired,
   isValidActivationPassword,
 } from "./utils";
+export { validateLinkParentForm } from "./schemas";
+export type {
+  LinkParentFormErrors,
+  LinkParentFormValues,
+} from "./schemas";
