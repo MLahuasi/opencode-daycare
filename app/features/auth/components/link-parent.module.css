@@ -126,6 +126,10 @@
   outline-offset: 2px;
 }
 
+.field input[aria-invalid="true"] {
+  border-color: var(--color-auth-error);
+}
+
 .relationshipField {
   margin: 0 0 20px;
   padding: 0;
@@ -174,6 +178,24 @@
   width: 1px;
   height: 1px;
   opacity: 0;
+}
+
+.validationError,
+.formMessage {
+  color: var(--color-auth-error);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.validationError {
+  margin-top: -2px;
+}
+
+.formMessage {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--color-auth-error-background);
 }
 
 .codePanel {

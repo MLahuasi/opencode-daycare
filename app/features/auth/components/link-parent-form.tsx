@@ -1,7 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { Button, FormField, LinkButton } from "@/app/components/ui";
+import {
+  sendParentInvitationAction,
+  type LinkParentActionState,
+} from "../actions";
 import type { LinkParentKid } from "../types";
 import styles from "./link-parent.module.css";
 
@@ -15,6 +19,11 @@ type LinkParentFormProps = {
   kid: LinkParentKid;
 };
 
+const initialActionState: LinkParentActionState = {
+  errors: {},
+  message: "",
+};
+
 /**
  * Renders the responsive parent-link invitation form.
  *
@@ -23,6 +32,10 @@ type LinkParentFormProps = {
  * @returns The parent-link invitation form.
  */
 export function LinkParentForm({ kid }: LinkParentFormProps) {
+  const [actionState, formAction, isPending] = useActionState(
+    sendParentInvitationAction,
+    initialActionState,
+  );
   const [selectedRelationship, setSelectedRelationship] = useState<string | null>(null);
 
   return (
@@ -57,9 +70,11 @@ export function LinkParentForm({ kid }: LinkParentFormProps) {
             </p>
           </div>
 
-          <form className={styles.form}>
+          <form action={formAction} className={styles.form}>
+            <input name="kidId" type="hidden" value={kid.id} />
             <FormField className={styles.field} label="NOMBRE DEL PADRE/MADRE">
               <input
+                aria-invalid={Boolean(actionState.errors.name)}
                 autoComplete="name"
                 maxLength={120}
                 name="name"
@@ -67,16 +82,23 @@ export function LinkParentForm({ kid }: LinkParentFormProps) {
                 required
                 type="text"
               />
+              <span className={styles.validationError} hidden={!actionState.errors.name} role="alert">
+                {actionState.errors.name}
+              </span>
             </FormField>
 
             <FormField className={styles.field} label="EMAIL">
               <input
+                aria-invalid={Boolean(actionState.errors.email)}
                 autoComplete="email"
                 name="email"
                 placeholder="correo@ejemplo.com"
                 required
                 type="email"
               />
+              <span className={styles.validationError} hidden={!actionState.errors.email} role="alert">
+                {actionState.errors.email}
+              </span>
             </FormField>
 
             <fieldset className={styles.relationshipField}>
@@ -99,6 +121,9 @@ export function LinkParentForm({ kid }: LinkParentFormProps) {
                   </label>
                 ))}
               </div>
+              <span className={styles.validationError} hidden={!actionState.errors.relationship} role="alert">
+                {actionState.errors.relationship}
+              </span>
             </fieldset>
 
             <div className={styles.codePanel}>
@@ -107,12 +132,15 @@ export function LinkParentForm({ kid }: LinkParentFormProps) {
               <p>Se generará al enviar y vencerá en 7 días.</p>
             </div>
 
-            <Button className={styles.submitButton} type="submit">
+            <Button className={styles.submitButton} disabled={isPending} type="submit">
               <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
                 <path d="m22 2-7 20-4-9-9-4zM22 2 11 13" />
               </svg>
-              Enviar invitación
+              {isPending ? "Enviando..." : "Enviar invitación"}
             </Button>
+            {actionState.message ? (
+              <p className={styles.formMessage} role="alert">{actionState.message}</p>
+            ) : null}
           </form>
         </div>
       </section>

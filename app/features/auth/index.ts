@@ -12,7 +12,9 @@ export {
   isValidActivationPassword,
 } from "./utils";
 export { validateLinkParentForm } from "./schemas";
+export { sendParentInvitationAction } from "./actions";
 export type {
-  LinkParentFormErrors,
-  LinkParentFormValues,
-} from "./schemas";
+  LinkParentAction,
+  LinkParentActionState,
+} from "./actions";
+export type { LinkParentFormErrors, LinkParentFormValues } from "./schemas";
