@@ -40,6 +40,24 @@ export const authOptions: NextAuthOptions = {
       },
     },
   },
+  callbacks: {
+    jwt({ token, user }) {
+      if (user) {
+        token.personId = user.personId;
+        token.role = user.role;
+      }
+
+      return token;
+    },
+    session({ session, token }) {
+      if (session.user && token.personId && token.role) {
+        session.user.personId = token.personId;
+        session.user.role = token.role;
+      }
+
+      return session;
+    },
+  },
 };
 
 /**
