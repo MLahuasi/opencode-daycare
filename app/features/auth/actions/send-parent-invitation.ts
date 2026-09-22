@@ -2,9 +2,8 @@
 
 import { requireStaffSession } from "@/auth";
 import { getPeople } from "@/app/features/kids/server";
-import type { Person } from "@/app/features/people";
 import { validateLinkParentForm } from "../schemas";
-import { createPendingInvitation, createPendingParent } from "../services";
+import { createPendingParentInvitation } from "../services";
 import type { LinkParentActionState } from "./types";
 
 /**
@@ -56,26 +55,11 @@ export async function sendParentInvitationAction(
     };
   }
 
-  let parent: Person;
-
   try {
-    parent = await createPendingParent({
+    await createPendingParentInvitation({
       name: validation.data.name,
       email: validation.data.email,
-    });
-  } catch {
-    return {
-      errors: {
-        email: "Ya existe una persona registrada con este email.",
-      },
-      message: "Revisa los campos marcados.",
-    };
-  }
-
-  try {
-    await createPendingInvitation({
       kidId: rawKidId,
-      personId: parent.id,
       relationship: validation.data.relationship,
     });
   } catch {

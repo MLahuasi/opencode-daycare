@@ -3,6 +3,7 @@ import "server-only";
 export {
   createPendingInvitation,
   createPendingParent,
+  createPendingParentInvitation,
   getLinkParentKid,
 } from "./services";
 export {
