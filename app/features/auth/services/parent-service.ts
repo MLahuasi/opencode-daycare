@@ -96,7 +96,11 @@ export function createPendingParentInvitation(values: {
         throw new ExistingPersonEmailError();
       }
 
-      if (!isInvitationExpired(existingInvitation) && existingInvitation.sentAt === null) {
+      if (existingInvitation.sentAt !== null) {
+        throw new ExistingPersonEmailError();
+      }
+
+      if (!isInvitationExpired(existingInvitation)) {
         return { parent: existingPerson, invitation: existingInvitation };
       }
 

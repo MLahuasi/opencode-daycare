@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { requireStaffSession } from "@/auth";
 import { LinkParentForm } from "@/app/features/auth/components";
 import { getLinkParentKid } from "@/app/features/auth/server";
 
@@ -18,6 +19,8 @@ export default async function LinkParentPage({
 }: {
   searchParams: Promise<LinkParentSearchParams>;
 }) {
+  await requireStaffSession();
+
   const params = await searchParams;
   const rawKidId = params.kidId;
   const kidId = Array.isArray(rawKidId) ? rawKidId[0] : rawKidId;

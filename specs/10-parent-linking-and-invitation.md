@@ -1,6 +1,6 @@
 # SPEC 10 — Vinculación de padres e invitaciones
 
-> **Status:** Approved
+> **Status:** Implement
 > **Depends on:** SPEC 07, SPEC 09
 > **Date:** 2026-09-22
 > **Objective:** Implementar `/auth/link-parent` para crear invitaciones seguras a padres y enviarlas mediante el mailer existente desde un perfil de niño.
@@ -82,41 +82,41 @@ El código se normaliza con `trim().toUpperCase()` al resolverlo. La unicidad se
 
 ## Acceptance criteria
 
-- [ ] Existe `/auth/link-parent?kidId=<id>`.
-- [ ] Un `kidId` inexistente produce una respuesta 404 o estado equivalente.
-- [ ] La pantalla muestra el nombre del niño cargado desde persistencia.
-- [ ] El formulario contiene nombre, email y parentesco.
-- [ ] Los tres campos son obligatorios.
-- [ ] El nombre exige entre dos y 120 caracteres y al menos dos palabras.
-- [ ] El email se recorta y normaliza en minúsculas.
-- [ ] El parentesco no aparece preseleccionado.
-- [ ] El código no se recibe como input confiable del cliente.
-- [ ] El código se genera en servidor al enviar.
-- [ ] El código tiene ocho caracteres.
-- [ ] El código usa únicamente el alfabeto acordado sin caracteres ambiguos.
-- [ ] La utilidad nunca devuelve un código presente en cualquier invitación existente.
-- [ ] La utilidad calcula un vencimiento de siete días.
-- [ ] El vencimiento se persiste como ISO string.
-- [ ] Se crea una persona `parent` con estado `pending`.
-- [ ] Se crea una invitación con `personId`, `kidId` y `relationship`.
-- [ ] No se crea `ParentKid` al enviar la invitación.
-- [ ] Un email existente se rechaza con un error visible y accesible.
-- [ ] El enlace de activación usa `APP_URL` y conserva el código generado.
-- [ ] El mailer recibe nombre del padre, niño, enlace y vencimiento correctos.
-- [ ] Un envío exitoso persiste `sentAt`.
-- [ ] Un fallo SMTP conserva la persona y la invitación pendientes.
-- [ ] Un reintento vigente reutiliza el código existente.
-- [ ] Un reintento de una invitación vencida rota código y vencimiento.
-- [ ] La URL de retorno contiene `?invitation=sent`.
-- [ ] El perfil muestra confirmación cuando `invitation=sent`.
-- [ ] La confirmación no muestra credenciales ni datos SMTP.
-- [ ] “Vincular otro padre” navega con el ID correcto del niño.
-- [ ] La ruta exige rol `personal` y un padre es redirigido a `/home`.
+- [x] Existe `/auth/link-parent?kidId=<id>`.
+- [x] Un `kidId` inexistente produce una respuesta 404 o estado equivalente.
+- [x] La pantalla muestra el nombre del niño cargado desde persistencia.
+- [x] El formulario contiene nombre, email y parentesco.
+- [x] Los tres campos son obligatorios.
+- [x] El nombre exige entre dos y 120 caracteres y al menos dos palabras.
+- [x] El email se recorta y normaliza en minúsculas.
+- [x] El parentesco no aparece preseleccionado.
+- [x] El código no se recibe como input confiable del cliente.
+- [x] El código se genera en servidor al enviar.
+- [x] El código tiene ocho caracteres.
+- [x] El código usa únicamente el alfabeto acordado sin caracteres ambiguos.
+- [x] La utilidad nunca devuelve un código presente en cualquier invitación existente.
+- [x] La utilidad calcula un vencimiento de siete días.
+- [x] El vencimiento se persiste como ISO string.
+- [x] Se crea una persona `parent` con estado `pending`.
+- [x] Se crea una invitación con `personId`, `kidId` y `relationship`.
+- [x] No se crea `ParentKid` al enviar la invitación.
+- [x] Un email existente se rechaza con un error visible y accesible.
+- [x] El enlace de activación usa `APP_URL` y conserva el código generado.
+- [x] El mailer recibe nombre del padre, niño, enlace y vencimiento correctos.
+- [x] Un envío exitoso persiste `sentAt`.
+- [x] Un fallo SMTP conserva la persona y la invitación pendientes.
+- [x] Un reintento vigente reutiliza el código existente.
+- [x] Un reintento de una invitación vencida rota código y vencimiento.
+- [x] La URL de retorno contiene `?invitation=sent`.
+- [x] El perfil muestra confirmación cuando `invitation=sent`.
+- [x] La confirmación no muestra credenciales ni datos SMTP.
+- [x] “Vincular otro padre” navega con el ID correcto del niño.
+- [x] La ruta exige rol `personal` y un padre es redirigido a `/home`.
 - [ ] El envío SMTP de prueba devuelve un `messageId` no vacío.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
 
 ## Decisions
 
