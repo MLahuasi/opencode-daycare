@@ -1,9 +1,11 @@
 "use server";
 
 import { requireStaffSession } from "@/auth";
+import { sendParentInvitationEmail } from "@/app/infrastructure";
 import { getPeople } from "@/app/features/kids/server";
+import { getEnvironment } from "@/app/shared/config/server";
 import { validateLinkParentForm } from "../schemas";
-import { createPendingParentInvitation } from "../services";
+import { createPendingParentInvitation, getLinkParentKid } from "../services";
 import type { LinkParentActionState } from "./types";
 
 /**
@@ -11,7 +13,7 @@ import type { LinkParentActionState } from "./types";
  *
  * @param _previousState - Previous feedback required by the React action contract.
  * @param formData - Submitted parent-link form payload.
- * @returns Validation feedback until invitation persistence is implemented.
+ * @returns Validation feedback until invitation delivery is completed.
  */
 export async function sendParentInvitationAction(
   _previousState: LinkParentActionState,
@@ -55,8 +57,20 @@ export async function sendParentInvitationAction(
     };
   }
 
+  const kid = await getLinkParentKid(rawKidId);
+
+  if (!kid) {
+    return {
+      errors: {},
+      message: "No pudimos encontrar al niño. Inténtalo nuevamente.",
+    };
+  }
+
+  let parentInvitation: Awaited<
+    ReturnType<typeof createPendingParentInvitation>
+  >;
   try {
-    await createPendingParentInvitation({
+    parentInvitation = await createPendingParentInvitation({
       name: validation.data.name,
       email: validation.data.email,
       kidId: rawKidId,
@@ -68,6 +82,18 @@ export async function sendParentInvitationAction(
       message: "No pudimos crear la invitación. Inténtalo nuevamente.",
     };
   }
+
+  const { APP_URL } = getEnvironment();
+  const activationUrl = new URL("/auth/activate-account", APP_URL);
+  activationUrl.searchParams.set("code", parentInvitation.invitation.code);
+
+  await sendParentInvitationEmail({
+    activationLink: activationUrl.toString(),
+    expiresAt: new Date(parentInvitation.invitation.expiresAt),
+    kidName: kid.name,
+    parentName: parentInvitation.parent.name,
+    recipientEmail: parentInvitation.parent.email,
+  });
 
   return {
     errors: {},
