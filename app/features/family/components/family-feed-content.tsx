@@ -33,11 +33,21 @@ export function FamilyFeedContent({
           <i aria-hidden="true" />
         </div>
 
-        <div className={styles.posts}>
-          {posts.map((post) => (
-            <FeedPostCard key={post.id} post={post} />
-          ))}
-        </div>
+        {posts.length > 0 ? (
+          <div className={styles.posts}>
+            {posts.map((post) => (
+              <FeedPostCard key={post.id} post={post} />
+            ))}
+          </div>
+        ) : (
+          <div className={styles.emptyState} role="status">
+            <h2>Aún no hay novedades para mostrar</h2>
+            <p>
+              Cuando exista una relación familiar activa, las actualizaciones
+              autorizadas aparecerán aquí.
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );
