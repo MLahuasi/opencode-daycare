@@ -1,6 +1,9 @@
-import { getServerSession, type NextAuthOptions } from "next-auth";
+import { getServerSession, type NextAuthOptions, type Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { getEnvironment } from "@/app/shared/config/server";
+import { readCollection } from "@/app/infrastructure";
+import type { Person } from "@/app/features/people";
+import { redirect } from "next/navigation";
 
 const { auth: authEnvironment } = getEnvironment();
 
@@ -67,4 +70,30 @@ export const authOptions: NextAuthOptions = {
  */
 export function getAuthSession() {
   return getServerSession(authOptions);
+}
+
+/**
+ * Requires an active staff session and revalidates its persisted role.
+ *
+ * @returns The active staff session.
+ */
+export async function requireStaffSession(): Promise<Session> {
+  const session = await getAuthSession();
+
+  if (!session?.user?.personId) {
+    redirect("/auth/login");
+  }
+
+  const people = await readCollection<Person>("people.json");
+  const person = people.find((candidate) => candidate.id === session.user.personId);
+
+  if (!person || person.status !== "active" || person.role !== session.user.role) {
+    redirect("/auth/login");
+  }
+
+  if (person.role !== "personal") {
+    redirect("/home");
+  }
+
+  return session;
 }
