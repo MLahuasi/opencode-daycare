@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button } from "@/app/components/ui";
+import { Avatar, Badge, LinkButton } from "@/app/components/ui";
 import type { PersonStatus } from "@/app/features/people";
 import type { LinkedParent, ParentRelationship } from "@/app/features/family";
 import styles from "./kid-profile.module.css";
@@ -33,17 +33,19 @@ function getParentTone(relationship: ParentRelationship): "blue" | "green" | "pu
 }
 
 type KidParentsProps = {
+  kidId: string;
   parents: readonly LinkedParent[];
 };
 
 /**
  * Renders the parents linked to a kid and a non-functional linking control.
  *
- * @param props - Linked parent options.
-  * @param props.parents - Linked person records resolved by the server.
+ * @param props - Linked parent options and the kid identifier.
+ * @param props.kidId - Stable identifier used by the parent-link route.
+ * @param props.parents - Linked person records resolved by the server.
  * @returns The linked parents panel.
  */
-export function KidParents({ parents }: KidParentsProps) {
+export function KidParents({ kidId, parents }: KidParentsProps) {
   return (
     <section aria-labelledby="linked-parents-heading" className={styles.parentsPanel}>
       <h2 id="linked-parents-heading">Padres vinculados</h2>
@@ -67,10 +69,14 @@ export function KidParents({ parents }: KidParentsProps) {
         {parents.length === 0 ? (
           <p className={styles.noParents}>Todavía no hay padres vinculados.</p>
         ) : null}
-        <Button className={styles.linkParentButton} variant="ghost">
+        <LinkButton
+          className={styles.linkParentButton}
+          href={`/auth/link-parent?kidId=${encodeURIComponent(kidId)}`}
+          variant="ghost"
+        >
           <span aria-hidden="true" className={styles.parentLinkIcon}>+</span>
           Vincular otro padre
-        </Button>
+        </LinkButton>
       </div>
     </section>
   );
