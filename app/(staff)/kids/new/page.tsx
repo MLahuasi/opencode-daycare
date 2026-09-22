@@ -1,6 +1,7 @@
 import { KidForm } from "@/app/features/kids";
 import type { KidFormValues } from "@/app/features/kids";
 import { createKidAction, getRooms } from "@/app/features/kids/server";
+import { requireStaffSession } from "@/auth";
 
 const EMPTY_KID_FORM_VALUES: KidFormValues = {
   name: "",
@@ -16,6 +17,8 @@ const EMPTY_KID_FORM_VALUES: KidFormValues = {
  * @returns The new kid form configured to cancel back to the Kids list.
  */
 export default async function NewKidPage() {
+  await requireStaffSession();
+
   const rooms = await getRooms();
 
   return (

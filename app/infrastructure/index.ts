@@ -5,6 +5,7 @@ export type {
 } from "./adapters";
 export {
   readCollection,
+  withJsonTransaction,
   withWriteLock,
   writeCollection,
 } from "./persistence";

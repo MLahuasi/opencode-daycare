@@ -60,6 +60,8 @@
   --color-auth-readonly: #f4ece1;
   --color-auth-error: #c5413a;
   --color-auth-error-background: #fbdad6;
+  --color-auth-success: #3e9b6c;
+  --color-auth-success-background: #cfebd8;
   --color-auth-consent-background: #fbf1d6;
   --color-auth-consent-text: #8a7234;
   --color-auth-checkbox: #5fb97e;

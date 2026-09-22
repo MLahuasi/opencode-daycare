@@ -1,5 +1,6 @@
 import { StaffSidebar } from "@/app/components/layout";
 import { staffNavigationConfig } from "@/app/shared/config";
+import { requireStaffSession } from "@/auth";
 import type { ReactNode } from "react";
 
 /**
@@ -9,7 +10,9 @@ import type { ReactNode } from "react";
  * @param props.children - Page or not-found content rendered beside the staff navigation.
  * @returns The Kids layout with desktop and mobile staff navigation.
  */
-export default function KidsLayout({ children }: { children: ReactNode }) {
+export default async function KidsLayout({ children }: { children: ReactNode }) {
+  await requireStaffSession();
+
   return (
     <div className="flex min-h-screen bg-background">
       <StaffSidebar activeSection="children" navigation={staffNavigationConfig} />

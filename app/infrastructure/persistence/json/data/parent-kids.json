@@ -1,12 +1,5 @@
 [
   {
-    "id": "parent-kid-lucia-mateo",
-    "parentId": "parent-lucia-fernandez",
-    "kidId": "kid-mateo-fernandez",
-    "relationship": "mother",
-    "photoSharingConsent": true
-  },
-  {
     "id": "parent-kid-diego-mateo",
     "parentId": "parent-diego-fernandez",
     "kidId": "kid-mateo-fernandez",

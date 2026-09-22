@@ -1,4 +1,4 @@
-import { ActivateAccountForm } from "@/app/features/auth";
+import { ActivateAccountForm, isInvitationExpired } from "@/app/features/auth";
 import type {
   ActivationInvitationState,
   ActivationKidCardData,
@@ -6,7 +6,6 @@ import type {
 import { getInvitations } from "@/app/features/auth/services";
 import {
   getKids,
-  getParentKids,
   getPeople,
   getRooms,
 } from "@/app/features/kids/server";
@@ -38,19 +37,17 @@ async function resolveActivation(code: string | undefined): Promise<ActivationRe
     return { code, email: "", invitationState: "accepted", kid: null };
   }
 
-  if (invitation.expiresAt <= new Date()) {
+  if (isInvitationExpired(invitation)) {
     return { code, email: "", invitationState: "expired", kid: null };
   }
 
-  const [kids, parentKids, people, rooms] = await Promise.all([
+  const [kids, people, rooms] = await Promise.all([
     getKids(),
-    getParentKids(),
     getPeople(),
     getRooms(),
   ]);
   const person = people.find((candidate) => candidate.id === invitation.personId);
-  const parentKid = parentKids.find((candidate) => candidate.parentId === invitation.personId);
-  const kid = parentKid ? kids.find((candidate) => candidate.id === parentKid.kidId) : undefined;
+  const kid = kids.find((candidate) => candidate.id === invitation.kidId);
   const room = kid ? rooms.find((candidate) => candidate.id === kid.roomId) : undefined;
 
   if (!person || !kid || !room) {

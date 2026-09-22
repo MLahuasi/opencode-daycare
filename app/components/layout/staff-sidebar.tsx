@@ -7,6 +7,7 @@ import type {
   StaffNavigationSection,
 } from "./staff-navigation";
 import styles from "./staff-sidebar.module.css";
+import { LogoutButton } from "./logout-button";
 
 type StaffSidebarProps = {
   activeSection?: StaffNavigationSection;
@@ -147,11 +148,7 @@ export function StaffSidebar({ activeSection = "feed", className = "", navigatio
             <p>{navigation.profile.name}</p>
             <span className={styles.profileRole}>{navigation.profile.role}</span>
           </div>
-          <Button aria-label={navigation.logoutLabel} className={styles.logoutButton} variant="ghost">
-            <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
-            </svg>
-          </Button>
+          <LogoutButton label={navigation.logoutLabel} />
         </div>
       </aside>
 

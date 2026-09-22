@@ -281,6 +281,15 @@
   font-size: 13px;
   line-height: 1.4;
 }
+.activationSuccess {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--color-auth-success-background);
+  color: var(--color-auth-success);
+  font-size: 13px;
+  line-height: 1.4;
+}
 .invitationError {
   margin: 0 0 18px;
   padding: 12px 14px;

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { requireStaffSession } from "@/auth";
 import { validateKidForm } from "../schemas";
 import { createKid, getRooms } from "../services";
 import type { Kid } from "../types";
@@ -18,6 +19,8 @@ export async function createKidAction(
   _previousState: KidFormActionState,
   formData: FormData,
 ): Promise<KidFormActionState> {
+  await requireStaffSession();
+
   const rooms = await getRooms();
   const validation = validateKidForm(
     {

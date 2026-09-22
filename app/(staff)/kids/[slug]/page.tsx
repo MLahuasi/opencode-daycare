@@ -14,6 +14,7 @@ import {
   getLinkedParentsByKidId,
 } from "@/app/features/kids/server";
 import { getTodayIsoDate } from "@/app/shared";
+import { requireStaffSession } from "@/auth";
 import { notFound } from "next/navigation";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
@@ -41,6 +42,8 @@ export default async function KidProfilePage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  await requireStaffSession();
+
   const { slug } = await params;
   const kids = await getKids();
   const kidIndex = kids.findIndex((candidate) => candidate.slug === slug);

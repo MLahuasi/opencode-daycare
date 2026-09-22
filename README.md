@@ -66,11 +66,11 @@ MAIL_TEMPLATE_EXTENSION=html
 `true` o `false`. `MAIL_TEMPLATE_PATH` se resuelve desde el directorio de trabajo
 del proyecto; por tanto, `templates` apunta a la carpeta raíz `templates/`.
 
-Las variables se validan al solicitar el mailer por primera vez, no durante la
-importación, lint, typecheck o build. Un intento de envío con configuración
-ausente o inválida falla con un error explícito. Las credenciales reales nunca
-se versionan: `.gitignore` permite únicamente el archivo de ejemplo
-`.env.template`.
+Las variables del mailer se validan al solicitarlo por primera vez. Las variables
+de autenticación se validan al cargar la configuración de NextAuth, por lo que
+deben estar presentes también durante el build. Una configuración ausente o
+inválida falla con un error explícito. Las credenciales reales nunca se
+versionan: `.gitignore` permite únicamente el archivo de ejemplo `.env.template`.
 
 La plantilla `templates/parent-invitation.html` forma parte de los archivos
 necesarios en runtime. Un despliegue que empaquete solo el output de Next.js,
@@ -82,11 +82,52 @@ como `output: "standalone"`, debe incluir también la carpeta `templates/`.
 - `/`: redirect permanente a `/home`.
 - `/auth/login`: inicio de sesión.
 - `/auth/activate-account`: activación de cuenta; acepta `?code=<valor>`.
+- `/api/auth/[...nextauth]`: Route Handler de NextAuth v4 para credenciales y sesiones JWT.
 - `/kids`: listado de ocho niños con búsqueda local y badges de alergias.
 - `/kids/[slug]`: perfil de un niño con información básica, notas médicas y padres vinculados.
 - `/kids/edit/[id]`: edición de un niño por ID.
 - `/login`, `/activate-account` y `/kids/:id/edit`: redirects permanentes a sus nuevas rutas.
 - `/kids/[slug]` con un slug desconocido: página 404 propia.
+
+## Autenticación
+
+La autenticación usa `next-auth@4.24.15` con Credentials Provider, sesiones JWT
+de siete días y cookies HttpOnly. La configuración server-only vive en `auth.ts`
+y obtiene sus valores desde `app/shared/config/server/environment.ts`.
+
+Añade estas variables a tu archivo local `.env` o `.env.local`, usando
+`.env.template` como referencia:
+
+```dotenv
+AUTH_SECRET=replace_with_a_random_secret
+AUTH_SESSION_MAX_AGE_SECONDS=604800
+AUTH_SESSION_COOKIE_NAME=next-auth.session-token
+AUTH_SESSION_COOKIE_HTTP_ONLY=true
+AUTH_SESSION_COOKIE_SECURE=false
+AUTH_SESSION_COOKIE_SAME_SITE=lax
+AUTH_SESSION_COOKIE_PATH=/
+AUTH_SIGN_IN_PATH=/auth/login
+```
+
+`AUTH_SECRET` debe reemplazarse por un secreto aleatorio real fuera del entorno
+local. `AUTH_SESSION_COOKIE_SECURE` debe ser `true` cuando la aplicación se sirve
+exclusivamente sobre HTTPS.
+
+El personal con rol `personal` puede acceder a `/kids/**` y conserva el feed de
+personal en `/home`. Los padres con rol `parent` reciben un estado familiar
+seguro en `/home` y no pueden acceder a las rutas de Kids. Las personas
+inexistentes, inactivas o con un rol cambiado son expulsadas de la sesión.
+
+### Credenciales demo
+
+Estas credenciales existen únicamente para pruebas locales del prototipo:
+
+| Usuario | Email | Password | Rol |
+| --- | --- | --- | --- |
+| Caro Giménez | `caro@opendaycare.com` | `OpenDayCare1!` | `personal` |
+
+Los demás hashes `mock-hash-*` de los fixtures no son contraseñas válidas.
+No reutilices la clave demo ni agregues credenciales reales al repositorio.
 
 ## Arquitectura
 
@@ -94,6 +135,8 @@ La aplicación sigue una organización **feature-first**:
 
 ```text
 open-daycare/
+├── auth.ts                    Configuración server-only de NextAuth v4
+├── types/                     Ampliaciones TypeScript de NextAuth
 ├── app/
 │   ├── (staff)/              Rutas de personal sin segmento público
 │   │   ├── home/             Feed en `/home`
@@ -104,7 +147,7 @@ open-daycare/
 │   │   └── ui/                Componentes visuales reutilizables
 │   ├── data/mocks/            Fixtures estáticos no editables
 │   ├── features/
-│   │   ├── auth/              Componentes y contratos de Auth
+│   │   ├── auth/              Componentes, acciones y contratos de Auth
 │   │   ├── family/            Relaciones familiares
 │   │   ├── feed/              Componentes y tipos del feed
 │   │   ├── kids/              Listado, perfiles y tipos de niños
@@ -112,7 +155,7 @@ open-daycare/
 │   │   └── rooms/             Salas
 │   ├── infrastructure/
 │   │   ├── adapters/jmlq/     Integraciones server-only con paquetes JMLQ
-│   │   └── persistence/json/  Adapter y datos JSON editables
+│   │   └── persistence/json/  Adapter, transacciones y datos JSON editables
 │   └── shared/                Utilidades y configuración transversal
 ├── templates/               Plantillas HTML requeridas en runtime
 ├── specs/                   Contratos funcionales versionados
@@ -188,6 +231,9 @@ Specs existentes:
 | `03-kids-and-profiles.md` | `Implemented` | Listado, perfiles, búsqueda y 404 de Kids |
 | `04-kid-allergy-tags.md` | `Implemented` | Badges de alergias y proyección segura |
 | `05-account-activation-and-login.md` | `Approved` | Login, activación y modelos de identidad |
+| `09-account-activation-session-and-login.md` | `Implemented` | Activación persistente, NextAuth v4, login, logout y autorización por rol |
+| `10-parent-linking-and-invitation.md` | `Draft` | Vinculación de padres e invitaciones |
+| `11-family-home-feed.md` | `Draft` | Feed familiar filtrado en Home |
 
 ## Flujo Spec Driven Development
 
