@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Avatar, Badge } from "@/app/components/ui";
-import type { KidListItem } from "@/app/features/kids/types";
+import type { KidListItem } from "../types";
 import styles from "./kids-list.module.css";
 
 type KidCardProps = {

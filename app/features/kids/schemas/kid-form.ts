@@ -1,8 +1,15 @@
 import { getTodayIsoDate, parseCommaSeparatedTags } from "@/app/shared";
-import type { KidFormValues, Room } from "../types";
+import type { Room } from "@/app/features/rooms";
+import type { Kid } from "../types";
 
 const DISPLAY_DATE_PATTERN = /^(\d{2})\/(\d{2})\/(\d{4})$/;
 const MAX_NAME_LENGTH = 120;
+
+/** Editable kid values shared by the Add and Edit flows. */
+export type KidFormValues = Pick<
+  Kid,
+  "allergies" | "birthDate" | "medicalNotes" | "name" | "roomId"
+>;
 
 type KidFormInput = Partial<Record<keyof KidFormValues, unknown>>;
 

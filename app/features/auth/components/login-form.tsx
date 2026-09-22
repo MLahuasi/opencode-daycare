@@ -33,7 +33,7 @@ export function LoginForm() {
         <Button className={styles.primaryButton} type="submit">Iniciar sesión</Button>
       </form>
       <p className={styles.formFooter}>
-        ¿Te invitó la guardería? <LinkButton className={styles.inlineLink} href="/activate-account" variant="ghost">Activa tu cuenta</LinkButton>
+        ¿Te invitó la guardería? <LinkButton className={styles.inlineLink} href="/auth/activate-account" variant="ghost">Activa tu cuenta</LinkButton>
       </p>
     </div>
   );

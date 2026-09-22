@@ -1,4 +1,4 @@
-import type { Kid } from "@/app/features/kids/types";
+import type { Kid } from "../types";
 import { APP_LOCALE } from "@/app/shared";
 import styles from "./kid-profile.module.css";
 

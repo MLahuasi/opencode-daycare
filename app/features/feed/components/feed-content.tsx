@@ -1,10 +1,12 @@
 import { Avatar, Button } from "@/app/components/ui";
-import { feedOverview, feedPosts } from "@/app/data/mocks";
+import type { FeedOverview, FeedPost } from "../types";
 import { FeedPostCard } from "./feed-post-card";
 import styles from "./feed-content.module.css";
 
 type FeedContentProps = {
   className?: string;
+  overview: FeedOverview;
+  posts: readonly FeedPost[];
 };
 
 /**
@@ -24,35 +26,37 @@ function CameraIcon() {
 /**
  * Renders the static Sala Soles staff feed.
  *
- * @param props - Feed content customization options.
+ * @param props - Feed content configuration.
  * @param props.className - Optional classes applied to the feed landmark.
+ * @param props.overview - Room header, greeting, and composer copy.
+ * @param props.posts - Published posts to render as cards.
  * @returns The feed main landmark with the greeting, composer, and posts.
  */
-export function FeedContent({ className = "" }: FeedContentProps) {
+export function FeedContent({ className = "", overview, posts }: FeedContentProps) {
   return (
     <main className={`${styles.feed} ${className}`}>
       <div className={styles.container}>
         <header className={styles.greeting}>
-          <p>{feedOverview.roomLabel}</p>
-          <h1>{feedOverview.greeting}</h1>
-          <span>{feedOverview.attendance} · {feedOverview.date}</span>
+          <p>{overview.roomLabel}</p>
+          <h1>{overview.greeting}</h1>
+          <span>{overview.attendance} · {overview.date}</span>
         </header>
 
         <Button className={styles.composer} variant="ghost">
           <Avatar aria-hidden="true" className={styles.avatar} initial="C" />
-          <span className={styles.composerText}>{feedOverview.composerPrompt}</span>
+          <span className={styles.composerText}>{overview.composerPrompt}</span>
           <span className={styles.camera} aria-hidden="true">
             <CameraIcon />
           </span>
         </Button>
 
         <div className={styles.divider}>
-          <span>{feedOverview.publishedTodayLabel}</span>
+          <span>{overview.publishedTodayLabel}</span>
           <i aria-hidden="true" />
         </div>
 
         <div className={styles.posts}>
-          {feedPosts.map((post) => (
+          {posts.map((post) => (
             <FeedPostCard key={post.id} post={post} />
           ))}
         </div>

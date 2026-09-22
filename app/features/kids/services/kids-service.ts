@@ -1,83 +1,18 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { open, readFile, rename, rm } from "node:fs/promises";
-import path from "node:path";
 import { getTodayIsoDate } from "@/app/shared";
-import type {
-  Kid,
-  KidFormValues,
-  LinkedParent,
-  ParentKid,
-  Person,
-  Room,
-} from "../types";
+import {
+  readCollection,
+  withWriteLock,
+  writeCollection,
+} from "@/app/infrastructure/persistence";
+import type { Person } from "@/app/features/people";
+import type { Room } from "@/app/features/rooms";
+import type { LinkedParent, ParentKid } from "@/app/features/family";
+import type { KidFormValues } from "../schemas";
+import type { Kid } from "../types";
 import { normalizeSlug } from "../utils";
-
-type KidCollectionFile =
-  | "kids.json"
-  | "parent-kids.json"
-  | "people.json"
-  | "rooms.json";
-
-const KIDS_DATA_DIRECTORY = path.join(
-  process.cwd(),
-  "app",
-  "data",
-  "mocks",
-  "kids",
-);
-let kidsWriteQueue: Promise<void> = Promise.resolve();
-
-async function readCollection<T>(fileName: KidCollectionFile): Promise<readonly T[]> {
-  const filePath = path.join(KIDS_DATA_DIRECTORY, fileName);
-  const contents = await readFile(filePath, "utf8");
-  const collection: unknown = JSON.parse(contents);
-
-  if (!Array.isArray(collection)) {
-    throw new Error(`Expected ${fileName} to contain a JSON array.`);
-  }
-
-  return collection as T[];
-}
-
-async function writeCollection<T>(
-  fileName: KidCollectionFile,
-  collection: readonly T[],
-): Promise<void> {
-  const filePath = path.join(KIDS_DATA_DIRECTORY, fileName);
-  const temporaryFilePath = `${filePath}.${process.pid}.${randomUUID()}.tmp`;
-  let temporaryFileCreated = false;
-
-  try {
-    const temporaryFile = await open(temporaryFilePath, "wx");
-    temporaryFileCreated = true;
-
-    try {
-      await temporaryFile.writeFile(`${JSON.stringify(collection, null, 2)}\n`, "utf8");
-      await temporaryFile.sync();
-    } finally {
-      await temporaryFile.close();
-    }
-
-    await rename(temporaryFilePath, filePath);
-  } finally {
-    if (temporaryFileCreated) {
-      await rm(temporaryFilePath, { force: true }).catch(() => undefined);
-    }
-  }
-}
-
-function serializeKidWrite<T>(operation: () => Promise<T>): Promise<T> {
-  const result = kidsWriteQueue.then(operation);
-
-  kidsWriteQueue = result.then(
-    () => undefined,
-    () => undefined,
-  );
-
-  return result;
-}
 
 function createUniqueSlug(name: string, kids: readonly Kid[]): string {
   const baseSlug = normalizeSlug(name);
@@ -216,7 +151,7 @@ export async function getLinkedParentsByKidId(kidId: string): Promise<LinkedPare
  * @returns The newly persisted kid.
  */
 export function createKid(values: KidFormValues): Promise<Kid> {
-  return serializeKidWrite(async () => {
+  return withWriteLock(async () => {
     const kids = await getKids();
     const editableValues = selectKidFormValues(values);
     const kid: Kid = {
@@ -241,7 +176,7 @@ export function createKid(values: KidFormValues): Promise<Kid> {
  * @returns The updated kid, or `null` when the identifier does not exist.
  */
 export function updateKid(id: string, values: KidFormValues): Promise<Kid | null> {
-  return serializeKidWrite(async () => {
+  return withWriteLock(async () => {
     const kids = await getKids();
     const kidIndex = kids.findIndex((kid) => kid.id === id);
 

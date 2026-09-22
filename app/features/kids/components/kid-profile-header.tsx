@@ -1,5 +1,5 @@
 import { Avatar, LinkButton } from "@/app/components/ui";
-import type { Kid } from "@/app/features/kids/types";
+import type { Kid } from "../types";
 import styles from "./kid-profile.module.css";
 
 type KidProfileHeaderProps = {

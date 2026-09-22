@@ -1,13 +1,2 @@
-export type {
-  Kid,
-  KidFormValues,
-  KidListItem,
-  KidStatus,
-  LinkedParent,
-  ParentKid,
-  ParentRelationship,
-  Person,
-  PersonRole,
-  PersonStatus,
-  Room,
-} from "./kids";
+export type { Kid, KidStatus } from "./kid";
+export type { KidListItem } from "./kid-list-item";

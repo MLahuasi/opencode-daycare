@@ -1,5 +1,6 @@
-import type { FeedPost } from "@/app/features/feed/types/feed";
+import type { FeedOverview, FeedPost } from "@/app/features/feed";
 
+/** Deterministic summary fixture rendered at the top of the staff feed. */
 export const feedOverview = {
   roomLabel: "Guardería · Sala Soles",
   greeting: "Buenas, Caro",
@@ -7,8 +8,9 @@ export const feedOverview = {
   date: "martes 17 jun",
   composerPrompt: "Comparte un momento…",
   publishedTodayLabel: "Publicado hoy",
-} as const;
+} satisfies FeedOverview;
 
+/** Deterministic feed-post fixtures rendered in chronological staff-feed sections. */
 export const feedPosts: readonly FeedPost[] = [
   {
     id: "mateo-first-potty",

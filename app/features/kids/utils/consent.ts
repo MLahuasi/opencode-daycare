@@ -1,4 +1,4 @@
-import type { ParentKid } from "../types";
+import type { ParentKid } from "@/app/features/family";
 
 /**
  * Determines whether a kid has effective photo sharing authorization.

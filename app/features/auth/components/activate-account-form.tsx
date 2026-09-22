@@ -4,16 +4,12 @@ import { useRouter } from "next/navigation";
 import type { FormEvent, SubmitEvent } from "react";
 import { useState } from "react";
 import { Button, CheckboxField, FormField } from "@/app/components/ui";
-import { isValidActivationPassword } from "@/app/features/auth";
+import type {
+  ActivationInvitationState,
+  ActivationKidCardData,
+} from "../types";
+import { isValidActivationPassword } from "../utils/password";
 import styles from "./auth.module.css";
-
-export type ActivationKidCardData = {
-  initial: string;
-  name: string;
-  room: string;
-};
-
-export type ActivationInvitationState = "none" | "valid" | "unknown" | "expired" | "accepted";
 
 type ActivateAccountFormProps = {
   code: string;
@@ -127,7 +123,7 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
         />
         <Button className={styles.primaryButton} disabled={!isFormComplete} type="submit">Activar mi cuenta</Button>
       </form>
-      <p className={styles.formFooter}>¿Ya tienes cuenta? <a className={styles.inlineLink} href="/login">Inicia sesión</a></p>
+      <p className={styles.formFooter}>¿Ya tienes cuenta? <a className={styles.inlineLink} href="/auth/login">Inicia sesión</a></p>
     </div>
   );
 }

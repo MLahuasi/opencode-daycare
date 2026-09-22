@@ -1,0 +1,150 @@
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  width: 248px;
+  height: 100vh;
+  flex: none;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 24px 16px;
+}
+
+.profile p {
+  margin: 0;
+}
+
+.profileRole {
+  margin-top: 2px;
+  color: var(--color-subtle);
+  font-size: 11.5px;
+}
+
+.newPostButton {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.newPostButton svg {
+  width: 17px;
+  height: 17px;
+}
+
+.navigation {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navigationButton {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 11px 12px;
+  color: var(--color-navigation);
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+.navigationButtonActive {
+  background: var(--color-coral-soft);
+  color: var(--color-navigation-active);
+  font-weight: 800;
+}
+
+.navigationIcon {
+  width: 19px;
+  height: 19px;
+  flex: none;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 10px;
+  border-top: 1px solid var(--color-border);
+  padding: 14px 8px 0;
+}
+
+.avatar {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-coral-light);
+  color: var(--color-on-coral);
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.profileDetails {
+  min-width: 0;
+  flex: 1;
+}
+
+.profile p {
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.profileRole {
+  display: block;
+}
+
+.logoutButton {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--color-page);
+  color: var(--color-muted);
+  padding: 0;
+}
+
+.logoutButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mobileNavigation {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    display: none;
+  }
+
+  .mobileNavigation {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .mobileNavigationButton {
+    flex-direction: column;
+    gap: 3px;
+    border-radius: 10px;
+    padding: 6px 4px;
+    color: var(--color-navigation);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .mobileNavigationButtonActive {
+    color: var(--color-navigation-active);
+  }
+}
