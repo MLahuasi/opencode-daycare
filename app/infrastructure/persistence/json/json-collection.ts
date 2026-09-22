@@ -98,3 +98,38 @@ export function withWriteLock<T>(operation: () => Promise<T>): Promise<T> {
 
   return result;
 }
+
+/**
+ * Runs a group of JSON collection writes with in-memory snapshots and rollback.
+ *
+ * @param collectionNames - Collections that may be changed by the operation.
+ * @param operation - Locked mutation that writes the new collection values.
+ * @returns The result returned by the mutation.
+ * @throws The original mutation error after restoring all snapshots.
+ */
+export function withJsonTransaction<T>(
+  collectionNames: readonly JsonCollectionName[],
+  operation: () => Promise<T>,
+): Promise<T> {
+  return withWriteLock(async () => {
+    const snapshots = new Map<JsonCollectionName, readonly unknown[]>();
+
+    for (const collectionName of collectionNames) {
+      snapshots.set(collectionName, await readCollection(collectionName));
+    }
+
+    try {
+      return await operation();
+    } catch (error) {
+      for (const collectionName of collectionNames) {
+        const snapshot = snapshots.get(collectionName);
+
+        if (snapshot) {
+          await writeCollection(collectionName, snapshot);
+        }
+      }
+
+      throw error;
+    }
+  });
+}

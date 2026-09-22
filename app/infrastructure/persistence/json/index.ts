@@ -1,5 +1,6 @@
 export {
   readCollection,
+  withJsonTransaction,
   withWriteLock,
   writeCollection,
 } from "./json-collection";
