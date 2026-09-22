@@ -3,7 +3,7 @@ import type {
   ActivationInvitationState,
   ActivationKidCardData,
 } from "@/app/features/auth";
-import { invitations } from "@/app/data/mocks";
+import { getInvitations } from "@/app/features/auth/services";
 import {
   getKids,
   getParentKids,
@@ -27,6 +27,7 @@ async function resolveActivation(code: string | undefined): Promise<ActivationRe
     return { code: "", email: "", invitationState: "none", kid: null };
   }
 
+  const invitations = await getInvitations()
   const invitation = invitations.find((candidate) => candidate.code === code);
 
   if (!invitation) {
