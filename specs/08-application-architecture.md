@@ -1,6 +1,6 @@
 # SPEC 08 — Reorganización de la arquitectura de aplicación
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 01, SPEC 02, SPEC 03, SPEC 04, SPEC 05, SPEC 06, SPEC 07
 > **Date:** 2026-09-21
 > **Objective:** Reorganizar incrementalmente la aplicación en rutas App Router, componentes compartidos, features de dominio, shared e infrastructure con contratos y tipos bien delimitados, sin alterar la experiencia salvo las URLs acordadas.
@@ -137,54 +137,54 @@ app/infrastructure/persistence/json/data/
 
 ## Acceptance criteria
 
-- [ ] Existe `/home` y muestra el feed de personal actual sin cambios visuales o de contenido.
-- [ ] `/` responde con redirect permanente hacia `/home`.
-- [ ] Existe `/auth/login` y conserva el flujo visual actual de Login.
-- [ ] Existe `/auth/activate-account` y conserva el flujo actual de activación.
-- [ ] `/login` redirige permanentemente a `/auth/login`.
-- [ ] `/activate-account` redirige permanentemente a `/auth/activate-account`.
-- [ ] El redirect desde `/activate-account?code=<valor>` conserva el parámetro `code` en el destino.
-- [ ] Existen `/kids`, `/kids/new`, `/kids/[slug]` y `/kids/edit/[id]`.
-- [ ] El perfil de Kids busca por `slug`.
-- [ ] Edit de Kids busca por `id`.
-- [ ] `/kids/:id/edit` redirige permanentemente a `/kids/edit/:id`.
-- [ ] No existen dos segmentos dinámicos hermanos que representen la misma posición de URL dentro de Kids.
-- [ ] Las rutas de Home y Kids están organizadas bajo `app/(staff)/` sin que `(staff)` aparezca en sus URLs.
-- [ ] `page.tsx` conserva la composición específica de cada pantalla.
-- [ ] Ningún consumidor externo importa internals de una feature desde `components`, `types`, `services`, `actions`, `schemas` o `utils`.
-- [ ] Cada feature que expone operaciones de servidor ofrece una entrada explícita `server` marcada como server-only cuando aplica.
-- [ ] Ningún Client Component importa una entrada server-only, Infrastructure, `node:fs`, configuración privada ni el mailer.
-- [ ] `StaffSidebar` se consume desde `@/app/components/layout`.
-- [ ] No existe `app/features/layout/`.
-- [ ] No existe `app/data/mocks/layout/`.
-- [ ] La configuración de navegación de personal vive en `app/shared/config/`.
-- [ ] Los componentes presentacionales `FeedContent` y `StaffSidebar` no cargan colecciones completas de mocks internamente.
-- [ ] Existen `features/people`, `features/rooms` y `features/family` con barrels públicos.
-- [ ] `Person`, `PersonRole` y `PersonStatus` pertenecen a People.
-- [ ] `Room` pertenece a Rooms.
-- [ ] `ParentKid`, `ParentRelationship` y `LinkedParent` pertenecen a Family.
-- [ ] `Kid` y `KidStatus` pertenecen a Kids.
-- [ ] `KidFormValues` y sus errores viven junto al schema de formulario de Kids.
-- [ ] `KidListItem` se identifica como DTO de presentación del listado de Kids.
-- [ ] No existe `app/features/kids/types/kids.ts`.
-- [ ] Auth y Feed no mantienen tipos que mezclen sin justificación modelos, DTOs de presentación y props de componentes.
-- [ ] Los props de componentes permanecen colocados junto a sus componentes.
-- [ ] Existe `app/infrastructure/persistence/json/` marcado como server-only.
-- [ ] El adapter JSON encapsula lectura, validación, serialización y escritura atómica.
-- [ ] Los servicios de dominio no importan `node:fs` ni construyen rutas físicas a JSON.
-- [ ] Los cuatro JSON editables viven en `app/infrastructure/persistence/json/data/`.
-- [ ] `app/data/mocks/` contiene únicamente fixtures estáticos no editables.
-- [ ] El contenido y la estructura raíz de los cuatro JSON se conservan durante el traslado.
-- [ ] El listado, perfil, Add, Edit y activación continúan leyendo datos correctos después de mover el adapter y sus datos.
-- [ ] No se cambian diseño, contenido, validaciones, flujos ni datos fuera de las URLs y redirects acordados.
-- [ ] `README.md` documenta el árbol, las rutas públicas y la propiedad de componentes, features, shared, mocks e Infrastructure.
-- [ ] `AGENTS.md` documenta los límites de imports client-safe y server-only, la propiedad de tipos y la ubicación de persistencia local.
-- [ ] Las APIs y componentes reutilizables exportados incluyen JSDoc completo según las reglas del proyecto.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica `/home`, `/auth/login`, `/auth/activate-account?code=<valor>`, `/kids`, `/kids/new`, un perfil por slug y Edit por ID en escritorio y móvil.
+- [x] Existe `/home` y muestra el feed de personal actual sin cambios visuales o de contenido.
+- [x] `/` responde con redirect permanente hacia `/home`.
+- [x] Existe `/auth/login` y conserva el flujo visual actual de Login.
+- [x] Existe `/auth/activate-account` y conserva el flujo actual de activación.
+- [x] `/login` redirige permanentemente a `/auth/login`.
+- [x] `/activate-account` redirige permanentemente a `/auth/activate-account`.
+- [x] El redirect desde `/activate-account?code=<valor>` conserva el parámetro `code` en el destino.
+- [x] Existen `/kids`, `/kids/new`, `/kids/[slug]` y `/kids/edit/[id]`.
+- [x] El perfil de Kids busca por `slug`.
+- [x] Edit de Kids busca por `id`.
+- [x] `/kids/:id/edit` redirige permanentemente a `/kids/edit/:id`.
+- [x] No existen dos segmentos dinámicos hermanos que representen la misma posición de URL dentro de Kids.
+- [x] Las rutas de Home y Kids están organizadas bajo `app/(staff)/` sin que `(staff)` aparezca en sus URLs.
+- [x] `page.tsx` conserva la composición específica de cada pantalla.
+- [x] Ningún consumidor externo importa internals de una feature desde `components`, `types`, `services`, `actions`, `schemas` o `utils`.
+- [x] Cada feature que expone operaciones de servidor ofrece una entrada explícita `server` marcada como server-only cuando aplica.
+- [x] Ningún Client Component importa una entrada server-only, Infrastructure, `node:fs`, configuración privada ni el mailer.
+- [x] `StaffSidebar` se consume desde `@/app/components/layout`.
+- [x] No existe `app/features/layout/`.
+- [x] No existe `app/data/mocks/layout/`.
+- [x] La configuración de navegación de personal vive en `app/shared/config/`.
+- [x] Los componentes presentacionales `FeedContent` y `StaffSidebar` no cargan colecciones completas de mocks internamente.
+- [x] Existen `features/people`, `features/rooms` y `features/family` con barrels públicos.
+- [x] `Person`, `PersonRole` y `PersonStatus` pertenecen a People.
+- [x] `Room` pertenece a Rooms.
+- [x] `ParentKid`, `ParentRelationship` y `LinkedParent` pertenecen a Family.
+- [x] `Kid` y `KidStatus` pertenecen a Kids.
+- [x] `KidFormValues` y sus errores viven junto al schema de formulario de Kids.
+- [x] `KidListItem` se identifica como DTO de presentación del listado de Kids.
+- [x] No existe `app/features/kids/types/kids.ts`.
+- [x] Auth y Feed no mantienen tipos que mezclen sin justificación modelos, DTOs de presentación y props de componentes.
+- [x] Los props de componentes permanecen colocados junto a sus componentes.
+- [x] Existe `app/infrastructure/persistence/json/` marcado como server-only.
+- [x] El adapter JSON encapsula lectura, validación, serialización y escritura atómica.
+- [x] Los servicios de dominio no importan `node:fs` ni construyen rutas físicas a JSON.
+- [x] Los cuatro JSON editables viven en `app/infrastructure/persistence/json/data/`.
+- [x] `app/data/mocks/` contiene únicamente fixtures estáticos no editables.
+- [x] El contenido y la estructura raíz de los cuatro JSON se conservan durante el traslado.
+- [x] El listado, perfil, Add, Edit y activación continúan leyendo datos correctos después de mover el adapter y sus datos.
+- [x] No se cambian diseño, contenido, validaciones, flujos ni datos fuera de las URLs y redirects acordados.
+- [x] `README.md` documenta el árbol, las rutas públicas y la propiedad de componentes, features, shared, mocks e Infrastructure.
+- [x] `AGENTS.md` documenta los límites de imports client-safe y server-only, la propiedad de tipos y la ubicación de persistencia local.
+- [x] Las APIs y componentes reutilizables exportados incluyen JSDoc completo según las reglas del proyecto.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica `/home`, `/auth/login`, `/auth/activate-account?code=<valor>`, `/kids`, `/kids/new`, un perfil por slug y Edit por ID en escritorio y móvil.
 
 ## Decisions
 
