@@ -123,7 +123,7 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
         />
         <Button className={styles.primaryButton} disabled={!isFormComplete} type="submit">Activar mi cuenta</Button>
       </form>
-      <p className={styles.formFooter}>¿Ya tienes cuenta? <a className={styles.inlineLink} href="/login">Inicia sesión</a></p>
+      <p className={styles.formFooter}>¿Ya tienes cuenta? <a className={styles.inlineLink} href="/auth/login">Inicia sesión</a></p>
     </div>
   );
 }

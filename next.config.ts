@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
         destination: "/home",
         permanent: true,
       },
+      {
+        source: "/login",
+        destination: "/auth/login",
+        permanent: true,
+      },
+      {
+        source: "/activate-account",
+        destination: "/auth/activate-account",
+        permanent: true,
+      },
     ];
   },
 };
