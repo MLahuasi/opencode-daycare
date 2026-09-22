@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         destination: "/auth/activate-account",
         permanent: true,
       },
+      {
+        source: "/kids/:id/edit",
+        destination: "/kids/edit/:id",
+        permanent: true,
+      },
     ];
   },
 };

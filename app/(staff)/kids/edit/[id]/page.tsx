@@ -4,18 +4,18 @@ import { getKidById, getRooms, updateKidAction } from "@/app/features/kids/serve
 import { notFound } from "next/navigation";
 
 /**
- * Renders the Edit Kid route using the identifier carried by the shared dynamic segment.
+ * Renders the Edit Kid route using the kid identifier.
  *
  * @param props - Dynamic Edit route parameters.
- * @param props.params - Promise containing the kid identifier under the shared segment name.
+ * @param props.params - Promise containing the kid identifier.
  * @returns The populated kid form or the route's not-found boundary.
  */
 export default async function EditKidPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { slug: id } = await params;
+  const { id } = await params;
   const [kid, rooms] = await Promise.all([getKidById(id), getRooms()]);
 
   if (!kid) {

@@ -72,7 +72,7 @@ export default async function KidProfilePage({
             <KidProfileHeader
               age={age}
               avatarTone={avatarTone}
-              editHref={`/kids/${kid.id}/edit`}
+              editHref={`/kids/edit/${kid.id}`}
               kid={kid}
               roomName={roomName}
             />
