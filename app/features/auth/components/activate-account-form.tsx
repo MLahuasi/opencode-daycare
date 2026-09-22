@@ -1,9 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import type { FormEvent, SubmitEvent } from "react";
-import { useState } from "react";
+import type { SubmitEvent, SyntheticEvent } from "react";
+import { useActionState, useState } from "react";
 import { Button, CheckboxField, FormField } from "@/app/components/ui";
+import {
+  activateAccountAction,
+  type ActivationActionState,
+} from "../actions";
 import type {
   ActivationInvitationState,
   ActivationKidCardData,
@@ -24,6 +27,11 @@ const invitationMessages: Record<Exclude<ActivationInvitationState, "none" | "va
   accepted: "El código de invitación ya fue utilizado.",
 };
 
+const initialActionState: ActivationActionState = {
+  errors: {},
+  message: "",
+};
+
 /**
  * Renders the account activation form for an invitation projection.
  *
@@ -35,8 +43,11 @@ const invitationMessages: Record<Exclude<ActivationInvitationState, "none" | "va
  * @returns The account activation form.
  */
 export function ActivateAccountForm({ code, email, invitationState, kid }: ActivateAccountFormProps) {
-  const router = useRouter();
   const hasResolvedInvitation = invitationState === "valid";
+  const [actionState, formAction, isPending] = useActionState(
+    activateAccountAction,
+    initialActionState,
+  );
   const [validationErrors, setValidationErrors] = useState({
     confirmation: false,
     password: false,
@@ -45,16 +56,14 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isFormComplete, setIsFormComplete] = useState(false);
 
-  function handleInput(event: FormEvent<HTMLFormElement>) {
+  function handleInput(event: SyntheticEvent<HTMLFormElement>) {
     const formData = new FormData(event.currentTarget);
     const requiredFields = ["code", "email", "password", "passwordConfirmation"];
     setIsFormComplete(requiredFields.every((field) => String(formData.get(field) ?? "").length > 0));
   }
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
+    const formData = new FormData(event.currentTarget);
     const password = String(formData.get("password") ?? "");
     const confirmation = String(formData.get("passwordConfirmation") ?? "");
     const passwordIsInvalid = !isValidActivationPassword(password);
@@ -63,10 +72,6 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
       confirmation: confirmationIsInvalid,
       password: passwordIsInvalid,
     });
-
-    if (hasResolvedInvitation && !passwordIsInvalid && !confirmationIsInvalid) {
-      router.push("/familia-feed");
-    }
   }
 
   return (
@@ -84,59 +89,69 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
       {invitationState !== "none" && invitationState !== "valid" ? (
         <p className={styles.invitationError} role="alert">{invitationMessages[invitationState]}</p>
       ) : null}
+      {invitationState === "none" ? (
+        <p className={styles.invitationError} role="alert">Abre el enlace de invitación que recibiste para activar tu cuenta.</p>
+      ) : null}
 
-      <form onInput={handleInput} onSubmit={handleSubmit}>
+      <form action={formAction} onInput={handleInput} onSubmit={handleSubmit}>
         <FormField className={styles.field} label="CÓDIGO DE INVITACIÓN">
-          <input defaultValue={code} name="code" readOnly={hasResolvedInvitation} required />
+          <input defaultValue={code} disabled={!hasResolvedInvitation || isPending} name="code" readOnly={hasResolvedInvitation} required />
+          <span className={styles.validationError} hidden={!actionState.errors.code} role="alert">{actionState.errors.code}</span>
         </FormField>
         <FormField className={styles.field} label="EMAIL">
-          <input autoComplete="email" defaultValue={email} name="email" readOnly={hasResolvedInvitation} required type="email" />
+          <input autoComplete="email" defaultValue={email} disabled={!hasResolvedInvitation || isPending} name="email" readOnly={hasResolvedInvitation} required type="email" />
+          <span className={styles.validationError} hidden={!actionState.errors.email} role="alert">{actionState.errors.email}</span>
         </FormField>
         <FormField className={styles.field} label="CREAR CONTRASEÑA">
           <div className={styles.passwordInput}>
-            <input aria-describedby="passwordError" aria-invalid={validationErrors.password} autoComplete="new-password" name="password" required type={showPassword ? "text" : "password"} />
+            <input aria-describedby="passwordError" aria-invalid={validationErrors.password || Boolean(actionState.errors.password)} autoComplete="new-password" disabled={!hasResolvedInvitation || isPending} name="password" required type={showPassword ? "text" : "password"} />
             <PasswordVisibilityButton
+              disabled={!hasResolvedInvitation || isPending}
               label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
               onClick={() => setShowPassword((visible) => !visible)}
               pressed={showPassword}
             />
           </div>
           <span className={styles.fieldHint}>Usa al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.</span>
-          <span className={styles.validationError} hidden={!validationErrors.password} id="passwordError" role="alert">La contraseña no cumple la política requerida.</span>
+          <span className={styles.validationError} hidden={!validationErrors.password && !actionState.errors.password} id="passwordError" role="alert">{actionState.errors.password ?? "La contraseña no cumple la política requerida."}</span>
         </FormField>
         <FormField className={styles.field} label="CONFIRMAR CONTRASEÑA">
           <div className={styles.passwordInput}>
-            <input aria-describedby="confirmationError" aria-invalid={validationErrors.confirmation} autoComplete="new-password" name="passwordConfirmation" required type={showConfirmation ? "text" : "password"} />
+            <input aria-describedby="confirmationError" aria-invalid={validationErrors.confirmation || Boolean(actionState.errors.passwordConfirmation)} autoComplete="new-password" disabled={!hasResolvedInvitation || isPending} name="passwordConfirmation" required type={showConfirmation ? "text" : "password"} />
             <PasswordVisibilityButton
+              disabled={!hasResolvedInvitation || isPending}
               label={showConfirmation ? "Ocultar confirmación" : "Mostrar confirmación"}
               onClick={() => setShowConfirmation((visible) => !visible)}
               pressed={showConfirmation}
             />
           </div>
-          <span className={styles.validationError} hidden={!validationErrors.confirmation} id="confirmationError" role="alert">Las contraseñas no coinciden.</span>
+          <span className={styles.validationError} hidden={!validationErrors.confirmation && !actionState.errors.passwordConfirmation} id="confirmationError" role="alert">{actionState.errors.passwordConfirmation ?? "Las contraseñas no coinciden."}</span>
         </FormField>
         <CheckboxField
           className={styles.consentField}
           indicatorClassName={styles.consentBox}
+          disabled={!hasResolvedInvitation || isPending}
           label="Autorizo a la guardería a tomar y compartir fotos de mi hijo dentro de la app."
           name="photoSharingConsent"
         />
-        <Button className={styles.primaryButton} disabled={!isFormComplete} type="submit">Activar mi cuenta</Button>
+        <Button className={styles.primaryButton} disabled={!hasResolvedInvitation || !isFormComplete || isPending} type="submit">{isPending ? "Activando..." : "Activar mi cuenta"}</Button>
       </form>
+      {actionState.message ? <p className={styles.invitationError} role="alert">{actionState.message}</p> : null}
       <p className={styles.formFooter}>¿Ya tienes cuenta? <a className={styles.inlineLink} href="/auth/login">Inicia sesión</a></p>
     </div>
   );
 }
 
 type PasswordVisibilityButtonProps = {
+  disabled?: boolean;
   label: string;
   onClick: () => void;
   pressed: boolean;
 };
 
-function PasswordVisibilityButton({ label, onClick, pressed }: PasswordVisibilityButtonProps) {
+function PasswordVisibilityButton({ disabled = false, label, onClick, pressed }: PasswordVisibilityButtonProps) {
   return (
-    <button aria-label={label} aria-pressed={pressed} className={styles.passwordToggle} onClick={onClick} type="button">
+    <button aria-label={label} aria-pressed={pressed} className={styles.passwordToggle} disabled={disabled} onClick={onClick} type="button">
       <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">
         {pressed ? (
           <>
