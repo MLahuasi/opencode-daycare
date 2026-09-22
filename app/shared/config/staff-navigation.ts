@@ -22,7 +22,7 @@ export const staffNavigationConfig = {
   },
   logoutLabel: "Cerrar sesión",
   navigationItems: [
-    { label: "Feed", icon: "feed", href: "/", active: true },
+    { label: "Feed", icon: "feed", href: "/home", active: true },
     { label: "Niños", icon: "children", href: "/kids" },
     { label: "Avisos", icon: "alerts" },
     { label: "Mi cuenta", icon: "account" },
