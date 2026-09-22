@@ -8,7 +8,11 @@ export type JsonCollectionName =
   | "kids.json"
   | "people.json"
   | "rooms.json"
-  | "parent-kids.json";
+  | "parent-kids.json"
+  | "credential.json"
+  | "invitation.json"
+  | "feed.json"
+  | "feed-overview.json";
 
 const JSON_DATA_DIRECTORY = path.join(
   process.cwd(),
@@ -61,7 +65,10 @@ export async function writeCollection<T>(
     temporaryFileCreated = true;
 
     try {
-      await temporaryFile.writeFile(`${JSON.stringify(collection, null, 2)}\n`, "utf8");
+      await temporaryFile.writeFile(
+        `${JSON.stringify(collection, null, 2)}\n`,
+        "utf8",
+      );
       await temporaryFile.sync();
     } finally {
       await temporaryFile.close();

@@ -1,6 +1,6 @@
 import { StaffSidebar } from "@/app/components/layout";
-import { feedOverview, feedPosts } from "@/app/data/mocks";
 import { FeedContent } from "@/app/features/feed";
+import { getFeedOverview, getFeeds } from "@/app/features/feed/services";
 import { staffNavigationConfig } from "@/app/shared/config";
 
 /**
@@ -8,11 +8,13 @@ import { staffNavigationConfig } from "@/app/shared/config";
  *
  * @returns The responsive staff feed layout.
  */
-export default function Home() {
+export default async function Home() {
+  const feedOverview = await getFeedOverview();
+  const feedPosts = await getFeeds();
   return (
     <div className="flex min-h-screen bg-background">
       <StaffSidebar navigation={staffNavigationConfig} />
-      <FeedContent overview={feedOverview} posts={feedPosts} />
+      <FeedContent overview={feedOverview[0]} posts={feedPosts} />
     </div>
   );
 }
