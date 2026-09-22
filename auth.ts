@@ -1,5 +1,6 @@
 import { getServerSession, type NextAuthOptions, type Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import { getEnvironment } from "@/app/shared/config/server";
 import { readCollection } from "@/app/infrastructure";
 import type { Person } from "@/app/features/people";
@@ -18,9 +19,54 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize() {
-        // Credential lookup is connected in the login implementation step.
-        return null;
+      async authorize(credentials) {
+        const email =
+          typeof credentials?.email === "string"
+            ? credentials.email.trim().toLowerCase()
+            : "";
+        const password =
+          typeof credentials?.password === "string" ? credentials.password : "";
+
+        if (!email || !password) {
+          return null;
+        }
+
+        const [people, credentialsCollection] = await Promise.all([
+          readCollection<Person>("people.json"),
+          readCollection<{ personId: string; passwordHash: string }>(
+            "credential.json",
+          ),
+        ]);
+        const person = people.find(
+          (candidate) =>
+            candidate.email.toLowerCase() === email &&
+            candidate.status === "active",
+        );
+        const storedCredential = person
+          ? credentialsCollection.find(
+              (candidate) => candidate.personId === person.id,
+            )
+          : undefined;
+
+        if (!person || !storedCredential) {
+          return null;
+        }
+
+        try {
+          if (!(await bcrypt.compare(password, storedCredential.passwordHash))) {
+            return null;
+          }
+        } catch {
+          return null;
+        }
+
+        return {
+          id: person.id,
+          name: person.name,
+          email: person.email,
+          personId: person.id,
+          role: person.role,
+        };
       },
     }),
   ],
