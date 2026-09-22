@@ -1,6 +1,7 @@
 "use server";
 
 import { requireStaffSession } from "@/auth";
+import { redirect } from "next/navigation";
 import { sendParentInvitationEmail } from "@/app/infrastructure";
 import { getEnvironment } from "@/app/shared/config/server";
 import { validateLinkParentForm } from "../schemas";
@@ -106,8 +107,5 @@ export async function sendParentInvitationAction(
     new Date().toISOString(),
   );
 
-  return {
-    errors: {},
-    message: "",
-  };
+  redirect(`/kids/${kid.slug}?invitation=sent`);
 }
