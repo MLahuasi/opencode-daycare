@@ -2,8 +2,9 @@
 
 import { requireStaffSession } from "@/auth";
 import { getPeople } from "@/app/features/kids/server";
+import type { Person } from "@/app/features/people";
 import { validateLinkParentForm } from "../schemas";
-import { createPendingParent } from "../services";
+import { createPendingInvitation, createPendingParent } from "../services";
 import type { LinkParentActionState } from "./types";
 
 /**
@@ -46,15 +47,19 @@ export async function sendParentInvitationAction(
     };
   }
 
-  if (typeof formData.get("kidId") !== "string" || !formData.get("kidId")) {
+  const rawKidId = formData.get("kidId");
+
+  if (typeof rawKidId !== "string" || !rawKidId) {
     return {
       errors: {},
       message: "No pudimos identificar al niño. Inténtalo nuevamente.",
     };
   }
 
+  let parent: Person;
+
   try {
-    await createPendingParent({
+    parent = await createPendingParent({
       name: validation.data.name,
       email: validation.data.email,
     });
@@ -64,6 +69,19 @@ export async function sendParentInvitationAction(
         email: "Ya existe una persona registrada con este email.",
       },
       message: "Revisa los campos marcados.",
+    };
+  }
+
+  try {
+    await createPendingInvitation({
+      kidId: rawKidId,
+      personId: parent.id,
+      relationship: validation.data.relationship,
+    });
+  } catch {
+    return {
+      errors: {},
+      message: "No pudimos crear la invitación. Inténtalo nuevamente.",
     };
   }
 
