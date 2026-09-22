@@ -5,7 +5,11 @@ import { sendParentInvitationEmail } from "@/app/infrastructure";
 import { getPeople } from "@/app/features/kids/server";
 import { getEnvironment } from "@/app/shared/config/server";
 import { validateLinkParentForm } from "../schemas";
-import { createPendingParentInvitation, getLinkParentKid } from "../services";
+import {
+  createPendingParentInvitation,
+  getLinkParentKid,
+  markInvitationSent,
+} from "../services";
 import type { LinkParentActionState } from "./types";
 
 /**
@@ -94,6 +98,11 @@ export async function sendParentInvitationAction(
     parentName: parentInvitation.parent.name,
     recipientEmail: parentInvitation.parent.email,
   });
+
+  await markInvitationSent(
+    parentInvitation.invitation.id,
+    new Date().toISOString(),
+  );
 
   return {
     errors: {},

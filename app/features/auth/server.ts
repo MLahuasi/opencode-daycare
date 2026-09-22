@@ -5,6 +5,7 @@ export {
   createPendingParent,
   createPendingParentInvitation,
   getLinkParentKid,
+  markInvitationSent,
 } from "./services";
 export {
   createInvitationCode,

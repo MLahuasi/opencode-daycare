@@ -51,3 +51,35 @@ export function createPendingInvitation(values: {
     return invitation;
   });
 }
+
+/**
+ * Marks an invitation as sent after the mail provider accepts it.
+ *
+ * @param id - Stable invitation identifier to update.
+ * @param sentAt - ISO instant when the provider accepted the message.
+ * @returns The updated invitation, or `null` when it no longer exists.
+ */
+export function markInvitationSent(
+  id: string,
+  sentAt: string,
+): Promise<Invitation | null> {
+  return withWriteLock(async () => {
+    const invitations = await readCollection<Invitation>("invitation.json");
+    const invitationIndex = invitations.findIndex((invitation) => invitation.id === id);
+
+    if (invitationIndex === -1) {
+      return null;
+    }
+
+    const updatedInvitation: Invitation = {
+      ...invitations[invitationIndex],
+      sentAt,
+    };
+    const updatedInvitations = [...invitations];
+    updatedInvitations[invitationIndex] = updatedInvitation;
+
+    await writeCollection("invitation.json", updatedInvitations);
+
+    return updatedInvitation;
+  });
+}
