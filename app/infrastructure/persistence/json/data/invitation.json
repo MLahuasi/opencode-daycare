@@ -2,22 +2,31 @@
   {
     "id": "invitation-lucia-7k4p9",
     "personId": "parent-lucia-fernandez",
+    "kidId": "kid-mateo-fernandez",
+    "relationship": "mother",
     "code": "7K4P9",
     "expiresAt": "2026-12-31T23:59:59.000Z",
+    "sentAt": "2026-09-22T10:00:00.000Z",
     "acceptedAt": null
   },
   {
     "id": "invitation-carolina-expired",
     "personId": "parent-carolina-mendez",
+    "kidId": "kid-sofia-mendez",
+    "relationship": "mother",
     "code": "EXPIRED1",
     "expiresAt": "2026-01-31T23:59:59.000Z",
+    "sentAt": "2026-01-01T10:00:00.000Z",
     "acceptedAt": null
   },
   {
     "id": "invitation-mariana-accepted",
     "personId": "parent-mariana-ruiz",
+    "kidId": "kid-benjamin-ruiz",
+    "relationship": "mother",
     "code": "ACCEPTED1",
     "expiresAt": "2026-12-31T23:59:59.000Z",
+    "sentAt": "2026-08-01T10:00:00.000Z",
     "acceptedAt": "2026-08-15T14:30:00.000Z"
   }
 ]
