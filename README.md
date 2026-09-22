@@ -78,9 +78,14 @@ como `output: "standalone"`, debe incluir también la carpeta `templates/`.
 
 ## Rutas actuales
 
-- `/`: feed del personal de Sala Soles.
+- `/home`: feed del personal de Sala Soles.
+- `/`: redirect permanente a `/home`.
+- `/auth/login`: inicio de sesión.
+- `/auth/activate-account`: activación de cuenta; acepta `?code=<valor>`.
 - `/kids`: listado de ocho niños con búsqueda local y badges de alergias.
 - `/kids/[slug]`: perfil de un niño con información básica, notas médicas y padres vinculados.
+- `/kids/edit/[id]`: edición de un niño por ID.
+- `/login`, `/activate-account` y `/kids/:id/edit`: redirects permanentes a sus nuevas rutas.
 - `/kids/[slug]` con un slug desconocido: página 404 propia.
 
 ## Arquitectura
@@ -90,17 +95,25 @@ La aplicación sigue una organización **feature-first**:
 ```text
 open-daycare/
 ├── app/
-│   ├── components/ui/       Componentes visuales reutilizables
-│   ├── data/mocks/          Fixtures por dominio
+│   ├── (staff)/              Rutas de personal sin segmento público
+│   │   ├── home/             Feed en `/home`
+│   │   └── kids/             Listado, perfil y edición de Kids
+│   ├── auth/                 Rutas públicas de autenticación
+│   ├── components/           UI reutilizable y layout de aplicación
+│   │   ├── layout/            StaffSidebar y navegación
+│   │   └── ui/                Componentes visuales reutilizables
+│   ├── data/mocks/            Fixtures estáticos no editables
 │   ├── features/
-│   │   ├── feed/            Componentes y tipos del feed
-│   │   ├── kids/            Listado, perfiles y tipos de niños
-│   │   └── layout/          Sidebar y navegación
+│   │   ├── auth/              Componentes y contratos de Auth
+│   │   ├── family/            Relaciones familiares
+│   │   ├── feed/              Componentes y tipos del feed
+│   │   ├── kids/              Listado, perfiles y tipos de niños
+│   │   ├── people/            Personas
+│   │   └── rooms/             Salas
 │   ├── infrastructure/
-│   │   └── adapters/jmlq/   Integraciones server-only con paquetes JMLQ
-│   ├── shared/              Utilidades y configuración transversal
-│   ├── page.tsx             Ruta raíz
-│   └── kids/                Rutas de niños
+│   │   ├── adapters/jmlq/     Integraciones server-only con paquetes JMLQ
+│   │   └── persistence/json/  Adapter y datos JSON editables
+│   └── shared/                Utilidades y configuración transversal
 ├── templates/               Plantillas HTML requeridas en runtime
 ├── specs/                   Contratos funcionales versionados
 ├── .agents/skills/          Skills del flujo SDD
@@ -109,10 +122,13 @@ open-daycare/
 └── .playwright-mcp/         Evidencia de validaciones visuales
 ```
 
-Los modelos de dominio viven en `app/features/<domain>/types/`, los fixtures en
-`app/data/mocks/<domain>/` y las APIs públicas se exponen mediante archivos
-`index.ts`. Los componentes de cliente reciben DTOs mínimos proyectados por el
-servidor.
+Los modelos de dominio viven en `app/features/<domain>/types/`. Los fixtures
+estáticos viven en `app/data/mocks/` y sus APIs públicas se exponen mediante
+`index.ts`. Los cuatro JSON editables viven en
+`app/infrastructure/persistence/json/data/` y solo se acceden mediante el
+adapter server-only. Las features exponen barrels públicos; sus operaciones de
+servidor se consumen desde entradas `server` explícitas. Los componentes de
+cliente reciben DTOs mínimos proyectados por el servidor.
 
 ### Diagrama del laboratorio
 
@@ -124,11 +140,12 @@ flowchart TD
 
     APP --> ROUTES["Rutas en app/"]
     ROUTES --> UI["components/ui"]
-    ROUTES --> FEATURES["features/feed<br/>features/kids<br/>features/layout"]
+    ROUTES --> FEATURES["features/feed<br/>features/kids<br/>features/auth"]
     FEATURES --> MOCKS["data/mocks"]
     FEATURES --> SHARED[shared]
 
     APP --> INFRA["app/infrastructure<br/>server-only"]
+    INFRA --> JSON["persistence/json/data"]
     INFRA --> MAILER["sendParentInvitationEmail"]
     MAILER --> PACKAGE["@jmlq/mailer"]
     MAILER --> TEMPLATE["templates/<br/>parent-invitation.html"]
@@ -310,7 +327,7 @@ flowchart LR
     BARREL --> BUTTON[Button]
     BARREL --> LINK[LinkButton]
 
-    MOCK[staffSidebarMock] --> SIDEBAR[StaffSidebar]
+    CONFIG[staffNavigationConfig] --> SIDEBAR[StaffSidebar]
 
     BRAND -->|Identidad y sala| SIDEBAR
     AVATAR -->|Perfil del personal| SIDEBAR
@@ -322,8 +339,8 @@ flowchart LR
     SIDEBAR --> DESKTOP[Sidebar de escritorio]
     SIDEBAR --> MOBILE[Navegación inferior móvil]
 
-    HOME["app/page.tsx"] -->|activeSection: feed| SIDEBAR
-    KIDS["app/kids/layout.tsx"] -->|activeSection: children| SIDEBAR
+    HOME["app/(staff)/home/page.tsx"] -->|navigation config| SIDEBAR
+    KIDS["app/(staff)/kids/layout.tsx"] -->|activeSection: children| SIDEBAR
 ```
 
 Dentro de `NavigationControl`, `LinkButton` se usa cuando una opción tiene un

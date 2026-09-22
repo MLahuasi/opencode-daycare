@@ -30,7 +30,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Arquitectura
 
-- Usar feature-first: `app/components/ui` para UI genérica, `app/shared` para código transversal, `app/data/mocks` para fixtures y `app/features/<domain>` para cada dominio.
+- Usar feature-first: `app/components/ui` para UI genérica, `app/components/layout` para composición estructural, `app/shared` para código transversal, `app/data/mocks` para fixtures estáticos, `app/infrastructure` para persistencia e integraciones server-only y `app/features/<domain>` para cada dominio.
 - Una feature puede contener `components`, `types`, `schemas`, `actions`, `services` y `utils`.
 - Las features no dependen de internals de otras features. Exponer su API pública mediante `index.ts`.
 - `app/components/ui/index.ts` expone la API pública de los componentes reutilizables.
@@ -64,9 +64,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ### Datos y configuración
 
-- Todos los mocks y fixtures viven en `app/data/mocks/<domain>/`.
+- Los mocks y fixtures estáticos viven en `app/data/mocks/<domain>/`; los datos JSON editables viven exclusivamente en `app/infrastructure/persistence/json/data/`.
 - Cada dominio de mocks expone un `index.ts`; `app/data/mocks/index.ts` es la API pública raíz.
-- La aplicación y los tests consumen mocks desde `@/app/data/mocks`.
+- La aplicación y los tests consumen fixtures desde `@/app/data/mocks`; los servicios server-only consumen persistencia mediante `@/app/infrastructure/persistence`.
 - Los mocks importan sus contratos desde `app/features/<domain>/types/`.
 - No declarar ni duplicar tipos de dominio dentro de los archivos mock.
 - Los fixtures son deterministas: IDs, fechas, códigos y relaciones permanecen estables entre ejecuciones.
@@ -74,6 +74,15 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Los Client Components reciben solo los datos necesarios mediante props y no importan colecciones completas de fixtures.
 - Datos mock incluyen nombres, fechas, cantidades, publicaciones, etiquetas variables y opciones de navegación.
 - Configuración compartida usa constantes; configuración de entorno usa variables de entorno. Se permiten literales técnicos, SVG y copy propio de componentes genéricos.
+
+### Rutas e imports
+
+- Home y Kids viven bajo `app/(staff)/`; el grupo `(staff)` no aparece en sus URLs públicas.
+- Las rutas públicas de autenticación viven bajo `app/auth/`: `/auth/login` y `/auth/activate-account`.
+- Los redirects legacy se mantienen en `next.config.ts` como permanentes: `/`, `/login`, `/activate-account` y `/kids/:id/edit`.
+- Consumir `StaffSidebar` desde `@/app/components/layout` y la navegación desde `@/app/shared/config`.
+- Ningún Client Component importa `app/infrastructure`, una entrada `server`, `node:fs` ni configuración privada.
+- Los servicios de dominio no construyen rutas físicas ni importan `node:fs`; usan el adapter JSON server-only.
 
 ### Estilos
 
@@ -90,7 +99,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Antes de finalizar:
 
-- Confirmar que todos los fixtures están dentro de `app/data/mocks/`.
+- Confirmar que todos los fixtures estáticos están dentro de `app/data/mocks/` y que los JSON editables están dentro de `app/infrastructure/persistence/json/data/`.
 - Confirmar que mocks y componentes UI se consumen mediante sus barrels públicos.
 - Revisar que los modelos de dominio estén definidos en `app/features/<domain>/types/`.
 - Buscar colores literales fuera de `app/globals.css`.
