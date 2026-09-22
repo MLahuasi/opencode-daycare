@@ -119,11 +119,11 @@ export function getAuthSession() {
 }
 
 /**
- * Requires an active staff session and revalidates its persisted role.
+ * Requires an active session whose persisted person and role still match.
  *
- * @returns The active staff session.
+ * @returns The active session for a parent or staff member.
  */
-export async function requireStaffSession(): Promise<Session> {
+export async function requireActiveSession(): Promise<Session> {
   const session = await getAuthSession();
 
   if (!session?.user?.personId) {
@@ -137,7 +137,18 @@ export async function requireStaffSession(): Promise<Session> {
     redirect("/auth/login");
   }
 
-  if (person.role !== "personal") {
+  return session;
+}
+
+/**
+ * Requires an active staff session and revalidates its persisted role.
+ *
+ * @returns The active staff session.
+ */
+export async function requireStaffSession(): Promise<Session> {
+  const session = await requireActiveSession();
+
+  if (session.user.role !== "personal") {
     redirect("/home");
   }
 
