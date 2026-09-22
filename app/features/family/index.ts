@@ -1,3 +1,4 @@
+export { FamilyHeader } from "./components/family-header";
 export { FamilyFeedContent } from "./components/family-feed-content";
 
 /**
