@@ -4,6 +4,7 @@ export {
   createPendingInvitation,
   createPendingParent,
   createPendingParentInvitation,
+  ExistingPersonEmailError,
   getLinkParentKid,
   markInvitationSent,
 } from "./services";

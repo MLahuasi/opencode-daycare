@@ -10,7 +10,16 @@ import {
 } from "@/app/infrastructure/persistence";
 import type { ParentRelationship } from "@/app/features/family";
 import { createInvitationCode, getInvitationExpiration } from "../utils/invitation-code";
+import { isInvitationExpired } from "../utils/invitation";
 import type { Invitation } from "../types";
+
+/** Error raised when an email cannot be reused for a parent invitation. */
+export class ExistingPersonEmailError extends Error {
+  constructor() {
+    super("A person with this email already exists.");
+    this.name = "ExistingPersonEmailError";
+  }
+}
 
 /**
  * Creates and persists a pending parent person.
@@ -29,7 +38,7 @@ export function createPendingParent(values: Pick<Person, "name" | "email">): Pro
     );
 
     if (emailAlreadyExists) {
-      throw new Error("A person with this email already exists.");
+      throw new ExistingPersonEmailError();
     }
 
     const parent: Person = {
@@ -67,12 +76,43 @@ export function createPendingParentInvitation(values: {
       readCollection<Person>("people.json"),
       readCollection<Invitation>("invitation.json"),
     ]);
-    const emailAlreadyExists = people.some(
+    const existingPerson = people.find(
       (person) => person.email.trim().toLowerCase() === values.email,
     );
 
-    if (emailAlreadyExists) {
-      throw new Error("A person with this email already exists.");
+    if (existingPerson) {
+      const existingInvitation = invitations.find(
+        (invitation) =>
+          invitation.personId === existingPerson.id &&
+          invitation.kidId === values.kidId &&
+          invitation.acceptedAt === null,
+      );
+
+      if (
+        existingPerson.role !== "parent" ||
+        existingPerson.status !== "pending" ||
+        !existingInvitation
+      ) {
+        throw new ExistingPersonEmailError();
+      }
+
+      if (!isInvitationExpired(existingInvitation) && existingInvitation.sentAt === null) {
+        return { parent: existingPerson, invitation: existingInvitation };
+      }
+
+      const updatedInvitation: Invitation = {
+        ...existingInvitation,
+        code: createInvitationCode(invitations.map((candidate) => candidate.code)),
+        expiresAt: getInvitationExpiration(),
+        sentAt: null,
+      };
+      const updatedInvitations = invitations.map((invitation) =>
+        invitation.id === updatedInvitation.id ? updatedInvitation : invitation,
+      );
+
+      await writeCollection("invitation.json", updatedInvitations);
+
+      return { parent: existingPerson, invitation: updatedInvitation };
     }
 
     const parent: Person = {

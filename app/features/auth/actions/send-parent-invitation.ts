@@ -2,11 +2,11 @@
 
 import { requireStaffSession } from "@/auth";
 import { sendParentInvitationEmail } from "@/app/infrastructure";
-import { getPeople } from "@/app/features/kids/server";
 import { getEnvironment } from "@/app/shared/config/server";
 import { validateLinkParentForm } from "../schemas";
 import {
   createPendingParentInvitation,
+  ExistingPersonEmailError,
   getLinkParentKid,
   markInvitationSent,
 } from "../services";
@@ -38,20 +38,6 @@ export async function sendParentInvitationAction(
     };
   }
 
-  const people = await getPeople();
-  const emailAlreadyExists = people.some(
-    (person) => person.email.trim().toLowerCase() === validation.data.email,
-  );
-
-  if (emailAlreadyExists) {
-    return {
-      errors: {
-        email: "Ya existe una persona registrada con este email.",
-      },
-      message: "Revisa los campos marcados.",
-    };
-  }
-
   const rawKidId = formData.get("kidId");
 
   if (typeof rawKidId !== "string" || !rawKidId) {
@@ -80,7 +66,16 @@ export async function sendParentInvitationAction(
       kidId: rawKidId,
       relationship: validation.data.relationship,
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof ExistingPersonEmailError) {
+      return {
+        errors: {
+          email: "Ya existe una persona registrada con este email.",
+        },
+        message: "Revisa los campos marcados.",
+      };
+    }
+
     return {
       errors: {},
       message: "No pudimos crear la invitación. Inténtalo nuevamente.",

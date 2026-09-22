@@ -7,4 +7,5 @@ export { getLinkParentKid } from "./link-parent-service";
 export {
   createPendingParent,
   createPendingParentInvitation,
+  ExistingPersonEmailError,
 } from "./parent-service";
