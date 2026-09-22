@@ -4,6 +4,7 @@ export type {
   ActivationKidCardData,
   Credential,
   Invitation,
+  LinkParentKid,
 } from "./types";
 export {
   ACTIVATION_PASSWORD_PATTERN,
