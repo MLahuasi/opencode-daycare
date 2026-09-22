@@ -10,7 +10,9 @@
     "recipient": "familia de Mateo",
     "body": "¡Usó el orinal solito por primera vez! Estaba feliz de contárselo a todos. Un gran paso.",
     "reactions": 3,
-    "comments": 1
+    "comments": 1,
+    "kidId": "kid-mateo-fernandez",
+    "roomId": null
   },
   {
     "id": "mateo-tempera-painting",
@@ -24,7 +26,9 @@
     "body": "Pintamos con témperas esta mañana. Mateo eligió el azul para todo y se concentró un montón mezclando colores.",
     "reactions": 5,
     "comments": 2,
-    "hasMedia": true
+    "hasMedia": true,
+    "kidId": "kid-mateo-fernandez",
+    "roomId": null
   },
   {
     "id": "friday-park-announcement",
@@ -36,6 +40,8 @@
     "recipient": "toda la sala",
     "body": "El viernes salimos al parque por la mañana. Recuerden mandar gorra y una botellita de agua.",
     "reactions": 8,
-    "comments": 0
+    "comments": 0,
+    "kidId": null,
+    "roomId": "room-soles"
   }
 ]
