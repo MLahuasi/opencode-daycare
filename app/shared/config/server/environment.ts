@@ -4,6 +4,16 @@ import path from "node:path";
 import env from "env-var";
 
 type Environment = {
+  auth: {
+    AUTH_SECRET: string;
+    AUTH_SESSION_MAX_AGE_SECONDS: number;
+    AUTH_SESSION_COOKIE_NAME: string;
+    AUTH_SESSION_COOKIE_HTTP_ONLY: boolean;
+    AUTH_SESSION_COOKIE_SECURE: boolean;
+    AUTH_SESSION_COOKIE_SAME_SITE: "lax" | "strict" | "none";
+    AUTH_SESSION_COOKIE_PATH: string;
+    AUTH_SIGN_IN_PATH: string;
+  };
   mailer: {
     MAILER_EMAIL: string;
     MAILER_SECRET_KEY: string;
@@ -38,6 +48,14 @@ function readPositivePort(): number {
   return port;
 }
 
+function readPositiveInteger(name: string): number {
+  return env.get(name).required().asIntPositive();
+}
+
+function readBoolean(name: string): boolean {
+  return env.get(name).required().asEnum(["true", "false"]) === "true";
+}
+
 /**
  * Reads, validates, and caches the application's server-side environment.
  * Add new typed sections here as infrastructure requirements grow.
@@ -55,6 +73,25 @@ export function getEnvironment(): Environment {
     .asEnum(["true", "false"]);
 
   const environment: Environment = {
+    auth: {
+      AUTH_SECRET: readRequiredString("AUTH_SECRET"),
+      AUTH_SESSION_MAX_AGE_SECONDS: readPositiveInteger(
+        "AUTH_SESSION_MAX_AGE_SECONDS",
+      ),
+      AUTH_SESSION_COOKIE_NAME: readRequiredString(
+        "AUTH_SESSION_COOKIE_NAME",
+      ),
+      AUTH_SESSION_COOKIE_HTTP_ONLY: readBoolean(
+        "AUTH_SESSION_COOKIE_HTTP_ONLY",
+      ),
+      AUTH_SESSION_COOKIE_SECURE: readBoolean("AUTH_SESSION_COOKIE_SECURE"),
+      AUTH_SESSION_COOKIE_SAME_SITE: env
+        .get("AUTH_SESSION_COOKIE_SAME_SITE")
+        .required()
+        .asEnum(["lax", "strict", "none"]),
+      AUTH_SESSION_COOKIE_PATH: readRequiredString("AUTH_SESSION_COOKIE_PATH"),
+      AUTH_SIGN_IN_PATH: readRequiredString("AUTH_SIGN_IN_PATH"),
+    },
     mailer: {
       MAILER_EMAIL: readRequiredString("MAILER_EMAIL"),
       MAILER_SECRET_KEY: readRequiredString("MAILER_SECRET_KEY"),
