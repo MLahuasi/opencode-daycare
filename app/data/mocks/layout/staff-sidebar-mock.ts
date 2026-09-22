@@ -1,1 +1,0 @@
-export { staffNavigationConfig as staffSidebarMock } from "@/app/shared/config";
