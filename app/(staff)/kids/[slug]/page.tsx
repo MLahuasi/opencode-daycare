@@ -6,6 +6,7 @@ import {
   KidParents,
   KidProfileActions,
   KidProfileHeader,
+  kidProfileStyles as styles,
 } from "@/app/features/kids";
 import {
   getKidRoom,
@@ -14,7 +15,6 @@ import {
 } from "@/app/features/kids/server";
 import { getTodayIsoDate } from "@/app/shared";
 import { notFound } from "next/navigation";
-import styles from "@/app/features/kids/components/kid-profile.module.css";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
 

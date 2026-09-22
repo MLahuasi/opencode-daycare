@@ -1,7 +1,10 @@
+/** Icon and section identifiers supported by staff navigation. */
 export type StaffNavigationIcon = "feed" | "children" | "alerts" | "account";
 
+/** Active navigation section identifier. */
 export type StaffNavigationSection = StaffNavigationIcon;
 
+/** A navigable or presentational staff navigation item. */
 export type StaffNavigationItem = {
   label: string;
   icon: StaffNavigationIcon;

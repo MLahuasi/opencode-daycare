@@ -1,5 +1,5 @@
 import { LinkButton } from "@/app/components/ui";
-import styles from "@/app/features/kids/components/kid-profile.module.css";
+import { kidProfileStyles as styles } from "@/app/features/kids";
 
 /**
  * Renders the accessible not-found state for an unknown kid profile slug.

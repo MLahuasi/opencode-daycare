@@ -2,13 +2,13 @@ import {
   calculateAge,
   KidsFilter,
   KidsHeader,
+  kidsListStyles as styles,
 } from "@/app/features/kids";
 import type { Kid, KidListItem } from "@/app/features/kids";
 import type { ParentKid } from "@/app/features/family";
 import type { Room } from "@/app/features/rooms";
 import { getKids, getParentKids, getRooms } from "@/app/features/kids/server";
 import { getTodayIsoDate, parseCommaSeparatedTags } from "@/app/shared";
-import styles from "@/app/features/kids/components/kids-list.module.css";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
 

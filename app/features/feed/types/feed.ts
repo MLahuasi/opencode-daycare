@@ -1,3 +1,4 @@
+/** Allowed presentation categories for a feed post. */
 export type PostType = "achievement" | "activity" | "announcement";
 
 /** Static copy projected by the staff room header and composer. */
@@ -10,6 +11,7 @@ export type FeedOverview = {
   publishedTodayLabel: string;
 };
 
+/** Persisted and projected content rendered by a feed post card. */
 export type FeedPost = {
   id: string;
   type: PostType;
