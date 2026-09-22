@@ -86,7 +86,7 @@ export default async function ActivateAccountPage({
   const resolution = await resolveActivation(code);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--color-page)] p-10 max-sm:p-6">
+    <main className="flex min-h-screen items-center justify-center bg-background p-10 max-sm:p-6">
       <ActivateAccountForm {...resolution} />
     </main>
   );

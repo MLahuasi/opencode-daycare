@@ -11,7 +11,7 @@ import type { ReactNode } from "react";
  */
 export default function KidsLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-[var(--color-page)]">
+    <div className="flex min-h-screen bg-background">
       <StaffSidebar activeSection="children" navigation={staffNavigationConfig} />
       <div className="min-w-0 flex-1 pb-20 md:pb-0">{children}</div>
     </div>

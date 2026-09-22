@@ -10,7 +10,7 @@ import { staffNavigationConfig } from "@/app/shared/config";
  */
 export default function Home() {
   return (
-    <div className="flex min-h-screen bg-[var(--color-page)]">
+    <div className="flex min-h-screen bg-background">
       <StaffSidebar navigation={staffNavigationConfig} />
       <FeedContent overview={feedOverview} posts={feedPosts} />
     </div>
