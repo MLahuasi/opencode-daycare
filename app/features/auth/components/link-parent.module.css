@@ -1,0 +1,253 @@
+.page {
+  display: flex;
+  min-height: 100vh;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-form-card);
+  box-shadow: var(--shadow-form-card);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 26px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.header p {
+  margin: 2px 0 0;
+  color: var(--color-subtle);
+  font-size: 13px;
+}
+
+.closeButton {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  padding: 0;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--color-card-divider);
+}
+
+.closeButton:hover {
+  background: var(--color-ghost-active);
+}
+
+.closeButton svg,
+.infoPanel svg,
+.submitButton svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.body {
+  padding: 22px 26px;
+}
+
+.infoPanel {
+  display: flex;
+  gap: 11px;
+  margin-bottom: 20px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  background: var(--color-announcement-background);
+  color: var(--color-announcement);
+}
+
+.infoPanel svg {
+  flex: none;
+  margin-top: 1px;
+}
+
+.infoPanel p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.field > span,
+.relationshipField legend,
+.codePanel > span {
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+}
+
+.field input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.field input:focus-visible,
+.relationshipOption:has(input:focus-visible) {
+  outline: 3px solid var(--color-auth-focus);
+  outline-offset: 2px;
+}
+
+.field input[aria-invalid="true"] {
+  border-color: var(--color-auth-error);
+}
+
+.relationshipField {
+  margin: 0 0 20px;
+  padding: 0;
+  border: 0;
+}
+
+.relationshipField legend {
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.relationshipOptions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.relationshipOption {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 9px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-navigation);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.relationshipOption:hover {
+  border-color: var(--color-coral-light);
+}
+
+.relationshipOptionSelected {
+  border-color: var(--color-auth-focus);
+  background: var(--color-announcement-background);
+  color: var(--color-announcement);
+}
+
+.relationshipOption input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.validationError,
+.formMessage {
+  color: var(--color-auth-error);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.validationError {
+  margin-top: -2px;
+}
+
+.formMessage {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--color-auth-error-background);
+}
+
+.codePanel {
+  margin-bottom: 20px;
+  padding: 18px;
+  border: 1.5px dashed var(--color-auth-consent-text);
+  border-radius: 16px;
+  background: var(--color-auth-consent-background);
+  text-align: center;
+}
+
+.codePanel > span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-auth-consent-text);
+}
+
+.codePanel strong {
+  display: block;
+  color: var(--color-auth-consent-text);
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 7px;
+}
+
+.codePanel p {
+  margin: 6px 0 0;
+  color: var(--color-auth-consent-text);
+  font-size: 13px;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 14px;
+  font-size: 15.5px;
+}
+
+@media (max-width: 520px) {
+  .page {
+    padding: 20px 12px;
+  }
+
+  .header,
+  .body {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .relationshipOptions {
+    grid-template-columns: 1fr;
+  }
+}

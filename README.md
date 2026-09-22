@@ -6,8 +6,8 @@ asistido por agentes, MCPs y **Spec Driven Development (SDD)**.
 
 La aplicación se construye a partir de especificaciones versionadas, skills
 reutilizables y validaciones realizadas por agentes. La interfaz actual incluye
-un feed de personal, el listado de niños y sus perfiles, usando datos mock
-tipados.
+un feed de personal, el listado de niños y sus perfiles, la vinculación de
+padres mediante invitaciones y datos persistidos en JSON tipados.
 
 ## Stack
 
@@ -50,6 +50,8 @@ Define la configuración SMTP en un archivo local ignorado por Git, por ejemplo
 `.env.local`, usando `.env.template` como referencia:
 
 ```dotenv
+APP_URL=http://localhost:3000
+
 MAILER_EMAIL=example@gmail.com
 MAILER_SECRET_KEY=app_password_here
 MAILER_FROM=example@gmail.com
@@ -65,6 +67,8 @@ MAIL_TEMPLATE_EXTENSION=html
 `MAIL_PORT` debe ser un entero positivo y `MAIL_SECURE` acepta únicamente
 `true` o `false`. `MAIL_TEMPLATE_PATH` se resuelve desde el directorio de trabajo
 del proyecto; por tanto, `templates` apunta a la carpeta raíz `templates/`.
+`APP_URL` debe ser un origen absoluto HTTP o HTTPS y se utiliza para construir
+los enlaces de activación sin depender de cabeceras de petición.
 
 Las variables del mailer se validan al solicitarlo por primera vez. Las variables
 de autenticación se validan al cargar la configuración de NextAuth, por lo que
@@ -82,12 +86,29 @@ como `output: "standalone"`, debe incluir también la carpeta `templates/`.
 - `/`: redirect permanente a `/home`.
 - `/auth/login`: inicio de sesión.
 - `/auth/activate-account`: activación de cuenta; acepta `?code=<valor>`.
+- `/auth/link-parent?kidId=<id>`: formulario protegido para invitar a otro padre
+  desde un perfil de niño.
 - `/api/auth/[...nextauth]`: Route Handler de NextAuth v4 para credenciales y sesiones JWT.
 - `/kids`: listado de ocho niños con búsqueda local y badges de alergias.
 - `/kids/[slug]`: perfil de un niño con información básica, notas médicas y padres vinculados.
 - `/kids/edit/[id]`: edición de un niño por ID.
 - `/login`, `/activate-account` y `/kids/:id/edit`: redirects permanentes a sus nuevas rutas.
 - `/kids/[slug]` con un slug desconocido: página 404 propia.
+
+### Invitaciones de padres
+
+El personal con rol `personal` puede crear invitaciones desde “Vincular otro
+padre” en `/kids/[slug]`. El servidor valida nombre, email y parentesco, genera
+un código criptográficamente aleatorio de ocho caracteres sin símbolos ambiguos
+y fija un vencimiento de siete días. La persona se crea como `parent/pending` y
+la invitación se persiste bajo transacción JSON antes de contactar al mailer;
+no se crea `ParentKid` durante este flujo.
+
+Los fallos SMTP conservan los registros pendientes y muestran un error
+recuperable. Un reintento de una invitación pendiente sin envío confirmado
+reutiliza el código vigente o rota código y vencimiento si ya expiró. Los
+envíos exitosos actualizan `sentAt` y redirigen al perfil con
+`?invitation=sent`. Los padres autenticados son redirigidos a `/home`.
 
 ## Autenticación
 
@@ -193,7 +214,7 @@ flowchart TD
     MAILER --> PACKAGE["@jmlq/mailer"]
     MAILER --> TEMPLATE["templates/<br/>parent-invitation.html"]
     PACKAGE --> SMTP["Servidor SMTP"]
-    KIDS["features/kids"] -. "Integración futura<br/>no implementada" .-> MAILER
+    AUTH["features/auth<br/>parent invitations"] --> MAILER
 
     U --> SPEC["/spec"]
     SPEC --> FILE["specs/NN-slug.md"]
@@ -219,8 +240,9 @@ Las specs se almacenan en `specs/` con el formato `NN-slug.md`. Sus estados son:
 1. `Draft`: definición inicial.
 2. `In review`: revisión del contenido.
 3. `Approved`: lista para implementación.
-4. `Implemented`: implementación y aceptación completadas.
-5. `Obsolete`: reemplazada o descartada.
+4. `Implement`: implementación realizada y aceptación en validación.
+5. `Implemented`: implementación y aceptación completadas.
+6. `Obsolete`: reemplazada o descartada.
 
 Specs existentes:
 
@@ -232,7 +254,7 @@ Specs existentes:
 | `04-kid-allergy-tags.md` | `Implemented` | Badges de alergias y proyección segura |
 | `05-account-activation-and-login.md` | `Approved` | Login, activación y modelos de identidad |
 | `09-account-activation-session-and-login.md` | `Implemented` | Activación persistente, NextAuth v4, login, logout y autorización por rol |
-| `10-parent-linking-and-invitation.md` | `Draft` | Vinculación de padres e invitaciones |
+| `10-parent-linking-and-invitation.md` | `Implement` | Vinculación de padres e invitaciones; aceptación validada salvo prueba SMTP real |
 | `11-family-home-feed.md` | `Draft` | Feed familiar filtrado en Home |
 
 ## Flujo Spec Driven Development

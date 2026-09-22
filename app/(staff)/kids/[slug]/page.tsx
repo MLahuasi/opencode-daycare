@@ -39,12 +39,19 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
  */
 export default async function KidProfilePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ invitation?: string | string[] }>;
 }) {
   await requireStaffSession();
 
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const rawInvitation = resolvedSearchParams.invitation;
+  const invitationStatus = Array.isArray(rawInvitation)
+    ? rawInvitation[0]
+    : rawInvitation;
   const kids = await getKids();
   const kidIndex = kids.findIndex((candidate) => candidate.slug === slug);
   const kid = kids[kidIndex];
@@ -70,6 +77,11 @@ export default async function KidProfilePage({
           </svg>
           Volver a Niños
         </LinkButton>
+        {invitationStatus === "sent" ? (
+          <p className={styles.invitationSuccess} role="status">
+            La invitación fue enviada correctamente. El padre o la madre recibirá un correo para activar su cuenta.
+          </p>
+        ) : null}
         <div className={styles.profileColumns}>
           <div className={styles.profileMainColumn}>
             <KidProfileHeader
@@ -84,7 +96,7 @@ export default async function KidProfilePage({
           </div>
           <div className={styles.profileSideColumn}>
             <KidProfileActions />
-            <KidParents parents={linkedParents} />
+            <KidParents kidId={kid.id} parents={linkedParents} />
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import path from "node:path";
 import env from "env-var";
 
 type Environment = {
+  APP_URL: string;
   auth: {
     AUTH_SECRET: string;
     AUTH_SESSION_MAX_AGE_SECONDS: number;
@@ -36,6 +37,23 @@ function readRequiredString(name: string): string {
   }
 
   return value;
+}
+
+function readAppUrl(): string {
+  const value = readRequiredString("APP_URL");
+  let parsedUrl: URL;
+
+  try {
+    parsedUrl = new URL(value);
+  } catch {
+    throw new Error("[environment] APP_URL must be a valid URL");
+  }
+
+  if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+    throw new Error("[environment] APP_URL must use HTTP or HTTPS");
+  }
+
+  return parsedUrl.toString().replace(/\/$/, "");
 }
 
 function readPositivePort(): number {
@@ -73,6 +91,7 @@ export function getEnvironment(): Environment {
     .asEnum(["true", "false"]);
 
   const environment: Environment = {
+    APP_URL: readAppUrl(),
     auth: {
       AUTH_SECRET: readRequiredString("AUTH_SECRET"),
       AUTH_SESSION_MAX_AGE_SECONDS: readPositiveInteger(

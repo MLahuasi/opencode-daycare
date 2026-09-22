@@ -4,3 +4,4 @@ export type {
 } from "./activation";
 export type { Credential } from "./credential";
 export type { Invitation } from "./invitation";
+export type { LinkParentKid } from "./link-parent";
