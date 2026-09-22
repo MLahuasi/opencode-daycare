@@ -10,14 +10,13 @@ export type JsonCollectionName =
   | "rooms.json"
   | "parent-kids.json";
 
-// The editable JSON collections still live with the mocks until their data
-// directory move lands (spec step 17); this path is updated together with it.
 const JSON_DATA_DIRECTORY = path.join(
   process.cwd(),
   "app",
+  "infrastructure",
+  "persistence",
+  "json",
   "data",
-  "mocks",
-  "kids",
 );
 
 let jsonWriteQueue: Promise<void> = Promise.resolve();
