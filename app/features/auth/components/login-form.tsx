@@ -10,9 +10,11 @@ import styles from "./auth.module.css";
 /**
  * Renders the login form and navigates to the staff home after native validation.
  *
+ * @param props - Login state projected from the route.
+ * @param props.activated - Whether the account was just activated.
  * @returns The login form.
  */
-export function LoginForm() {
+export function LoginForm({ activated = false }: { activated?: boolean }) {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -42,6 +44,7 @@ export function LoginForm() {
     <div className={styles.formContent}>
       <h2>Iniciar sesión</h2>
       <p className={styles.formIntro}>Ingresa para ver el día de hoy.</p>
+      {activated ? <p className={styles.activationSuccess} role="status">Tu cuenta fue activada. Ya puedes iniciar sesión.</p> : null}
       {errorMessage ? <p className={styles.invitationError} role="alert">{errorMessage}</p> : null}
       <form onSubmit={handleSubmit}>
         <FormField className={styles.field} label="EMAIL">
