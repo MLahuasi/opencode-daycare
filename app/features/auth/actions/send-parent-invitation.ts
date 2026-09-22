@@ -1,6 +1,7 @@
 "use server";
 
 import { requireStaffSession } from "@/auth";
+import { getPeople } from "@/app/features/kids/server";
 import { validateLinkParentForm } from "../schemas";
 import type { LinkParentActionState } from "./types";
 
@@ -27,6 +28,20 @@ export async function sendParentInvitationAction(
     return {
       errors: validation.errors,
       message: "",
+    };
+  }
+
+  const people = await getPeople();
+  const emailAlreadyExists = people.some(
+    (person) => person.email.trim().toLowerCase() === validation.data.email,
+  );
+
+  if (emailAlreadyExists) {
+    return {
+      errors: {
+        email: "Ya existe una persona registrada con este email.",
+      },
+      message: "Revisa los campos marcados.",
     };
   }
 
