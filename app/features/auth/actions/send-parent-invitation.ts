@@ -3,6 +3,7 @@
 import { requireStaffSession } from "@/auth";
 import { getPeople } from "@/app/features/kids/server";
 import { validateLinkParentForm } from "../schemas";
+import { createPendingParent } from "../services";
 import type { LinkParentActionState } from "./types";
 
 /**
@@ -49,6 +50,20 @@ export async function sendParentInvitationAction(
     return {
       errors: {},
       message: "No pudimos identificar al niño. Inténtalo nuevamente.",
+    };
+  }
+
+  try {
+    await createPendingParent({
+      name: validation.data.name,
+      email: validation.data.email,
+    });
+  } catch {
+    return {
+      errors: {
+        email: "Ya existe una persona registrada con este email.",
+      },
+      message: "Revisa los campos marcados.",
     };
   }
 

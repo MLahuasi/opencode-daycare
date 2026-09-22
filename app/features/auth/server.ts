@@ -1,6 +1,6 @@
 import "server-only";
 
-export { getLinkParentKid } from "./services";
+export { createPendingParent, getLinkParentKid } from "./services";
 export {
   createInvitationCode,
   getInvitationExpiration,
