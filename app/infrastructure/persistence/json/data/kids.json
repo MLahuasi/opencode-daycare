@@ -97,5 +97,27 @@
     "medicalNotes": "Tienes alergia al mani, camarones y gluten, debe tomar un antiestaminico una vez al dia despues del almuerzo",
     "enrollmentDate": "2026-09-18",
     "status": "active"
+  },
+  {
+    "id": "a8728bae-1aba-41c4-a50d-cc3cc192548b",
+    "slug": "chewbacca-lahuasi",
+    "name": "Chewbacca Lahuasi",
+    "birthDate": "2017-08-15",
+    "roomId": "room-soles",
+    "allergies": "gluten, pollo",
+    "medicalNotes": "Comida hipoalergenica",
+    "enrollmentDate": "2026-09-23",
+    "status": "active"
+  },
+  {
+    "id": "e73240ec-9849-4060-8b75-79a1a1e917dc",
+    "slug": "leia-lahuasi",
+    "name": "Leia Lahuasi",
+    "birthDate": "2026-08-15",
+    "roomId": "room-soles",
+    "allergies": "",
+    "medicalNotes": "",
+    "enrollmentDate": "2026-09-23",
+    "status": "active"
   }
 ]

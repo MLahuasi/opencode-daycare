@@ -17,6 +17,7 @@ import styles from "./auth.module.css";
 type ActivateAccountFormProps = {
   code: string;
   email: string;
+  existingActiveParent: boolean;
   invitationState: ActivationInvitationState;
   kid: ActivationKidCardData | null;
 };
@@ -42,7 +43,7 @@ const initialActionState: ActivationActionState = {
  * @param props.kid - Optional child summary associated with the invitation.
  * @returns The account activation form.
  */
-export function ActivateAccountForm({ code, email, invitationState, kid }: ActivateAccountFormProps) {
+export function ActivateAccountForm({ code, email, existingActiveParent, invitationState, kid }: ActivateAccountFormProps) {
   const hasResolvedInvitation = invitationState === "valid";
   const [actionState, formAction, isPending] = useActionState(
     activateAccountAction,
@@ -58,7 +59,10 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
 
   function handleInput(event: SyntheticEvent<HTMLFormElement>) {
     const formData = new FormData(event.currentTarget);
-    const requiredFields = ["code", "email", "password", "passwordConfirmation"];
+    const requiredFields = ["code", "email"];
+    if (!existingActiveParent) {
+      requiredFields.push("password", "passwordConfirmation");
+    }
     setIsFormComplete(requiredFields.every((field) => String(formData.get(field) ?? "").length > 0));
   }
 
@@ -66,8 +70,8 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
     const formData = new FormData(event.currentTarget);
     const password = String(formData.get("password") ?? "");
     const confirmation = String(formData.get("passwordConfirmation") ?? "");
-    const passwordIsInvalid = !isValidActivationPassword(password);
-    const confirmationIsInvalid = password !== confirmation;
+    const passwordIsInvalid = !existingActiveParent && !isValidActivationPassword(password);
+    const confirmationIsInvalid = !existingActiveParent && password !== confirmation;
     setValidationErrors({
       confirmation: confirmationIsInvalid,
       password: passwordIsInvalid,
@@ -83,7 +87,7 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
         </svg>
       </div>
       <h1>Bienvenida a OpenDayCare</h1>
-      <p className={styles.activationIntro}>Te invitaron a seguir el día de tu hijo. Crea tu contraseña para activar la cuenta.</p>
+      <p className={styles.activationIntro}>{existingActiveParent ? "Confirma la nueva vinculación familiar para ver a tu hijo en tu cuenta." : "Te invitaron a seguir el día de tu hijo. Crea tu contraseña para activar la cuenta."}</p>
 
       {kid ? <ActivationKidCard kid={kid} /> : null}
       {invitationState !== "none" && invitationState !== "valid" ? (
@@ -102,7 +106,7 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
           <input autoComplete="email" defaultValue={email} disabled={!hasResolvedInvitation || isPending} name="email" readOnly={hasResolvedInvitation} required type="email" />
           <span className={styles.validationError} hidden={!actionState.errors.email} role="alert">{actionState.errors.email}</span>
         </FormField>
-        <FormField className={styles.field} label="CREAR CONTRASEÑA">
+        {!existingActiveParent ? <FormField className={styles.field} label="CREAR CONTRASEÑA">
           <div className={styles.passwordInput}>
             <input aria-describedby="passwordError" aria-invalid={validationErrors.password || Boolean(actionState.errors.password)} autoComplete="new-password" disabled={!hasResolvedInvitation || isPending} name="password" required type={showPassword ? "text" : "password"} />
             <PasswordVisibilityButton
@@ -114,8 +118,8 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
           </div>
           <span className={styles.fieldHint}>Usa al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.</span>
           <span className={styles.validationError} hidden={!validationErrors.password && !actionState.errors.password} id="passwordError" role="alert">{actionState.errors.password ?? "La contraseña no cumple la política requerida."}</span>
-        </FormField>
-        <FormField className={styles.field} label="CONFIRMAR CONTRASEÑA">
+        </FormField> : null}
+        {!existingActiveParent ? <FormField className={styles.field} label="CONFIRMAR CONTRASEÑA">
           <div className={styles.passwordInput}>
             <input aria-describedby="confirmationError" aria-invalid={validationErrors.confirmation || Boolean(actionState.errors.passwordConfirmation)} autoComplete="new-password" disabled={!hasResolvedInvitation || isPending} name="passwordConfirmation" required type={showConfirmation ? "text" : "password"} />
             <PasswordVisibilityButton
@@ -126,7 +130,7 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
             />
           </div>
           <span className={styles.validationError} hidden={!validationErrors.confirmation && !actionState.errors.passwordConfirmation} id="confirmationError" role="alert">{actionState.errors.passwordConfirmation ?? "Las contraseñas no coinciden."}</span>
-        </FormField>
+        </FormField> : null}
         <CheckboxField
           className={styles.consentField}
           indicatorClassName={styles.consentBox}
@@ -134,7 +138,7 @@ export function ActivateAccountForm({ code, email, invitationState, kid }: Activ
           label="Autorizo a la guardería a tomar y compartir fotos de mi hijo dentro de la app."
           name="photoSharingConsent"
         />
-        <Button className={styles.primaryButton} disabled={!hasResolvedInvitation || !isFormComplete || isPending} type="submit">{isPending ? "Activando..." : "Activar mi cuenta"}</Button>
+        <Button className={styles.primaryButton} disabled={!hasResolvedInvitation || !isFormComplete || isPending} type="submit">{isPending ? "Guardando..." : existingActiveParent ? "Confirmar vinculación" : "Activar mi cuenta"}</Button>
       </form>
       {actionState.message ? <p className={styles.invitationError} role="alert">{actionState.message}</p> : null}
       <p className={styles.formFooter}>¿Ya tienes cuenta? <a className={styles.inlineLink} href="/auth/login">Inicia sesión</a></p>

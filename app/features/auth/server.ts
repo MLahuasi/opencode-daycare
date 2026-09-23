@@ -4,6 +4,7 @@ export {
   createPendingInvitation,
   createPendingParent,
   createPendingParentInvitation,
+  ExistingParentKidError,
   ExistingPersonEmailError,
   getLinkParentKid,
   markInvitationSent,

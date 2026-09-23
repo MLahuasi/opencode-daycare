@@ -17,28 +17,29 @@ type ActivationSearchParams = {
 type ActivationResolution = {
   code: string;
   email: string;
+  existingActiveParent: boolean;
   invitationState: ActivationInvitationState;
   kid: ActivationKidCardData | null;
 };
 
 async function resolveActivation(code: string | undefined): Promise<ActivationResolution> {
   if (!code) {
-    return { code: "", email: "", invitationState: "none", kid: null };
+    return { code: "", email: "", existingActiveParent: false, invitationState: "none", kid: null };
   }
 
   const invitations = await getInvitations()
   const invitation = invitations.find((candidate) => candidate.code === code);
 
   if (!invitation) {
-    return { code, email: "", invitationState: "unknown", kid: null };
+    return { code, email: "", existingActiveParent: false, invitationState: "unknown", kid: null };
   }
 
   if (invitation.acceptedAt) {
-    return { code, email: "", invitationState: "accepted", kid: null };
+    return { code, email: "", existingActiveParent: false, invitationState: "accepted", kid: null };
   }
 
   if (isInvitationExpired(invitation)) {
-    return { code, email: "", invitationState: "expired", kid: null };
+    return { code, email: "", existingActiveParent: false, invitationState: "expired", kid: null };
   }
 
   const [kids, people, rooms] = await Promise.all([
@@ -51,12 +52,13 @@ async function resolveActivation(code: string | undefined): Promise<ActivationRe
   const room = kid ? rooms.find((candidate) => candidate.id === kid.roomId) : undefined;
 
   if (!person || !kid || !room) {
-    return { code, email: "", invitationState: "unknown", kid: null };
+    return { code, email: "", existingActiveParent: false, invitationState: "unknown", kid: null };
   }
 
   return {
     code,
     email: person.email,
+    existingActiveParent: person.role === "parent" && person.status === "active",
     invitationState: "valid",
     kid: {
       initial: kid.name.trim().charAt(0).toUpperCase(),

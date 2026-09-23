@@ -7,6 +7,7 @@ import { getEnvironment } from "@/app/shared/config/server";
 import { validateLinkParentForm } from "../schemas";
 import {
   createPendingParentInvitation,
+  ExistingParentKidError,
   ExistingPersonEmailError,
   getLinkParentKid,
   markInvitationSent,
@@ -68,6 +69,15 @@ export async function sendParentInvitationAction(
       relationship: validation.data.relationship,
     });
   } catch (error) {
+    if (error instanceof ExistingParentKidError) {
+      return {
+        errors: {
+          email: "Este padre ya está vinculado con este niño.",
+        },
+        message: "Revisa los campos marcados.",
+      };
+    }
+
     if (error instanceof ExistingPersonEmailError) {
       return {
         errors: {

@@ -54,5 +54,19 @@
     "kidId": "kid-olivia-vega",
     "relationship": "mother",
     "photoSharingConsent": true
+  },
+  {
+    "id": "parent-kid-92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8-e73240ec-9849-4060-8b75-79a1a1e917dc",
+    "parentId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "kidId": "e73240ec-9849-4060-8b75-79a1a1e917dc",
+    "relationship": "father",
+    "photoSharingConsent": true
+  },
+  {
+    "id": "parent-kid-92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8-a8728bae-1aba-41c4-a50d-cc3cc192548b",
+    "parentId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "kidId": "a8728bae-1aba-41c4-a50d-cc3cc192548b",
+    "relationship": "father",
+    "photoSharingConsent": true
   }
 ]

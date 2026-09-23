@@ -15,6 +15,13 @@
 - Permitir que una publicación tenga `kidId` o `roomId`, pero no ambos.
 - Mostrar un feed combinado para padres vinculados con varios niños.
 - Mostrar anuncios de las salas de sus niños.
+- Reutilizar padres `parent` activos con varios niños.
+- Vincular niños de salas diferentes.
+- Crear una invitación específica por relación padre-niño.
+- Evitar duplicar registros `Person`.
+- Conservar las credenciales y el estado activo del padre reutilizado.
+- Crear `ParentKid` al aceptar la invitación sin reemplazar credenciales.
+- Rechazar personal, estados incompatibles y relaciones duplicadas.
 - Crear un header familiar con identidad, niños y cierre de sesión.
 - Omitir composer y navegación exclusiva de personal.
 - Mostrar un estado vacío seguro cuando no existan relaciones.
@@ -67,7 +74,7 @@ El feed familiar será la unión de publicaciones cuyos `kidId` pertenezcan a lo
 
 1. Añadir `kidId` y `roomId` al contrato `FeedPost` y migrar `feed.json` con destinos explícitos: los dos posts de Mateo con `kid-mateo-fernandez` y el anuncio con `room-soles`.
 2. Validar que cada publicación tenga exactamente un destino.
-3. Crear servicios server-only para resolver la sesión NextAuth v4, personas, relaciones, niños y salas mediante el adapter JSON existente.
+3. Crear servicios server-only para resolver la sesión NextAuth v4, personas, relaciones, niños y salas mediante el adapter JSON existente, y reutilizar padres `parent` activos sin duplicar `Person`.
 4. Crear la proyección de feed familiar a partir de las relaciones `ParentKid`.
 5. Crear el componente visual de Home familiar reutilizando las tarjetas existentes sin importar datos completos desde el cliente.
 6. Crear el header familiar con nombre del padre, niños vinculados y cierre de sesión.
@@ -88,6 +95,12 @@ El feed familiar será la unión de publicaciones cuyos `kidId` pertenezcan a lo
 - [ ] Un padre autenticado no ve el feed de personal.
 - [ ] Un padre ve publicaciones de todos sus niños vinculados.
 - [ ] Un padre ve anuncios de las salas de sus niños.
+- [ ] Un padre `parent` activo puede vincular varios niños sin duplicar `Person`.
+- [ ] Un padre puede tener niños vinculados en salas diferentes.
+- [ ] Cada relación padre-niño pendiente usa una invitación específica.
+- [ ] Una vinculación adicional conserva las credenciales y el estado activo del padre.
+- [ ] Aceptar una vinculación adicional crea `ParentKid` sin reemplazar credenciales.
+- [ ] Personal, estados incompatibles y relaciones duplicadas son rechazados.
 - [ ] Un padre no ve publicaciones de niños no vinculados.
 - [ ] Un padre no ve anuncios de salas no relacionadas.
 - [ ] Los anuncios se muestran una sola vez aunque varios niños compartan sala.
@@ -112,6 +125,10 @@ El feed familiar será la unión de publicaciones cuyos `kidId` pertenezcan a lo
 - **Sí:** filtrar por `kidId` y `roomId` explícitos.
 - **No:** inferir el alcance usando nombres o texto de las publicaciones.
 - **Sí:** mostrar niños relacionados y anuncios de sus salas.
+- **Sí:** reutilizar padres `parent` activos para varios niños sin duplicar `Person`.
+- **Sí:** mantener credenciales y estado activo al aceptar una vinculación adicional.
+- **No:** crear `ParentKid` antes de aceptar la invitación.
+- **No:** duplicar relaciones padre-niño ni aceptar personal o estados incompatibles.
 - **No:** mostrar la sala completa con publicaciones de otros niños.
 - **Sí:** usar un feed combinado para varios niños.
 - **No:** introducir un selector interactivo en esta entrega.

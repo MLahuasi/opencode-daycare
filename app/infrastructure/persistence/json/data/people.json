@@ -68,5 +68,12 @@
     "email": "caro@opendaycare.com",
     "role": "personal",
     "status": "active"
+  },
+  {
+    "id": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "name": "Mauricio Lahuasi",
+    "email": "jmlahuasiq@gmail.com",
+    "role": "parent",
+    "status": "active"
   }
 ]
