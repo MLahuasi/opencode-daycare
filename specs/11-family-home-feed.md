@@ -1,6 +1,6 @@
 # SPEC 11 — Feed familiar en Home
 
-> **Status:** Approved
+> **Status:** Implement
 > **Depends on:** SPEC 01, SPEC 09, SPEC 10
 > **Date:** 2026-09-22
 > **Objective:** Convertir `/home` en una vista de feed filtrada por las relaciones y salas de los padres autenticados sin exponer contenido de otras familias.
@@ -86,39 +86,39 @@ El feed familiar será la unión de publicaciones cuyos `kidId` pertenezcan a lo
 
 ## Acceptance criteria
 
-- [ ] `FeedPost` contiene `kidId` y `roomId` nullable.
-- [ ] Cada publicación persistida tiene exactamente un destino.
-- [ ] Las publicaciones actuales de Mateo tienen `kidId: "kid-mateo-fernandez"`.
-- [ ] El anuncio general actual tiene `roomId: "room-soles"`.
-- [ ] Los niños de `kids.json` conservan `room-soles` o `room-patitos` como sala explícita.
-- [ ] Un usuario de personal continúa viendo el feed de personal actual.
-- [ ] Un padre autenticado no ve el feed de personal.
-- [ ] Un padre ve publicaciones de todos sus niños vinculados.
-- [ ] Un padre ve anuncios de las salas de sus niños.
-- [ ] Un padre `parent` activo puede vincular varios niños sin duplicar `Person`.
-- [ ] Un padre puede tener niños vinculados en salas diferentes.
-- [ ] Cada relación padre-niño pendiente usa una invitación específica.
-- [ ] Una vinculación adicional conserva las credenciales y el estado activo del padre.
-- [ ] Aceptar una vinculación adicional crea `ParentKid` sin reemplazar credenciales.
-- [ ] Personal, estados incompatibles y relaciones duplicadas son rechazados.
-- [ ] Un padre no ve publicaciones de niños no vinculados.
-- [ ] Un padre no ve anuncios de salas no relacionadas.
-- [ ] Los anuncios se muestran una sola vez aunque varios niños compartan sala.
-- [ ] El feed combinado se ordena por `dateTime` descendente.
-- [ ] El destinatario de cada publicación permanece visible.
-- [ ] El Home familiar muestra identidad del padre y niños vinculados.
-- [ ] El Home familiar permite cerrar sesión.
-- [ ] El Home familiar no muestra composer de personal.
-- [ ] El Home familiar no muestra navegación exclusiva de personal.
-- [ ] Una cuenta sin relaciones muestra un estado vacío seguro.
-- [ ] No se exponen credenciales, tokens ni datos de otras personas al cliente.
-- [ ] La pantalla funciona en escritorio y móvil.
-- [ ] Las verificaciones funcionales se ejecutan con Playwright.
-- [ ] No se añaden tests unitarios en esta spec.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
+- [x] `FeedPost` contiene `kidId` y `roomId` nullable.
+- [x] Cada publicación persistida tiene exactamente un destino.
+- [x] Las publicaciones actuales de Mateo tienen `kidId: "kid-mateo-fernandez"`.
+- [x] El anuncio general actual tiene `roomId: "room-soles"`.
+- [x] Los niños de `kids.json` conservan `room-soles` o `room-patitos` como sala explícita.
+- [x] Un usuario de personal continúa viendo el feed de personal actual.
+- [x] Un padre autenticado no ve el feed de personal.
+- [x] Un padre ve publicaciones de todos sus niños vinculados.
+- [x] Un padre ve anuncios de las salas de sus niños.
+- [x] Un padre `parent` activo puede vincular varios niños sin duplicar `Person`.
+- [x] Un padre puede tener niños vinculados en salas diferentes.
+- [x] Cada relación padre-niño pendiente usa una invitación específica.
+- [x] Una vinculación adicional conserva las credenciales y el estado activo del padre.
+- [x] Aceptar una vinculación adicional crea `ParentKid` sin reemplazar credenciales.
+- [x] Personal, estados incompatibles y relaciones duplicadas son rechazados.
+- [x] Un padre no ve publicaciones de niños no vinculados.
+- [x] Un padre no ve anuncios de salas no relacionadas.
+- [x] Los anuncios se muestran una sola vez aunque varios niños compartan sala.
+- [x] El feed combinado se ordena por `dateTime` descendente.
+- [x] El destinatario de cada publicación permanece visible.
+- [x] El Home familiar muestra identidad del padre y niños vinculados.
+- [x] El Home familiar permite cerrar sesión.
+- [x] El Home familiar no muestra composer de personal.
+- [x] El Home familiar no muestra navegación exclusiva de personal.
+- [x] Una cuenta sin relaciones muestra un estado vacío seguro.
+- [x] No se exponen credenciales, tokens ni datos de otras personas al cliente.
+- [x] La pantalla funciona en escritorio y móvil.
+- [x] Las verificaciones funcionales se ejecutan con Playwright.
+- [x] No se añaden tests unitarios en esta spec.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
 
 ## Decisions
 

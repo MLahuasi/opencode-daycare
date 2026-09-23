@@ -25,6 +25,11 @@ export type FamilyContext = {
  */
 export async function getAuthenticatedFamilyContext(): Promise<FamilyContext> {
   const session = await requireActiveSession();
+
+  if (session.user.role !== "parent") {
+    throw new Error("Family context is only available to parent accounts.");
+  }
+
   const [people, parentKids, kids, rooms] = await Promise.all([
     readCollection<Person>("people.json"),
     readCollection<ParentKid>("parent-kids.json"),

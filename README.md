@@ -6,8 +6,9 @@ asistido por agentes, MCPs y **Spec Driven Development (SDD)**.
 
 La aplicación se construye a partir de especificaciones versionadas, skills
 reutilizables y validaciones realizadas por agentes. La interfaz actual incluye
-un feed de personal, el listado de niños y sus perfiles, la vinculación de
-padres mediante invitaciones y datos persistidos en JSON tipados.
+un feed diferenciado para personal y familias, el listado de niños y sus
+perfiles, la vinculación de padres mediante invitaciones y datos persistidos en
+JSON tipados.
 
 ## Stack
 
@@ -60,15 +61,14 @@ MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_SECURE=false
 
-MAIL_TEMPLATE_PATH=templates
 MAIL_TEMPLATE_EXTENSION=html
 ```
 
 `MAIL_PORT` debe ser un entero positivo y `MAIL_SECURE` acepta únicamente
-`true` o `false`. `MAIL_TEMPLATE_PATH` se resuelve desde el directorio de trabajo
-del proyecto; por tanto, `templates` apunta a la carpeta raíz `templates/`.
-`APP_URL` debe ser un origen absoluto HTTP o HTTPS y se utiliza para construir
-los enlaces de activación sin depender de cabeceras de petición.
+`true` o `false`. Las plantillas se cargan exclusivamente desde la carpeta raíz
+`templates/`, que debe existir en runtime. `APP_URL` debe ser un origen absoluto
+HTTP o HTTPS y se utiliza para construir los enlaces de activación sin depender
+de cabeceras de petición.
 
 Las variables del mailer se validan al solicitarlo por primera vez. Las variables
 de autenticación se validan al cargar la configuración de NextAuth, por lo que
@@ -82,7 +82,7 @@ como `output: "standalone"`, debe incluir también la carpeta `templates/`.
 
 ## Rutas actuales
 
-- `/home`: feed del personal de Sala Soles.
+- `/home`: feed del personal o feed familiar filtrado según el rol autenticado.
 - `/`: redirect permanente a `/home`.
 - `/auth/login`: inicio de sesión.
 - `/auth/activate-account`: activación de cuenta; acepta `?code=<valor>`.
@@ -110,6 +110,11 @@ reutiliza el código vigente o rota código y vencimiento si ya expiró. Los
 envíos exitosos actualizan `sentAt` y redirigen al perfil con
 `?invitation=sent`. Los padres autenticados son redirigidos a `/home`.
 
+La activación de una invitación se realiza posteriormente desde
+`/auth/activate-account`: crea o actualiza las credenciales, activa la persona,
+crea la relación `ParentKid` y marca `acceptedAt` de forma coordinada. Un fallo
+restaura las colecciones modificadas y conserva la invitación pendiente.
+
 ## Autenticación
 
 La autenticación usa `next-auth@4.24.15` con Credentials Provider, sesiones JWT
@@ -135,9 +140,16 @@ local. `AUTH_SESSION_COOKIE_SECURE` debe ser `true` cuando la aplicación se sir
 exclusivamente sobre HTTPS.
 
 El personal con rol `personal` puede acceder a `/kids/**` y conserva el feed de
-personal en `/home`. Los padres con rol `parent` reciben un estado familiar
-seguro en `/home` y no pueden acceder a las rutas de Kids. Las personas
-inexistentes, inactivas o con un rol cambiado son expulsadas de la sesión.
+personal en `/home`. Los padres con rol `parent` reciben un feed familiar en
+`/home`, limitado a los niños vinculados y a sus salas, y no pueden acceder a
+las rutas de Kids. Las personas inexistentes, inactivas o con un rol cambiado
+son expulsadas de la sesión.
+
+El feed familiar combina publicaciones dirigidas a los niños relacionados y
+anuncios de sus salas, elimina anuncios duplicados, mantiene el orden por fecha
+y no expone contenido de otras familias. Incluye identidad del padre, niños
+vinculados, cierre de sesión y un estado vacío seguro cuando no existen
+relaciones. No muestra el composer ni la navegación exclusiva de personal.
 
 ### Credenciales demo
 
@@ -255,7 +267,7 @@ Specs existentes:
 | `05-account-activation-and-login.md` | `Approved` | Login, activación y modelos de identidad |
 | `09-account-activation-session-and-login.md` | `Implemented` | Activación persistente, NextAuth v4, login, logout y autorización por rol |
 | `10-parent-linking-and-invitation.md` | `Implement` | Vinculación de padres e invitaciones; aceptación validada salvo prueba SMTP real |
-| `11-family-home-feed.md` | `Draft` | Feed familiar filtrado en Home |
+| `11-family-home-feed.md` | `Implement` | Feed familiar filtrado en Home; responsive y verificaciones Playwright completadas |
 
 ## Flujo Spec Driven Development
 

@@ -119,6 +119,18 @@ export async function activateAccountAction(
     };
   }
 
+  if (
+    person.role !== "parent" ||
+    (person.status !== "pending" && person.status !== "active")
+  ) {
+    return {
+      errors: {
+        code: "La invitación no corresponde a una cuenta de familia válida.",
+      },
+      message: "No pudimos activar la cuenta.",
+    };
+  }
+
   const existingActiveParent = person.role === "parent" && person.status === "active";
   const errors = getValidationErrors(
     code,

@@ -68,5 +68,12 @@
     "kidId": "a8728bae-1aba-41c4-a50d-cc3cc192548b",
     "relationship": "father",
     "photoSharingConsent": true
+  },
+  {
+    "id": "parent-kid-92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8-493c86d1-f2f3-42aa-a36f-656102bf6472",
+    "parentId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "kidId": "493c86d1-f2f3-42aa-a36f-656102bf6472",
+    "relationship": "father",
+    "photoSharingConsent": true
   }
 ]

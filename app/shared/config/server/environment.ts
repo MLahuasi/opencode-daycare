@@ -1,5 +1,6 @@
 import "server-only";
 
+import { existsSync } from "node:fs";
 import path from "node:path";
 import env from "env-var";
 
@@ -85,10 +86,14 @@ export function getEnvironment(): Environment {
     return cachedEnvironment;
   }
 
-  const secure = env
-    .get("MAIL_SECURE")
-    .required()
-    .asEnum(["true", "false"]);
+  const secure = env.get("MAIL_SECURE").required().asEnum(["true", "false"]);
+  const mailTemplatePath = path.join(process.cwd(), "templates");
+
+  if (!existsSync(mailTemplatePath)) {
+    throw new Error(
+      `[environment] Mail template directory does not exist: ${mailTemplatePath}`,
+    );
+  }
 
   const environment: Environment = {
     APP_URL: readAppUrl(),
@@ -97,9 +102,7 @@ export function getEnvironment(): Environment {
       AUTH_SESSION_MAX_AGE_SECONDS: readPositiveInteger(
         "AUTH_SESSION_MAX_AGE_SECONDS",
       ),
-      AUTH_SESSION_COOKIE_NAME: readRequiredString(
-        "AUTH_SESSION_COOKIE_NAME",
-      ),
+      AUTH_SESSION_COOKIE_NAME: readRequiredString("AUTH_SESSION_COOKIE_NAME"),
       AUTH_SESSION_COOKIE_HTTP_ONLY: readBoolean(
         "AUTH_SESSION_COOKIE_HTTP_ONLY",
       ),
@@ -118,13 +121,8 @@ export function getEnvironment(): Environment {
       MAIL_HOST: readRequiredString("MAIL_HOST"),
       MAIL_PORT: readPositivePort(),
       MAIL_SECURE: secure === "true",
-      MAIL_TEMPLATE_PATH: path.resolve(
-        process.cwd(),
-        readRequiredString("MAIL_TEMPLATE_PATH"),
-      ),
-      MAIL_TEMPLATE_EXTENSION: readRequiredString(
-        "MAIL_TEMPLATE_EXTENSION",
-      ),
+      MAIL_TEMPLATE_PATH: mailTemplatePath,
+      MAIL_TEMPLATE_EXTENSION: readRequiredString("MAIL_TEMPLATE_EXTENSION"),
     },
   };
 
