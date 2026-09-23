@@ -1,6 +1,14 @@
 import { StaffSidebar } from "@/app/components/layout";
 import { FeedContent } from "@/app/features/feed";
 import { getFeedOverview, getFeeds } from "@/app/features/feed/services";
+import {
+  FamilyFeedContent,
+  FamilyHeader,
+} from "@/app/features/family";
+import {
+  getAuthenticatedFamilyContext,
+  getFamilyFeed,
+} from "@/app/features/family/server";
 import { staffNavigationConfig } from "@/app/shared/config";
 import { requireActiveSession } from "@/auth";
 
@@ -13,13 +21,16 @@ export default async function Home() {
   const session = await requireActiveSession();
 
   if (session.user.role === "parent") {
+    const [familyContext, familyPosts] = await Promise.all([
+      getAuthenticatedFamilyContext(),
+      getFamilyFeed(),
+    ]);
+
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background p-6 text-foreground">
-        <div className="max-w-lg text-center">
-          <h1 className="font-display text-3xl font-semibold">Tu espacio familiar</h1>
-          <p className="mt-3 text-base">Pronto podrás ver aquí las novedades de tus hijos.</p>
-        </div>
-      </main>
+      <div className="min-h-screen bg-background text-foreground">
+        <FamilyHeader kids={familyContext.kids} person={familyContext.person} />
+        <FamilyFeedContent posts={familyPosts} />
+      </div>
     );
   }
 

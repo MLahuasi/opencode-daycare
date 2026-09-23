@@ -38,6 +38,7 @@ function getValidationErrors(
   email: string,
   password: string,
   passwordConfirmation: string,
+  requiresNewCredentials: boolean,
 ): ActivationActionErrors {
   const errors: ActivationActionErrors = {};
 
@@ -49,15 +50,20 @@ function getValidationErrors(
     errors.email = "Ingresa tu email.";
   }
 
-  if (!password) {
+  if (requiresNewCredentials && !password) {
     errors.password = "Ingresa una contraseña.";
   }
 
-  if (!passwordConfirmation) {
+  if (requiresNewCredentials && !passwordConfirmation) {
     errors.passwordConfirmation = "Confirma tu contraseña.";
   }
 
-  if (password && passwordConfirmation && password !== passwordConfirmation) {
+  if (
+    requiresNewCredentials &&
+    password &&
+    passwordConfirmation &&
+    password !== passwordConfirmation
+  ) {
     errors.passwordConfirmation = "Las contraseñas no coinciden.";
   }
 
@@ -79,17 +85,6 @@ export async function activateAccountAction(
   const email = readText(formData, "email").toLowerCase();
   const password = readText(formData, "password");
   const passwordConfirmation = readText(formData, "passwordConfirmation");
-  const errors = getValidationErrors(
-    code,
-    email,
-    password,
-    passwordConfirmation,
-  );
-
-  if (Object.keys(errors).length > 0) {
-    return { errors, message: "Revisa los campos marcados." };
-  }
-
   const invitations = await readCollection<Invitation>("invitation.json");
   const invitation = invitations.find((candidate) => candidate.code === code);
 
@@ -124,7 +119,32 @@ export async function activateAccountAction(
     };
   }
 
-  if (!isValidActivationPassword(password)) {
+  if (
+    person.role !== "parent" ||
+    (person.status !== "pending" && person.status !== "active")
+  ) {
+    return {
+      errors: {
+        code: "La invitación no corresponde a una cuenta de familia válida.",
+      },
+      message: "No pudimos activar la cuenta.",
+    };
+  }
+
+  const existingActiveParent = person.role === "parent" && person.status === "active";
+  const errors = getValidationErrors(
+    code,
+    email,
+    password,
+    passwordConfirmation,
+    !existingActiveParent,
+  );
+
+  if (Object.keys(errors).length > 0) {
+    return { errors, message: "Revisa los campos marcados." };
+  }
+
+  if (!existingActiveParent && !isValidActivationPassword(password)) {
     return {
       errors: {
         password:
@@ -135,7 +155,9 @@ export async function activateAccountAction(
   }
 
   const photoSharingConsent = formData.get("photoSharingConsent") !== null;
-  const passwordHash = await bcrypt.hash(password, 12);
+  const passwordHash = existingActiveParent
+    ? null
+    : await bcrypt.hash(password, 12);
   const now = new Date().toISOString();
 
   try {
@@ -149,16 +171,28 @@ export async function activateAccountAction(
             readCollection<ParentKid>("parent-kids.json"),
             readCollection<Invitation>("invitation.json"),
           ]);
-        const credential: Credential = {
-          id: `credential-${person.id}`,
-          personId: person.id,
-          passwordHash,
-        };
-        const updatedPeople = currentPeople.map((candidate) =>
-          candidate.id === person.id
-            ? { ...candidate, status: "active" as const }
-            : candidate,
+        const credential: Credential | null = passwordHash
+          ? {
+              id: `credential-${person.id}`,
+              personId: person.id,
+              passwordHash,
+            }
+          : null;
+        const alreadyLinked = parentKids.some(
+          (candidate) =>
+            candidate.parentId === person.id && candidate.kidId === invitation.kidId,
         );
+
+        if (alreadyLinked) {
+          throw new Error("The parent is already linked to this kid.");
+        }
+        const updatedPeople = existingActiveParent
+          ? currentPeople
+          : currentPeople.map((candidate) =>
+              candidate.id === person.id
+                ? { ...candidate, status: "active" as const }
+                : candidate,
+            );
         const updatedParentKids = [
           ...parentKids.filter(
             (candidate) =>
@@ -181,10 +215,12 @@ export async function activateAccountAction(
             : candidate,
         );
 
-        await writeCollection("credential.json", [
-          ...credentials.filter((candidate) => candidate.personId !== person.id),
-          credential,
-        ]);
+        if (credential) {
+          await writeCollection("credential.json", [
+            ...credentials.filter((candidate) => candidate.personId !== person.id),
+            credential,
+          ]);
+        }
         await writeCollection("people.json", updatedPeople);
         await writeCollection("parent-kids.json", updatedParentKids);
         await writeCollection("invitation.json", updatedInvitations);
@@ -197,5 +233,5 @@ export async function activateAccountAction(
     };
   }
 
-  redirect("/auth/login?activated=1");
+  redirect(existingActiveParent ? "/auth/login" : "/auth/login?activated=1");
 }

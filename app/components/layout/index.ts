@@ -5,6 +5,7 @@
  * routes. Its navigation contract types stay co-located with the component.
  */
 export { StaffSidebar } from "./staff-sidebar";
+export { LogoutButton } from "./logout-button";
 export type {
   StaffNavigationConfig,
   StaffNavigationIcon,

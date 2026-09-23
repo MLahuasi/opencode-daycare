@@ -25,4 +25,6 @@ export type FeedPost = {
   reactions: number;
   comments: number;
   hasMedia?: boolean;
+  kidId: string | null;
+  roomId: string | null;
 };
