@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import type { FormHTMLAttributes, SubmitEvent } from "react";
+import { useActionState, useState } from "react";
+import type { SubmitEvent } from "react";
 import { Button, FormField, LinkButton } from "@/app/components/ui";
 import type { Kid } from "@/app/features/kids";
 import type { Room } from "@/app/features/rooms";
@@ -12,6 +12,7 @@ import {
 } from "../index";
 import type { PostFormMode } from "../schemas";
 import type { PostType } from "../types";
+import type { PostFormAction, PostFormActionState } from "../actions/types";
 import styles from "./post-form.module.css";
 
 const POST_TYPE_OPTIONS: readonly { value: PostType; label: string }[] = [
@@ -34,12 +35,17 @@ export type PostFormInitialValues = {
 };
 
 type PostFormProps = {
-  action: FormHTMLAttributes<HTMLFormElement>["action"];
+  action: PostFormAction;
   cancelHref: string;
   className?: string;
   initialValues: PostFormInitialValues;
   kids: readonly Kid[];
   rooms: readonly Room[];
+};
+
+const INITIAL_ACTION_STATE: PostFormActionState = {
+  errors: {},
+  message: "",
 };
 
 function getInitial(name: string): string {
@@ -66,12 +72,17 @@ export function PostForm({
   kids,
   rooms,
 }: PostFormProps) {
+  const [actionState, formAction, pending] = useActionState(
+    action,
+    INITIAL_ACTION_STATE,
+  );
   const [body, setBody] = useState(initialValues.body);
   const [kidId, setKidId] = useState(initialValues.kidId);
   const [roomId, setRoomId] = useState(initialValues.roomId);
   const [type, setType] = useState<PostType>(initialValues.type);
   const [images, setImages] = useState<readonly PostImageSelection[]>([]);
   const [error, setError] = useState("");
+  const serverError = actionState.message || Object.values(actionState.errors)[0] || "";
 
   function selectKid(nextKidId: string) {
     setKidId(nextKidId);
@@ -106,7 +117,7 @@ export function PostForm({
 
   return (
     <form
-      action={action}
+      action={formAction}
       className={`${styles.form} ${className}`}
       noValidate
       onSubmit={handleSubmit}
@@ -116,8 +127,14 @@ export function PostForm({
           Cancelar
         </LinkButton>
         <h1>{initialValues.mode === "edit" ? "Editar publicación" : "Nueva publicación"}</h1>
-        <Button className={styles.publish} type="submit" variant="ghost">
-          Publicar
+        <Button
+          aria-busy={pending}
+          className={styles.publish}
+          disabled={pending}
+          type="submit"
+          variant="ghost"
+        >
+          {pending ? "Guardando..." : "Publicar"}
         </Button>
       </header>
 
@@ -183,8 +200,8 @@ export function PostForm({
 
         <FormField className={styles.field} label="Descripción">
           <textarea
-            aria-describedby={error ? "post-form-error" : "post-body-count"}
-            aria-invalid={Boolean(error)}
+            aria-describedby={error || serverError ? "post-form-error" : "post-body-count"}
+            aria-invalid={Boolean(error || serverError)}
             maxLength={MAX_POST_BODY_LENGTH}
             name="body"
             onChange={(event) => setBody(event.target.value)}
@@ -202,8 +219,10 @@ export function PostForm({
           </fieldset>
         ) : null}
 
-        {error ? (
-          <p className={styles.error} id="post-form-error" role="alert">{error}</p>
+        {error || serverError ? (
+          <p className={styles.error} id="post-form-error" role="alert">
+            {error || serverError}
+          </p>
         ) : null}
       </div>
     </form>

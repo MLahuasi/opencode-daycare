@@ -35,7 +35,9 @@ export type PostFormValues = {
 };
 
 /** Raw values accepted from a create or edit post form. */
-export type PostFormInput = Partial<Record<keyof PostFormValues, unknown>>;
+export type PostFormInput = Partial<Record<keyof PostFormValues, unknown>> & {
+  hasImages?: unknown;
+};
 
 /** Field-level validation errors returned by the post form validator. */
 export type PostFormErrors = Partial<
@@ -133,6 +135,7 @@ export function validatePostForm(
   const roomId = normalizeNullableId(input.roomId);
   const body = typeof input.body === "string" ? input.body.trim() : "";
   const media = validateMedia(input.media);
+  const hasImages = input.hasImages === true || media.value.length > 0;
 
   if (!mode) errors.mode = "Selecciona un modo de publicación válido.";
   if (!type) errors.type = "Selecciona un tipo de publicación.";
@@ -142,13 +145,13 @@ export function validatePostForm(
   if (Boolean(kidId) === Boolean(roomId)) {
     errors.destination = "Selecciona exactamente un niño o una sala.";
   }
-  if (typeof input.body !== "string" && media.value.length === 0) {
+  if (typeof input.body !== "string" && !hasImages) {
     errors.body = "La descripción es obligatoria cuando no hay imágenes.";
   } else if (body.length > MAX_POST_BODY_LENGTH) {
     errors.body = `La descripción no puede superar los ${MAX_POST_BODY_LENGTH} caracteres.`;
   }
   if (media.error) errors.media = media.error;
-  if (!body && media.value.length === 0) {
+  if (!body && !hasImages) {
     errors.body = "Agrega una descripción o al menos una imagen.";
   }
 
