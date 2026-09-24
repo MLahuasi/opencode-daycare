@@ -20,7 +20,13 @@ const ACCEPTED_MIME_TYPES = new Set([
 const ACCEPTED_EXTENSIONS = /\.(jpe?g|png|webp)$/i;
 
 type ParsedPostSubmission =
-  | { success: true; values: PostFormValues; media: FeedMedia[]; subject: string }
+  | {
+      success: true;
+      values: PostFormValues;
+      media: FeedMedia[];
+      uploadedMedia: FeedMedia[];
+      subject: string;
+    }
   | { success: false; state: PostFormActionState };
 
 function errorState(field: keyof PostFormActionState["errors"], message: string) {
@@ -67,6 +73,28 @@ function getAltTexts(formData: FormData): Map<string, string> {
   }
 }
 
+function getExistingMedia(
+  formData: FormData,
+  currentMedia: readonly FeedMedia[],
+): FeedMedia[] {
+  if (!formData.has("existingMedia")) return [...currentMedia];
+
+  const value = formData.get("existingMedia");
+  if (typeof value !== "string") return [];
+
+  try {
+    const ids: unknown = JSON.parse(value);
+    if (!Array.isArray(ids)) return [];
+
+    const retainedIds = new Set(
+      ids.filter((id): id is string => typeof id === "string"),
+    );
+    return currentMedia.filter((media) => retainedIds.has(media.id));
+  } catch {
+    return [];
+  }
+}
+
 async function validateConsent(kidId: string): Promise<boolean> {
   const [parentKids, people] = await Promise.all([
     readCollection<ParentKid>("parent-kids.json"),
@@ -99,11 +127,12 @@ export async function parsePostSubmission(
   existingMedia: readonly FeedMedia[] = [],
 ): Promise<ParsedPostSubmission> {
   const files = getFiles(formData);
+  const retainedMedia = getExistingMedia(formData, existingMedia);
   const initialValidation = validatePostForm({
     body: formData.get("body"),
-    hasImages: files.length > 0 || existingMedia.length > 0,
+    hasImages: files.length > 0 || retainedMedia.length > 0,
     kidId: formData.get("kidId"),
-    media: existingMedia,
+    media: retainedMedia,
     mode: formData.get("mode"),
     postId: formData.get("postId"),
     roomId: formData.get("roomId"),
@@ -126,7 +155,7 @@ export async function parsePostSubmission(
     return { success: false, state: errorState("destination", "El destino no está autorizado.") };
   }
 
-  if (targetRoom && (files.length > 0 || existingMedia.length > 0)) {
+  if (targetRoom && (files.length > 0 || retainedMedia.length > 0)) {
     return { success: false, state: errorState("media", "Las publicaciones de sala no admiten imágenes.") };
   }
 
@@ -143,7 +172,7 @@ export async function parsePostSubmission(
     return { success: false, state: errorState("media", "No hay consentimiento vigente de todas las familias activas.") };
   }
 
-  if (files.length + existingMedia.length > 4) {
+  if (files.length + retainedMedia.length > 4) {
     return { success: false, state: errorState("media", "Puedes adjuntar hasta 4 imágenes.") };
   }
 
@@ -165,13 +194,19 @@ export async function parsePostSubmission(
       });
     }
   } catch {
+    await Promise.allSettled(
+      uploadedMedia.map((media) => imageStorage?.delete(media.publicId)),
+    );
     return { success: false, state: { errors: {}, message: "No pudimos subir las imágenes. Inténtalo nuevamente." } };
   }
 
-  const finalMedia = [...existingMedia, ...uploadedMedia];
+  const finalMedia = [...retainedMedia, ...uploadedMedia];
   const finalValidation = validatePostForm({ ...initialValidation.data, media: finalMedia, hasImages: finalMedia.length > 0 });
 
   if (!finalValidation.success) {
+    await Promise.allSettled(
+      uploadedMedia.map((media) => imageStorage?.delete(media.publicId)),
+    );
     return { success: false, state: { errors: finalValidation.errors, message: "Revisa los campos marcados." } };
   }
 
@@ -179,6 +214,7 @@ export async function parsePostSubmission(
     success: true,
     values: finalValidation.data,
     media: finalMedia,
+    uploadedMedia,
     subject: targetKid?.name ?? targetRoom?.name ?? "Anuncio general",
   };
 }

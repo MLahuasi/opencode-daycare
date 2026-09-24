@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
+import { createCloudinaryImageStorage } from "@/app/infrastructure";
 import { createFeedPost } from "../services";
 import { parsePostSubmission } from "./post-action";
 import type { PostFormActionState } from "./types";
@@ -34,6 +35,12 @@ export async function createPostAction(
       type: parsed.values.type,
     });
   } catch {
+    const imageStorage = parsed.uploadedMedia.length
+      ? createCloudinaryImageStorage()
+      : null;
+    await Promise.allSettled(
+      parsed.uploadedMedia.map((media) => imageStorage?.delete(media.publicId)),
+    );
     return { errors: {}, message: "No pudimos guardar la publicación. Inténtalo nuevamente." };
   }
 

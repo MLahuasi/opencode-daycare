@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
+import { createCloudinaryImageStorage } from "@/app/infrastructure";
 import { readCollection } from "@/app/infrastructure/persistence";
 import { updateFeedPost } from "../services";
 import type { FeedPost } from "../types";
@@ -52,7 +53,23 @@ export async function updatePostAction(
       return { errors: {}, message: "La publicación ya no existe." };
     }
   } catch {
+    const imageStorage = parsed.uploadedMedia.length
+      ? createCloudinaryImageStorage()
+      : null;
+    await Promise.allSettled(
+      parsed.uploadedMedia.map((media) => imageStorage?.delete(media.publicId)),
+    );
     return { errors: {}, message: "No pudimos guardar la publicación. Inténtalo nuevamente." };
+  }
+
+  const removedMedia = currentPost.media.filter(
+    (media) => !parsed.media.some((retained) => retained.id === media.id),
+  );
+  if (removedMedia.length > 0) {
+    const imageStorage = createCloudinaryImageStorage();
+    await Promise.allSettled(
+      removedMedia.map((media) => imageStorage.delete(media.publicId)),
+    );
   }
 
   revalidatePath("/home");
