@@ -6,8 +6,9 @@ import { requireStaffSession } from "@/auth";
 import { createCloudinaryImageStorage } from "@/app/infrastructure";
 import { readCollection } from "@/app/infrastructure/persistence";
 import { updateFeedPost } from "../services";
-import type { FeedPost } from "../types";
+import type { FeedMedia, FeedPost } from "../types";
 import { parsePostSubmission } from "./post-action";
+import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "./types";
 
 /**
@@ -67,9 +68,53 @@ export async function updatePostAction(
   );
   if (removedMedia.length > 0) {
     const imageStorage = createCloudinaryImageStorage();
-    await Promise.allSettled(
-      removedMedia.map((media) => imageStorage.delete(media.publicId)),
-    );
+    const failedMedia: FeedMedia[] = [];
+
+    for (const media of removedMedia) {
+      let deleted = false;
+
+      for (let attempt = 0; attempt < 3 && !deleted; attempt += 1) {
+        try {
+          await imageStorage.delete(media.publicId);
+          deleted = true;
+        } catch {
+          // Retry transient provider failures before preserving the reference.
+        }
+      }
+
+      if (!deleted) failedMedia.push(media);
+    }
+
+    if (failedMedia.length > 0) {
+      const uploadedIds = new Set(
+        parsed.uploadedMedia.map((media) => media.id),
+      );
+      try {
+        await Promise.all(
+          parsed.uploadedMedia.map((media) =>
+            deleteMediaWithRetry(imageStorage, media.publicId),
+          ),
+        );
+      } catch {
+        // The restored post keeps failed deletions addressable for a later retry.
+      }
+      await updateFeedPost(postId, {
+        authorId: session.user.personId,
+        body: parsed.values.body,
+        kidId: parsed.values.kidId,
+        media: [
+          ...parsed.media.filter((media) => !uploadedIds.has(media.id)),
+          ...failedMedia,
+        ],
+        roomId: parsed.values.roomId,
+        subject: parsed.subject,
+        type: parsed.values.type,
+      });
+      return {
+        errors: { media: "No pudimos retirar todas las imágenes. Inténtalo nuevamente." },
+        message: "La publicación se guardó, pero algunas imágenes no se pudieron retirar.",
+      };
+    }
   }
 
   revalidatePath("/home");

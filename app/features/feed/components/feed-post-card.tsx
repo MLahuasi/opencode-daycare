@@ -1,9 +1,12 @@
+"use client";
+
 import {
   Avatar,
   Badge,
   LinkButton,
   type BadgeVariant,
 } from "@/app/components/ui";
+import { useEffect, useState } from "react";
 import type { FeedPost, PostType } from "../types";
 import styles from "./feed-post-card.module.css";
 
@@ -106,18 +109,38 @@ function PhotoIcon() {
  * @returns A feed publication article.
  */
 export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostCardProps) {
+  const [expandedMedia, setExpandedMedia] = useState<{
+    alt: string;
+    url: string;
+  } | null>(null);
   const isAnnouncement = post.type === "announcement";
+
+  useEffect(() => {
+    if (!expandedMedia) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setExpandedMedia(null);
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [expandedMedia]);
 
   return (
     <article className={`${styles.card} ${styles[post.type]} ${className}`}>
       <header className={styles.header}>
-          {isAnnouncement ? (
-            <div className={styles.avatar}>
-              <AnnouncementIcon />
-            </div>
-          ) : (
-            <Avatar className={styles.avatar} initial={post.initial ?? ""} tone="blue" />
-          )}
+        {isAnnouncement ? (
+          <div className={styles.avatar}>
+            <AnnouncementIcon />
+          </div>
+        ) : (
+          <Avatar className={styles.avatar} initial={post.initial ?? ""} tone="blue" />
+        )}
         <div className={styles.author}>
           <h2>{post.subject}</h2>
           <p>
@@ -134,10 +157,67 @@ export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostC
       <p className={styles.recipient}>Para: {post.recipient}</p>
       <p className={styles.body}>{post.body}</p>
 
-      {post.hasMedia ? (
-        <div className={styles.mediaPlaceholder} aria-label="Foto: pintando con témperas" role="img">
+      {post.media.length > 0 ? (
+        <div className={styles.mediaGallery}>
+          {post.media.map((media) =>
+            media.url ? (
+              <figure key={media.id}>
+                {/* Signed provider URLs are generated server-side for this server-rendered card. */}
+                <button
+                  aria-label={`Ampliar ${media.alt ?? media.originalName}`}
+                  className={styles.mediaButton}
+                  onClick={() =>
+                    setExpandedMedia({
+                      alt: media.alt ?? media.originalName,
+                      url: media.url!,
+                    })
+                  }
+                  type="button"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img alt={media.alt ?? media.originalName} src={media.url} />
+                </button>
+              </figure>
+            ) : (
+              <div
+                aria-label="Imagen adjunta"
+                className={styles.mediaPlaceholder}
+                key={media.id}
+                role="img"
+              >
+                <PhotoIcon />
+                <span>Imagen adjunta</span>
+              </div>
+            ),
+          )}
+        </div>
+      ) : post.hasMedia ? (
+        <div className={styles.mediaPlaceholder} aria-label="Imagen adjunta" role="img">
           <PhotoIcon />
-          <span>Foto · pintando con témperas</span>
+          <span>Imagen adjunta</span>
+        </div>
+      ) : null}
+
+      {expandedMedia ? (
+        <div
+          aria-label="Vista ampliada de la imagen"
+          aria-modal="true"
+          className={styles.lightbox}
+          onClick={() => setExpandedMedia(null)}
+          role="dialog"
+        >
+          <div className={styles.lightboxContent} onClick={(event) => event.stopPropagation()}>
+            <button
+              aria-label="Cerrar imagen ampliada"
+              className={styles.lightboxClose}
+              onClick={() => setExpandedMedia(null)}
+              type="button"
+            >
+              ×
+            </button>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img alt={expandedMedia.alt} src={expandedMedia.url} />
+          </div>
         </div>
       ) : null}
 

@@ -1,5 +1,7 @@
-import { readCollection } from "@/app/infrastructure";
-import { FeedOverview, FeedPost } from "../types";
+import "server-only";
+
+import { createCloudinaryImageStorage, readCollection } from "@/app/infrastructure";
+import type { FeedOverview, FeedPost } from "../types";
 
 /**
  * Reads the canonical FeedPost collection from disk.
@@ -20,7 +22,19 @@ export function getFeeds(): Promise<readonly FeedPost[]> {
       }
     }
 
-    return posts;
+    const imageStorage = posts.some((post) => post.media.length > 0)
+      ? createCloudinaryImageStorage()
+      : null;
+
+    return posts.map((post) => ({
+      ...post,
+      media: imageStorage
+        ? post.media.map((media) => ({
+            ...media,
+            url: imageStorage.getUrl(media),
+          }))
+        : post.media,
+    }));
   });
 }
 

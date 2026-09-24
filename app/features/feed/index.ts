@@ -29,3 +29,4 @@ export type {
   PostFormValidationResult,
   PostFormValues,
 } from "./schemas";
+export { isSupportedImageFile } from "./utils";

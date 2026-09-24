@@ -6,14 +6,8 @@ import {
   MAX_MEDIA_BYTES,
   MAX_POST_MEDIA,
 } from "../schemas";
+import { isSupportedImageFile } from "../utils";
 import styles from "./post-image-picker.module.css";
-
-const ACCEPTED_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
-const ACCEPTED_EXTENSIONS = /\.(jpe?g|png|webp)$/i;
 
 /** A selected image and the preview data used by the picker. */
 export type PostImageSelection = {
@@ -30,10 +24,6 @@ type PostImagePickerProps = {
   maxImages?: number;
   onChange?: (images: readonly PostImageSelection[]) => void;
 };
-
-function isSupportedImage(file: File): boolean {
-  return ACCEPTED_MIME_TYPES.has(file.type) || ACCEPTED_EXTENSIONS.test(file.name);
-}
 
 function getFileId(file: File): string {
   return `${file.name}-${file.size}-${file.lastModified}`;
@@ -91,7 +81,7 @@ export function PostImagePicker({
     onChange?.(nextImages);
   }
 
-  function addFiles(fileList: FileList | readonly File[]) {
+  async function addFiles(fileList: FileList | readonly File[]) {
     if (disabled) return;
 
     const nextImages = [...images];
@@ -104,7 +94,7 @@ export function PostImagePicker({
         break;
       }
 
-      if (!isSupportedImage(file)) {
+       if (!(await isSupportedImageFile(file))) {
         nextError = "Solo se aceptan imágenes JPEG, PNG o WebP.";
         continue;
       }
@@ -137,13 +127,13 @@ export function PostImagePicker({
       ? Array.from(event.currentTarget.files)
       : [];
     event.currentTarget.value = "";
-    addFiles(files);
+    void addFiles(files);
   }
 
   function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     setIsDragging(false);
-    addFiles(event.dataTransfer.files);
+    void addFiles(event.dataTransfer.files);
   }
 
   function removeImage(id: string) {

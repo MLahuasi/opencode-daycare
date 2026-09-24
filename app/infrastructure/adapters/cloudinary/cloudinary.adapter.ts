@@ -24,6 +24,12 @@ type CloudinaryUrlOptions = {
   type: "authenticated";
   resource_type: "image";
   format: ImageAsset["format"];
+  width: number;
+  height: number;
+  crop: "fill";
+  gravity: "auto";
+  quality: "auto";
+  fetch_format: "auto";
 };
 
 type CloudinaryDestroyOptions = {
@@ -141,6 +147,12 @@ export class CloudinaryImageStorage implements ImageStorage {
       type: "authenticated",
       resource_type: "image",
       format: asset.format,
+      width: 800,
+      height: 600,
+      crop: "fill",
+      gravity: "auto",
+      quality: "auto",
+      fetch_format: "auto",
     });
   }
 

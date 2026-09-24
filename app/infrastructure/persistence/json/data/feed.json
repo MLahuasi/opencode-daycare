@@ -55,5 +55,65 @@
     "media": [],
     "kidId": null,
     "roomId": "room-soles"
+  },
+  {
+    "id": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "type": "activity",
+    "authorId": "person-caro-gimenez",
+    "subject": "Chewbacca Lahuasi",
+    "initial": "C",
+    "time": "23:21",
+    "dateTime": "2026-09-24T23:21:01.099Z",
+    "authorLabel": "publicado por ti",
+    "recipient": "familia de Chewbacca Lahuasi",
+    "reactions": 0,
+    "comments": 0,
+    "hasMedia": true,
+    "body": "Mi bebe chiquito",
+    "createdAt": "2026-09-24T23:19:31.874Z",
+    "updatedAt": "2026-09-24T23:21:01.099Z",
+    "media": [
+      {
+        "assetId": "5dd3b7baa3cfa7af5b3c49a0d4b2ebb8",
+        "publicId": "daycare/posts/hgylex2gwjuqsurcaovz",
+        "resourceType": "image",
+        "deliveryType": "authenticated",
+        "format": "jpg",
+        "width": 4899,
+        "height": 3266,
+        "bytes": 4275613,
+        "id": "6b2490cb-2c33-4288-81cb-335d0fd2ab4b",
+        "originalName": "DSC_0409.jpg",
+        "alt": null
+      },
+      {
+        "assetId": "fa6a6ab055f54178d6977c1ede7602c5",
+        "publicId": "daycare/posts/af4btayiypxfph90eklj",
+        "resourceType": "image",
+        "deliveryType": "authenticated",
+        "format": "jpg",
+        "width": 3000,
+        "height": 4000,
+        "bytes": 714347,
+        "id": "9e8f25e1-7b6a-4ef1-8c0e-d8255a55b77f",
+        "originalName": "EFFECTS.jpg",
+        "alt": null
+      },
+      {
+        "assetId": "c7b30fcf259b8363a8b077723f2e3cfd",
+        "publicId": "daycare/posts/qfeza5tr9mp8cvvmun05",
+        "resourceType": "image",
+        "deliveryType": "authenticated",
+        "format": "jpg",
+        "width": 1064,
+        "height": 2015,
+        "bytes": 288299,
+        "id": "d32a06db-b877-44ca-8250-73b100bd6189",
+        "originalName": "FB_IMG_1581873922116.jpg",
+        "alt": null
+      }
+    ],
+    "kidId": "a8728bae-1aba-41c4-a50d-cc3cc192548b",
+    "roomId": null
   }
 ]

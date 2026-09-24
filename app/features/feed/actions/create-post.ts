@@ -6,6 +6,7 @@ import { requireStaffSession } from "@/auth";
 import { createCloudinaryImageStorage } from "@/app/infrastructure";
 import { createFeedPost } from "../services";
 import { parsePostSubmission } from "./post-action";
+import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "./types";
 
 /**
@@ -38,10 +39,25 @@ export async function createPostAction(
     const imageStorage = parsed.uploadedMedia.length
       ? createCloudinaryImageStorage()
       : null;
-    await Promise.allSettled(
-      parsed.uploadedMedia.map((media) => imageStorage?.delete(media.publicId)),
-    );
-    return { errors: {}, message: "No pudimos guardar la publicación. Inténtalo nuevamente." };
+    let cleanupSucceeded = true;
+
+    if (imageStorage) {
+      try {
+        await Promise.all(
+          parsed.uploadedMedia.map((media) =>
+            deleteMediaWithRetry(imageStorage, media.publicId),
+          ),
+        );
+      } catch {
+        cleanupSucceeded = false;
+      }
+    }
+    return {
+      errors: {},
+      message: cleanupSucceeded
+        ? "No pudimos guardar la publicación. Inténtalo nuevamente."
+        : "No pudimos guardar la publicación ni limpiar todos los assets. Requiere reintento.",
+    };
   }
 
   revalidatePath("/home");

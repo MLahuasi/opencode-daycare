@@ -9,15 +9,10 @@ import {
   type PostFormValues,
 } from "../schemas";
 import type { PostFormActionState } from "./types";
+import { deleteMediaWithRetry } from "./media-cleanup";
 import { getAuthorizedPostTargets } from "../services";
 import type { FeedMedia } from "../types";
-
-const ACCEPTED_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
-const ACCEPTED_EXTENSIONS = /\.(jpe?g|png|webp)$/i;
+import { isSupportedImageFile } from "../utils";
 
 type ParsedPostSubmission =
   | {
@@ -161,14 +156,17 @@ export async function parsePostSubmission(
 
   for (const file of files) {
     if (
-      (!ACCEPTED_MIME_TYPES.has(file.type) && !ACCEPTED_EXTENSIONS.test(file.name)) ||
-      file.size > MAX_MEDIA_BYTES
+      file.size > MAX_MEDIA_BYTES || !(await isSupportedImageFile(file))
     ) {
       return { success: false, state: errorState("media", "Revisa el formato y tamaño de las imágenes.") };
     }
   }
 
-  if (targetKid && files.length > 0 && !(await validateConsent(targetKid.id))) {
+  if (
+    targetKid &&
+    (files.length > 0 || retainedMedia.length > 0) &&
+    !(await validateConsent(targetKid.id))
+  ) {
     return { success: false, state: errorState("media", "No hay consentimiento vigente de todas las familias activas.") };
   }
 
@@ -194,20 +192,56 @@ export async function parsePostSubmission(
       });
     }
   } catch {
-    await Promise.allSettled(
-      uploadedMedia.map((media) => imageStorage?.delete(media.publicId)),
-    );
-    return { success: false, state: { errors: {}, message: "No pudimos subir las imágenes. Inténtalo nuevamente." } };
+    let cleanupSucceeded = true;
+
+    if (imageStorage) {
+      try {
+        await Promise.all(
+          uploadedMedia.map((media) =>
+            deleteMediaWithRetry(imageStorage, media.publicId),
+          ),
+        );
+      } catch {
+        cleanupSucceeded = false;
+      }
+    }
+    return {
+      success: false,
+      state: {
+        errors: {},
+        message: cleanupSucceeded
+          ? "No pudimos subir las imágenes. Inténtalo nuevamente."
+          : "No pudimos subir las imágenes ni limpiar todos los assets. Requiere reintento.",
+      },
+    };
   }
 
   const finalMedia = [...retainedMedia, ...uploadedMedia];
   const finalValidation = validatePostForm({ ...initialValidation.data, media: finalMedia, hasImages: finalMedia.length > 0 });
 
   if (!finalValidation.success) {
-    await Promise.allSettled(
-      uploadedMedia.map((media) => imageStorage?.delete(media.publicId)),
-    );
-    return { success: false, state: { errors: finalValidation.errors, message: "Revisa los campos marcados." } };
+    let cleanupSucceeded = true;
+
+    if (imageStorage) {
+      try {
+        await Promise.all(
+          uploadedMedia.map((media) =>
+            deleteMediaWithRetry(imageStorage, media.publicId),
+          ),
+        );
+      } catch {
+        cleanupSucceeded = false;
+      }
+    }
+    return {
+      success: false,
+      state: {
+        errors: finalValidation.errors,
+        message: cleanupSucceeded
+          ? "Revisa los campos marcados."
+          : "La validación falló y no se pudieron limpiar todos los assets. Requiere reintento.",
+      },
+    };
   }
 
   return {

@@ -20,6 +20,7 @@ export type FeedMedia = {
   bytes: number;
   originalName: string;
   alt: string | null;
+  url?: string;
 };
 
 /** Static copy projected by the staff room header and composer. */
