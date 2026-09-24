@@ -4,6 +4,9 @@ export type {
   FeedMedia,
   FeedOverview,
   FeedPost,
+  ImageAsset,
+  ImageUploadInput,
+  ImageStorage,
   PostType,
   StaffRoom,
 } from "./types";

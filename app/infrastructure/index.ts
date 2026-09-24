@@ -4,6 +4,11 @@ export type {
   ParentInvitationEmailResult,
 } from "./adapters";
 export {
+  CloudinaryImageStorage,
+  createCloudinaryImageStorage,
+} from "./adapters";
+export type { CloudinaryGateway } from "./adapters";
+export {
   readCollection,
   withJsonTransaction,
   withWriteLock,
