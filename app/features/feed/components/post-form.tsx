@@ -13,6 +13,10 @@ import {
 import type { PostFormMode } from "../schemas";
 import type { PostType } from "../types";
 import type { PostFormAction, PostFormActionState } from "../actions/types";
+import {
+  PostFormExistingMedia,
+  type PostFormExistingMedia as PostFormExistingMediaValue,
+} from "./post-form-existing-media";
 import styles from "./post-form.module.css";
 
 const POST_TYPE_OPTIONS: readonly { value: PostType; label: string }[] = [
@@ -27,6 +31,7 @@ const POST_TYPE_OPTIONS: readonly { value: PostType; label: string }[] = [
 /** Initial values shared by new and edit post forms. */
 export type PostFormInitialValues = {
   body: string;
+  existingMedia: readonly PostFormExistingMediaValue[];
   kidId: string | null;
   mode: PostFormMode;
   postId?: string;
@@ -77,6 +82,9 @@ export function PostForm({
     INITIAL_ACTION_STATE,
   );
   const [body, setBody] = useState(initialValues.body);
+  const [existingMedia, setExistingMedia] = useState(
+    initialValues.existingMedia,
+  );
   const [kidId, setKidId] = useState(initialValues.kidId);
   const [roomId, setRoomId] = useState(initialValues.roomId);
   const [type, setType] = useState<PostType>(initialValues.type);
@@ -93,6 +101,7 @@ export function PostForm({
   function selectRoom(nextRoomId: string) {
     setRoomId(nextRoomId);
     setKidId(null);
+    setExistingMedia([]);
     setImages([]);
     setError("");
   }
@@ -150,6 +159,11 @@ export function PostForm({
           name="imageAlts"
           type="hidden"
           value={JSON.stringify(images.map((image) => ({ id: image.id, alt: image.alt })))}
+        />
+        <input
+          name="existingMedia"
+          type="hidden"
+          value={JSON.stringify(existingMedia.map(({ media }) => media.id))}
         />
 
         <fieldset className={styles.section}>
@@ -215,7 +229,18 @@ export function PostForm({
         {kidId ? (
           <fieldset className={styles.section}>
             <legend>Fotos</legend>
-            <PostImagePicker onChange={setImages} />
+            <PostFormExistingMedia
+              images={existingMedia}
+              onRemove={(id) =>
+                setExistingMedia((current) =>
+                  current.filter(({ media }) => media.id !== id),
+                )
+              }
+            />
+            <PostImagePicker
+              maxImages={Math.max(0, 4 - existingMedia.length)}
+              onChange={setImages}
+            />
           </fieldset>
         ) : null}
 

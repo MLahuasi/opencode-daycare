@@ -36,7 +36,7 @@ export function FamilyFeedContent({
         {posts.length > 0 ? (
           <div className={styles.posts}>
             {posts.map((post) => (
-              <FeedPostCard key={post.id} post={post} />
+              <FeedPostCard canEdit={false} key={post.id} post={post} />
             ))}
           </div>
         ) : (

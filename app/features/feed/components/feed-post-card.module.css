@@ -182,6 +182,9 @@
 
 .editLabel {
   margin-left: auto;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
   color: var(--color-coral-dark);
   cursor: pointer;
   font-size: 14px;
@@ -190,6 +193,7 @@
 }
 
 .editLabel:hover {
+  background: transparent;
   color: var(--color-coral);
 }
 

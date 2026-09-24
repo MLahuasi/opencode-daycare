@@ -25,6 +25,17 @@ export function getFeeds(): Promise<readonly FeedPost[]> {
 }
 
 /**
+ * Finds one persisted feed post by stable identifier.
+ *
+ * @param id - Stable post identifier.
+ * @returns The matching post, or null when it does not exist.
+ */
+export async function getFeedById(id: string): Promise<FeedPost | null> {
+  const posts = await getFeeds();
+  return posts.find((post) => post.id === id) ?? null;
+}
+
+/**
  * Reads the canonical FeedPost collection from disk.
  *
  * @returns A freshly parsed, immutable list of kids.

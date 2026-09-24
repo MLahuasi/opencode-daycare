@@ -27,6 +27,7 @@ type PostImagePickerProps = {
   className?: string;
   disabled?: boolean;
   inputName?: string;
+  maxImages?: number;
   onChange?: (images: readonly PostImageSelection[]) => void;
 };
 
@@ -49,6 +50,7 @@ function formatFileSize(bytes: number): string {
  * @param props.className - Optional classes applied to the picker wrapper.
  * @param props.disabled - Whether selection and editing are disabled.
  * @param props.inputName - Name used by the native file input in form submission.
+ * @param props.maxImages - Maximum number of new images accepted by the picker.
  * @param props.onChange - Called with the current valid image selections.
  * @returns An accessible image selection and preview control.
  */
@@ -56,6 +58,7 @@ export function PostImagePicker({
   className = "",
   disabled = false,
   inputName = "images",
+  maxImages = MAX_POST_MEDIA,
   onChange,
 }: PostImagePickerProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -96,8 +99,8 @@ export function PostImagePicker({
     let nextError = "";
 
     for (const file of fileList) {
-      if (nextImages.length >= MAX_POST_MEDIA) {
-        nextError = `Puedes adjuntar hasta ${MAX_POST_MEDIA} imágenes.`;
+      if (nextImages.length >= maxImages) {
+        nextError = `Puedes adjuntar hasta ${maxImages} imágenes nuevas.`;
         break;
       }
 
@@ -192,13 +195,13 @@ export function PostImagePicker({
         <span>Arrástralas aquí o elige archivos desde tu dispositivo</span>
         <button
           className={styles.chooseButton}
-          disabled={disabled || images.length >= MAX_POST_MEDIA}
+          disabled={disabled || images.length >= maxImages}
           onClick={() => inputRef.current?.click()}
           type="button"
         >
           Elegir imágenes
         </button>
-        <small>JPEG, PNG o WebP · máximo 10 MB por imagen · hasta 4 imágenes</small>
+        <small>JPEG, PNG o WebP · máximo 10 MB por imagen · hasta {maxImages} nuevas</small>
       </div>
 
       {error ? (

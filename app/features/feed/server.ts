@@ -6,6 +6,7 @@ export {
   getFeedOverview,
   getFeeds,
   getAuthorizedPostTargets,
+  getFeedById,
   getStaffRoomAssignments,
   createFeedPost,
   updateFeedPost,

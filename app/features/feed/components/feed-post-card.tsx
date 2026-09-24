@@ -1,8 +1,14 @@
-import { Avatar, Badge, type BadgeVariant } from "@/app/components/ui";
+import {
+  Avatar,
+  Badge,
+  LinkButton,
+  type BadgeVariant,
+} from "@/app/components/ui";
 import type { FeedPost, PostType } from "../types";
 import styles from "./feed-post-card.module.css";
 
 type FeedPostCardProps = {
+  canEdit?: boolean;
   post: FeedPost;
   className?: string;
 };
@@ -94,11 +100,12 @@ function PhotoIcon() {
  * Renders a static feed publication using its category-specific visual treatment.
  *
  * @param props - Feed card configuration.
+ * @param props.canEdit - Whether to render the staff edit destination.
  * @param props.post - Static publication data to display.
  * @param props.className - Optional classes that customize the card container.
  * @returns A feed publication article.
  */
-export function FeedPostCard({ className = "", post }: FeedPostCardProps) {
+export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostCardProps) {
   const isAnnouncement = post.type === "announcement";
 
   return (
@@ -143,7 +150,15 @@ export function FeedPostCard({ className = "", post }: FeedPostCardProps) {
           <CommentIcon />
           {post.comments}
         </span>
-        <span className={styles.editLabel}>Editar</span>
+        {canEdit ? (
+          <LinkButton
+            className={styles.editLabel}
+            href={`/post?id=${post.id}`}
+            variant="ghost"
+          >
+            Editar
+          </LinkButton>
+        ) : null}
       </footer>
     </article>
   );
