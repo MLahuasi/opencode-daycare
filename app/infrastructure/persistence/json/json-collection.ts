@@ -12,7 +12,8 @@ export type JsonCollectionName =
   | "credential.json"
   | "invitation.json"
   | "feed.json"
-  | "feed-overview.json";
+  | "feed-overview.json"
+  | "staff-rooms.json";
 
 const JSON_DATA_DIRECTORY = path.join(
   process.cwd(),

@@ -1,3 +1,8 @@
 import "server-only";
 
-export { getFeedOverview, getFeeds } from "./services";
+export {
+  getAuthorizedStaffRooms,
+  getFeedOverview,
+  getFeeds,
+  getStaffRoomAssignments,
+} from "./services";
