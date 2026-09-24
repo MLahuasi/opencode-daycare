@@ -1,5 +1,26 @@
-/** Allowed presentation categories for a feed post. */
-export type PostType = "achievement" | "activity" | "announcement";
+/** Allowed categories for a feed post. */
+export type PostType =
+  | "food"
+  | "nap"
+  | "activity"
+  | "achievement"
+  | "mood"
+  | "announcement";
+
+/** Cloudinary metadata persisted for a feed image. */
+export type FeedMedia = {
+  id: string;
+  publicId: string;
+  assetId: string;
+  resourceType: "image";
+  deliveryType: "authenticated";
+  format: "jpg" | "jpeg" | "png" | "webp";
+  width: number;
+  height: number;
+  bytes: number;
+  originalName: string;
+  alt: string | null;
+};
 
 /** Static copy projected by the staff room header and composer. */
 export type FeedOverview = {
@@ -15,16 +36,20 @@ export type FeedOverview = {
 export type FeedPost = {
   id: string;
   type: PostType;
+  authorId: string;
   subject: string;
   initial?: string;
   time: string;
   dateTime: string;
+  createdAt: string;
+  updatedAt: string;
   authorLabel?: string;
   recipient: string;
   body: string;
   reactions: number;
   comments: number;
   hasMedia?: boolean;
+  media: FeedMedia[];
   kidId: string | null;
   roomId: string | null;
 };

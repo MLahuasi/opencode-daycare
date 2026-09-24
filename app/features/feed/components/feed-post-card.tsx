@@ -8,14 +8,20 @@ type FeedPostCardProps = {
 };
 
 const postTypeLabels: Record<PostType, string> = {
+  food: "Alimentación",
+  nap: "Descanso",
   achievement: "Logro",
   activity: "Actividad",
+  mood: "Estado de ánimo",
   announcement: "Anuncio",
 };
 
 const postTypeBadgeVariants: Record<PostType, BadgeVariant> = {
+  food: "yellow",
+  nap: "purple",
   achievement: "green",
   activity: "blue",
+  mood: "pink",
   announcement: "announcement",
 };
 

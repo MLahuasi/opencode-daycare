@@ -1,1 +1,1 @@
-export type { FeedOverview, FeedPost, PostType } from "./feed";
+export type { FeedMedia, FeedOverview, FeedPost, PostType } from "./feed";
