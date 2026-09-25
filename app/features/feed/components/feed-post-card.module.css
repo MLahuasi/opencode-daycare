@@ -13,6 +13,18 @@
   margin-bottom: 14px;
 }
 
+.detailLink {
+  display: block;
+  width: 100%;
+  border-radius: 14px;
+  padding: 0;
+  text-align: left;
+}
+
+.detailLink:hover {
+  background: transparent;
+}
+
 .avatar {
   display: grid;
   width: 44px;

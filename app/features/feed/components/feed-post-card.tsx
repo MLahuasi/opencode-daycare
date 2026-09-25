@@ -133,26 +133,33 @@ export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostC
 
   return (
     <article className={`${styles.card} ${styles[post.type]} ${className}`}>
-      <header className={styles.header}>
-        {isAnnouncement ? (
-          <div className={styles.avatar}>
-            <AnnouncementIcon />
+      <LinkButton
+        aria-label={`Abrir publicación de ${post.subject}`}
+        className={styles.detailLink}
+        href={`/post-detail?id=${post.id}`}
+        variant="ghost"
+      >
+        <header className={styles.header}>
+          {isAnnouncement ? (
+            <div className={styles.avatar}>
+              <AnnouncementIcon />
+            </div>
+          ) : (
+            <Avatar className={styles.avatar} initial={post.initial ?? ""} tone="blue" />
+          )}
+          <div className={styles.author}>
+            <h2>{post.subject}</h2>
+            <p>
+              <time dateTime={post.dateTime}>{post.time}</time>
+              {post.authorLabel ? ` · ${post.authorLabel}` : ""}
+            </p>
           </div>
-        ) : (
-          <Avatar className={styles.avatar} initial={post.initial ?? ""} tone="blue" />
-        )}
-        <div className={styles.author}>
-          <h2>{post.subject}</h2>
-          <p>
-            <time dateTime={post.dateTime}>{post.time}</time>
-            {post.authorLabel ? ` · ${post.authorLabel}` : ""}
-          </p>
-        </div>
-        <Badge className={styles.tag} variant={postTypeBadgeVariants[post.type]}>
-          <PostTypeIcon type={post.type} />
-          {postTypeLabels[post.type]}
-        </Badge>
-      </header>
+          <Badge className={styles.tag} variant={postTypeBadgeVariants[post.type]}>
+            <PostTypeIcon type={post.type} />
+            {postTypeLabels[post.type]}
+          </Badge>
+        </header>
+      </LinkButton>
 
       <p className={styles.recipient}>Para: {post.recipient}</p>
       <p className={styles.body}>{post.body}</p>
