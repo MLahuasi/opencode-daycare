@@ -1,0 +1,11 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-page);
+  color: var(--color-ink);
+}
+
+.content {
+  min-width: 0;
+  flex: 1;
+}

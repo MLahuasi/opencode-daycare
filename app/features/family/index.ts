@@ -1,5 +1,8 @@
 export { FamilyHeader } from "./components/family-header";
 export { FamilyFeedContent } from "./components/family-feed-content";
+export { FamilyFeedFilters } from "./components/family-feed-filters";
+export { FamilyNavigation } from "./components/family-navigation";
+export { FamilySidebar } from "./components/family-sidebar";
 
 /**
  * Public API of the Family domain.
@@ -7,4 +10,10 @@ export { FamilyFeedContent } from "./components/family-feed-content";
  * Exposes the parent-to-kid relationship contracts and family feed UI. This
  * entry reexports neither server-only data access nor actions.
  */
-export type { LinkedParent, ParentKid, ParentRelationship } from "./types";
+export type {
+  FamilyFeedFilter,
+  FamilyFeedOption,
+  LinkedParent,
+  ParentKid,
+  ParentRelationship,
+} from "./types";
