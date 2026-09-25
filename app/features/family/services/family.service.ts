@@ -7,13 +7,17 @@ import { readCollection } from "@/app/infrastructure/persistence";
 import type { Kid } from "@/app/features/kids/types";
 import type { Person } from "@/app/features/people";
 import type { Room } from "@/app/features/rooms";
-import type { ParentKid } from "../types";
+import type {
+  FamilyFeedOption,
+  ParentKid,
+} from "../types";
 
 /** Server-resolved data required to build a parent's authorized view. */
 export type FamilyContext = {
   person: Person;
   parentKids: readonly ParentKid[];
   kids: readonly Kid[];
+  activeKids: readonly Kid[];
   rooms: readonly Room[];
 };
 
@@ -49,6 +53,7 @@ export async function getAuthenticatedFamilyContext(): Promise<FamilyContext> {
     authorizedParentKids.map((parentKid) => parentKid.kidId),
   );
   const authorizedKids = kids.filter((kid) => authorizedKidIds.has(kid.id));
+  const activeKids = authorizedKids.filter((kid) => kid.status === "active");
   const authorizedRoomIds = new Set(authorizedKids.map((kid) => kid.roomId));
   const authorizedRooms = rooms.filter((room) => authorizedRoomIds.has(room.id));
 
@@ -56,8 +61,45 @@ export async function getAuthenticatedFamilyContext(): Promise<FamilyContext> {
     person,
     parentKids: authorizedParentKids,
     kids: authorizedKids,
+    activeKids,
     rooms: authorizedRooms,
   };
+}
+
+/**
+ * Builds the server-authorized filter options for the family feed.
+ *
+ * @returns Active kid, authorized room, and all-rooms filter options.
+ */
+export async function getFamilyFeedOptions(): Promise<
+  readonly FamilyFeedOption[]
+> {
+  const context = await getAuthenticatedFamilyContext();
+  const activeRoomIds = new Set(context.activeKids.map((kid) => kid.roomId));
+  const activeRooms = context.rooms.filter((room) => activeRoomIds.has(room.id));
+  const options: FamilyFeedOption[] = context.activeKids.map((kid) => ({
+    id: kid.id,
+    label: kid.name,
+    filter: { kind: "kid", id: kid.id },
+  }));
+
+  options.push(
+    ...activeRooms.map((room) => ({
+      id: room.id,
+      label: room.name,
+      filter: { kind: "room", id: room.id } as const,
+    })),
+  );
+
+  if (activeRooms.length > 1) {
+    options.push({
+      id: "all",
+      label: "Todos",
+      filter: { kind: "all" },
+    });
+  }
+
+  return options;
 }
 
 /**

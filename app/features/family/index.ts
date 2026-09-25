@@ -7,4 +7,10 @@ export { FamilyFeedContent } from "./components/family-feed-content";
  * Exposes the parent-to-kid relationship contracts and family feed UI. This
  * entry reexports neither server-only data access nor actions.
  */
-export type { LinkedParent, ParentKid, ParentRelationship } from "./types";
+export type {
+  FamilyFeedFilter,
+  FamilyFeedOption,
+  LinkedParent,
+  ParentKid,
+  ParentRelationship,
+} from "./types";
