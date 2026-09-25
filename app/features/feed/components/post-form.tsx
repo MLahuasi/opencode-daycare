@@ -115,7 +115,7 @@ export function PostForm({
       return;
     }
 
-    if (!normalizedBody && images.length === 0) {
+    if (!normalizedBody && images.length === 0 && existingMedia.length === 0) {
       event.preventDefault();
       setError("Agrega una descripción o al menos una imagen.");
       return;

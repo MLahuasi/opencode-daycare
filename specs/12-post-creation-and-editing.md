@@ -1,6 +1,6 @@
 # SPEC 12 — Creación y edición de publicaciones
 
-> **Status:** Approved
+> **Status:** Implement
 > **Depends on:** SPEC 03, SPEC 05, SPEC 08, SPEC 09, SPEC 11
 > **Date:** 2026-09-23
 > **Objective:** Implementar `/post` para crear y editar publicaciones del personal con imágenes gestionadas por Cloudinary y persistencia en JSON.
@@ -100,30 +100,30 @@ Cloudinary se configurará mediante variables de entorno server-only. `api_key` 
 
 ## Acceptance criteria
 
-- [ ] `/post` carga para personal activo y redirige a `/home` para padres.
-- [ ] `/post?id=<id>` carga los datos de la publicación existente.
-- [ ] El formulario coincide estructuralmente con la plantilla indicada.
-- [ ] Solo se pueden seleccionar niños activos y salas asignadas al personal.
-- [ ] Cada publicación tiene exactamente un destino.
-- [ ] Los seis tipos definidos se pueden seleccionar y persistir.
-- [ ] Una descripción de más de 2000 caracteres es rechazada.
-- [ ] Una publicación sin descripción ni imágenes es rechazada.
-- [ ] El selector acepta como máximo cuatro imágenes válidas.
-- [ ] Se rechazan formatos no permitidos y archivos mayores de 10 MB.
-- [ ] El selector ofrece diálogo del sistema, drag and drop, preview y eliminación.
-- [ ] Las credenciales Cloudinary no llegan al cliente.
+- [x] `/post` carga para personal activo y redirige a `/home` para padres.
+- [x] `/post?id=<id>` carga los datos de la publicación existente.
+- [x] El formulario coincide estructuralmente con la plantilla indicada.
+- [x] Solo se pueden seleccionar niños activos y salas asignadas al personal.
+- [x] Cada publicación tiene exactamente un destino.
+- [x] Los seis tipos definidos se pueden seleccionar y persistir.
+- [x] Una descripción de más de 2000 caracteres es rechazada.
+- [x] Una publicación sin descripción ni imágenes es rechazada.
+- [x] El selector acepta como máximo cuatro imágenes válidas.
+- [x] Se rechazan formatos no permitidos y archivos mayores de 10 MB.
+- [x] El selector ofrece diálogo del sistema, drag and drop, preview y eliminación.
+- [x] Las credenciales Cloudinary no llegan al cliente.
 - [ ] Las imágenes se suben como assets `authenticated`.
-- [ ] Las fotos de un niño se bloquean si algún padre o tutor activo no tiene consentimiento.
-- [ ] Las publicaciones dirigidas a una sala no admiten imágenes.
-- [ ] `feed.json` contiene `publicId` y metadatos de cada imagen guardada.
+- [x] Las fotos de un niño se bloquean si algún padre o tutor activo no tiene consentimiento.
+- [x] Las publicaciones dirigidas a una sala no admiten imágenes.
+- [x] `feed.json` contiene `publicId` y metadatos de cada imagen guardada.
 - [ ] Un fallo de persistencia elimina los assets Cloudinary recién subidos.
-- [ ] Editar permite agregar y quitar imágenes sin superar el límite.
-- [ ] Cancelar, crear y editar vuelven a `/home`.
-- [ ] Las publicaciones nuevas aparecen en `/home` después de guardarse.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
+- [x] Editar permite agregar y quitar imágenes sin superar el límite.
+- [x] Cancelar, crear y editar vuelven a `/home`.
+- [x] Las publicaciones nuevas aparecen en `/home` después de guardarse.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
 
 ## Decisions
 
