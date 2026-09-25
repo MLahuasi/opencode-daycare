@@ -101,8 +101,11 @@ export function FamilySidebar({ className = "", person }: FamilySidebarProps) {
           >
             <NavigationIcon name={item.icon} />
             <span>{item.label}</span>
-          </LinkButton>
-        ))}
+            </LinkButton>
+          ))}
+        <div className={styles.mobileLogout}>
+          <LogoutButton label="Cerrar sesión" />
+        </div>
       </nav>
     </>
   );

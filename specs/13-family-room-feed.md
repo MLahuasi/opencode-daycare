@@ -1,6 +1,6 @@
 # SPEC 13 — Feed familiar por sala
 
-> **Status:** Approved
+> **Status:** Implement
 > **Depends on:** SPEC 09, SPEC 11, SPEC 12
 > **Date:** 2026-09-23
 > **Objective:** Implementar `/family-feed` con navegación familiar y filtros por niño, sala y conjunto de salas autorizadas.
@@ -70,31 +70,31 @@ La autorización se calcula a partir de `ParentKid` y `Kid.roomId`. No se usará
 
 ## Acceptance criteria
 
-- [ ] Un padre autenticado llega a `/family-feed` después del login.
-- [ ] Un padre que abre `/home` es redirigido a `/family-feed`.
-- [ ] Personal que abre `/family-feed` es redirigido a `/home`.
-- [ ] La navegación familiar muestra Feed, Resumen del día y Mi cuenta.
-- [ ] Feed y cerrar sesión tienen comportamiento funcional; Resumen del día y Mi cuenta solo redirigen desde sus rutas placeholder a `/family-feed`.
-- [ ] `/family-feed/day-summary` y `/family-feed/account` redirigen a `/family-feed`.
-- [ ] El feed muestra todos los niños activos de las salas de los hijos vinculados.
-- [ ] Un padre no puede ver publicaciones de salas no autorizadas.
-- [ ] Se muestran etiquetas de niños y salas según las salas autorizadas.
-- [ ] `Todos` aparece cuando el padre tiene más de una sala autorizada.
-- [ ] La sala única inicia seleccionada cuando solo existe una sala.
-- [ ] `Todos` inicia seleccionado cuando existen varias salas.
-- [ ] La etiqueta activa usa el estilo negro definido por la plantilla.
-- [ ] El filtro de un niño muestra únicamente posts dirigidos a ese niño.
-- [ ] El filtro de una sala muestra posts de sus niños y anuncios de esa sala.
-- [ ] `Todos` combina las salas autorizadas sin duplicar publicaciones.
-- [ ] El feed se ordena por fecha descendente.
-- [ ] Las imágenes se muestran solo después de autorizar el post.
-- [ ] Las URLs Cloudinary no se generan para publicaciones no autorizadas.
-- [ ] Una cuenta sin relaciones muestra un estado vacío seguro.
-- [ ] La navegación funciona en escritorio y móvil.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
+- [x] Un padre autenticado llega a `/family-feed` después del login.
+- [x] Un padre que abre `/home` es redirigido a `/family-feed`.
+- [x] Personal que abre `/family-feed` es redirigido a `/home`.
+- [x] La navegación familiar muestra Feed, Resumen del día y Mi cuenta.
+- [x] Feed y cerrar sesión tienen comportamiento funcional; Resumen del día y Mi cuenta solo redirigen desde sus rutas placeholder a `/family-feed`.
+- [x] `/family-feed/day-summary` y `/family-feed/account` redirigen a `/family-feed`.
+- [x] El feed muestra todos los niños activos de las salas de los hijos vinculados.
+- [x] Un padre no puede ver publicaciones de salas no autorizadas.
+- [x] Se muestran etiquetas de niños y salas según las salas autorizadas.
+- [x] `Todos` aparece cuando el padre tiene más de una sala autorizada.
+- [x] La sala única inicia seleccionada cuando solo existe una sala.
+- [x] `Todos` inicia seleccionado cuando existen varias salas.
+- [x] La etiqueta activa usa el estilo negro definido por la plantilla.
+- [x] El filtro de un niño muestra únicamente posts dirigidos a ese niño.
+- [x] El filtro de una sala muestra posts de sus niños y anuncios de esa sala.
+- [x] `Todos` combina las salas autorizadas sin duplicar publicaciones.
+- [x] El feed se ordena por fecha descendente.
+- [x] Las imágenes se muestran solo después de autorizar el post.
+- [x] Las URLs Cloudinary no se generan para publicaciones no autorizadas.
+- [x] Una cuenta sin relaciones muestra un estado vacío seguro.
+- [x] La navegación funciona en escritorio y móvil.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
 
 ## Decisions
 
