@@ -1,5 +1,9 @@
+/** Icon identifiers supported by the family sidebar. */
+export type FamilyNavigationIcon = "feed" | "summary" | "account";
+
 /** A configured destination in the family navigation. */
 export type FamilyNavigationItem = {
+  icon: FamilyNavigationIcon;
   label: string;
   href: string;
   active?: boolean;
@@ -15,8 +19,12 @@ export type FamilyNavigationConfig = {
 export const familyNavigationConfig = {
   navigationLabel: "Navegación familiar",
   items: [
-    { label: "Feed", href: "/family-feed", active: true },
-    { label: "Resumen del día", href: "/family-feed/day-summary" },
-    { label: "Mi cuenta", href: "/family-feed/account" },
+    { icon: "feed", label: "Feed", href: "/family-feed", active: true },
+    {
+      icon: "summary",
+      label: "Resumen del día",
+      href: "/family-feed/day-summary",
+    },
+    { icon: "account", label: "Mi cuenta", href: "/family-feed/account" },
   ],
 } satisfies FamilyNavigationConfig;

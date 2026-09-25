@@ -21,7 +21,7 @@
 }
 
 .greeting p,
-.divider span {
+.dateDivider span {
   color: var(--color-navigation-active);
   font-size: 12.5px;
   font-weight: 800;
@@ -44,18 +44,19 @@
   font-size: 14.5px;
 }
 
-.divider {
+.dateDivider {
   display: flex;
   align-items: center;
   gap: 14px;
   margin-bottom: 14px;
 }
 
-.divider span {
+.dateDivider span {
   color: var(--color-navigation);
+  white-space: nowrap;
 }
 
-.divider i {
+.dateDivider i {
   height: 1px;
   flex: 1;
   background: var(--color-divider);

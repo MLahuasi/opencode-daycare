@@ -1,6 +1,8 @@
 export { FamilyHeader } from "./components/family-header";
 export { FamilyFeedContent } from "./components/family-feed-content";
+export { FamilyFeedFilters } from "./components/family-feed-filters";
 export { FamilyNavigation } from "./components/family-navigation";
+export { FamilySidebar } from "./components/family-sidebar";
 
 /**
  * Public API of the Family domain.
