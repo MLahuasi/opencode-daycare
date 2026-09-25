@@ -1,7 +1,10 @@
 import "server-only";
 
 import { requireActiveSession } from "@/auth";
-import { getFeeds } from "@/app/features/feed/server";
+import {
+  getFeeds,
+  resolveFeedMediaUrls,
+} from "@/app/features/feed/server";
 import type { FeedPost } from "@/app/features/feed";
 import { readCollection } from "@/app/infrastructure/persistence";
 import type { Kid } from "@/app/features/kids/types";
@@ -116,7 +119,7 @@ export async function getFamilyFeed(
 ): Promise<readonly FeedPost[]> {
   const [context, posts] = await Promise.all([
     getAuthenticatedFamilyContext(),
-    getFeeds(),
+    getFeeds({ resolveMediaUrls: false }),
   ]);
   const kidIds = new Set(context.activeKids.map((kid) => kid.id));
   const activeRoomIds = new Set(context.activeKids.map((kid) => kid.roomId));
@@ -160,8 +163,10 @@ export async function getFamilyFeed(
     authorizedPosts.map((post) => [post.id, post]),
   );
 
-  return [...uniquePosts.values()].sort(
+  const sortedPosts = [...uniquePosts.values()].sort(
     (first, second) =>
       new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime(),
   );
+
+  return resolveFeedMediaUrls(sortedPosts);
 }

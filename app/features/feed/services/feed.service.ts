@@ -3,39 +3,60 @@ import "server-only";
 import { createCloudinaryImageStorage, readCollection } from "@/app/infrastructure";
 import type { FeedOverview, FeedPost } from "../types";
 
+type FeedReadOptions = {
+  resolveMediaUrls?: boolean;
+};
+
+function validateFeedPosts(posts: readonly FeedPost[]): void {
+  for (const post of posts) {
+    const hasKidDestination = post.kidId !== null && post.kidId !== undefined;
+    const hasRoomDestination =
+      post.roomId !== null && post.roomId !== undefined;
+
+    if (hasKidDestination === hasRoomDestination) {
+      throw new Error(
+        `Feed post ${post.id} must have exactly one destination: kidId or roomId.`,
+      );
+    }
+  }
+}
+
 /**
  * Reads the canonical FeedPost collection from disk.
  *
- * @returns A freshly parsed, immutable list of kids.
+ * @param options - Whether to resolve signed URLs for media.
+ * @returns A freshly parsed list of feed posts.
  */
-export function getFeeds(): Promise<readonly FeedPost[]> {
-  return readCollection<FeedPost>("feed.json").then((posts) => {
-    for (const post of posts) {
-      const hasKidDestination = post.kidId !== null && post.kidId !== undefined;
-      const hasRoomDestination =
-        post.roomId !== null && post.roomId !== undefined;
+export async function getFeeds(
+  { resolveMediaUrls = true }: FeedReadOptions = {},
+): Promise<readonly FeedPost[]> {
+  const posts = await readCollection<FeedPost>("feed.json");
+  validateFeedPosts(posts);
 
-      if (hasKidDestination === hasRoomDestination) {
-        throw new Error(
-          `Feed post ${post.id} must have exactly one destination: kidId or roomId.`,
-        );
-      }
-    }
+  return resolveMediaUrls ? resolveFeedMediaUrls(posts) : posts;
+}
 
-    const imageStorage = posts.some((post) => post.media.length > 0)
-      ? createCloudinaryImageStorage()
-      : null;
+/**
+ * Projects signed media URLs for an already authorized set of feed posts.
+ *
+ * @param posts - Feed posts whose media access has already been authorized.
+ * @returns The posts with signed URLs projected onto their media.
+ */
+export function resolveFeedMediaUrls(
+  posts: readonly FeedPost[],
+): readonly FeedPost[] {
+  if (!posts.some((post) => post.media.length > 0)) {
+    return posts;
+  }
 
-    return posts.map((post) => ({
-      ...post,
-      media: imageStorage
-        ? post.media.map((media) => ({
-            ...media,
-            url: imageStorage.getUrl(media),
-          }))
-        : post.media,
-    }));
-  });
+  const imageStorage = createCloudinaryImageStorage();
+  return posts.map((post) => ({
+    ...post,
+    media: post.media.map((media) => ({
+      ...media,
+      url: imageStorage.getUrl(media),
+    })),
+  }));
 }
 
 /**

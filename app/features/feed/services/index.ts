@@ -1,4 +1,9 @@
-export { getFeedById, getFeedOverview, getFeeds } from "./feed.service";
+export {
+  getFeedById,
+  getFeedOverview,
+  getFeeds,
+  resolveFeedMediaUrls,
+} from "./feed.service";
 export {
   getAuthorizedStaffRooms,
   getStaffRoomAssignments,

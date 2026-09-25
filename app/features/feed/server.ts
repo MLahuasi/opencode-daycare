@@ -5,6 +5,7 @@ export {
   getAuthorizedStaffRooms,
   getFeedOverview,
   getFeeds,
+  resolveFeedMediaUrls,
   getAuthorizedPostTargets,
   getFeedById,
   getStaffRoomAssignments,
