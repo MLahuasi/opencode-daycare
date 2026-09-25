@@ -1,4 +1,4 @@
-import { Avatar, Button } from "@/app/components/ui";
+import { Avatar, LinkButton } from "@/app/components/ui";
 import type { FeedOverview, FeedPost } from "../types";
 import { FeedPostCard } from "./feed-post-card";
 import styles from "./feed-content.module.css";
@@ -42,13 +42,13 @@ export function FeedContent({ className = "", overview, posts }: FeedContentProp
           <span>{overview.attendance} · {overview.date}</span>
         </header>
 
-        <Button className={styles.composer} variant="ghost">
+        <LinkButton className={styles.composer} href="/post" variant="ghost">
           <Avatar aria-hidden="true" className={styles.avatar} initial="C" />
           <span className={styles.composerText}>{overview.composerPrompt}</span>
           <span className={styles.camera} aria-hidden="true">
             <CameraIcon />
           </span>
-        </Button>
+        </LinkButton>
 
         <div className={styles.divider}>
           <span>{overview.publishedTodayLabel}</span>

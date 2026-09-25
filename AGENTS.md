@@ -33,6 +33,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Usar feature-first: `app/components/ui` para UI genérica, `app/components/layout` para composición estructural, `app/shared` para código transversal, `app/data/mocks` para fixtures estáticos, `app/infrastructure` para persistencia e integraciones server-only y `app/features/<domain>` para cada dominio.
 - Una feature puede contener `components`, `types`, `schemas`, `actions`, `services` y `utils`.
 - Las features no dependen de internals de otras features. Exponer su API pública mediante `index.ts`.
+- Aplicar inversión de dependencias en adapters: la lógica de dominio debe depender de interfaces o puertos definidos en la capa de dominio o contratos compartidos, nunca de SDKs o proveedores concretos.
+- Inyectar las implementaciones de infraestructura desde una composición externa; cambiar de proveedor no debe requerir modificar la lógica de negocio.
 - `app/components/ui/index.ts` expone la API pública de los componentes reutilizables.
 - Consumir componentes UI desde `@/app/components/ui`, sin imports profundos a sus archivos internos.
 - Mantener componentes específicos de negocio dentro de `app/features/<domain>/components`.
