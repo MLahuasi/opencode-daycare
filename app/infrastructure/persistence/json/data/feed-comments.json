@@ -1,0 +1,23 @@
+[
+  {
+    "id": "comment-mateo-first-potty-1",
+    "postId": "mateo-first-potty",
+    "authorId": "parent-diego-fernandez",
+    "body": "¡Qué gran paso, Mateo!",
+    "createdAt": "2026-06-17T19:30:00.000Z"
+  },
+  {
+    "id": "comment-mateo-tempera-painting-1",
+    "postId": "mateo-tempera-painting",
+    "authorId": "parent-diego-fernandez",
+    "body": "¡Qué hermoso! En casa también le encanta el azul.",
+    "createdAt": "2026-06-17T15:02:00.000Z"
+  },
+  {
+    "id": "comment-mateo-tempera-painting-2",
+    "postId": "mateo-tempera-painting",
+    "authorId": "person-caro-gimenez",
+    "body": "¡Se nota mucho! Le guardamos la obra.",
+    "createdAt": "2026-06-17T15:15:00.000Z"
+  }
+]

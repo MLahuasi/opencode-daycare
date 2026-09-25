@@ -12,6 +12,8 @@ export type JsonCollectionName =
   | "credential.json"
   | "invitation.json"
   | "feed.json"
+  | "feed-comments.json"
+  | "feed-reactions.json"
   | "feed-overview.json"
   | "staff-rooms.json";
 
