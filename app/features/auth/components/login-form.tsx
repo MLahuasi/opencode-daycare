@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { SubmitEvent } from "react";
 import { useState } from "react";
@@ -8,7 +8,7 @@ import { Button, FormField, LinkButton } from "@/app/components/ui";
 import styles from "./auth.module.css";
 
 /**
- * Renders the login form and navigates to the staff home after native validation.
+ * Renders the login form and navigates to the role-specific feed after validation.
  *
  * @param props - Login state projected from the route.
  * @param props.activated - Whether the account was just activated.
@@ -33,7 +33,8 @@ export function LoginForm({ activated = false }: { activated?: boolean }) {
     setIsPending(false);
 
     if (result?.ok) {
-      router.push("/home");
+      const session = await getSession();
+      router.push(session?.user.role === "parent" ? "/family-feed" : "/home");
       return;
     }
 
