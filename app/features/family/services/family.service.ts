@@ -53,9 +53,11 @@ export async function getAuthenticatedFamilyContext(): Promise<FamilyContext> {
     authorizedParentKids.map((parentKid) => parentKid.kidId),
   );
   const authorizedKids = kids.filter((kid) => authorizedKidIds.has(kid.id));
-  const activeKids = authorizedKids.filter((kid) => kid.status === "active");
   const authorizedRoomIds = new Set(authorizedKids.map((kid) => kid.roomId));
   const authorizedRooms = rooms.filter((room) => authorizedRoomIds.has(room.id));
+  const activeKids = kids.filter(
+    (kid) => kid.status === "active" && authorizedRoomIds.has(kid.roomId),
+  );
 
   return {
     person,
@@ -105,14 +107,14 @@ export async function getFamilyFeedOptions(): Promise<
 /**
  * Builds the authorized chronological feed for the authenticated parent.
  *
- * @returns Posts addressed to the parent's kids or their rooms.
+ * @returns Posts addressed to active kids in authorized rooms or those rooms.
  */
 export async function getFamilyFeed(): Promise<readonly FeedPost[]> {
   const [context, posts] = await Promise.all([
     getAuthenticatedFamilyContext(),
     getFeeds(),
   ]);
-  const kidIds = new Set(context.kids.map((kid) => kid.id));
+  const kidIds = new Set(context.activeKids.map((kid) => kid.id));
   const roomIds = new Set(context.rooms.map((room) => room.id));
   const authorizedPosts = posts.filter(
     (post) =>
