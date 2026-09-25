@@ -13,9 +13,11 @@ export {
   validatePostForm,
 } from "./schemas";
 export type {
+  FeedComment,
   FeedMedia,
   FeedOverview,
   FeedPost,
+  FeedReaction,
   ImageAsset,
   ImageUploadInput,
   ImageStorage,
