@@ -24,6 +24,7 @@ export type AuthorizedPostData = {
   reactions: readonly FeedReaction[];
   recipientKid: Kid | null;
   recipientRoom: Room | null;
+  viewerRole: Person["role"];
 };
 
 function isPostInAuthorizedRooms(
@@ -110,5 +111,6 @@ export async function getAuthorizedPostData(
     reactions: reactions.filter((reaction) => reaction.postId === post.id),
     recipientKid: postRecipientKid,
     recipientRoom: postRecipientRoom,
+    viewerRole: session.user.role,
   };
 }
