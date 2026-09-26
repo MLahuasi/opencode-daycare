@@ -1,0 +1,114 @@
+[
+  {
+    "id": "reaction-mateo-first-potty-1",
+    "postId": "mateo-first-potty",
+    "personId": "parent-diego-fernandez",
+    "type": "love",
+    "createdAt": "2026-06-17T19:25:00.000Z"
+  },
+  {
+    "id": "reaction-mateo-first-potty-2",
+    "postId": "mateo-first-potty",
+    "personId": "parent-carolina-mendez",
+    "type": "love",
+    "createdAt": "2026-06-17T19:26:00.000Z"
+  },
+  {
+    "id": "reaction-mateo-first-potty-3",
+    "postId": "mateo-first-potty",
+    "personId": "parent-mariana-ruiz",
+    "type": "love",
+    "createdAt": "2026-06-17T19:27:00.000Z"
+  },
+  {
+    "id": "reaction-mateo-tempera-painting-1",
+    "postId": "mateo-tempera-painting",
+    "personId": "parent-diego-fernandez",
+    "type": "love",
+    "createdAt": "2026-06-17T14:50:00.000Z"
+  },
+  {
+    "id": "reaction-mateo-tempera-painting-2",
+    "postId": "mateo-tempera-painting",
+    "personId": "parent-carolina-mendez",
+    "type": "love",
+    "createdAt": "2026-06-17T14:51:00.000Z"
+  },
+  {
+    "id": "reaction-mateo-tempera-painting-3",
+    "postId": "mateo-tempera-painting",
+    "personId": "parent-mariana-ruiz",
+    "type": "love",
+    "createdAt": "2026-06-17T14:52:00.000Z"
+  },
+  {
+    "id": "reaction-mateo-tempera-painting-4",
+    "postId": "mateo-tempera-painting",
+    "personId": "parent-julieta-diaz",
+    "type": "love",
+    "createdAt": "2026-06-17T14:53:00.000Z"
+  },
+  {
+    "id": "reaction-mateo-tempera-painting-5",
+    "postId": "mateo-tempera-painting",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-06-17T14:54:00.000Z"
+  },
+  {
+    "id": "reaction-friday-park-announcement-1",
+    "postId": "friday-park-announcement",
+    "personId": "parent-diego-fernandez",
+    "type": "love",
+    "createdAt": "2026-06-17T13:00:00.000Z"
+  },
+  {
+    "id": "reaction-friday-park-announcement-2",
+    "postId": "friday-park-announcement",
+    "personId": "parent-carolina-mendez",
+    "type": "love",
+    "createdAt": "2026-06-17T13:01:00.000Z"
+  },
+  {
+    "id": "reaction-friday-park-announcement-3",
+    "postId": "friday-park-announcement",
+    "personId": "parent-mariana-ruiz",
+    "type": "love",
+    "createdAt": "2026-06-17T13:02:00.000Z"
+  },
+  {
+    "id": "reaction-friday-park-announcement-4",
+    "postId": "friday-park-announcement",
+    "personId": "parent-julieta-diaz",
+    "type": "love",
+    "createdAt": "2026-06-17T13:03:00.000Z"
+  },
+  {
+    "id": "reaction-friday-park-announcement-5",
+    "postId": "friday-park-announcement",
+    "personId": "parent-paula-romero",
+    "type": "love",
+    "createdAt": "2026-06-17T13:04:00.000Z"
+  },
+  {
+    "id": "reaction-friday-park-announcement-6",
+    "postId": "friday-park-announcement",
+    "personId": "parent-ines-vega",
+    "type": "love",
+    "createdAt": "2026-06-17T13:05:00.000Z"
+  },
+  {
+    "id": "reaction-friday-park-announcement-7",
+    "postId": "friday-park-announcement",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-06-17T13:06:00.000Z"
+  },
+  {
+    "id": "reaction-friday-park-announcement-8",
+    "postId": "friday-park-announcement",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-06-17T13:07:00.000Z"
+  }
+]
