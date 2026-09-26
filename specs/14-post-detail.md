@@ -1,6 +1,6 @@
 # SPEC 14 — Detalle de publicación
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 09, SPEC 12, SPEC 13
 > **Date:** 2026-09-23
 > **Objective:** Implementar `/post-detail?id=<id>` para mostrar publicaciones autorizadas, imágenes Cloudinary, comentarios y reacciones en modo lectura.
@@ -68,28 +68,28 @@ Los contadores del detalle se derivarán de las colecciones relacionadas. Las UR
 
 ## Acceptance criteria
 
-- [ ] Una tarjeta de `/home` navega a `/post-detail?id=<id>`.
-- [ ] Una tarjeta de `/family-feed` navega a `/post-detail?id=<id>`.
-- [ ] El detalle muestra la publicación correcta según el ID.
-- [ ] Personal solo puede consultar posts de sus salas asignadas.
-- [ ] Padres solo pueden consultar posts de sus salas autorizadas.
-- [ ] Un ID inexistente o no autorizado no revela información del post.
-- [ ] El detalle muestra autor, destino, tipo, descripción y fecha.
-- [ ] Las fechas se muestran con la zona horaria `America/Guayaquil`.
-- [ ] Las imágenes se muestran mediante URLs Cloudinary generadas server-side.
-- [ ] No se generan URLs de imágenes para posts no autorizados.
-- [ ] Los comentarios se cargan desde `feed-comments.json`.
-- [ ] Las reacciones se cargan desde `feed-reactions.json`.
-- [ ] Los contadores coinciden con los registros relacionados.
-- [ ] El ejemplo inicial contiene comentarios y reacciones con autores válidos.
-- [ ] No se ofrecen controles funcionales para comentar o reaccionar.
-- [ ] Volver al feed respeta el rol actual.
-- [ ] Existen estados accesibles para detalle sin comentarios y sin imágenes.
-- [ ] La pantalla funciona en escritorio y móvil.
-- [ ] `npx eslint app` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
+- [x] Una tarjeta de `/home` navega a `/post-detail?id=<id>`.
+- [x] Una tarjeta de `/family-feed` navega a `/post-detail?id=<id>`.
+- [x] El detalle muestra la publicación correcta según el ID.
+- [x] Personal solo puede consultar posts de sus salas asignadas.
+- [x] Padres solo pueden consultar posts de sus salas autorizadas.
+- [x] Un ID inexistente o no autorizado no revela información del post.
+- [x] El detalle muestra autor, destino, tipo, descripción y fecha.
+- [x] Las fechas se muestran con la zona horaria `America/Guayaquil`.
+- [x] Las imágenes se muestran mediante URLs Cloudinary generadas server-side.
+- [x] No se generan URLs de imágenes para posts no autorizados.
+- [x] Los comentarios se cargan desde `feed-comments.json`.
+- [x] Las reacciones se cargan desde `feed-reactions.json`.
+- [x] Los contadores coinciden con los registros relacionados.
+- [x] El ejemplo inicial contiene comentarios y reacciones con autores válidos.
+- [x] No se ofrecen controles funcionales para comentar o reaccionar.
+- [x] Volver al feed respeta el rol actual.
+- [x] Existen estados accesibles para detalle sin comentarios y sin imágenes.
+- [x] La pantalla funciona en escritorio y móvil.
+- [x] `npx eslint app` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
 
 ## Decisions
 

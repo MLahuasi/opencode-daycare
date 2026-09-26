@@ -50,6 +50,7 @@ export type FeedPost = {
   reactions: number;
   comments: number;
   hasMedia?: boolean;
+  mediaLabel?: string;
   media: FeedMedia[];
   kidId: string | null;
   roomId: string | null;

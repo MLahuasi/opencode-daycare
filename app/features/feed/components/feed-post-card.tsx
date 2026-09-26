@@ -4,6 +4,7 @@ import {
   Avatar,
   Badge,
   LinkButton,
+  PhotoIcon,
   type BadgeVariant,
 } from "@/app/components/ui";
 import { useEffect, useState } from "react";
@@ -89,16 +90,6 @@ function CommentIcon() {
  *
  * @returns An inline SVG photo icon.
  */
-function PhotoIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.7" viewBox="0 0 24 24">
-      <rect height="18" rx="2" width="18" x="3" y="3" />
-      <circle cx="9" cy="9" r="2" />
-      <path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 21" />
-    </svg>
-  );
-}
-
 /**
  * Renders a static feed publication using its category-specific visual treatment.
  *
@@ -114,6 +105,9 @@ export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostC
     url: string;
   } | null>(null);
   const isAnnouncement = post.type === "announcement";
+  const mediaPlaceholderLabel = post.mediaLabel
+    ? `Foto · ${post.mediaLabel}`
+    : "Imagen adjunta";
 
   useEffect(() => {
     if (!expandedMedia) return;
@@ -187,21 +181,21 @@ export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostC
               </figure>
             ) : (
               <div
-                aria-label="Imagen adjunta"
+                aria-label={mediaPlaceholderLabel}
                 className={styles.mediaPlaceholder}
                 key={media.id}
                 role="img"
               >
                 <PhotoIcon />
-                <span>Imagen adjunta</span>
+                <span>{mediaPlaceholderLabel}</span>
               </div>
             ),
           )}
         </div>
       ) : post.hasMedia ? (
-        <div className={styles.mediaPlaceholder} aria-label="Imagen adjunta" role="img">
+        <div className={styles.mediaPlaceholder} aria-label={mediaPlaceholderLabel} role="img">
           <PhotoIcon />
-          <span>Imagen adjunta</span>
+          <span>{mediaPlaceholderLabel}</span>
         </div>
       ) : null}
 

@@ -1,5 +1,15 @@
-import { Avatar, Brand, Button, LinkButton } from "@/app/components/ui";
-import type { ReactNode } from "react";
+import {
+  Avatar,
+  BellIcon,
+  Brand,
+  Button,
+  HomeIcon,
+  LinkButton,
+  PeopleIcon,
+  PlusIcon,
+  UserIcon,
+} from "@/app/components/ui";
+import type { ComponentType, SVGAttributes } from "react";
 import type {
   StaffNavigationConfig,
   StaffNavigationIcon,
@@ -29,43 +39,15 @@ type NavigationControlProps = {
  * @returns An inline SVG icon.
  */
 function NavigationIcon({ name }: { name: StaffNavigationIcon }) {
-  const paths: Record<StaffNavigationIcon, ReactNode> = {
-    feed: <path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" />,
-    children: (
-      <>
-        <circle cx="9" cy="7" r="3" />
-        <circle cx="17" cy="9" r="2.4" />
-        <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 20a5 5 0 0 1 5.5-4.9" />
-      </>
-    ),
-    alerts: (
-      <>
-        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-        <path d="M13.7 21a2 2 0 0 1-3.4 0" />
-      </>
-    ),
-    account: (
-      <>
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-        <circle cx="12" cy="7" r="4" />
-      </>
-    ),
+  const icons: Record<StaffNavigationIcon, ComponentType<SVGAttributes<SVGSVGElement>>> = {
+    feed: HomeIcon,
+    children: PeopleIcon,
+    alerts: BellIcon,
+    account: UserIcon,
   };
+  const Icon = icons[name];
 
-  return (
-    <svg
-      aria-hidden="true"
-      className={styles.navigationIcon}
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      {paths[name]}
-    </svg>
-  );
+  return <Icon className={styles.navigationIcon} strokeWidth="2" />;
 }
 
 /**
@@ -126,9 +108,7 @@ export function StaffSidebar({ activeSection = "feed", className = "", navigatio
         <Brand name={navigation.brand.name} room={navigation.brand.room} />
 
         <Button className={styles.newPostButton}>
-          <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
+          <PlusIcon strokeWidth="2.4" />
           {navigation.newPostLabel}
         </Button>
 
