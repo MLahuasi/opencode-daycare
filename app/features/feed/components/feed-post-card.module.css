@@ -222,6 +222,7 @@
 .comments {
   color: var(--color-muted);
   cursor: pointer;
+  text-decoration: none;
   transition: color 150ms, transform 150ms;
 }
 

@@ -9,6 +9,7 @@ import {
   PhotoIcon,
   type BadgeVariant,
 } from "@/app/components/ui";
+import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import type { FeedPost, PostType } from "../types";
 import styles from "./feed-post-card.module.css";
@@ -16,6 +17,7 @@ import styles from "./feed-post-card.module.css";
 type FeedPostCardProps = {
   canEdit?: boolean;
   canReact?: boolean;
+  commentHref?: string;
   post: FeedPost;
   className?: string;
   onToggleReaction?: (
@@ -75,6 +77,7 @@ function AnnouncementIcon() {
  *
  * @param props - Feed card configuration.
  * @param props.canEdit - Whether to render the staff edit destination.
+ * @param props.commentHref - Optional destination used to create a comment.
  * @param props.post - Static publication data to display.
  * @param props.className - Optional classes that customize the card container.
  * @returns A feed publication article.
@@ -82,6 +85,7 @@ function AnnouncementIcon() {
 export function FeedPostCard({
   canEdit = true,
   canReact = false,
+  commentHref,
   className = "",
   onToggleReaction,
   post,
@@ -252,10 +256,21 @@ export function FeedPostCard({
             {post.engagement.reactionCount}
           </span>
         )}
-        <span className={styles.comments}>
-          <CommentIcon />
-          {post.engagement.commentCount}
-        </span>
+        {commentHref ? (
+          <Link
+            aria-label={`Comentar en ${post.subject}`}
+            className={styles.comments}
+            href={commentHref}
+          >
+            <CommentIcon />
+            {post.engagement.commentCount}
+          </Link>
+        ) : (
+          <span className={styles.comments}>
+            <CommentIcon />
+            {post.engagement.commentCount}
+          </span>
+        )}
         {reactionError ? (
           <span className={styles.engagementError} role="alert">
             {reactionError}

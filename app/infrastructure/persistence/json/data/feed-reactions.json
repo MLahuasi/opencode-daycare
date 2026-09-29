@@ -105,10 +105,24 @@
     "createdAt": "2026-06-17T13:06:00.000Z"
   },
   {
-    "id": "reaction-friday-park-announcement-8",
-    "postId": "friday-park-announcement",
+    "id": "f731a7a0-61d8-4f08-b620-4a1725fad51c",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
     "type": "love",
-    "createdAt": "2026-06-17T13:07:00.000Z"
+    "createdAt": "2026-09-29T20:10:25.778Z"
+  },
+  {
+    "id": "794d6a4a-2295-4b55-a00a-a79ec65306d2",
+    "postId": "mateo-first-potty",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-09-29T20:21:35.827Z"
+  },
+  {
+    "id": "a12e2882-ba1a-42bb-a7f1-a44297f8c77d",
+    "postId": "mateo-tempera-painting",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-09-29T20:22:11.616Z"
   }
 ]

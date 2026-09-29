@@ -72,6 +72,7 @@ export function FamilyFeedContent({
               <FeedPostCard
                 canEdit={false}
                 canReact
+                commentHref={`/post-comment/new?postId=${encodeURIComponent(post.id)}`}
                 key={post.id}
                 onToggleReaction={toggleFeedReactionAction}
                 post={post}

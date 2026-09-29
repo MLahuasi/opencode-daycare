@@ -56,9 +56,33 @@
   font-size: 14px;
 }
 
+.field {
+  display: grid;
+  gap: 8px;
+  color: var(--color-ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .field textarea {
+  display: block;
+  width: 100%;
   min-height: 150px;
+  padding: 12px 14px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  outline: none;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
   resize: vertical;
+}
+
+.field textarea:focus-visible {
+  border-color: var(--color-coral);
+  box-shadow: 0 0 0 3px var(--color-coral-soft);
 }
 
 .field small {

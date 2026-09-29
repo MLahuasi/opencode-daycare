@@ -22,5 +22,21 @@
     "body": "¡Se nota mucho! Le guardamos la obra.",
     "createdAt": "2026-06-17T15:15:00.000Z",
     "updatedAt": null
+  },
+  {
+    "id": "8a0f1996-ba6a-47bf-92d1-ba097c2ebb95",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "authorId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "body": "este es mi comentario, mi chiquito",
+    "createdAt": "2026-09-29T20:20:30.602Z",
+    "updatedAt": "2026-09-29T20:21:17.764Z"
+  },
+  {
+    "id": "4ca84acb-b687-4800-948d-f1052a41b447",
+    "postId": "mateo-first-potty",
+    "authorId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "body": "este es otro comentario",
+    "createdAt": "2026-09-29T20:21:51.990Z",
+    "updatedAt": null
   }
 ]
