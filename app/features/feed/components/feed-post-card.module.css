@@ -172,7 +172,49 @@
   color: var(--color-coral);
 }
 
+.reactionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--color-coral);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  transition: color 150ms, transform 150ms;
+}
+
+.reactionButton:hover {
+  color: var(--color-coral-dark);
+}
+
+.reactionButton:active {
+  transform: translateY(1px);
+}
+
+.reactionButton:focus-visible {
+  outline: 3px solid var(--color-coral);
+  outline-offset: 4px;
+}
+
+.reactionButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.reactionActive {
+  color: var(--color-coral-dark);
+}
+
 .reaction svg {
+  width: 19px;
+  height: 19px;
+}
+
+.reactionButton svg {
   width: 19px;
   height: 19px;
 }
@@ -180,6 +222,7 @@
 .comments {
   color: var(--color-muted);
   cursor: pointer;
+  text-decoration: none;
   transition: color 150ms, transform 150ms;
 }
 
@@ -189,6 +232,17 @@
 
 .comments:active {
   transform: translateY(1px);
+}
+
+.comments:focus-visible {
+  outline: 3px solid var(--color-coral);
+  outline-offset: 4px;
+}
+
+.engagementError {
+  color: var(--color-coral-dark);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .comments svg {

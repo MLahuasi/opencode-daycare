@@ -1,5 +1,6 @@
 import type { FeedPost } from "@/app/features/feed";
 import { FeedPostCard } from "@/app/features/feed";
+import { toggleFeedReactionAction } from "../actions";
 import type { Person } from "@/app/features/people";
 import type { FamilyFeedFilter, FamilyFeedOption } from "../types";
 import { FamilyFeedFilters } from "./family-feed-filters";
@@ -68,7 +69,14 @@ export function FamilyFeedContent({
         {posts.length > 0 ? (
           <div className={styles.posts}>
             {posts.map((post) => (
-              <FeedPostCard canEdit={false} key={post.id} post={post} />
+              <FeedPostCard
+                canEdit={false}
+                canReact
+                commentHref={`/post-comment/new?postId=${encodeURIComponent(post.id)}`}
+                key={post.id}
+                onToggleReaction={toggleFeedReactionAction}
+                post={post}
+              />
             ))}
           </div>
         ) : (

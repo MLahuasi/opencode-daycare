@@ -1,5 +1,6 @@
 import { StaffSidebar } from "@/app/components/layout";
 import { FeedContent } from "@/app/features/feed";
+import { toggleFeedReactionAction } from "@/app/features/family/server";
 import { getFeedOverview, getFeeds } from "@/app/features/feed/services";
 import { staffNavigationConfig } from "@/app/shared/config";
 import { requireActiveSession } from "@/auth";
@@ -22,7 +23,13 @@ export default async function Home() {
   return (
     <div className="flex min-h-screen bg-background">
       <StaffSidebar navigation={staffNavigationConfig} />
-      <FeedContent overview={feedOverview[0]} posts={feedPosts} />
+      <FeedContent
+        canReact
+        commentHref={(postId) => `/post-comment/new?postId=${encodeURIComponent(postId)}`}
+        onToggleReaction={toggleFeedReactionAction}
+        overview={feedOverview[0]}
+        posts={feedPosts}
+      />
     </div>
   );
 }

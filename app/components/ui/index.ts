@@ -7,6 +7,7 @@ export { CameraIcon } from "./camera-icon";
 export { CommentIcon } from "./comment-icon";
 export { CheckboxField } from "./checkbox-field";
 export { FormField } from "./form-field";
+export { HeartIcon } from "./heart-icon";
 export { LinkButton } from "./link-button";
 export { HomeIcon } from "./home-icon";
 export { PeopleIcon } from "./people-icon";

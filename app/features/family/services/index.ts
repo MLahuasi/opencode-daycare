@@ -1,5 +1,6 @@
 export {
   getAuthenticatedFamilyContext,
+  getAuthorizedEngagementPosts,
   getFamilyFeed,
   getFamilyFeedOptions,
   type FamilyContext,

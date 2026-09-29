@@ -3,18 +3,26 @@
 import {
   Avatar,
   Badge,
+  CommentIcon,
+  HeartIcon,
   LinkButton,
   PhotoIcon,
   type BadgeVariant,
 } from "@/app/components/ui";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect, useState, useTransition } from "react";
 import type { FeedPost, PostType } from "../types";
 import styles from "./feed-post-card.module.css";
 
 type FeedPostCardProps = {
   canEdit?: boolean;
+  canReact?: boolean;
+  commentHref?: string;
   post: FeedPost;
   className?: string;
+  onToggleReaction?: (
+    postId: string,
+  ) => Promise<{ success: boolean; active?: boolean; message?: string }>;
 };
 
 const postTypeLabels: Record<PostType, string> = {
@@ -60,32 +68,6 @@ function AnnouncementIcon() {
 }
 
 /**
- * Renders the filled reaction icon from the visual reference.
- *
- * @returns An inline SVG heart icon.
- */
-function HeartIcon() {
-  return (
-    <svg aria-hidden="true" fill="currentColor" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z" />
-    </svg>
-  );
-}
-
-/**
- * Renders the comment count icon.
- *
- * @returns An inline SVG comment icon.
- */
-function CommentIcon() {
-  return (
-    <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z" />
-    </svg>
-  );
-}
-
-/**
  * Renders the static illustration for a media placeholder.
  *
  * @returns An inline SVG photo icon.
@@ -95,19 +77,52 @@ function CommentIcon() {
  *
  * @param props - Feed card configuration.
  * @param props.canEdit - Whether to render the staff edit destination.
+ * @param props.commentHref - Optional destination used to create a comment.
  * @param props.post - Static publication data to display.
  * @param props.className - Optional classes that customize the card container.
  * @returns A feed publication article.
  */
-export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostCardProps) {
+export function FeedPostCard({
+  canEdit = true,
+  canReact = false,
+  commentHref,
+  className = "",
+  onToggleReaction,
+  post,
+}: FeedPostCardProps) {
   const [expandedMedia, setExpandedMedia] = useState<{
     alt: string;
     url: string;
   } | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [reactionError, setReactionError] = useState<string | null>(null);
+  const [reactionState, setReactionState] = useState({
+    active: post.engagement.viewerHasLoved,
+    count: post.engagement.reactionCount,
+  });
   const isAnnouncement = post.type === "announcement";
   const mediaPlaceholderLabel = post.mediaLabel
     ? `Foto · ${post.mediaLabel}`
     : "Imagen adjunta";
+
+  function handleReactionClick() {
+    if (!canReact || !onToggleReaction || isPending) return;
+
+    setReactionError(null);
+    startTransition(async () => {
+      const result = await onToggleReaction(post.id);
+
+      if (!result.success) {
+        setReactionError(result.message ?? "No pudimos actualizar tu reacción.");
+        return;
+      }
+
+      setReactionState((current) => ({
+        active: result.active ?? false,
+        count: current.count + (result.active ? 1 : -1),
+      }));
+    });
+  }
 
   useEffect(() => {
     if (!expandedMedia) return;
@@ -223,14 +238,44 @@ export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostC
       ) : null}
 
       <footer className={styles.footer}>
-        <span className={styles.reaction}>
-          <HeartIcon />
-          {post.reactions}
-        </span>
-        <span className={styles.comments}>
-          <CommentIcon />
-          {post.comments}
-        </span>
+        {canReact ? (
+          <button
+            aria-label={reactionState.active ? "Quitar Me encanta" : "Dar Me encanta"}
+            aria-pressed={reactionState.active}
+            className={`${styles.reactionButton} ${reactionState.active ? styles.reactionActive : ""}`}
+            disabled={isPending}
+            onClick={handleReactionClick}
+            type="button"
+          >
+            <HeartIcon />
+            {reactionState.count}
+          </button>
+        ) : (
+          <span className={styles.reaction}>
+            <HeartIcon />
+            {post.engagement.reactionCount}
+          </span>
+        )}
+        {commentHref ? (
+          <Link
+            aria-label={`Comentar en ${post.subject}`}
+            className={styles.comments}
+            href={commentHref}
+          >
+            <CommentIcon />
+            {post.engagement.commentCount}
+          </Link>
+        ) : (
+          <span className={styles.comments}>
+            <CommentIcon />
+            {post.engagement.commentCount}
+          </span>
+        )}
+        {reactionError ? (
+          <span className={styles.engagementError} role="alert">
+            {reactionError}
+          </span>
+        ) : null}
         {canEdit ? (
           <LinkButton
             className={styles.editLabel}

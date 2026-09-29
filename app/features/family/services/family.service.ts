@@ -117,10 +117,11 @@ export async function getFamilyFeedOptions(): Promise<
 export async function getFamilyFeed(
   filter: FamilyFeedFilter = { kind: "all" },
 ): Promise<readonly FeedPost[]> {
-  const [context, posts] = await Promise.all([
-    getAuthenticatedFamilyContext(),
-    getFeeds({ resolveMediaUrls: false }),
-  ]);
+  const context = await getAuthenticatedFamilyContext();
+  const posts = await getFeeds({
+    resolveMediaUrls: false,
+    viewerId: context.person.id,
+  });
   const kidIds = new Set(context.activeKids.map((kid) => kid.id));
   const activeRoomIds = new Set(context.activeKids.map((kid) => kid.roomId));
   const kidsById = new Map(context.activeKids.map((kid) => [kid.id, kid]));
@@ -169,4 +170,22 @@ export async function getFamilyFeed(
   );
 
   return resolveFeedMediaUrls(sortedPosts);
+}
+
+/**
+ * Loads the posts visible to an authenticated person for engagement actions.
+ *
+ * @returns Posts the current parent or staff member can engage with.
+ */
+export async function getAuthorizedEngagementPosts(): Promise<readonly FeedPost[]> {
+  const session = await requireActiveSession();
+
+  if (session.user.role === "parent") {
+    return getFamilyFeed({ kind: "all" });
+  }
+
+  return getFeeds({
+    resolveMediaUrls: false,
+    viewerId: session.user.personId,
+  });
 }

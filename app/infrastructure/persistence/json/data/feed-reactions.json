@@ -105,10 +105,38 @@
     "createdAt": "2026-06-17T13:06:00.000Z"
   },
   {
-    "id": "reaction-friday-park-announcement-8",
-    "postId": "friday-park-announcement",
+    "id": "4f8771fe-7562-4489-873b-cc736f3ab8b0",
+    "postId": "mateo-first-potty",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-09-29T21:25:28.557Z"
+  },
+  {
+    "id": "c0636a39-e392-436d-b5e5-661eb6b6c5ad",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-09-29T21:25:59.195Z"
+  },
+  {
+    "id": "00264f06-40df-4795-a540-8e1caf1d8fc0",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
     "type": "love",
-    "createdAt": "2026-06-17T13:07:00.000Z"
+    "createdAt": "2026-09-29T21:27:03.499Z"
+  },
+  {
+    "id": "bb187da2-28d5-4fb6-a1d6-e8214ad49bb4",
+    "postId": "mateo-first-potty",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-09-29T21:27:07.610Z"
+  },
+  {
+    "id": "2555b085-1ad6-4dfa-8469-e7992214b631",
+    "postId": "mateo-tempera-painting",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-09-29T21:27:11.697Z"
   }
 ]
