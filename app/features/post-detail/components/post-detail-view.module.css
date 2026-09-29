@@ -256,26 +256,6 @@
   text-align: center;
 }
 
-.readOnlyNotice {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 18px;
-  padding: 12px 14px;
-  color: var(--color-muted);
-  background: var(--color-photo-background);
-  border-radius: 14px;
-  font-size: 13px;
-}
-
-.readOnlyNotice svg {
-  width: 18px;
-  height: 18px;
-  flex: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-}
-
 @media (max-width: 767px) {
   .container {
     padding: 24px 16px 32px;

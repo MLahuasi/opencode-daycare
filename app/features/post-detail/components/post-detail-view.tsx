@@ -1,7 +1,6 @@
 import {
   Avatar,
   Badge,
-  CommentIcon,
   LinkButton,
   PhotoIcon,
   type BadgeVariant,
@@ -186,12 +185,6 @@ export function PostDetailView({
               Todavía no hay comentarios en esta publicación.
             </p>
           )}
-          {detail.viewerRole === "personal" ? (
-            <div className={styles.readOnlyNotice} role="note">
-              <CommentIcon />
-              <span>Los comentarios se muestran en modo lectura.</span>
-            </div>
-          ) : null}
         </section>
       </div>
     </main>

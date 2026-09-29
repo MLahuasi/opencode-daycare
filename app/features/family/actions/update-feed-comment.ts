@@ -12,7 +12,7 @@ import { getAuthorizedEngagementPosts } from "../services";
 import type { FeedCommentActionState } from "./types";
 
 /**
- * Authorizes ownership, validates and updates a parent's own comment.
+ * Authorizes ownership, validates and updates a person's own comment.
  *
  * @param _previousState - Previous feedback required by the action contract.
  * @param formData - Submitted comment ID, post ID and body.

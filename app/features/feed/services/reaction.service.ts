@@ -21,16 +21,19 @@ export function toggleFeedReaction(
 ): Promise<FeedReaction | null> {
   return withJsonTransaction(["feed-reactions.json"], async () => {
     const reactions = await readCollection<FeedReaction>("feed-reactions.json");
-    const existingIndex = reactions.findIndex(
+    const hasExistingReaction = reactions.some(
       (reaction) =>
         reaction.postId === postId &&
         reaction.personId === personId &&
         reaction.type === "love",
     );
 
-    if (existingIndex >= 0) {
+    if (hasExistingReaction) {
       const updatedReactions = reactions.filter(
-        (_, index) => index !== existingIndex,
+        (reaction) =>
+          reaction.postId !== postId ||
+          reaction.personId !== personId ||
+          reaction.type !== "love",
       );
       await writeCollection("feed-reactions.json", updatedReactions);
       return null;

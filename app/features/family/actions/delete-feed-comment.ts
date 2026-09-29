@@ -11,7 +11,7 @@ import { getAuthorizedEngagementPosts } from "../services";
 import type { FeedCommentActionState } from "./types";
 
 /**
- * Authorizes ownership and physically deletes a parent's own comment.
+ * Authorizes ownership and physically deletes a person's own comment.
  *
  * @param _previousState - Previous feedback required by the action contract.
  * @param formData - Submitted comment and post identifiers.

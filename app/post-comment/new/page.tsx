@@ -9,7 +9,7 @@ function getQueryValue(value: string | string[] | undefined): string | undefined
 }
 
 /**
- * Renders the authorized family comment creation form for a post.
+ * Renders the authorized parent or staff comment creation form for a post.
  *
  * @param props - Route search parameters containing the post identifier.
  * @param props.searchParams - Promise with the `postId` query parameter.

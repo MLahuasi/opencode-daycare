@@ -10,7 +10,7 @@ function getQueryValue(value: string | string[] | undefined): string | undefined
 }
 
 /**
- * Renders the authorized edit form for a parent's own comment.
+ * Renders the authorized edit form for a person's own comment.
  *
  * @param props - Route search parameters containing the comment identifier.
  * @param props.searchParams - Promise with the `id` query parameter.

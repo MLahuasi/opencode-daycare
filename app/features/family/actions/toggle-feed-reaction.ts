@@ -31,10 +31,19 @@ export async function toggleFeedReactionAction(
     return { success: false, message: "No tienes acceso a esta publicación." };
   }
 
-  const reaction = await toggleFeedReaction(
-    normalizedPostId,
-    session.user.personId,
-  );
+  let reaction;
+
+  try {
+    reaction = await toggleFeedReaction(
+      normalizedPostId,
+      session.user.personId,
+    );
+  } catch {
+    return {
+      success: false,
+      message: "No pudimos actualizar tu reacción. Inténtalo nuevamente.",
+    };
+  }
   revalidatePath("/family-feed");
   revalidatePath("/home");
   revalidatePath("/post-detail");

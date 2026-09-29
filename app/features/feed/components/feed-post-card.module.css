@@ -234,6 +234,11 @@
   transform: translateY(1px);
 }
 
+.comments:focus-visible {
+  outline: 3px solid var(--color-coral);
+  outline-offset: 4px;
+}
+
 .engagementError {
   color: var(--color-coral-dark);
   font-size: 12px;

@@ -105,31 +105,38 @@
     "createdAt": "2026-06-17T13:06:00.000Z"
   },
   {
-    "id": "f731a7a0-61d8-4f08-b620-4a1725fad51c",
-    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
-    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
-    "type": "love",
-    "createdAt": "2026-09-29T20:10:25.778Z"
-  },
-  {
-    "id": "794d6a4a-2295-4b55-a00a-a79ec65306d2",
+    "id": "4f8771fe-7562-4489-873b-cc736f3ab8b0",
     "postId": "mateo-first-potty",
-    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "personId": "person-caro-gimenez",
     "type": "love",
-    "createdAt": "2026-09-29T20:21:35.827Z"
+    "createdAt": "2026-09-29T21:25:28.557Z"
   },
   {
-    "id": "a12e2882-ba1a-42bb-a7f1-a44297f8c77d",
-    "postId": "mateo-tempera-painting",
-    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
-    "type": "love",
-    "createdAt": "2026-09-29T20:22:11.616Z"
-  },
-  {
-    "id": "77fa38c5-ecbf-4a5a-9b98-1bccc62187a2",
+    "id": "c0636a39-e392-436d-b5e5-661eb6b6c5ad",
     "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
     "personId": "person-caro-gimenez",
     "type": "love",
-    "createdAt": "2026-09-29T20:38:30.790Z"
+    "createdAt": "2026-09-29T21:25:59.195Z"
+  },
+  {
+    "id": "00264f06-40df-4795-a540-8e1caf1d8fc0",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-09-29T21:27:03.499Z"
+  },
+  {
+    "id": "bb187da2-28d5-4fb6-a1d6-e8214ad49bb4",
+    "postId": "mateo-first-potty",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-09-29T21:27:07.610Z"
+  },
+  {
+    "id": "2555b085-1ad6-4dfa-8469-e7992214b631",
+    "postId": "mateo-tempera-painting",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-09-29T21:27:11.697Z"
   }
 ]

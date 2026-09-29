@@ -46,5 +46,29 @@
     "body": "Si este es otro comentario",
     "createdAt": "2026-09-29T20:38:47.662Z",
     "updatedAt": null
+  },
+  {
+    "id": "40dbe560-1a64-487c-a99a-86bb5877a171",
+    "postId": "mateo-first-potty",
+    "authorId": "person-caro-gimenez",
+    "body": "Este es otro",
+    "createdAt": "2026-09-29T21:25:37.263Z",
+    "updatedAt": null
+  },
+  {
+    "id": "278353c2-e83e-4dc9-9357-901ca4a08d84",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "authorId": "person-caro-gimenez",
+    "body": "gato hermoso",
+    "createdAt": "2026-09-29T21:26:06.097Z",
+    "updatedAt": null
+  },
+  {
+    "id": "fc1a4841-4796-4291-80c5-0b74d2ffd822",
+    "postId": "friday-park-announcement",
+    "authorId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "body": "No hay otro comentario",
+    "createdAt": "2026-09-29T21:27:22.035Z",
+    "updatedAt": null
   }
 ]

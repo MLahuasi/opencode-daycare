@@ -28,7 +28,7 @@ type FamilyCommentFormProps = {
 };
 
 /**
- * Renders the family form used to create a comment on an authorized post.
+ * Renders the parent or staff form used to create or edit a comment on an authorized post.
  *
  * @param props - Comment form configuration and destination information.
  * @param props.action - Server Action used to persist the comment.
@@ -40,7 +40,7 @@ type FamilyCommentFormProps = {
  * @param props.postId - Stable post identifier submitted with the form.
  * @param props.postLabel - Post title shown as form context.
  * @param props.submitLabel - Label displayed on the submit button.
- * @returns A responsive comment creation form.
+ * @returns A responsive comment form.
  */
 export function FamilyCommentForm({
   action,

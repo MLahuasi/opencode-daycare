@@ -60,18 +60,23 @@ export async function getPostDetail(id: string): Promise<PostDetail | null> {
     return null;
   }
 
-  const comments = data.comments.flatMap<PostDetailComment>((comment) => {
-    const author = peopleById.get(comment.authorId);
-    return author
-      ? [
-          {
-            ...comment,
-            author,
-            timeLabel: guayaquilTime.format(new Date(comment.createdAt)),
-          },
-        ]
-      : [];
-  });
+  const comments = [...data.comments]
+    .sort(
+      (first, second) =>
+        new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime(),
+    )
+    .flatMap<PostDetailComment>((comment) => {
+      const author = peopleById.get(comment.authorId);
+      return author
+        ? [
+            {
+              ...comment,
+              author,
+              timeLabel: guayaquilTime.format(new Date(comment.createdAt)),
+            },
+          ]
+        : [];
+    });
   const reactions = data.reactions.flatMap<PostDetailReaction>((reaction) => {
     const person = peopleById.get(reaction.personId);
     return person ? [{ ...reaction, person }] : [];
