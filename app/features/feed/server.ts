@@ -18,4 +18,6 @@ export {
   getFeedEngagementByPostIds,
   toggleFeedReaction,
   createFeedComment,
+  getFeedCommentById,
+  updateFeedComment,
 } from "./services";

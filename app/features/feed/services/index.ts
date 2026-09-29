@@ -15,5 +15,12 @@ export {
   getFeedEngagementByPostIds,
 } from "./engagement.service";
 export { toggleFeedReaction } from "./reaction.service";
-export { createFeedComment } from "./comment.service";
-export type { CreateFeedCommentInput } from "./comment.service";
+export {
+  createFeedComment,
+  getFeedCommentById,
+  updateFeedComment,
+} from "./comment.service";
+export type {
+  CreateFeedCommentInput,
+  UpdateFeedCommentInput,
+} from "./comment.service";

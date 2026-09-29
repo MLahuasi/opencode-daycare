@@ -19,8 +19,12 @@ type FamilyCommentFormProps = {
   action: FeedCommentAction;
   cancelHref: string;
   className?: string;
+  commentId?: string;
+  initialBody?: string;
+  heading?: string;
   postId: string;
   postLabel: string;
+  submitLabel?: string;
 };
 
 /**
@@ -30,22 +34,30 @@ type FamilyCommentFormProps = {
  * @param props.action - Server Action used to persist the comment.
  * @param props.cancelHref - Destination used by the cancel action.
  * @param props.className - Optional classes applied to the form card.
+ * @param props.commentId - Optional comment identifier used in edit mode.
+ * @param props.initialBody - Existing body used to initialize edit mode.
+ * @param props.heading - Heading displayed above the form.
  * @param props.postId - Stable post identifier submitted with the form.
  * @param props.postLabel - Post title shown as form context.
+ * @param props.submitLabel - Label displayed on the submit button.
  * @returns A responsive comment creation form.
  */
 export function FamilyCommentForm({
   action,
   cancelHref,
   className = "",
+  commentId,
+  initialBody = "",
+  heading = "Nuevo comentario",
   postId,
   postLabel,
+  submitLabel = "Guardar",
 }: FamilyCommentFormProps) {
   const [actionState, formAction, pending] = useActionState(
     action,
     INITIAL_ACTION_STATE,
   );
-  const [body, setBody] = useState("");
+  const [body, setBody] = useState(initialBody);
   const [localError, setLocalError] = useState("");
   const serverError = actionState.message || actionState.errors.body || "";
   const error = localError || serverError;
@@ -81,7 +93,7 @@ export function FamilyCommentForm({
         <LinkButton className={styles.cancel} href={cancelHref} variant="ghost">
           Cancelar
         </LinkButton>
-        <h1>Nuevo comentario</h1>
+        <h1>{heading}</h1>
         <Button
           aria-busy={pending}
           className={styles.submit}
@@ -89,12 +101,13 @@ export function FamilyCommentForm({
           type="submit"
           variant="ghost"
         >
-          {pending ? "Guardando..." : "Guardar"}
+          {pending ? "Guardando..." : submitLabel}
         </Button>
       </header>
 
       <div className={styles.content}>
         <input name="postId" type="hidden" value={postId} />
+        {commentId ? <input name="commentId" type="hidden" value={commentId} /> : null}
         <p className={styles.context}>Comentando en: {postLabel}</p>
         <FormField className={styles.field} label="Comentario">
           <textarea
