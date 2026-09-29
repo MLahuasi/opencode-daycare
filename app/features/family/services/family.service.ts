@@ -171,3 +171,21 @@ export async function getFamilyFeed(
 
   return resolveFeedMediaUrls(sortedPosts);
 }
+
+/**
+ * Loads the posts visible to an authenticated person for engagement actions.
+ *
+ * @returns Posts the current parent or staff member can engage with.
+ */
+export async function getAuthorizedEngagementPosts(): Promise<readonly FeedPost[]> {
+  const session = await requireActiveSession();
+
+  if (session.user.role === "parent") {
+    return getFamilyFeed({ kind: "all" });
+  }
+
+  return getFeeds({
+    resolveMediaUrls: false,
+    viewerId: session.user.personId,
+  });
+}

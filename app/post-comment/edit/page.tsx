@@ -23,10 +23,6 @@ export default async function EditPostCommentPage({
 }) {
   const session = await requireActiveSession();
 
-  if (session.user.role !== "parent") {
-    redirect("/home");
-  }
-
   const commentId = getQueryValue((await searchParams)?.id);
   if (!commentId) {
     redirect("/family-feed");

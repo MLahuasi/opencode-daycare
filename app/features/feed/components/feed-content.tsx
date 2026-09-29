@@ -4,7 +4,12 @@ import { FeedPostCard } from "./feed-post-card";
 import styles from "./feed-content.module.css";
 
 type FeedContentProps = {
+  canReact?: boolean;
   className?: string;
+  commentHref?: (postId: string) => string;
+  onToggleReaction?: (
+    postId: string,
+  ) => Promise<{ success: boolean; active?: boolean; message?: string }>;
   overview: FeedOverview;
   posts: readonly FeedPost[];
 };
@@ -19,11 +24,21 @@ type FeedContentProps = {
  *
  * @param props - Feed content configuration.
  * @param props.className - Optional classes applied to the feed landmark.
+ * @param props.canReact - Whether the current viewer can react to posts.
+ * @param props.commentHref - Optional destination builder for comment creation.
+ * @param props.onToggleReaction - Server action used to toggle a reaction.
  * @param props.overview - Room header, greeting, and composer copy.
  * @param props.posts - Published posts to render as cards.
  * @returns The feed main landmark with the greeting, composer, and posts.
  */
-export function FeedContent({ className = "", overview, posts }: FeedContentProps) {
+export function FeedContent({
+  canReact = false,
+  className = "",
+  commentHref,
+  onToggleReaction,
+  overview,
+  posts,
+}: FeedContentProps) {
   return (
     <main className={`${styles.feed} ${className}`}>
       <div className={styles.container}>
@@ -48,7 +63,13 @@ export function FeedContent({ className = "", overview, posts }: FeedContentProp
 
         <div className={styles.posts}>
           {posts.map((post) => (
-            <FeedPostCard key={post.id} post={post} />
+            <FeedPostCard
+              canReact={canReact}
+              commentHref={commentHref?.(post.id)}
+              key={post.id}
+              onToggleReaction={onToggleReaction}
+              post={post}
+            />
           ))}
         </div>
       </div>

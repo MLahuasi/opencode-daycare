@@ -38,5 +38,13 @@
     "body": "este es otro comentario",
     "createdAt": "2026-09-29T20:21:51.990Z",
     "updatedAt": null
+  },
+  {
+    "id": "32dd47cb-92de-4aea-9376-8ec3653793ed",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "authorId": "person-caro-gimenez",
+    "body": "Si este es otro comentario",
+    "createdAt": "2026-09-29T20:38:47.662Z",
+    "updatedAt": null
   }
 ]

@@ -20,11 +20,7 @@ export default async function NewPostCommentPage({
 }: {
   searchParams?: Promise<{ postId?: string | string[] }>;
 }) {
-  const session = await requireActiveSession();
-
-  if (session.user.role !== "parent") {
-    redirect("/home");
-  }
+  await requireActiveSession();
 
   const postId = getQueryValue((await searchParams)?.postId);
   if (!postId) {

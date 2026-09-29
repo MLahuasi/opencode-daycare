@@ -7,7 +7,7 @@ import {
   deleteFeedComment,
   getFeedCommentById,
 } from "@/app/features/feed/server";
-import { getFamilyFeed } from "../services";
+import { getAuthorizedEngagementPosts } from "../services";
 import type { FeedCommentActionState } from "./types";
 
 /**
@@ -22,10 +22,6 @@ export async function deleteFeedCommentAction(
   formData: FormData,
 ): Promise<FeedCommentActionState> {
   const session = await requireActiveSession();
-
-  if (session.user.role !== "parent") {
-    return { errors: {}, message: "Solo las familias pueden eliminar comentarios." };
-  }
 
   const commentId = formData.get("commentId");
   const postId = formData.get("postId");
@@ -47,7 +43,7 @@ export async function deleteFeedCommentAction(
     return { errors: {}, message: "No tienes permiso para eliminar este comentario." };
   }
 
-  const authorizedPosts = await getFamilyFeed({ kind: "all" });
+  const authorizedPosts = await getAuthorizedEngagementPosts();
   if (!authorizedPosts.some((post) => post.id === postId)) {
     return { errors: {}, message: "No tienes acceso a esta publicación." };
   }

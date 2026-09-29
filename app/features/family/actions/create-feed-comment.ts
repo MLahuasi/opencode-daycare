@@ -7,11 +7,11 @@ import {
   createFeedComment,
   validateFeedCommentForm,
 } from "@/app/features/feed/server";
-import { getFamilyFeed } from "../services";
+import { getAuthorizedEngagementPosts } from "../services";
 import type { FeedCommentActionState } from "./types";
 
 /**
- * Authorizes a parent, validates a comment and persists it for an authorized post.
+ * Authorizes a parent or staff member, validates a comment and persists it.
  *
  * @param _previousState - Previous feedback required by the action contract.
  * @param formData - Submitted post ID and comment body.
@@ -23,10 +23,6 @@ export async function createFeedCommentAction(
 ): Promise<FeedCommentActionState> {
   const session = await requireActiveSession();
 
-  if (session.user.role !== "parent") {
-    return { errors: {}, message: "Solo las familias pueden comentar." };
-  }
-
   const postId = formData.get("postId");
   if (typeof postId !== "string" || !postId.trim()) {
     return { errors: {}, message: "La publicación no es válida." };
@@ -37,7 +33,7 @@ export async function createFeedCommentAction(
     return { errors: validation.errors, message: "Revisa el comentario." };
   }
 
-  const authorizedPosts = await getFamilyFeed({ kind: "all" });
+  const authorizedPosts = await getAuthorizedEngagementPosts();
   if (!authorizedPosts.some((post) => post.id === postId)) {
     return { errors: {}, message: "No tienes acceso a esta publicación." };
   }

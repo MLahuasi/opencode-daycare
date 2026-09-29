@@ -55,7 +55,12 @@ export default async function PostDetailPage({
   return (
     <div className="flex min-h-screen bg-background text-foreground">
       <StaffSidebar navigation={staffNavigationConfig} />
-      <PostDetailView backHref="/home" detail={detail} className="min-w-0 flex-1" />
+        <PostDetailView
+          backHref="/home"
+          detail={detail}
+          className="min-w-0 flex-1"
+          viewerPersonId={session.user.personId}
+        />
     </div>
   );
 }

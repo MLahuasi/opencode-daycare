@@ -8,7 +8,7 @@ import {
   updateFeedComment,
   validateFeedCommentForm,
 } from "@/app/features/feed/server";
-import { getFamilyFeed } from "../services";
+import { getAuthorizedEngagementPosts } from "../services";
 import type { FeedCommentActionState } from "./types";
 
 /**
@@ -23,10 +23,6 @@ export async function updateFeedCommentAction(
   formData: FormData,
 ): Promise<FeedCommentActionState> {
   const session = await requireActiveSession();
-
-  if (session.user.role !== "parent") {
-    return { errors: {}, message: "Solo las familias pueden editar comentarios." };
-  }
 
   const commentId = formData.get("commentId");
   const postId = formData.get("postId");
@@ -48,7 +44,7 @@ export async function updateFeedCommentAction(
     return { errors: {}, message: "No tienes permiso para editar este comentario." };
   }
 
-  const authorizedPosts = await getFamilyFeed({ kind: "all" });
+  const authorizedPosts = await getAuthorizedEngagementPosts();
   if (!authorizedPosts.some((post) => post.id === postId)) {
     return { errors: {}, message: "No tienes acceso a esta publicación." };
   }

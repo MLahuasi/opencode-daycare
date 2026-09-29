@@ -124,5 +124,12 @@
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
     "type": "love",
     "createdAt": "2026-09-29T20:22:11.616Z"
+  },
+  {
+    "id": "77fa38c5-ecbf-4a5a-9b98-1bccc62187a2",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-09-29T20:38:30.790Z"
   }
 ]

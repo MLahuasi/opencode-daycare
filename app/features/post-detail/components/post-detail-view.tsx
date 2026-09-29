@@ -136,7 +136,7 @@ export function PostDetailView({
         <section aria-labelledby="comments-heading" className={styles.commentsSection}>
           <div className={styles.commentsHeading}>
             <h2 id="comments-heading">Comentarios · {comments.length}</h2>
-            {detail.viewerRole === "parent" ? (
+            {detail.viewerRole === "parent" || detail.viewerRole === "personal" ? (
               <LinkButton
                 href={`/post-comment/new?postId=${encodeURIComponent(post.id)}`}
                 variant="soft"
@@ -160,7 +160,8 @@ export function PostDetailView({
                       </time>
                     </header>
                     <p>{comment.body}</p>
-                    {detail.viewerRole === "parent" && comment.authorId === viewerPersonId ? (
+                    {(detail.viewerRole === "parent" || detail.viewerRole === "personal") &&
+                    comment.authorId === viewerPersonId ? (
                       <div className={styles.commentActions}>
                         <LinkButton
                           href={`/post-comment/edit?id=${encodeURIComponent(comment.id)}`}
