@@ -6,7 +6,7 @@ import { requireStaffSession } from "@/auth";
 import { createCloudinaryImageStorage } from "@/app/infrastructure";
 import { readCollection } from "@/app/infrastructure/persistence";
 import { updateFeedPost } from "../services";
-import type { FeedMedia, FeedPost } from "../types";
+import type { FeedMedia, PersistedFeedPost } from "../types";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "./types";
@@ -29,7 +29,7 @@ export async function updatePostAction(
     return { errors: { postId: "Indica la publicación que deseas editar." }, message: "Revisa los campos marcados." };
   }
 
-  const posts = await readCollection<FeedPost>("feed.json");
+  const posts = await readCollection<PersistedFeedPost>("feed.json");
   const currentPost = posts.find((post) => post.id === postId);
 
   if (!currentPost || currentPost.authorId !== session.user.personId) {

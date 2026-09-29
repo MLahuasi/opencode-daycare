@@ -12,3 +12,7 @@ export {
   createFeedPost,
   updateFeedPost,
 } from "./services";
+export {
+  getFeedEngagement,
+  getFeedEngagementByPostIds,
+} from "./services";

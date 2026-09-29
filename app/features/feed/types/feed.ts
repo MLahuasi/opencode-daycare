@@ -33,8 +33,15 @@ export type FeedOverview = {
   publishedTodayLabel: string;
 };
 
-/** Persisted and projected content rendered by a feed post card. */
-export type FeedPost = {
+/** Derived engagement values rendered by a feed post card. */
+export type FeedEngagement = {
+  reactionCount: number;
+  commentCount: number;
+  viewerHasLoved: boolean;
+};
+
+/** Persisted feed post content without derived engagement values. */
+export type PersistedFeedPost = {
   id: string;
   type: PostType;
   authorId: string;
@@ -47,11 +54,14 @@ export type FeedPost = {
   authorLabel?: string;
   recipient: string;
   body: string;
-  reactions: number;
-  comments: number;
   hasMedia?: boolean;
   mediaLabel?: string;
   media: FeedMedia[];
   kidId: string | null;
   roomId: string | null;
 };
+
+/** Projected content rendered by a feed post card. */
+export type FeedPost = {
+  engagement: FeedEngagement;
+} & PersistedFeedPost;

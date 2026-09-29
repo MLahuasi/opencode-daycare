@@ -6,7 +6,13 @@ import {
   withJsonTransaction,
   writeCollection,
 } from "@/app/infrastructure/persistence";
-import type { FeedMedia, FeedPost, PostType } from "../types";
+import type {
+  FeedEngagement,
+  FeedMedia,
+  FeedPost,
+  PersistedFeedPost,
+  PostType,
+} from "../types";
 
 /** Server-generated values required to create a feed post. */
 export type CreateFeedPostInput = {
@@ -38,11 +44,15 @@ function getPresentationValues(input: CreateFeedPostInput, timestamp: string) {
     dateTime: timestamp,
     authorLabel: "publicado por ti",
     recipient: input.kidId ? `familia de ${input.subject}` : "toda la sala",
-    reactions: 0,
-    comments: 0,
     hasMedia: input.media.length > 0,
   };
 }
+
+const EMPTY_ENGAGEMENT: FeedEngagement = {
+  reactionCount: 0,
+  commentCount: 0,
+  viewerHasLoved: false,
+};
 
 /**
  * Creates and atomically persists a feed post with server timestamps.
@@ -52,9 +62,9 @@ function getPresentationValues(input: CreateFeedPostInput, timestamp: string) {
  */
 export function createFeedPost(input: CreateFeedPostInput): Promise<FeedPost> {
   return withJsonTransaction(["feed.json"], async () => {
-    const posts = await readCollection<FeedPost>("feed.json");
+    const posts = await readCollection<PersistedFeedPost>("feed.json");
     const timestamp = new Date().toISOString();
-    const post: FeedPost = {
+    const post: PersistedFeedPost = {
       id: randomUUID(),
       type: input.type,
       authorId: input.authorId,
@@ -68,7 +78,7 @@ export function createFeedPost(input: CreateFeedPostInput): Promise<FeedPost> {
     };
 
     await writeCollection("feed.json", [...posts, post]);
-    return post;
+    return { ...post, engagement: { ...EMPTY_ENGAGEMENT } };
   });
 }
 
@@ -84,14 +94,14 @@ export function updateFeedPost(
   input: UpdateFeedPostInput,
 ): Promise<FeedPost | null> {
   return withJsonTransaction(["feed.json"], async () => {
-    const posts = await readCollection<FeedPost>("feed.json");
+    const posts = await readCollection<PersistedFeedPost>("feed.json");
     const postIndex = posts.findIndex((post) => post.id === id);
 
     if (postIndex === -1) return null;
 
     const currentPost = posts[postIndex];
     const updatedAt = new Date().toISOString();
-    const updatedPost: FeedPost = {
+    const updatedPost: PersistedFeedPost = {
       ...currentPost,
       type: input.type,
       authorId: input.authorId,
@@ -106,6 +116,6 @@ export function updateFeedPost(
     updatedPosts[postIndex] = updatedPost;
 
     await writeCollection("feed.json", updatedPosts);
-    return updatedPost;
+    return { ...updatedPost, engagement: { ...EMPTY_ENGAGEMENT } };
   });
 }

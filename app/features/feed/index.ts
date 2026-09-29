@@ -16,6 +16,7 @@ export {
 } from "./schemas";
 export type {
   FeedComment,
+  FeedEngagement,
   FeedMedia,
   FeedOverview,
   FeedPost,
@@ -23,6 +24,7 @@ export type {
   ImageAsset,
   ImageUploadInput,
   ImageStorage,
+  PersistedFeedPost,
   PostType,
   StaffRoom,
 } from "./types";

@@ -1,7 +1,8 @@
 import "server-only";
 
 import { createCloudinaryImageStorage, readCollection } from "@/app/infrastructure";
-import type { FeedOverview, FeedPost } from "../types";
+import type { FeedOverview, FeedPost, PersistedFeedPost } from "../types";
+import { getFeedEngagementByPostIds } from "./engagement.service";
 
 type FeedReadOptions = {
   resolveMediaUrls?: boolean;
@@ -30,7 +31,18 @@ function validateFeedPosts(posts: readonly FeedPost[]): void {
 export async function getFeeds(
   { resolveMediaUrls = true }: FeedReadOptions = {},
 ): Promise<readonly FeedPost[]> {
-  const posts = await readCollection<FeedPost>("feed.json");
+  const persistedPosts = await readCollection<PersistedFeedPost>("feed.json");
+  const engagement = await getFeedEngagementByPostIds(
+    persistedPosts.map((post) => post.id),
+  );
+  const posts = persistedPosts.map((post) => ({
+    ...post,
+    engagement: engagement.get(post.id) ?? {
+      reactionCount: 0,
+      commentCount: 0,
+      viewerHasLoved: false,
+    },
+  }));
   validateFeedPosts(posts);
 
   return resolveMediaUrls ? resolveFeedMediaUrls(posts) : posts;

@@ -10,3 +10,7 @@ export {
 } from "./staff-room.service";
 export { getAuthorizedPostTargets } from "./post-target.service";
 export { createFeedPost, updateFeedPost } from "./post.service";
+export {
+  getFeedEngagement,
+  getFeedEngagementByPostIds,
+} from "./engagement.service";

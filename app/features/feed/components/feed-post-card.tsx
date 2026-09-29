@@ -201,11 +201,11 @@ export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostC
       <footer className={styles.footer}>
         <span className={styles.reaction}>
           <HeartIcon />
-          {post.reactions}
+          {post.engagement.reactionCount}
         </span>
         <span className={styles.comments}>
           <CommentIcon />
-          {post.comments}
+          {post.engagement.commentCount}
         </span>
         {canEdit ? (
           <LinkButton
