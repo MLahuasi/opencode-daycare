@@ -9,14 +9,18 @@ import {
   PhotoIcon,
   type BadgeVariant,
 } from "@/app/components/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import type { FeedPost, PostType } from "../types";
 import styles from "./feed-post-card.module.css";
 
 type FeedPostCardProps = {
   canEdit?: boolean;
+  canReact?: boolean;
   post: FeedPost;
   className?: string;
+  onToggleReaction?: (
+    postId: string,
+  ) => Promise<{ success: boolean; active?: boolean; message?: string }>;
 };
 
 const postTypeLabels: Record<PostType, string> = {
@@ -75,15 +79,46 @@ function AnnouncementIcon() {
  * @param props.className - Optional classes that customize the card container.
  * @returns A feed publication article.
  */
-export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostCardProps) {
+export function FeedPostCard({
+  canEdit = true,
+  canReact = false,
+  className = "",
+  onToggleReaction,
+  post,
+}: FeedPostCardProps) {
   const [expandedMedia, setExpandedMedia] = useState<{
     alt: string;
     url: string;
   } | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [reactionError, setReactionError] = useState<string | null>(null);
+  const [reactionState, setReactionState] = useState({
+    active: post.engagement.viewerHasLoved,
+    count: post.engagement.reactionCount,
+  });
   const isAnnouncement = post.type === "announcement";
   const mediaPlaceholderLabel = post.mediaLabel
     ? `Foto · ${post.mediaLabel}`
     : "Imagen adjunta";
+
+  function handleReactionClick() {
+    if (!canReact || !onToggleReaction || isPending) return;
+
+    setReactionError(null);
+    startTransition(async () => {
+      const result = await onToggleReaction(post.id);
+
+      if (!result.success) {
+        setReactionError(result.message ?? "No pudimos actualizar tu reacción.");
+        return;
+      }
+
+      setReactionState((current) => ({
+        active: result.active ?? false,
+        count: current.count + (result.active ? 1 : -1),
+      }));
+    });
+  }
 
   useEffect(() => {
     if (!expandedMedia) return;
@@ -199,14 +234,33 @@ export function FeedPostCard({ canEdit = true, className = "", post }: FeedPostC
       ) : null}
 
       <footer className={styles.footer}>
-        <span className={styles.reaction}>
-          <HeartIcon />
-          {post.engagement.reactionCount}
-        </span>
+        {canReact ? (
+          <button
+            aria-label={reactionState.active ? "Quitar Me encanta" : "Dar Me encanta"}
+            aria-pressed={reactionState.active}
+            className={`${styles.reactionButton} ${reactionState.active ? styles.reactionActive : ""}`}
+            disabled={isPending}
+            onClick={handleReactionClick}
+            type="button"
+          >
+            <HeartIcon />
+            {reactionState.count}
+          </button>
+        ) : (
+          <span className={styles.reaction}>
+            <HeartIcon />
+            {post.engagement.reactionCount}
+          </span>
+        )}
         <span className={styles.comments}>
           <CommentIcon />
           {post.engagement.commentCount}
         </span>
+        {reactionError ? (
+          <span className={styles.engagementError} role="alert">
+            {reactionError}
+          </span>
+        ) : null}
         {canEdit ? (
           <LinkButton
             className={styles.editLabel}
