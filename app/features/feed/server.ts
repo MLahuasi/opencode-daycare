@@ -1,6 +1,7 @@
 import "server-only";
 
 export { createPostAction, updatePostAction } from "./actions";
+export { validateFeedCommentForm } from "./schemas";
 export {
   getAuthorizedStaffRooms,
   getFeedOverview,
@@ -16,4 +17,5 @@ export {
   getFeedEngagement,
   getFeedEngagementByPostIds,
   toggleFeedReaction,
+  createFeedComment,
 } from "./services";
