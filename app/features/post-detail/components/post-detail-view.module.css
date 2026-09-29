@@ -173,6 +173,13 @@
   text-transform: uppercase;
 }
 
+.commentsHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .commentsList {
   display: flex;
   flex-direction: column;
@@ -220,6 +227,24 @@
   color: var(--color-text);
   font-size: 14.5px;
   line-height: 1.45;
+}
+
+.commentActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.commentActions a,
+.commentActions button {
+  min-height: 28px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.deleteAction {
+  display: inline-flex;
 }
 
 .emptyComments {

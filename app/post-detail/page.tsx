@@ -42,7 +42,12 @@ export default async function PostDetailPage({
     return (
       <div className="flex min-h-screen bg-background text-foreground">
         <FamilySidebar person={familyContext.person} />
-        <PostDetailView backHref="/family-feed" detail={detail} className="min-w-0 flex-1" />
+        <PostDetailView
+          backHref="/family-feed"
+          detail={detail}
+          className="min-w-0 flex-1"
+          viewerPersonId={session.user.personId}
+        />
       </div>
     );
   }
