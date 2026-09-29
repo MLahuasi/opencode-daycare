@@ -11,4 +11,5 @@ export {
   type ToggleFeedReactionResult,
 } from "./actions";
 export { createFeedCommentAction } from "./actions";
+export { deleteFeedCommentAction } from "./actions";
 export { updateFeedCommentAction } from "./actions";

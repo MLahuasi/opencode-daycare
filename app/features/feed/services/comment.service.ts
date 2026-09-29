@@ -22,6 +22,12 @@ export type UpdateFeedCommentInput = {
   commentId: string;
 };
 
+/** Values required to delete a persisted feed comment. */
+export type DeleteFeedCommentInput = {
+  authorId: string;
+  commentId: string;
+};
+
 /**
  * Finds one persisted feed comment by stable identifier.
  *
@@ -89,5 +95,28 @@ export function updateFeedComment(
 
     await writeCollection("feed-comments.json", updatedComments);
     return updatedComment;
+  });
+}
+
+/**
+ * Deletes a comment owned by the authenticated person atomically.
+ *
+ * @param input - Comment and owner identifiers used for authorization.
+ * @returns Whether a matching comment was removed.
+ */
+export function deleteFeedComment(
+  input: DeleteFeedCommentInput,
+): Promise<boolean> {
+  return withJsonTransaction(["feed-comments.json"], async () => {
+    const comments = await readCollection<FeedComment>("feed-comments.json");
+    const remainingComments = comments.filter(
+      (comment) =>
+        comment.id !== input.commentId || comment.authorId !== input.authorId,
+    );
+
+    if (remainingComments.length === comments.length) return false;
+
+    await writeCollection("feed-comments.json", remainingComments);
+    return true;
   });
 }

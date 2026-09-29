@@ -17,10 +17,12 @@ export {
 export { toggleFeedReaction } from "./reaction.service";
 export {
   createFeedComment,
+  deleteFeedComment,
   getFeedCommentById,
   updateFeedComment,
 } from "./comment.service";
 export type {
   CreateFeedCommentInput,
+  DeleteFeedCommentInput,
   UpdateFeedCommentInput,
 } from "./comment.service";
