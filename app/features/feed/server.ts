@@ -15,4 +15,5 @@ export {
 export {
   getFeedEngagement,
   getFeedEngagementByPostIds,
+  toggleFeedReaction,
 } from "./services";

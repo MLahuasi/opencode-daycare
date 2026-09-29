@@ -6,3 +6,7 @@ export {
   getFamilyFeedOptions,
   type FamilyContext,
 } from "./services";
+export {
+  toggleFeedReactionAction,
+  type ToggleFeedReactionResult,
+} from "./actions";
