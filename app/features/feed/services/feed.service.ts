@@ -6,6 +6,7 @@ import { getFeedEngagementByPostIds } from "./engagement.service";
 
 type FeedReadOptions = {
   resolveMediaUrls?: boolean;
+  viewerId?: string;
 };
 
 function validateFeedPosts(posts: readonly FeedPost[]): void {
@@ -29,11 +30,12 @@ function validateFeedPosts(posts: readonly FeedPost[]): void {
  * @returns A freshly parsed list of feed posts.
  */
 export async function getFeeds(
-  { resolveMediaUrls = true }: FeedReadOptions = {},
+  { resolveMediaUrls = true, viewerId }: FeedReadOptions = {},
 ): Promise<readonly FeedPost[]> {
   const persistedPosts = await readCollection<PersistedFeedPost>("feed.json");
   const engagement = await getFeedEngagementByPostIds(
     persistedPosts.map((post) => post.id),
+    viewerId,
   );
   const posts = persistedPosts.map((post) => ({
     ...post,

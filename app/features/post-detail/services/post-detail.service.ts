@@ -52,7 +52,10 @@ export async function getAuthorizedPostData(
   id: string,
 ): Promise<AuthorizedPostData | null> {
   const session = await requireActiveSession();
-  const posts = await getFeeds({ resolveMediaUrls: false });
+  const posts = await getFeeds({
+    resolveMediaUrls: false,
+    viewerId: session.user.personId,
+  });
   const post = posts.find((candidate) => candidate.id === id);
 
   if (!post) {
