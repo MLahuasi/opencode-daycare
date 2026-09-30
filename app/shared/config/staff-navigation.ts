@@ -1,4 +1,4 @@
-import type { StaffNavigationConfig } from "@/app/components/layout";
+import type { StaffNavigationConfig } from "@/src/components/layout";
 
 /**
  * Transversal copy and navigation profile used by the staff shell.

@@ -1,5 +1,5 @@
 import { Avatar, Brand, LinkButton } from "@/src/components/ui";
-import { LogoutButton } from "@/app/components/layout";
+import { LogoutButton } from "@/src/components/layout";
 import type { Person } from "@/app/features/people";
 import { familyNavigationConfig, type FamilyNavigationIcon } from "@/app/shared/config";
 import type { ReactNode } from "react";

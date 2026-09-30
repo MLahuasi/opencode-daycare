@@ -1,4 +1,4 @@
-import { StaffSidebar } from "@/app/components/layout";
+import { StaffSidebar } from "@/src/components/layout";
 import { FamilySidebar } from "@/app/features/family";
 import { getAuthenticatedFamilyContext } from "@/app/features/family/server";
 import { PostDetailView } from "@/app/features/post-detail";

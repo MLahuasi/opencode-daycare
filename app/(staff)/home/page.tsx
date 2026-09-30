@@ -1,4 +1,4 @@
-import { StaffSidebar } from "@/app/components/layout";
+import { StaffSidebar } from "@/src/components/layout";
 import { FeedContent } from "@/app/features/feed";
 import { toggleFeedReactionAction } from "@/app/features/family/server";
 import { getFeedOverview, getFeeds } from "@/app/features/feed/services";
