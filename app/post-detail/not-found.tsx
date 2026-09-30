@@ -1,4 +1,4 @@
-import { LinkButton } from "@/app/components/ui";
+import { LinkButton } from "@/src/components/ui";
 
 /**
  * Renders the neutral fallback for missing or unauthorized post details.

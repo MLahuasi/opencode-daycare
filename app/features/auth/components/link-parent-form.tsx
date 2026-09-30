@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Button, FormField, LinkButton } from "@/app/components/ui";
+import { Button, FormField, LinkButton } from "@/src/components/ui";
 import {
   sendParentInvitationAction,
   type LinkParentActionState,

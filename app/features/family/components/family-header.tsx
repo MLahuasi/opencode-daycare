@@ -1,4 +1,4 @@
-import { Avatar } from "@/app/components/ui";
+import { Avatar } from "@/src/components/ui";
 import { LogoutButton } from "@/app/components/layout";
 import type { Kid } from "@/app/features/kids/types";
 import type { Person } from "@/app/features/people";

@@ -1,4 +1,4 @@
-import { Avatar, Brand, LinkButton } from "@/app/components/ui";
+import { Avatar, Brand, LinkButton } from "@/src/components/ui";
 import { LogoutButton } from "@/app/components/layout";
 import type { Person } from "@/app/features/people";
 import { familyNavigationConfig, type FamilyNavigationIcon } from "@/app/shared/config";

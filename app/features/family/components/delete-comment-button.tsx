@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import type { SubmitEvent } from "react";
-import { Button } from "@/app/components/ui";
+import { Button } from "@/src/components/ui";
 import type { FeedCommentAction, FeedCommentActionState } from "../actions";
 
 const INITIAL_ACTION_STATE: FeedCommentActionState = {

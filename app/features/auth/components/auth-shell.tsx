@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Brand } from "@/app/components/ui";
+import { Brand } from "@/src/components/ui";
 import styles from "./auth.module.css";
 
 type AuthShellProps = {

@@ -1,4 +1,4 @@
-import { LinkButton } from "@/app/components/ui";
+import { LinkButton } from "@/src/components/ui";
 import { kidProfileStyles as styles } from "@/app/features/kids";
 
 /**

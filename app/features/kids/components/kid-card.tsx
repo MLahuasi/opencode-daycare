@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Avatar, Badge } from "@/app/components/ui";
+import { Avatar, Badge } from "@/src/components/ui";
 import type { KidListItem } from "../types";
 import styles from "./kids-list.module.css";
 

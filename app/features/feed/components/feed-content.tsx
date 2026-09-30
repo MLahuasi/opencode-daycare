@@ -1,4 +1,4 @@
-import { Avatar, CameraIcon, LinkButton } from "@/app/components/ui";
+import { Avatar, CameraIcon, LinkButton } from "@/src/components/ui";
 import type { FeedOverview, FeedPost } from "../types";
 import { FeedPostCard } from "./feed-post-card";
 import styles from "./feed-content.module.css";
