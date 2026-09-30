@@ -1,6 +1,6 @@
 # SPEC 16 — Fundación de arquitectura por capas
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 08, SPEC 15
 > **Date:** 2026-09-30
 > **Objective:** Separar componentes reutilizables, configuración transversal y persistencia concreta en capas externas al App Router sin cambiar el comportamiento funcional.
@@ -56,21 +56,27 @@ La interfaz técnica del adapter conserva operaciones equivalentes a `readCollec
 
 ## Acceptance criteria
 
-- [ ] `src/components/ui/` contiene los controles UI reutilizables actuales.
-- [ ] `src/components/layout/` contiene la navegación y shells estructurales actuales.
-- [ ] `src/infrastructure/persistence/json/` está marcado como server-only.
-- [ ] Todos los JSON editables viven en `src/infrastructure/persistence/json/data/`.
-- [ ] Los hashes byte a byte de los JSON antes y después del traslado son iguales.
-- [ ] El adapter JSON mantiene lectura, escritura atómica, lock y rollback equivalentes.
-- [ ] Ningún Client Component importa `src/infrastructure`.
-- [ ] No quedan imports runtime hacia los directorios antiguos trasladados.
-- [ ] El App Router sigue funcionando desde `app/`.
-- [ ] No se modifican URLs, redirects, reglas de negocio ni registros persistidos.
-- [ ] `npx eslint app src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica Home, Auth, Kids, invitación y ambos feeds en escritorio y móvil.
+- [x] `src/components/ui/` contiene los controles UI reutilizables actuales.
+- [x] `src/components/layout/` contiene la navegación y shells estructurales actuales.
+- [x] `src/infrastructure/persistence/json/` está marcado como server-only.
+- [x] Todos los JSON editables viven en `src/infrastructure/persistence/json/data/`.
+- [x] Los hashes byte a byte de los JSON antes y después del traslado son iguales.
+- [x] El adapter JSON mantiene lectura, escritura atómica, lock y rollback equivalentes.
+- [x] Ningún Client Component importa `src/infrastructure`.
+- [x] No quedan imports runtime hacia los directorios antiguos trasladados.
+- [x] El App Router sigue funcionando desde `app/`.
+- [x] No se modifican URLs, redirects, reglas de negocio ni registros persistidos.
+- [x] `npx eslint app src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica Home, Auth, Kids, invitación y ambos feeds en escritorio y móvil.
+
+## Verification notes
+
+- La línea base SHA-256 raw de los 11 JSON registrada antes del traslado coincide con la calculada después del traslado.
+- La comparación reproducible contra el commit anterior al traslado confirma que los 11 blobs Git son idénticos antes y después.
+- `core.autocrlf=true` puede representar LF como CRLF en el working tree; por eso se verificaron hashes raw bajo la misma política y blobs normalizados de Git.
 
 ## Decisions
 
