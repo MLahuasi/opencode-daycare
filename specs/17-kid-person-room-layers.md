@@ -1,6 +1,6 @@
 # SPEC 17 — Capas de Kid, Person y Room
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 06, SPEC 16
 > **Date:** 2026-09-30
 > **Objective:** Separar los modelos y casos de uso de Kid, Person y Room en Domain, Application e Infrastructure sin alterar los flujos de personal.
@@ -91,11 +91,11 @@ src/application/kid/
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Separar modelos compartidos produce ciclos. | Domain solo expone contratos puros y la composición resuelve consultas cruzadas. |
+| Risk                                                         | Mitigation                                                                          |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Separar modelos compartidos produce ciclos.                  | Domain solo expone contratos puros y la composición resuelve consultas cruzadas.    |
 | Un DTO de formulario se confunde con una entidad persistida. | Mantener DTOs y validadores bajo `application/kid` y documentar su responsabilidad. |
-| La eliminación de features rompe imports profundos. | Buscar consumidores antes de eliminar y exigir barrels o entry points explícitos. |
+| La eliminación de features rompe imports profundos.          | Buscar consumidores antes de eliminar y exigir barrels o entry points explícitos.   |
 
 ## What is **not** in this spec
 
