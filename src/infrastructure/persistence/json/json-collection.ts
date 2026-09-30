@@ -19,7 +19,7 @@ export type JsonCollectionName =
 
 const JSON_DATA_DIRECTORY = path.join(
   process.cwd(),
-  "app",
+  "src",
   "infrastructure",
   "persistence",
   "json",
