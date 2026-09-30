@@ -5,7 +5,7 @@ import {
   readCollection,
   withJsonTransaction,
   writeCollection,
-} from "@/app/infrastructure/persistence";
+} from "@/src/infrastructure/persistence";
 import type { FeedReaction } from "../types";
 
 /**

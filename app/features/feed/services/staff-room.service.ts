@@ -1,4 +1,4 @@
-import { readCollection } from "@/app/infrastructure";
+import { readCollection } from "@/src/infrastructure/persistence";
 import type { Room } from "@/app/features/rooms";
 import type { StaffRoom } from "../types";
 

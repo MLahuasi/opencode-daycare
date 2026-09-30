@@ -14,7 +14,7 @@ import type {
 import type { Kid } from "@/app/features/kids/types";
 import type { Person } from "@/app/features/people";
 import type { Room } from "@/app/features/rooms";
-import { readCollection } from "@/app/infrastructure/persistence";
+import { readCollection } from "@/src/infrastructure/persistence";
 
 /** Server-resolved records required to project an authorized post detail. */
 export type AuthorizedPostData = {

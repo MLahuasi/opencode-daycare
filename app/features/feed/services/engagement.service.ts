@@ -1,6 +1,6 @@
 import "server-only";
 
-import { readCollection } from "@/app/infrastructure/persistence";
+import { readCollection } from "@/src/infrastructure/persistence";
 import type { FeedComment, FeedEngagement, FeedReaction } from "../types";
 
 const EMPTY_ENGAGEMENT: FeedEngagement = {

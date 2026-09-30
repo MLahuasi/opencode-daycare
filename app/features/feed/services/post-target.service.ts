@@ -1,6 +1,6 @@
 import "server-only";
 
-import { readCollection } from "@/app/infrastructure/persistence";
+import { readCollection } from "@/src/infrastructure/persistence";
 import type { Kid } from "@/app/features/kids";
 import type { Room } from "@/app/features/rooms";
 import { getAuthorizedStaffRooms } from "./staff-room.service";

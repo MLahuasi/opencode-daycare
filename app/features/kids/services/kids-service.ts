@@ -6,7 +6,7 @@ import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/app/infrastructure/persistence";
+} from "@/src/infrastructure/persistence";
 import type { Person } from "@/app/features/people";
 import type { Room } from "@/app/features/rooms";
 import type { LinkedParent, ParentKid } from "@/app/features/family";

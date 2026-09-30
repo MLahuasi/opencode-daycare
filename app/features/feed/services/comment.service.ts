@@ -5,7 +5,7 @@ import {
   readCollection,
   withJsonTransaction,
   writeCollection,
-} from "@/app/infrastructure/persistence";
+} from "@/src/infrastructure/persistence";
 import type { FeedComment } from "../types";
 
 /** Values required to create a persisted feed comment. */

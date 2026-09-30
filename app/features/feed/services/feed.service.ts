@@ -1,6 +1,7 @@
 import "server-only";
 
-import { createCloudinaryImageStorage, readCollection } from "@/app/infrastructure";
+import { createCloudinaryImageStorage } from "@/app/infrastructure";
+import { readCollection } from "@/src/infrastructure/persistence";
 import type { FeedOverview, FeedPost, PersistedFeedPost } from "../types";
 import { getFeedEngagementByPostIds } from "./engagement.service";
 

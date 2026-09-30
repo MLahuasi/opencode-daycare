@@ -1,4 +1,4 @@
-import { readCollection } from "@/app/infrastructure";
+import { readCollection } from "@/src/infrastructure/persistence";
 import { Credential } from "@/app/features/auth/types";
 
 /**
