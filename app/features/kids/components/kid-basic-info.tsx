@@ -1,5 +1,5 @@
 import type { Kid } from "../types";
-import { APP_LOCALE } from "@/app/shared";
+import { APP_LOCALE } from "@/src/config";
 import styles from "./kid-profile.module.css";
 
 function formatDate(value: string): string {

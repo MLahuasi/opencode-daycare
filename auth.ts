@@ -1,7 +1,7 @@
 import { getServerSession, type NextAuthOptions, type Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { getEnvironment } from "@/app/shared/config/server";
+import { getEnvironment } from "@/src/infrastructure/config/server";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type { Person } from "@/app/features/people";
 import { redirect } from "next/navigation";

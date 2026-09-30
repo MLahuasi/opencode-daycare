@@ -13,7 +13,7 @@ import {
   getKids,
   getLinkedParentsByKidId,
 } from "@/app/features/kids/server";
-import { getTodayIsoDate } from "@/app/shared";
+import { getTodayIsoDate } from "@/src/utils";
 import { requireStaffSession } from "@/auth";
 import { notFound } from "next/navigation";
 

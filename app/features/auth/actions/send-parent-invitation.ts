@@ -3,7 +3,7 @@
 import { requireStaffSession } from "@/auth";
 import { redirect } from "next/navigation";
 import { sendParentInvitationEmail } from "@/app/infrastructure";
-import { getEnvironment } from "@/app/shared/config/server";
+import { getEnvironment } from "@/src/infrastructure/config/server";
 import { validateLinkParentForm } from "../schemas";
 import {
   createPendingParentInvitation,

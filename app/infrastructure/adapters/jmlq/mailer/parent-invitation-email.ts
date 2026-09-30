@@ -1,7 +1,7 @@
 import "server-only";
 
 import { EmailAddress } from "@jmlq/mailer";
-import { APP_LOCALE } from "@/app/shared";
+import { APP_LOCALE } from "@/src/config";
 import { getMailer } from "./mailer.singleton";
 
 const PARENT_INVITATION_SUBJECT = "Activa tu acceso a OpenDayCare";

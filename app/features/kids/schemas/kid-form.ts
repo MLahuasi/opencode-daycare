@@ -1,4 +1,4 @@
-import { getTodayIsoDate, parseCommaSeparatedTags } from "@/app/shared";
+import { getTodayIsoDate, parseCommaSeparatedTags } from "@/src/utils";
 import type { Room } from "@/app/features/rooms";
 import type { Kid } from "../types";
 

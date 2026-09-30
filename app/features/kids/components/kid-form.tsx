@@ -8,7 +8,7 @@ import {
   LinkButton,
   TagsInput,
 } from "@/src/components/ui";
-import { parseCommaSeparatedTags } from "@/app/shared";
+import { parseCommaSeparatedTags } from "@/src/utils";
 import type { Room } from "@/app/features/rooms";
 import type { KidFormAction, KidFormActionState } from "../actions/types";
 import { validateKidForm } from "../schemas";

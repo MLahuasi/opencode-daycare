@@ -1,7 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { getTodayIsoDate } from "@/app/shared";
+import { getTodayIsoDate } from "@/src/utils";
 import {
   readCollection,
   withWriteLock,

@@ -3,7 +3,7 @@ import { FamilySidebar } from "@/app/features/family";
 import { getAuthenticatedFamilyContext } from "@/app/features/family/server";
 import { PostDetailView } from "@/app/features/post-detail";
 import { getPostDetail } from "@/app/features/post-detail/server";
-import { staffNavigationConfig } from "@/app/shared/config";
+import { staffNavigationConfig } from "@/src/config";
 import { requireActiveSession } from "@/auth";
 import { notFound } from "next/navigation";
 

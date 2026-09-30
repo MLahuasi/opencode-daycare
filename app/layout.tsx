@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Fredoka, Nunito } from "next/font/google";
-import { APP_LOCALE } from "@/app/shared";
+import { APP_LOCALE } from "@/src/config";
 import "./globals.css";
 
 const fredoka = Fredoka({
