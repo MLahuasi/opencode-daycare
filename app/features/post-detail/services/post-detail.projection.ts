@@ -2,7 +2,7 @@ import "server-only";
 
 import { resolveFeedMediaUrls } from "@/app/features/feed/server";
 import type { Person } from "@/app/features/people";
-import { readCollection } from "@/app/infrastructure/persistence";
+import { readCollection } from "@/src/infrastructure/persistence";
 import type {
   PostDetail,
   PostDetailComment,

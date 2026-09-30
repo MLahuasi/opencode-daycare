@@ -1,7 +1,7 @@
-import { Avatar, Brand, LinkButton } from "@/app/components/ui";
-import { LogoutButton } from "@/app/components/layout";
+import { Avatar, Brand, LinkButton } from "@/src/components/ui";
+import { LogoutButton } from "@/src/components/layout";
 import type { Person } from "@/app/features/people";
-import { familyNavigationConfig, type FamilyNavigationIcon } from "@/app/shared/config";
+import { familyNavigationConfig, type FamilyNavigationIcon } from "@/src/config";
 import type { ReactNode } from "react";
 import styles from "./family-sidebar.module.css";
 

@@ -1,5 +1,5 @@
-import { Avatar } from "@/app/components/ui";
-import { LogoutButton } from "@/app/components/layout";
+import { Avatar } from "@/src/components/ui";
+import { LogoutButton } from "@/src/components/layout";
 import type { Kid } from "@/app/features/kids/types";
 import type { Person } from "@/app/features/people";
 import styles from "./family-header.module.css";

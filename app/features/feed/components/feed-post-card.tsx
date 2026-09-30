@@ -8,7 +8,7 @@ import {
   LinkButton,
   PhotoIcon,
   type BadgeVariant,
-} from "@/app/components/ui";
+} from "@/src/components/ui";
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import type { FeedPost, PostType } from "../types";

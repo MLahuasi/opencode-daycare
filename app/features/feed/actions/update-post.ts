@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
 import { createCloudinaryImageStorage } from "@/app/infrastructure";
-import { readCollection } from "@/app/infrastructure/persistence";
+import { readCollection } from "@/src/infrastructure/persistence";
 import { updateFeedPost } from "../services";
 import type { FeedMedia, PersistedFeedPost } from "../types";
 import { parsePostSubmission } from "./post-action";

@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import type { SubmitEvent } from "react";
-import { Button, FormField, LinkButton } from "@/app/components/ui";
+import { Button, FormField, LinkButton } from "@/src/components/ui";
 import type { Kid } from "@/app/features/kids";
 import type { Room } from "@/app/features/rooms";
 import {

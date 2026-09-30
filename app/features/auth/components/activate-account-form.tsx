@@ -2,7 +2,7 @@
 
 import type { SubmitEvent, SyntheticEvent } from "react";
 import { useActionState, useState } from "react";
-import { Button, CheckboxField, FormField } from "@/app/components/ui";
+import { Button, CheckboxField, FormField } from "@/src/components/ui";
 import {
   activateAccountAction,
   type ActivationActionState,

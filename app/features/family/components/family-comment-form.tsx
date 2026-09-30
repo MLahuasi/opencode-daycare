@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import type { SubmitEvent } from "react";
-import { Button, FormField, LinkButton } from "@/app/components/ui";
+import { Button, FormField, LinkButton } from "@/src/components/ui";
 import { MAX_FEED_COMMENT_BODY_LENGTH } from "@/app/features/feed";
 import {
   type FeedCommentAction,
