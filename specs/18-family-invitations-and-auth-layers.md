@@ -1,6 +1,6 @@
 # SPEC 18 — Invitaciones Family y capas de Auth
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 09, SPEC 10, SPEC 11, SPEC 17
 > **Date:** 2026-09-30
 > **Objective:** Separar la relación Parent/Tutor-Kid en Family y las credenciales en Auth, con rutas públicas y de personal definitivas para invitaciones.
@@ -112,11 +112,11 @@ interface PasswordHasher {
 
 ## Risks
 
-| Risk                                                    | Mitigation                                                                                        |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Un enlace legacy podría parecer funcional aunque no exista una invitación vigente. | Mantener las rutas de activación legacy ausentes para responder 404. |
-| Auth y Family crean dependencias circulares.            | Auth expone credenciales; Family expone invitaciones y relaciones; la composición coordina ambos. |
-| El token queda expuesto a una página no autorizada.     | Resolver y validar el token en servidor antes de proyectar datos.                                 |
+| Risk                                                                               | Mitigation                                                                                        |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Un enlace legacy podría parecer funcional aunque no exista una invitación vigente. | Mantener las rutas de activación legacy ausentes para responder 404.                              |
+| Auth y Family crean dependencias circulares.                                       | Auth expone credenciales; Family expone invitaciones y relaciones; la composición coordina ambos. |
+| El token queda expuesto a una página no autorizada.                                | Resolver y validar el token en servidor antes de proyectar datos.                                 |
 
 ## What is **not** in this spec
 
