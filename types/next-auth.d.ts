@@ -1,4 +1,4 @@
-import type { PersonRole } from "@/app/features/people";
+import type { PersonRole } from "@/src/domain/person";
 import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {

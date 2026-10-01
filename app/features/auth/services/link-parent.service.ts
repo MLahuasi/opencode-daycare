@@ -1,6 +1,7 @@
 import "server-only";
 
-import { getKidById } from "@/app/features/kids/server";
+import { getKidById } from "@/src/application/kid";
+import { createKidComposition } from "@/src/infrastructure/composition/kid";
 import type { LinkParentKid } from "../types";
 
 /**
@@ -12,7 +13,7 @@ import type { LinkParentKid } from "../types";
 export async function getLinkParentKid(
   kidId: string,
 ): Promise<LinkParentKid | null> {
-  const kid = await getKidById(kidId);
+  const kid = await getKidById(createKidComposition(), kidId);
 
   if (!kid) {
     return null;

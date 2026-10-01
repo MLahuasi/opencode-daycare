@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { getEnvironment } from "@/src/infrastructure/config/server";
 import { readCollection } from "@/src/infrastructure/persistence";
-import type { Person } from "@/app/features/people";
+import type { Person } from "@/src/domain/person";
 import { redirect } from "next/navigation";
 
 const { auth: authEnvironment } = getEnvironment();

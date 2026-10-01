@@ -7,9 +7,9 @@ import {
 } from "@/app/features/feed/server";
 import type { FeedPost } from "@/app/features/feed";
 import { readCollection } from "@/src/infrastructure/persistence";
-import type { Kid } from "@/app/features/kids/types";
-import type { Person } from "@/app/features/people";
-import type { Room } from "@/app/features/rooms";
+import type { Kid } from "@/src/domain/kid";
+import type { Person } from "@/src/domain/person";
+import type { Room } from "@/src/domain/room";
 import type {
   FamilyFeedFilter,
   FamilyFeedOption,

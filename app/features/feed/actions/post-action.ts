@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { createCloudinaryImageStorage } from "@/app/infrastructure";
 import { readCollection } from "@/src/infrastructure/persistence";
-import type { Person } from "@/app/features/people";
+import type { Person } from "@/src/domain/person";
 import type { ParentKid } from "@/app/features/family";
 import {
   MAX_MEDIA_BYTES,

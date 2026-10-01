@@ -3,7 +3,7 @@ import type {
   FeedPost,
   FeedReaction,
 } from "@/app/features/feed";
-import type { Person, PersonRole } from "@/app/features/people";
+import type { Person, PersonRole } from "@/src/domain/person";
 
 /** A comment enriched with its valid author and localized timestamp. */
 export type PostDetailComment = FeedComment & {

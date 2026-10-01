@@ -11,9 +11,9 @@ import type {
   FeedPost,
   FeedReaction,
 } from "@/app/features/feed";
-import type { Kid } from "@/app/features/kids/types";
-import type { Person } from "@/app/features/people";
-import type { Room } from "@/app/features/rooms";
+import type { Kid } from "@/src/domain/kid";
+import type { Person } from "@/src/domain/person";
+import type { Room } from "@/src/domain/room";
 import { readCollection } from "@/src/infrastructure/persistence";
 
 /** Server-resolved records required to project an authorized post detail. */
