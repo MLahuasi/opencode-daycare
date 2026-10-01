@@ -86,5 +86,13 @@
     "body": "pechocho",
     "createdAt": "2026-10-01T02:04:35.214Z",
     "updatedAt": null
+  },
+  {
+    "id": "4782cc7f-a5ce-42be-8b98-137822162f5a",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "authorId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "body": "bebe",
+    "createdAt": "2026-10-01T23:06:37.666Z",
+    "updatedAt": null
   }
 ]

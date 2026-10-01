@@ -57,14 +57,14 @@
     "authorId": "person-caro-gimenez",
     "subject": "Chewbacca Lahuasi",
     "initial": "C",
-    "time": "23:21",
-    "dateTime": "2026-09-24T23:21:01.099Z",
+    "time": "23:17",
+    "dateTime": "2026-10-01T23:17:48.014Z",
     "authorLabel": "publicado por ti",
     "recipient": "familia de Chewbacca Lahuasi",
     "hasMedia": true,
     "body": "Mi bebe chiquito",
     "createdAt": "2026-09-24T23:19:31.874Z",
-    "updatedAt": "2026-09-24T23:21:01.099Z",
+    "updatedAt": "2026-10-01T23:17:48.014Z",
     "media": [
       {
         "assetId": "5dd3b7baa3cfa7af5b3c49a0d4b2ebb8",
@@ -103,6 +103,19 @@
         "bytes": 288299,
         "id": "d32a06db-b877-44ca-8250-73b100bd6189",
         "originalName": "FB_IMG_1581873922116.jpg",
+        "alt": null
+      },
+      {
+        "assetId": "1196be846e04c80c9b89d9995bdc9f0a",
+        "publicId": "daycare/posts/s7s7nsllx8vxoeujj84y",
+        "resourceType": "image",
+        "deliveryType": "authenticated",
+        "format": "jpg",
+        "width": 960,
+        "height": 1280,
+        "bytes": 144260,
+        "id": "80ad668d-c95e-4c25-a15e-c55a999cf685",
+        "originalName": "WhatsApp Image 2026-08-30 at 9.25.14 PM.jpeg",
         "alt": null
       }
     ],

@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
 import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
 import { readCollection } from "@/src/infrastructure/persistence";
@@ -12,7 +11,7 @@ import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "./types";
 
 /**
- * Revalidates authorization, updates a post, and redirects to the feed.
+ * Revalidates authorization, updates a post, and returns the feed destination.
  *
  * @param _previousState - Previous feedback required by the action contract.
  * @param formData - Submitted post form payload.
@@ -119,5 +118,5 @@ export async function updatePostAction(
 
   revalidatePath("/home");
   revalidatePath(`/posts/${postId}`);
-  redirect("/home");
+  return { errors: {}, message: "", redirectTo: "/home" };
 }

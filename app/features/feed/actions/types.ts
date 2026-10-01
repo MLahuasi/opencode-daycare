@@ -4,6 +4,8 @@ import type { PostFormErrors } from "../schemas";
 export type PostFormActionState = {
   errors: PostFormErrors;
   message: string;
+  /** Destination used after a successful mutation. */
+  redirectTo?: string;
 };
 
 /** Server Action contract consumed by the shared post form. */

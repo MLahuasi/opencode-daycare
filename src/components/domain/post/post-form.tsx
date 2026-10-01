@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import type { SubmitEvent } from "react";
 import { Button, FormField, LinkButton } from "@/src/components/ui";
 import type { Kid } from "@/src/domain/kid";
@@ -111,6 +111,12 @@ export function PostForm({
   const [images, setImages] = useState<readonly PostImageSelection[]>([]);
   const [error, setError] = useState("");
   const serverError = actionState.message || Object.values(actionState.errors)[0] || "";
+
+  useEffect(() => {
+    if (actionState.redirectTo) {
+      window.location.assign(actionState.redirectTo);
+    }
+  }, [actionState.redirectTo]);
 
   /**
    * Selects a kid destination and clears the room destination.
