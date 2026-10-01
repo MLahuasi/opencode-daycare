@@ -19,7 +19,7 @@ export async function validateInvitationToken(
     return { status: "unknown", invitation: null, person: null };
   }
 
-  const status = getInvitationStatus(invitation, dependencies.now());
+  const status = getInvitationStatus(invitation, dependencies.clock.now());
 
   if (status !== "pending") {
     return { status, invitation: null, person: null };

@@ -1,46 +1,44 @@
-import type { Invitation, ParentKid } from "@/src/domain/family";
-import type { Person } from "@/src/domain/person";
 import type {
   CreateInvitationInput,
   CreatedInvitation,
 } from "./dto/invitation";
+import type {
+  Clock,
+  FamilyParentKidRepository,
+  FamilyPersonRepository,
+  IdentifierGenerator,
+  InvitationCodeGenerator,
+  InvitationExpirationPolicy,
+  InvitationRepository,
+  TransactionRunner,
+} from "./ports";
 
 /** Persistence and clock capabilities required by Family use cases. */
 export type FamilyDependencies = {
-  invitations: {
-    findByCode(code: string): Promise<Invitation | null>;
-    create(invitation: Invitation): Promise<void>;
-    markAccepted(id: string, acceptedAt: string): Promise<Invitation | null>;
-  };
-  people: {
-    findById(id: string): Promise<Person | null>;
-    findByEmail(email: string): Promise<Person | null>;
-    create(person: Person): Promise<void>;
-    update(person: Person): Promise<void>;
-  };
-  parentKids: {
-    findByParentAndKid(parentId: string, kidId: string): Promise<ParentKid | null>;
-    create(parentKid: ParentKid): Promise<void>;
-  };
-  createId(): string;
-  createCode(): string;
-  getInvitationExpiration(now: Date): string;
-  now(): Date;
-  runInTransaction<T>(operation: () => Promise<T>): Promise<T>;
+  /** Invitation persistence port. */
+  invitations: InvitationRepository;
+  /** Person persistence port. */
+  people: FamilyPersonRepository;
+  /** Parent-kid relationship persistence port. */
+  parentKids: FamilyParentKidRepository;
+  /** Stable identifier generation port. */
+  identifiers: IdentifierGenerator;
+  /** Invitation token generation port. */
+  invitationCodes: InvitationCodeGenerator;
+  /** Invitation expiration policy port. */
+  invitationExpiration: InvitationExpirationPolicy;
+  /** Current-time provider. */
+  clock: Clock;
+  /** Atomic write transaction port. */
+  transaction: TransactionRunner;
 };
 
 /** Additional capabilities required to activate invitation credentials. */
 export type FamilyAcceptanceDependencies = FamilyDependencies & {
-  credentials: {
-    upsert(credential: {
-      id: string;
-      personId: string;
-      passwordHash: string;
-    }): Promise<void>;
-  };
-  passwordHasher: {
-    hash(password: string): Promise<string>;
-  };
+  /** Credential persistence port from Auth. */
+  credentials: import("../auth/ports").CredentialRepository;
+  /** Password hashing port from Auth. */
+  passwordHasher: import("../auth/ports").PasswordHasher;
 };
 
 /** Creates a pending person and invitation without creating ParentKid. */

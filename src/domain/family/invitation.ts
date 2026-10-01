@@ -2,13 +2,21 @@ import type { ParentRelationship } from "./parent-relationship";
 
 /** Invitation sent to a person to establish a parent-kid relationship. */
 export type Invitation = {
+  /** Stable invitation identifier. */
   id: string;
+  /** Stable invited person identifier. */
   personId: string;
+  /** Stable kid identifier receiving the invitation. */
   kidId: string;
+  /** Relationship requested by the invited person. */
   relationship: ParentRelationship;
+  /** Token included in the invitation URL. */
   code: string;
+  /** ISO instant after which the token is invalid. */
   expiresAt: string;
+  /** ISO instant when the email provider accepted the message. */
   sentAt: string | null;
+  /** ISO instant when the invitation was accepted. */
   acceptedAt: string | null;
 };
 

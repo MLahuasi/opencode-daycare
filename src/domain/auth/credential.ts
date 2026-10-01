@@ -1,7 +1,10 @@
 /** Persisted password credential associated with a person. */
 export type Credential = {
+  /** Stable credential identifier. */
   id: string;
+  /** Stable identifier of the person who owns the credential. */
   personId: string;
+  /** Password hash produced by the configured hasher. */
   passwordHash: string;
 };
 

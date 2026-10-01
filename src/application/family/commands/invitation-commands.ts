@@ -46,20 +46,22 @@ export async function createInvitation(
   }
 
   const person: Person = {
-    id: dependencies.createId(),
+    id: dependencies.identifiers.create(),
     name: input.name.trim(),
     email,
     role: "parent",
     status: "pending",
   };
-  const now = dependencies.now();
+  const now = dependencies.clock.now();
   const invitation: Invitation = {
-    id: dependencies.createId(),
+    id: dependencies.identifiers.create(),
     personId: person.id,
     kidId: input.kidId,
     relationship: input.relationship,
-    code: dependencies.createCode(),
-    expiresAt: dependencies.getInvitationExpiration(now),
+    code: dependencies.invitationCodes.create(
+      (await dependencies.invitations.findAll()).map((candidate) => candidate.code),
+    ),
+    expiresAt: dependencies.invitationExpiration.getExpiration(now),
     sentAt: null,
     acceptedAt: null,
   };
@@ -122,7 +124,10 @@ export async function acceptInvitation(
 ): Promise<void> {
   const invitation = await dependencies.invitations.findByCode(input.code.trim());
 
-  if (!invitation || getInvitationStatus(invitation, dependencies.now()) !== "pending") {
+  if (
+    !invitation ||
+    getInvitationStatus(invitation, dependencies.clock.now()) !== "pending"
+  ) {
     throw new InvalidInvitationAcceptanceError("The invitation is not valid.");
   }
 
@@ -139,12 +144,12 @@ export async function acceptInvitation(
     throw new InvalidInvitationAcceptanceError("The activation password is invalid.");
   }
 
-  await dependencies.runInTransaction(async () => {
+  await dependencies.transaction.run(async () => {
     const currentInvitation = await dependencies.invitations.findByCode(input.code.trim());
 
     if (
       !currentInvitation ||
-      isInvitationExpired(currentInvitation, dependencies.now()) ||
+      isInvitationExpired(currentInvitation, dependencies.clock.now()) ||
       currentInvitation.acceptedAt
     ) {
       throw new InvalidInvitationAcceptanceError("The invitation is no longer valid.");
@@ -166,7 +171,7 @@ export async function acceptInvitation(
       await dependencies.people.update({ ...person, status: "active" });
     }
 
-    const acceptedAt = dependencies.now().toISOString();
+    const acceptedAt = dependencies.clock.now().toISOString();
     const acceptedInvitation = await dependencies.invitations.markAccepted(
       currentInvitation.id,
       acceptedAt,
