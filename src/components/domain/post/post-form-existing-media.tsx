@@ -1,14 +1,19 @@
-import type { FeedMedia } from "../types";
+import type { FeedMedia } from "@/app/features/feed/types";
 import styles from "./post-form.module.css";
 
 /** Existing image data displayed by the edit form. */
 export type PostFormExistingMedia = {
+  /** Persisted media metadata. */
   media: FeedMedia;
+  /** Server-generated delivery URL. */
   url: string;
 };
 
+/** Props accepted by the persisted media list. */
 type PostFormExistingMediaProps = {
+  /** Persisted images available for retention or removal. */
   images: readonly PostFormExistingMedia[];
+  /** Called with the identifier of a removed image. */
   onRemove: (id: string) => void;
 };
 

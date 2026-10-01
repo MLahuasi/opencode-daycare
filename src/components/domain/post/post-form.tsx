@@ -5,14 +5,14 @@ import type { SubmitEvent } from "react";
 import { Button, FormField, LinkButton } from "@/src/components/ui";
 import type { Kid } from "@/src/domain/kid";
 import type { Room } from "@/src/domain/room";
+import { MAX_POST_BODY_LENGTH } from "@/app/features/feed/schemas";
 import {
-  MAX_POST_BODY_LENGTH,
   PostImagePicker,
   type PostImageSelection,
-} from "../index";
-import type { PostFormMode } from "../schemas";
-import type { PostType } from "../types";
-import type { PostFormAction, PostFormActionState } from "../actions/types";
+} from "./post-image-picker";
+import type { PostFormMode } from "@/app/features/feed/schemas";
+import type { PostType } from "@/app/features/feed/types";
+import type { PostFormAction, PostFormActionState } from "@/app/features/feed/actions/types";
 import {
   PostFormExistingMedia,
   type PostFormExistingMedia as PostFormExistingMediaValue,
@@ -30,21 +30,35 @@ const POST_TYPE_OPTIONS: readonly { value: PostType; label: string }[] = [
 
 /** Initial values shared by new and edit post forms. */
 export type PostFormInitialValues = {
+  /** Initial description. */
   body: string;
+  /** Persisted images available during editing. */
   existingMedia: readonly PostFormExistingMediaValue[];
+  /** Initially selected kid identifier. */
   kidId: string | null;
+  /** Form operation mode. */
   mode: PostFormMode;
+  /** Identifier of the Post being edited. */
   postId?: string;
+  /** Initially selected room identifier. */
   roomId: string | null;
+  /** Initially selected Post category. */
   type: PostType;
 };
 
+/** Props accepted by the create and edit Post form. */
 type PostFormProps = {
+  /** Native or server action invoked on submit. */
   action: PostFormAction;
+  /** Destination used by the cancel action. */
   cancelHref: string;
+  /** Optional classes applied to the form card. */
   className?: string;
+  /** Values used by create or edit mode. */
   initialValues: PostFormInitialValues;
+  /** Kids authorized for the current staff member. */
   kids: readonly Kid[];
+  /** Rooms authorized for the current staff member. */
   rooms: readonly Room[];
 };
 
@@ -53,6 +67,12 @@ const INITIAL_ACTION_STATE: PostFormActionState = {
   message: "",
 };
 
+/**
+ * Returns the uppercase initial used by a kid target pill.
+ *
+ * @param name - Kid name displayed by the target pill.
+ * @returns The uppercase first character.
+ */
 function getInitial(name: string): string {
   return name.trim().charAt(0).toUpperCase();
 }
@@ -92,12 +112,24 @@ export function PostForm({
   const [error, setError] = useState("");
   const serverError = actionState.message || Object.values(actionState.errors)[0] || "";
 
+  /**
+   * Selects a kid destination and clears the room destination.
+   *
+   * @param nextKidId - Identifier of the selected kid.
+   * @returns Nothing after updating the destination state.
+   */
   function selectKid(nextKidId: string) {
     setKidId(nextKidId);
     setRoomId(null);
     setError("");
   }
 
+  /**
+   * Selects a room destination and clears media intended for a kid.
+   *
+   * @param nextRoomId - Identifier of the selected room.
+   * @returns Nothing after updating the destination state.
+   */
   function selectRoom(nextRoomId: string) {
     setRoomId(nextRoomId);
     setKidId(null);
@@ -106,6 +138,12 @@ export function PostForm({
     setError("");
   }
 
+  /**
+   * Performs client-side validation before submitting the form action.
+   *
+   * @param event - Form submit event.
+   * @returns Nothing after allowing or preventing submission.
+   */
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     const normalizedBody = body.trim();
 

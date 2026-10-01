@@ -11,15 +11,22 @@ import {
 } from "@/src/components/ui";
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
-import type { FeedPost, PostType } from "../types";
+import type { Post, PostType } from "@/src/domain/post";
 import styles from "./feed-post-card.module.css";
 
+/** Props accepted by the reusable Post card. */
 type FeedPostCardProps = {
+  /** Whether to render the staff edit destination. */
   canEdit?: boolean;
+  /** Whether to render an interactive reaction control. */
   canReact?: boolean;
+  /** Optional destination used to create a comment. */
   commentHref?: string;
-  post: FeedPost;
+  /** Post data to display. */
+  post: Post;
+  /** Optional classes applied to the card container. */
   className?: string;
+  /** Callback used to toggle the viewer's reaction. */
   onToggleReaction?: (
     postId: string,
   ) => Promise<{ success: boolean; active?: boolean; message?: string }>;
@@ -44,11 +51,11 @@ const postTypeBadgeVariants: Record<PostType, BadgeVariant> = {
 };
 
 /**
- * Renders the icon for a post's category badge.
+ * Renders the marker for a Post category badge.
  *
  * @param props - Category icon configuration.
  * @param props.type - Post category that determines the displayed icon.
- * @returns An inline SVG category icon.
+ * @returns An inline category marker.
  */
 function PostTypeIcon({ type }: { type: PostType }) {
   return <span aria-hidden="true" className={styles.tagDot} data-post-type={type} />;
@@ -67,11 +74,6 @@ function AnnouncementIcon() {
   );
 }
 
-/**
- * Renders the static illustration for a media placeholder.
- *
- * @returns An inline SVG photo icon.
- */
 /**
  * Renders a static feed publication using its category-specific visual treatment.
  *
@@ -105,6 +107,11 @@ export function FeedPostCard({
     ? `Foto · ${post.mediaLabel}`
     : "Imagen adjunta";
 
+  /**
+   * Toggles the viewer's reaction and updates the optimistic card state.
+   *
+   * @returns Nothing after scheduling the reaction transition.
+   */
   function handleReactionClick() {
     if (!canReact || !onToggleReaction || isPending) return;
 
@@ -127,6 +134,12 @@ export function FeedPostCard({
   useEffect(() => {
     if (!expandedMedia) return;
 
+    /**
+     * Closes the media lightbox when Escape is pressed.
+     *
+     * @param event - Keyboard event received by the document.
+     * @returns Nothing after handling the key.
+     */
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") setExpandedMedia(null);
     }

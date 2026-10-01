@@ -1,6 +1,8 @@
 import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
-import { PostForm } from "@/app/features/feed";
-import type { PostFormInitialValues } from "@/app/features/feed";
+import {
+  PostForm,
+  type PostFormInitialValues,
+} from "@/src/components/domain/post";
 import {
   createPostAction,
   getAuthorizedPostTargets,

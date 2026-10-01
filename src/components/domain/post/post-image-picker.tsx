@@ -5,30 +5,52 @@ import type { ChangeEvent, DragEvent } from "react";
 import {
   MAX_MEDIA_BYTES,
   MAX_POST_MEDIA,
-} from "../schemas";
-import { isSupportedImageFile } from "../utils";
+} from "@/app/features/feed/schemas";
+import { isSupportedImageFile } from "@/app/features/feed/utils";
 import styles from "./post-image-picker.module.css";
 
 /** A selected image and the preview data used by the picker. */
 export type PostImageSelection = {
+  /** Stable client-side image identifier. */
   id: string;
+  /** Original image file selected by the user. */
   file: File;
+  /** Object URL used for the local preview. */
   previewUrl: string;
+  /** Editable alternative text for the image. */
   alt: string;
 };
 
+/** Props accepted by the reusable Post image picker. */
 type PostImagePickerProps = {
+  /** Optional classes applied to the picker wrapper. */
   className?: string;
+  /** Whether selection and editing are disabled. */
   disabled?: boolean;
+  /** Name used by the native file input in form submission. */
   inputName?: string;
+  /** Maximum number of new images accepted by the picker. */
   maxImages?: number;
+  /** Called with the current valid image selections. */
   onChange?: (images: readonly PostImageSelection[]) => void;
 };
 
+/**
+ * Builds a stable client-side key for an uploaded file.
+ *
+ * @param file - File to identify.
+ * @returns A key derived from the file metadata.
+ */
 function getFileId(file: File): string {
   return `${file.name}-${file.size}-${file.lastModified}`;
 }
 
+/**
+ * Formats a byte count for display in validation feedback.
+ *
+ * @param bytes - Number of bytes to format.
+ * @returns A localized megabyte label.
+ */
 function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
@@ -67,6 +89,12 @@ export function PostImagePicker({
     };
   }, []);
 
+  /**
+   * Synchronizes selected files with the native file input.
+   *
+   * @param nextImages - Images that should be represented by the input.
+   * @returns Nothing when the input is synchronized.
+   */
   function syncInputFiles(nextImages: readonly PostImageSelection[]) {
     if (!inputRef.current || typeof DataTransfer === "undefined") return;
 
@@ -75,12 +103,24 @@ export function PostImagePicker({
     inputRef.current.files = transfer.files;
   }
 
+  /**
+   * Stores selected images and notifies the controlled consumer.
+   *
+   * @param nextImages - New image selection.
+   * @returns Nothing after state and input synchronization.
+   */
   function updateImages(nextImages: PostImageSelection[]) {
     setImages(nextImages);
     syncInputFiles(nextImages);
     onChange?.(nextImages);
   }
 
+  /**
+   * Validates and adds files selected through the dialog or drop zone.
+   *
+   * @param fileList - Files selected by the user.
+   * @returns A promise that resolves after validation and state updates.
+   */
   async function addFiles(fileList: FileList | readonly File[]) {
     if (disabled) return;
 
@@ -122,6 +162,12 @@ export function PostImagePicker({
     if (nextImages.length !== images.length) updateImages(nextImages);
   }
 
+  /**
+   * Handles files selected through the native file input.
+   *
+   * @param event - Native file input change event.
+   * @returns Nothing after scheduling file validation.
+   */
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     const files = event.currentTarget.files
       ? Array.from(event.currentTarget.files)
@@ -130,12 +176,24 @@ export function PostImagePicker({
     void addFiles(files);
   }
 
+  /**
+   * Handles files dropped onto the picker.
+   *
+   * @param event - Drop event from the picker zone.
+   * @returns Nothing after scheduling file validation.
+   */
   function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     setIsDragging(false);
     void addFiles(event.dataTransfer.files);
   }
 
+  /**
+   * Removes an image and releases its local preview URL.
+   *
+   * @param id - Identifier of the image to remove.
+   * @returns Nothing after updating the selection.
+   */
   function removeImage(id: string) {
     const image = images.find((candidate) => candidate.id === id);
     if (image) {
@@ -145,6 +203,13 @@ export function PostImagePicker({
     updateImages(images.filter((candidate) => candidate.id !== id));
   }
 
+  /**
+   * Updates alternative text for a selected image.
+   *
+   * @param id - Identifier of the image to update.
+   * @param alt - New alternative text.
+   * @returns Nothing after updating the selection.
+   */
   function updateAlt(id: string, alt: string) {
     updateImages(
       images.map((image) => (image.id === id ? { ...image, alt } : image)),
