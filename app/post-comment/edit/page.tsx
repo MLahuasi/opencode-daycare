@@ -42,7 +42,7 @@ export default async function EditPostCommentPage({
     <main className="flex min-h-screen items-start justify-center px-6 py-10 max-sm:px-4 max-sm:py-6">
       <FamilyCommentForm
         action={updateFeedCommentAction}
-        cancelHref={`/post-detail?id=${encodeURIComponent(comment.postId)}`}
+        cancelHref={`/posts/${encodeURIComponent(comment.postId)}`}
         commentId={comment.id}
         heading="Editar comentario"
         initialBody={comment.body}

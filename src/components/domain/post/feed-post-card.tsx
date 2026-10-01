@@ -158,7 +158,7 @@ export function FeedPostCard({
       <LinkButton
         aria-label={`Abrir publicación de ${post.subject}`}
         className={styles.detailLink}
-        href={`/post-detail?id=${post.id}`}
+        href={`/posts/${encodeURIComponent(post.id)}`}
         variant="ghost"
       >
         <header className={styles.header}>
@@ -292,7 +292,7 @@ export function FeedPostCard({
         {canEdit ? (
           <LinkButton
             className={styles.editLabel}
-            href={`/post?id=${post.id}`}
+            href={`/posts/${encodeURIComponent(post.id)}/edit`}
             variant="ghost"
           >
             Editar

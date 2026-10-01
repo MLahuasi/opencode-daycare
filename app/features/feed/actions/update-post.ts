@@ -118,5 +118,6 @@ export async function updatePostAction(
   }
 
   revalidatePath("/home");
+  revalidatePath(`/posts/${postId}`);
   redirect("/home");
 }

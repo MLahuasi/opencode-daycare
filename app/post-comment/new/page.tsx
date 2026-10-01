@@ -36,7 +36,7 @@ export default async function NewPostCommentPage({
     <main className="flex min-h-screen items-start justify-center px-6 py-10 max-sm:px-4 max-sm:py-6">
       <FamilyCommentForm
         action={createFeedCommentAction}
-        cancelHref={`/post-detail?id=${encodeURIComponent(postId)}`}
+        cancelHref={`/posts/${encodeURIComponent(postId)}`}
         postId={postId}
         postLabel={detail.recipient.label}
       />

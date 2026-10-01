@@ -46,7 +46,7 @@ export async function toggleFeedReactionAction(
   }
   revalidatePath("/family-feed");
   revalidatePath("/home");
-  revalidatePath("/post-detail");
+  revalidatePath(`/posts/${normalizedPostId}`);
 
   return { success: true, active: reaction !== null };
 }

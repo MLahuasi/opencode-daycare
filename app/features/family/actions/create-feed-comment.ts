@@ -53,6 +53,6 @@ export async function createFeedCommentAction(
 
   revalidatePath("/family-feed");
   revalidatePath("/home");
-  revalidatePath("/post-detail");
-  redirect(`/post-detail?id=${encodeURIComponent(postId)}`);
+  revalidatePath(`/posts/${postId}`);
+  redirect(`/posts/${encodeURIComponent(postId)}`);
 }
