@@ -75,30 +75,30 @@ interface PasswordHasher {
 
 ## Acceptance criteria
 
-- [ ] La invitación iniciada desde un perfil de niño vive bajo `(staff)` en `/kids/[slug]/invite-parent`.
-- [ ] El caso de uso de invitación pertenece a `application/family`.
-- [ ] La relación Parent/Tutor-Kid pertenece a `domain/family`.
-- [ ] Las credenciales y sus reglas pertenecen a `domain/auth` o `application/auth`.
-- [ ] Domain no importa Next.js, React, NextAuth, bcrypt, filesystem ni mailer.
-- [ ] Application no importa adapters concretos ni APIs HTTP o de navegación.
-- [ ] Existe `InvitationMailer` y su implementación concreta está en Infrastructure.
-- [ ] Existe `PasswordHasher` y su implementación concreta usa bcrypt desde Infrastructure.
-- [ ] Las páginas no construyen repositorios, mailers ni hashers directamente.
-- [ ] `/auth/parent-invitation` explica que debe usarse el enlace recibido por email.
-- [ ] `/auth/parent-invitation/[token]` valida el token desde la URL y permite completar la vinculación.
-- [ ] Un token no válido, vencido o aceptado no revela datos de la invitación.
-- [ ] La aceptación crea o activa credenciales y crea `ParentKid` de forma coordinada.
-- [ ] El inicio de una invitación no crea `ParentKid`.
-- [ ] Los emails nuevos usan exclusivamente `/auth/parent-invitation/[token]`.
-- [ ] `/auth/activate-account` responde 404 porque las activaciones legacy no forman parte del flujo vigente.
-- [ ] `/activate-account` responde 404 porque las activaciones legacy no forman parte del flujo vigente.
-- [ ] `/auth/link-parent` y `/login` responden 404.
-- [ ] Los JSON permanecen sin cambios.
-- [ ] `npx eslint app src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica inicio staff, token válido, token inválido, aceptación, login y permisos.
+- [x] La invitación iniciada desde un perfil de niño vive bajo `(staff)` en `/kids/[slug]/invite-parent`.
+- [x] El caso de uso de invitación pertenece a `application/family`.
+- [x] La relación Parent/Tutor-Kid pertenece a `domain/family`.
+- [x] Las credenciales y sus reglas pertenecen a `domain/auth` o `application/auth`.
+- [x] Domain no importa Next.js, React, NextAuth, bcrypt, filesystem ni mailer.
+- [x] Application no importa adapters concretos ni APIs HTTP o de navegación.
+- [x] Existe `InvitationMailer` y su implementación concreta está en Infrastructure.
+- [x] Existe `PasswordHasher` y su implementación concreta usa bcrypt desde Infrastructure.
+- [x] Las páginas no construyen repositorios, mailers ni hashers directamente.
+- [x] `/auth/parent-invitation` explica que debe usarse el enlace recibido por email.
+- [x] `/auth/parent-invitation/[token]` valida el token desde la URL y permite completar la vinculación.
+- [x] Un token no válido, vencido o aceptado no revela datos de la invitación.
+- [x] La aceptación crea o activa credenciales y crea `ParentKid` de forma coordinada.
+- [x] El inicio de una invitación no crea `ParentKid`.
+- [x] Los emails nuevos usan exclusivamente `/auth/parent-invitation/[token]`.
+- [x] `/auth/activate-account` responde 404 porque las activaciones legacy no forman parte del flujo vigente.
+- [x] `/activate-account` responde 404 porque las activaciones legacy no forman parte del flujo vigente.
+- [x] `/auth/link-parent` y `/login` responden 404.
+- [x] Los JSON permanecen sin cambios.
+- [x] `npx eslint app src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica inicio staff, token válido, token inválido, aceptación, login y permisos.
 
 ## Decisions
 

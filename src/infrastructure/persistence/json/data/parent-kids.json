@@ -82,5 +82,12 @@
     "kidId": "kid-valentina-soto",
     "relationship": "father",
     "photoSharingConsent": true
+  },
+  {
+    "id": "parent-kid-69d0be26-7460-41cf-b44e-652716b72ef4-493c86d1-f2f3-42aa-a36f-656102bf6472",
+    "parentId": "69d0be26-7460-41cf-b44e-652716b72ef4",
+    "kidId": "493c86d1-f2f3-42aa-a36f-656102bf6472",
+    "relationship": "mother",
+    "photoSharingConsent": true
   }
 ]

@@ -82,5 +82,12 @@
     "email": "maurojre@hotmail.com",
     "role": "parent",
     "status": "active"
+  },
+  {
+    "id": "69d0be26-7460-41cf-b44e-652716b72ef4",
+    "name": "Katty Gonzalez",
+    "email": "aragon777@gmail.com",
+    "role": "parent",
+    "status": "active"
   }
 ]
