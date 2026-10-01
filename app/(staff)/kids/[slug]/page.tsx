@@ -1,13 +1,15 @@
 import { LinkButton } from "@/src/components/ui";
 import {
   calculateAge,
+} from "@/src/application/kid";
+import {
   KidBasicInfo,
   KidMedicalNotes,
   KidParents,
   KidProfileActions,
   KidProfileHeader,
-  kidProfileStyles as styles,
-} from "@/app/features/kids";
+} from "./_components";
+import styles from "./_components/kid-profile.module.css";
 import {
   getKidRoom,
   getKids,

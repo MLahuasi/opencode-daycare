@@ -1,14 +1,14 @@
 import {
   calculateAge,
-  KidsFilter,
-  KidsHeader,
-  kidsListStyles as styles,
-} from "@/app/features/kids";
-import type { Kid, KidListItem } from "@/app/features/kids";
-import type { ParentKid } from "@/app/features/family";
-import type { Room } from "@/app/features/rooms";
+  parseCommaSeparatedTags,
+} from "@/src/application/kid";
+import type { KidListItem, ParentKidRecord } from "@/src/application/kid";
+import type { Kid } from "@/src/domain/kid";
+import type { Room } from "@/src/domain/room";
+import { KidsFilter, KidsHeader } from "./_components";
+import styles from "./_components/kids-list.module.css";
 import { getKids, getParentKids, getRooms } from "@/app/features/kids/server";
-import { getTodayIsoDate, parseCommaSeparatedTags } from "@/src/utils";
+import { getTodayIsoDate } from "@/src/utils";
 import { requireStaffSession } from "@/auth";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
@@ -17,7 +17,7 @@ function toKidListItem(
   kid: Kid,
   index: number,
   asOfDate: string,
-  parentKids: readonly ParentKid[],
+  parentKids: readonly ParentKidRecord[],
   rooms: readonly Room[],
 ): KidListItem {
   return {

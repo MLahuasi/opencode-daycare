@@ -9,10 +9,10 @@ import {
   TagsInput,
 } from "@/src/components/ui";
 import { parseCommaSeparatedTags } from "@/src/utils";
-import type { Room } from "@/app/features/rooms";
-import type { KidFormAction, KidFormActionState } from "../actions/types";
-import { validateKidForm } from "../schemas";
-import type { KidFormErrors, KidFormValues } from "../schemas";
+import type { Room } from "@/src/domain/room";
+import type { KidFormAction, KidFormActionState } from "@/app/features/kids/actions/types";
+import { validateKidForm } from "@/src/application/kid";
+import type { KidFormErrors, KidFormValues } from "@/src/application/kid";
 import styles from "./kid-form.module.css";
 
 type KidFormProps = {

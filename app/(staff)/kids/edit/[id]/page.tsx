@@ -1,5 +1,5 @@
-import { KidForm } from "@/app/features/kids";
-import type { KidFormValues } from "@/app/features/kids";
+import { KidForm } from "../../_components/kid-form";
+import type { KidFormValues } from "@/src/application/kid";
 import { getKidById, getRooms, updateKidAction } from "@/app/features/kids/server";
 import { requireStaffSession } from "@/auth";
 import { notFound } from "next/navigation";

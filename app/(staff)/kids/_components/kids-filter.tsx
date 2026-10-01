@@ -1,8 +1,8 @@
 "use client";
 
 import { SearchField } from "@/src/components/ui";
-import { normalizeName } from "../utils";
-import type { KidListItem } from "../types";
+import { normalizeName } from "@/src/application/kid";
+import type { KidListItem } from "@/src/application/kid";
 import { KidsEmptyState } from "./kids-empty-state";
 import { KidsRoomGroup } from "./kids-room-group";
 import styles from "./kids-list.module.css";

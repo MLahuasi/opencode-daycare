@@ -1,4 +1,4 @@
-import type { Kid } from "../types";
+import type { Kid } from "@/src/domain/kid";
 import { APP_LOCALE } from "@/src/config";
 import styles from "./kid-profile.module.css";
 
