@@ -21,7 +21,7 @@
 - Crear `/auth/parent-invitation` como página pública informativa.
 - Crear `/auth/parent-invitation/[token]` como aceptación pública por token de URL.
 - Generar nuevos enlaces de email hacia `/auth/parent-invitation/[token]`.
-- Conservar redirects externos con token desde `/auth/activate-account?code=<token>` y `/activate-account?code=<token>`.
+- No conservar rutas ni redirects externos de activación legacy; las activaciones vigentes usan exclusivamente `/auth/parent-invitation/[token]`.
 - Hacer que las URLs legacy de activación sin `code` respondan 404.
 - Eliminar `/auth/link-parent` y `/login` sin aliases.
 
@@ -69,7 +69,7 @@ interface PasswordHasher {
 6. Crear la página protegida `/kids/[slug]/invite-parent` y su `_actions`, resolviendo internamente el ID persistido del niño.
 7. Crear la página informativa y la página pública de aceptación por token, sin permitir introducir manualmente el token.
 8. Actualizar el mailer y los destinos de activación sin cambiar el contenido funcional del email.
-9. Configurar redirects legacy condicionales solo cuando exista `code`; los accesos sin `code` deben responder 404.
+9. No conservar rutas ni redirects de activación legacy; `/auth/activate-account` y `/activate-account` deben responder 404.
 10. Eliminar las rutas `/auth/link-parent` y `/login`, actualizar imports y verificar todos los flujos.
 11. Ejecutar checks completos y pruebas Playwright de invitación, aceptación, sesión y permisos.
 
@@ -90,9 +90,8 @@ interface PasswordHasher {
 - [ ] La aceptación crea o activa credenciales y crea `ParentKid` de forma coordinada.
 - [ ] El inicio de una invitación no crea `ParentKid`.
 - [ ] Los emails nuevos usan exclusivamente `/auth/parent-invitation/[token]`.
-- [ ] `/auth/activate-account?code=<token>` redirige al token correspondiente.
-- [ ] `/activate-account?code=<token>` redirige al token correspondiente.
-- [ ] Las URLs legacy de activación sin `code` responden 404.
+- [ ] `/auth/activate-account` responde 404 porque las activaciones legacy no forman parte del flujo vigente.
+- [ ] `/activate-account` responde 404 porque las activaciones legacy no forman parte del flujo vigente.
 - [ ] `/auth/link-parent` y `/login` responden 404.
 - [ ] Los JSON permanecen sin cambios.
 - [ ] `npx eslint app src` termina correctamente.
@@ -106,7 +105,7 @@ interface PasswordHasher {
 - **Sí:** ownership de Parent/Tutor-Kid en Family aunque el flujo cree credenciales.
 - **Sí:** token exclusivamente en la URL del enlace recibido.
 - **No:** permitir códigos manuales en la página informativa.
-- **Sí:** conservar compatibilidad solo para emails externos ya enviados.
+- **No:** conservar compatibilidad para emails o URLs de activación legacy; no existen invitaciones pendientes que la requieran.
 - **No:** mantener aliases internos para `/auth/link-parent` o `/login`.
 - **Sí:** conservar `redirect`, `revalidatePath`, cookies y APIs del framework en adapters de entrada cuando corresponda.
 - **No:** cerrar en esta spec las verificaciones reales pendientes de SMTP.
@@ -115,7 +114,7 @@ interface PasswordHasher {
 
 | Risk                                                    | Mitigation                                                                                        |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Un redirect legacy transforma incorrectamente el token. | Validar query `code` y verificar ambos formatos con Playwright.                                   |
+| Un enlace legacy podría parecer funcional aunque no exista una invitación vigente. | Mantener las rutas de activación legacy ausentes para responder 404. |
 | Auth y Family crean dependencias circulares.            | Auth expone credenciales; Family expone invitaciones y relaciones; la composición coordina ambos. |
 | El token queda expuesto a una página no autorizada.     | Resolver y validar el token en servidor antes de proyectar datos.                                 |
 

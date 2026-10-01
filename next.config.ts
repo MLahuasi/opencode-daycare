@@ -19,11 +19,6 @@ const nextConfig: NextConfig = {
         destination: "/auth/login",
         permanent: true,
       },
-      {
-        source: "/activate-account",
-        destination: "/auth/activate-account",
-        permanent: true,
-      },
     ];
   },
 };
