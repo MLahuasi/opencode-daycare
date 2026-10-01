@@ -8,7 +8,7 @@ import {
   writeCollection,
 } from "@/src/infrastructure/persistence";
 import type { ParentKid } from "@/app/features/family";
-import type { Person } from "@/app/features/people";
+import type { Person } from "@/src/domain/person";
 import { isInvitationExpired, isValidActivationPassword } from "../utils";
 import type { Credential, Invitation } from "../types";
 

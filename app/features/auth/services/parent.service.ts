@@ -1,7 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import type { Person } from "@/app/features/people";
+import type { Person } from "@/src/domain/person";
 import {
   readCollection,
   withJsonTransaction,

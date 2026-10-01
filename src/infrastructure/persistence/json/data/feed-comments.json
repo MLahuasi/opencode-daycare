@@ -70,5 +70,21 @@
     "body": "No hay otro comentario",
     "createdAt": "2026-09-29T21:27:22.035Z",
     "updatedAt": null
+  },
+  {
+    "id": "3f73db0d-ef15-46cf-8bb8-76804e63798f",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "authorId": "person-caro-gimenez",
+    "body": "hermoso",
+    "createdAt": "2026-10-01T02:03:10.566Z",
+    "updatedAt": null
+  },
+  {
+    "id": "bb0f234f-fd0b-4876-a0f0-1abab2410a82",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "authorId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "body": "pechocho",
+    "createdAt": "2026-10-01T02:04:35.214Z",
+    "updatedAt": null
   }
 ]

@@ -1,8 +1,8 @@
 import "server-only";
 
 import { readCollection } from "@/src/infrastructure/persistence";
-import type { Kid } from "@/app/features/kids";
-import type { Room } from "@/app/features/rooms";
+import type { Kid } from "@/src/domain/kid";
+import type { Room } from "@/src/domain/room";
 import { getAuthorizedStaffRooms } from "./staff-room.service";
 
 /** Active children and rooms available to the authenticated staff member. */

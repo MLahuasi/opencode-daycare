@@ -8,7 +8,8 @@ import {
   getKids,
   getPeople,
   getRooms,
-} from "@/app/features/kids/server";
+} from "@/src/application/kid";
+import { createKidComposition } from "@/src/infrastructure/composition/kid";
 
 type ActivationSearchParams = {
   code?: string | string[];
@@ -42,10 +43,11 @@ async function resolveActivation(code: string | undefined): Promise<ActivationRe
     return { code, email: "", existingActiveParent: false, invitationState: "expired", kid: null };
   }
 
+  const dependencies = createKidComposition();
   const [kids, people, rooms] = await Promise.all([
-    getKids(),
-    getPeople(),
-    getRooms(),
+    getKids(dependencies),
+    getPeople(dependencies),
+    getRooms(dependencies),
   ]);
   const person = people.find((candidate) => candidate.id === invitation.personId);
   const kid = kids.find((candidate) => candidate.id === invitation.kidId);

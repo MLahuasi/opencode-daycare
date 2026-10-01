@@ -3,8 +3,8 @@
 import { useActionState, useState } from "react";
 import type { SubmitEvent } from "react";
 import { Button, FormField, LinkButton } from "@/src/components/ui";
-import type { Kid } from "@/app/features/kids";
-import type { Room } from "@/app/features/rooms";
+import type { Kid } from "@/src/domain/kid";
+import type { Room } from "@/src/domain/room";
 import {
   MAX_POST_BODY_LENGTH,
   PostImagePicker,

@@ -1,7 +1,7 @@
 import { Avatar } from "@/src/components/ui";
 import { LogoutButton } from "@/src/components/layout";
-import type { Kid } from "@/app/features/kids/types";
-import type { Person } from "@/app/features/people";
+import type { Kid } from "@/src/domain/kid";
+import type { Person } from "@/src/domain/person";
 import styles from "./family-header.module.css";
 
 type FamilyHeaderProps = {

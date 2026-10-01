@@ -1,7 +1,7 @@
 import type { FeedPost } from "@/app/features/feed";
 import { FeedPostCard } from "@/app/features/feed";
 import { toggleFeedReactionAction } from "../actions";
-import type { Person } from "@/app/features/people";
+import type { Person } from "@/src/domain/person";
 import type { FamilyFeedFilter, FamilyFeedOption } from "../types";
 import { FamilyFeedFilters } from "./family-feed-filters";
 import styles from "./family-feed-content.module.css";

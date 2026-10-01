@@ -1,7 +1,7 @@
 import "server-only";
 
 import { resolveFeedMediaUrls } from "@/app/features/feed/server";
-import type { Person } from "@/app/features/people";
+import type { Person } from "@/src/domain/person";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type {
   PostDetail,

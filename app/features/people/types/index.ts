@@ -1,1 +1,0 @@
-export type { Person, PersonRole, PersonStatus } from "./person";

@@ -1,6 +1,6 @@
 # SPEC 17 — Capas de Kid, Person y Room
 
-> **Status:** Draft
+> **Status:** Implemented
 > **Depends on:** SPEC 06, SPEC 16
 > **Date:** 2026-09-30
 > **Objective:** Separar los modelos y casos de uso de Kid, Person y Room en Domain, Application e Infrastructure sin alterar los flujos de personal.
@@ -62,23 +62,23 @@ src/application/kid/
 
 ## Acceptance criteria
 
-- [ ] `Kid`, `Person` y `Room` tienen ownership en `src/domain/kid`, `src/domain/person` y `src/domain/room`.
-- [ ] Domain no importa Next.js, React, Application, Infrastructure, filesystem ni SDKs.
-- [ ] Los casos de uso de Kids viven en `src/application/kid`.
-- [ ] Los repositorios JSON no se construyen desde páginas ni Server Actions.
-- [ ] Existe composición server-only para conectar los ports de Kids.
-- [ ] `/kids`, `/kids/new`, `/kids/[slug]` y `/kids/edit/[id]` conservan su comportamiento.
-- [ ] El perfil continúa resolviendo por `slug`.
-- [ ] La edición continúa resolviendo por ID.
-- [ ] `/kids/:id/edit` responde 404 y no tiene alias interno.
-- [ ] No existen `app/features/kids`, `app/features/people` ni `app/features/rooms`.
-- [ ] No se cambian los registros de `kids.json`, `people.json`, `rooms.json` ni `parent-kids.json`.
-- [ ] Las páginas y acciones de Kids no importan filesystem ni SDKs concretos.
-- [ ] `npx eslint app src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica listado, alta, perfil, edición, errores y responsive.
+- [x] `Kid`, `Person` y `Room` tienen ownership en `src/domain/kid`, `src/domain/person` y `src/domain/room`.
+- [x] Domain no importa Next.js, React, Application, Infrastructure, filesystem ni SDKs.
+- [x] Los casos de uso de Kids viven en `src/application/kid`.
+- [x] Los repositorios JSON no se construyen desde páginas ni Server Actions.
+- [x] Existe composición server-only para conectar los ports de Kids.
+- [x] `/kids`, `/kids/new`, `/kids/[slug]` y `/kids/edit/[id]` conservan su comportamiento.
+- [x] El perfil continúa resolviendo por `slug`.
+- [x] La edición continúa resolviendo por ID.
+- [x] `/kids/:id/edit` responde 404 y no tiene alias interno.
+- [x] No existen `app/features/kids`, `app/features/people` ni `app/features/rooms`.
+- [x] No se cambian los registros de `kids.json`, `people.json`, `rooms.json` ni `parent-kids.json`.
+- [x] Las páginas y acciones de Kids no importan filesystem ni SDKs concretos.
+- [x] `npx eslint app src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica listado, alta, perfil, edición, errores y responsive.
 
 ## Decisions
 
@@ -91,11 +91,11 @@ src/application/kid/
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Separar modelos compartidos produce ciclos. | Domain solo expone contratos puros y la composición resuelve consultas cruzadas. |
+| Risk                                                         | Mitigation                                                                          |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Separar modelos compartidos produce ciclos.                  | Domain solo expone contratos puros y la composición resuelve consultas cruzadas.    |
 | Un DTO de formulario se confunde con una entidad persistida. | Mantener DTOs y validadores bajo `application/kid` y documentar su responsabilidad. |
-| La eliminación de features rompe imports profundos. | Buscar consumidores antes de eliminar y exigir barrels o entry points explícitos. |
+| La eliminación de features rompe imports profundos.          | Buscar consumidores antes de eliminar y exigir barrels o entry points explícitos.   |
 
 ## What is **not** in this spec
 

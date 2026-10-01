@@ -1,6 +1,8 @@
-import { KidForm } from "@/app/features/kids";
-import type { KidFormValues } from "@/app/features/kids";
-import { getKidById, getRooms, updateKidAction } from "@/app/features/kids/server";
+import { KidForm } from "../../_components/kid-form";
+import type { KidFormValues } from "@/src/application/kid";
+import { getKidById, getRooms } from "@/src/application/kid";
+import { createKidComposition } from "@/src/infrastructure/composition/kid";
+import { updateKidAction } from "../../_actions";
 import { requireStaffSession } from "@/auth";
 import { notFound } from "next/navigation";
 
@@ -19,7 +21,11 @@ export default async function EditKidPage({
   await requireStaffSession();
 
   const { id } = await params;
-  const [kid, rooms] = await Promise.all([getKidById(id), getRooms()]);
+  const dependencies = createKidComposition();
+  const [kid, rooms] = await Promise.all([
+    getKidById(dependencies, id),
+    getRooms(dependencies),
+  ]);
 
   if (!kid) {
     notFound();

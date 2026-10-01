@@ -1,6 +1,8 @@
-import { KidForm } from "@/app/features/kids";
-import type { KidFormValues } from "@/app/features/kids";
-import { createKidAction, getRooms } from "@/app/features/kids/server";
+import { KidForm } from "../_components/kid-form";
+import type { KidFormValues } from "@/src/application/kid";
+import { getRooms } from "@/src/application/kid";
+import { createKidComposition } from "@/src/infrastructure/composition/kid";
+import { createKidAction } from "../_actions";
 import { requireStaffSession } from "@/auth";
 
 const EMPTY_KID_FORM_VALUES: KidFormValues = {
@@ -19,7 +21,7 @@ const EMPTY_KID_FORM_VALUES: KidFormValues = {
 export default async function NewKidPage() {
   await requireStaffSession();
 
-  const rooms = await getRooms();
+  const rooms = await getRooms(createKidComposition());
 
   return (
     <main className="flex min-h-screen items-start justify-center px-6 py-10 max-sm:px-4 max-sm:py-6">
