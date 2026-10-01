@@ -2,7 +2,13 @@ import { getInvitationStatus } from "@/src/domain/family";
 import type { FamilyDependencies } from "../family-dependencies";
 import type { InvitationTokenResolution } from "../dto/invitation";
 
-/** Resolves an invitation token without exposing invalid invitation data. */
+/**
+ * Resolves an invitation token without exposing invalid invitation data.
+ *
+ * @param dependencies - Invitation and person lookup ports.
+ * @param code - Token received in the invitation URL.
+ * @returns A safe token resolution with no invitation data for invalid states.
+ */
 export async function validateInvitationToken(
   dependencies: FamilyDependencies,
   code: string,

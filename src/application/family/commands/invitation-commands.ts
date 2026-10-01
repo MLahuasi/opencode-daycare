@@ -22,7 +22,18 @@ export class ExistingParentKidError extends Error {}
 /** Error raised when the invitation cannot be accepted. */
 export class InvalidInvitationAcceptanceError extends Error {}
 
-/** Creates a pending person and invitation, without linking the parent yet. */
+/**
+ * Creates a pending person and invitation, without linking the parent yet.
+ *
+ * @param dependencies - Ports and factories required to persist the invitation.
+ * @param input - Parent and kid values used to create the invitation.
+ * @param input.name - Parent display name.
+ * @param input.email - Parent email address.
+ * @param input.kidId - Stable kid identifier.
+ * @param input.relationship - Parent relationship with the kid.
+ * @returns The newly created pending person and invitation.
+ * @throws ExistingInvitationPersonError when the email already exists.
+ */
 export async function createInvitation(
   dependencies: FamilyDependencies,
   input: CreateInvitationInput,
@@ -59,7 +70,16 @@ export async function createInvitation(
   return { invitation, person };
 }
 
-/** Completes the persisted Family side of an accepted invitation. */
+/**
+ * Completes the persisted Family side of an accepted invitation.
+ *
+ * @param dependencies - Ports required to inspect and persist relationships.
+ * @param invitation - Invitation being accepted.
+ * @param person - Person accepting the invitation.
+ * @param photoSharingConsent - Whether photo sharing is allowed.
+ * @returns A promise that resolves after the ParentKid relationship is stored.
+ * @throws ExistingParentKidError when the relationship already exists.
+ */
 export async function createParentKidFromInvitation(
   dependencies: FamilyDependencies,
   invitation: Invitation,
@@ -84,7 +104,18 @@ export async function createParentKidFromInvitation(
   });
 }
 
-/** Validates and atomically accepts an invitation. */
+/**
+ * Validates and atomically accepts an invitation.
+ *
+ * @param dependencies - Family and credential ports used by the transaction.
+ * @param input - Token, email, password and consent submitted by the parent.
+ * @param input.code - Invitation token from the email URL.
+ * @param input.email - Email address supplied by the parent.
+ * @param input.password - New password for a pending parent account.
+ * @param input.photoSharingConsent - Whether photo sharing is allowed.
+ * @returns A promise that resolves after account activation and linking finish.
+ * @throws InvalidInvitationAcceptanceError when validation or persistence fails.
+ */
 export async function acceptInvitation(
   dependencies: FamilyAcceptanceDependencies,
   input: AcceptInvitationInput,
