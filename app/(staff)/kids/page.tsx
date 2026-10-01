@@ -1,5 +1,8 @@
 import {
   calculateAge,
+  getKids,
+  getParentKids,
+  getRooms,
   parseCommaSeparatedTags,
 } from "@/src/application/kid";
 import type { KidListItem, ParentKidRecord } from "@/src/application/kid";
@@ -7,7 +10,7 @@ import type { Kid } from "@/src/domain/kid";
 import type { Room } from "@/src/domain/room";
 import { KidsFilter, KidsHeader } from "./_components";
 import styles from "./_components/kids-list.module.css";
-import { getKids, getParentKids, getRooms } from "@/app/features/kids/server";
+import { createKidComposition } from "@/src/infrastructure/composition/kid";
 import { getTodayIsoDate } from "@/src/utils";
 import { requireStaffSession } from "@/auth";
 
@@ -40,11 +43,12 @@ function toKidListItem(
  */
 export default async function KidsPage() {
   await requireStaffSession();
+  const dependencies = createKidComposition();
 
   const [kids, parentKids, rooms] = await Promise.all([
-    getKids(),
-    getParentKids(),
-    getRooms(),
+    getKids(dependencies),
+    getParentKids(dependencies),
+    getRooms(dependencies),
   ]);
   const today = getTodayIsoDate();
   const listItems = kids.map((kid, index) =>

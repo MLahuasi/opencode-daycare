@@ -3,9 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
-import { validateKidForm } from "../schemas";
-import { createKid, getRooms } from "../services";
-import type { Kid } from "../types";
+import {
+  createKid,
+  getRooms,
+  validateKidForm,
+} from "@/src/application/kid";
+import type { Kid } from "@/src/domain/kid";
+import { createKidComposition } from "@/src/infrastructure/composition/kid";
 import type { KidFormActionState } from "./types";
 
 /**
@@ -20,8 +24,8 @@ export async function createKidAction(
   formData: FormData,
 ): Promise<KidFormActionState> {
   await requireStaffSession();
-
-  const rooms = await getRooms();
+  const dependencies = createKidComposition();
+  const rooms = await getRooms(dependencies);
   const validation = validateKidForm(
     {
       name: formData.get("name"),
@@ -34,16 +38,13 @@ export async function createKidAction(
   );
 
   if (!validation.success) {
-    return {
-      errors: validation.errors,
-      message: "",
-    };
+    return { errors: validation.errors, message: "" };
   }
 
   let kid: Kid;
 
   try {
-    kid = await createKid(validation.data);
+    kid = await createKid(dependencies, validation.data);
   } catch {
     return {
       errors: {},

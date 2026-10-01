@@ -1,6 +1,9 @@
 import { LinkButton } from "@/src/components/ui";
 import {
   calculateAge,
+  getKidRoom,
+  getKids,
+  getLinkedParentsByKidId,
 } from "@/src/application/kid";
 import {
   KidBasicInfo,
@@ -10,13 +13,9 @@ import {
   KidProfileHeader,
 } from "./_components";
 import styles from "./_components/kid-profile.module.css";
-import {
-  getKidRoom,
-  getKids,
-  getLinkedParentsByKidId,
-} from "@/app/features/kids/server";
 import { getTodayIsoDate } from "@/src/utils";
 import { requireStaffSession } from "@/auth";
+import { createKidComposition } from "@/src/infrastructure/composition/kid";
 import { notFound } from "next/navigation";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
@@ -27,7 +26,7 @@ const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
  * @returns The canonical profile route parameters.
  */
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  const kids = await getKids();
+  const kids = await getKids(createKidComposition());
 
   return kids.map((kid) => ({ slug: kid.slug }));
 }
@@ -54,7 +53,8 @@ export default async function KidProfilePage({
   const invitationStatus = Array.isArray(rawInvitation)
     ? rawInvitation[0]
     : rawInvitation;
-  const kids = await getKids();
+  const dependencies = createKidComposition();
+  const kids = await getKids(dependencies);
   const kidIndex = kids.findIndex((candidate) => candidate.slug === slug);
   const kid = kids[kidIndex];
 
@@ -63,8 +63,8 @@ export default async function KidProfilePage({
   }
 
   const [room, linkedParents] = await Promise.all([
-    getKidRoom(kid),
-    getLinkedParentsByKidId(kid.id),
+    getKidRoom(dependencies, kid),
+    getLinkedParentsByKidId(dependencies, kid.id),
   ]);
   const roomName = room?.name ?? "Sin sala asignada";
   const age = calculateAge(kid.birthDate, getTodayIsoDate());

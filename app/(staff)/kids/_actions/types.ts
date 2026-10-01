@@ -1,4 +1,4 @@
-import type { KidFormErrors } from "../schemas";
+import type { KidFormErrors } from "@/src/application/kid";
 
 /** Serializable feedback returned by Add and Edit Server Actions. */
 export type KidFormActionState = {

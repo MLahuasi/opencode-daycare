@@ -1,6 +1,5 @@
 import "server-only";
 
-export { createKidAction, updateKidAction } from "./actions";
 export {
   createKid,
   getKidById,

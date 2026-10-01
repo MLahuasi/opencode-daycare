@@ -10,7 +10,7 @@ import {
 } from "@/src/components/ui";
 import { parseCommaSeparatedTags } from "@/src/utils";
 import type { Room } from "@/src/domain/room";
-import type { KidFormAction, KidFormActionState } from "@/app/features/kids/actions/types";
+import type { KidFormAction, KidFormActionState } from "../_actions/types";
 import { validateKidForm } from "@/src/application/kid";
 import type { KidFormErrors, KidFormValues } from "@/src/application/kid";
 import styles from "./kid-form.module.css";
