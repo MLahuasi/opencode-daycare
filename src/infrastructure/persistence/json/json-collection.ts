@@ -1,5 +1,6 @@
 import "server-only";
 
+import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
 import { open, readFile, rename, rm } from "node:fs/promises";
 import path from "node:path";
@@ -27,6 +28,7 @@ const JSON_DATA_DIRECTORY = path.join(
 );
 
 let jsonWriteQueue: Promise<void> = Promise.resolve();
+const transactionContext = new AsyncLocalStorage<boolean>();
 
 /**
  * Reads and parses a JSON collection from the persistence directory.
@@ -92,6 +94,10 @@ export async function writeCollection<T>(
  * @returns The result of the queued operation.
  */
 export function withWriteLock<T>(operation: () => Promise<T>): Promise<T> {
+  if (transactionContext.getStore()) {
+    return operation();
+  }
+
   const result = jsonWriteQueue.then(operation);
 
   jsonWriteQueue = result.then(
@@ -114,25 +120,27 @@ export function withJsonTransaction<T>(
   collectionNames: readonly JsonCollectionName[],
   operation: () => Promise<T>,
 ): Promise<T> {
-  return withWriteLock(async () => {
-    const snapshots = new Map<JsonCollectionName, readonly unknown[]>();
+  return withWriteLock(() =>
+    transactionContext.run(true, async () => {
+      const snapshots = new Map<JsonCollectionName, readonly unknown[]>();
 
-    for (const collectionName of collectionNames) {
-      snapshots.set(collectionName, await readCollection(collectionName));
-    }
-
-    try {
-      return await operation();
-    } catch (error) {
       for (const collectionName of collectionNames) {
-        const snapshot = snapshots.get(collectionName);
-
-        if (snapshot) {
-          await writeCollection(collectionName, snapshot);
-        }
+        snapshots.set(collectionName, await readCollection(collectionName));
       }
 
-      throw error;
-    }
-  });
+      try {
+        return await operation();
+      } catch (error) {
+        for (const collectionName of collectionNames) {
+          const snapshot = snapshots.get(collectionName);
+
+          if (snapshot) {
+            await writeCollection(collectionName, snapshot);
+          }
+        }
+
+        throw error;
+      }
+    }),
+  );
 }

@@ -10,19 +10,33 @@ import {
 
 /** JSON-backed persistence adapter for Rooms. */
 export class RoomRepository implements RoomRepositoryPort {
-  /** @inheritdoc */
+  /**
+   * Lists all persisted rooms.
+   *
+   * @returns All room records from JSON persistence.
+   */
   findAll(): Promise<readonly Room[]> {
     return readCollection<Room>("rooms.json");
   }
 
-  /** @inheritdoc */
+  /**
+   * Finds a room by stable identifier.
+   *
+   * @param id - Stable room identifier.
+   * @returns The room or `null` when it does not exist.
+   */
   async findById(id: string): Promise<Room | null> {
     const rooms = await this.findAll();
 
     return rooms.find((room) => room.id === id) ?? null;
   }
 
-  /** @inheritdoc */
+  /**
+   * Persists a new room.
+   *
+   * @param room - Room record to append.
+   * @returns A promise that resolves after persistence completes.
+   */
   create(room: Room): Promise<void> {
     return withWriteLock(async () => {
       const rooms = await this.findAll();
@@ -31,7 +45,12 @@ export class RoomRepository implements RoomRepositoryPort {
     });
   }
 
-  /** @inheritdoc */
+  /**
+   * Replaces an existing room.
+   *
+   * @param room - Updated room record.
+   * @returns A promise that resolves after persistence completes.
+   */
   update(room: Room): Promise<void> {
     return withWriteLock(async () => {
       const rooms = await this.findAll();

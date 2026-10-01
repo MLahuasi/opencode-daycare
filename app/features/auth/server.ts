@@ -6,7 +6,6 @@ export {
   createPendingParentInvitation,
   ExistingParentKidError,
   ExistingPersonEmailError,
-  getLinkParentKid,
   markInvitationSent,
 } from "./services";
 export {

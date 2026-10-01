@@ -1,6 +1,7 @@
 import "server-only";
 
 export {
+  JsonTransactionRunner,
   readCollection,
   withJsonTransaction,
   withWriteLock,

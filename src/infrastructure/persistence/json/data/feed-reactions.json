@@ -138,5 +138,12 @@
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
     "type": "love",
     "createdAt": "2026-10-01T02:04:21.266Z"
+  },
+  {
+    "id": "04ea16f1-0552-42d2-8df3-a0fb1bf42745",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "personId": "2a72a378-638e-4cad-b8bf-b0d1b3e8663f",
+    "type": "love",
+    "createdAt": "2026-10-01T18:55:36.979Z"
   }
 ]

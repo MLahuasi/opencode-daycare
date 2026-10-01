@@ -58,7 +58,7 @@ export function LoginForm({ activated = false }: { activated?: boolean }) {
         <Button className={styles.primaryButton} disabled={isPending} type="submit">{isPending ? "Ingresando..." : "Iniciar sesión"}</Button>
       </form>
       <p className={styles.formFooter}>
-        ¿Te invitó la guardería? <LinkButton className={styles.inlineLink} href="/auth/activate-account" variant="ghost">Activa tu cuenta</LinkButton>
+        ¿Te invitó la guardería? <LinkButton className={styles.inlineLink} href="/auth/parent-invitation" variant="ghost">Activa tu cuenta</LinkButton>
       </p>
     </div>
   );
