@@ -3,7 +3,6 @@
 import { useActionState, useState } from "react";
 import { Button, FormField, LinkButton } from "@/src/components/ui";
 import {
-  initialInviteParentActionState,
   sendInviteParentAction,
 } from "../_actions";
 import type { InviteParentActionState } from "../_actions";
@@ -19,6 +18,11 @@ const relationshipOptions = [
 type InviteParentFormProps = {
   /** Kid data shown in the invitation form. */
   kid: Pick<Kid, "id" | "name" | "slug">;
+};
+
+const initialInviteParentActionState: InviteParentActionState = {
+  errors: {},
+  message: "",
 };
 
 /**

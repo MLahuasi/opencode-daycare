@@ -75,5 +75,12 @@
     "email": "jmlahuasiq@gmail.com",
     "role": "parent",
     "status": "active"
+  },
+  {
+    "id": "2a72a378-638e-4cad-b8bf-b0d1b3e8663f",
+    "name": "Mauricio Quillupangui",
+    "email": "maurojre@hotmail.com",
+    "role": "parent",
+    "status": "active"
   }
 ]

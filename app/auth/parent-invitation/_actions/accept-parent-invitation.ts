@@ -5,12 +5,6 @@ import { acceptInvitation, InvalidInvitationAcceptanceError } from "@/src/applic
 import { createFamilyComposition } from "@/src/infrastructure/composition/family";
 import type { ParentInvitationActionState } from "./types";
 
-/** Empty feedback used to initialize the parent invitation action state. */
-export const initialParentInvitationActionState: ParentInvitationActionState = {
-  errors: {},
-  message: "",
-};
-
 /**
  * Accepts a public parent invitation and activates its family relationship.
  *

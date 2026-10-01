@@ -58,5 +58,15 @@
     "expiresAt": "2026-09-30T17:18:48.045Z",
     "sentAt": "2026-09-23T17:18:50.318Z",
     "acceptedAt": "2026-09-23T17:19:07.730Z"
+  },
+  {
+    "id": "699cb92d-cd2e-47d5-9379-8a042eb32ad9",
+    "personId": "2a72a378-638e-4cad-b8bf-b0d1b3e8663f",
+    "kidId": "kid-valentina-soto",
+    "relationship": "father",
+    "code": "9XNX4QK5",
+    "expiresAt": "2026-10-08T18:54:00.002Z",
+    "sentAt": "2026-10-01T18:54:02.930Z",
+    "acceptedAt": "2026-10-01T18:54:54.054Z"
   }
 ]

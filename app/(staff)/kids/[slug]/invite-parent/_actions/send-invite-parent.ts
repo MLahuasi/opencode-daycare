@@ -10,12 +10,6 @@ import { createFamilyComposition } from "@/src/infrastructure/composition/family
 import { getEnvironment } from "@/src/infrastructure/config/server";
 import type { InviteParentActionState } from "./types";
 
-/** Empty feedback used to initialize the invite-parent action state. */
-export const initialInviteParentActionState: InviteParentActionState = {
-  errors: {},
-  message: "",
-};
-
 /**
  * Creates and sends a parent invitation for a kid resolved from its slug.
  *

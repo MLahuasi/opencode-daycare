@@ -4,7 +4,6 @@ import { useActionState } from "react";
 import { Button, CheckboxField, FormField } from "@/src/components/ui";
 import {
   acceptParentInvitationAction,
-  initialParentInvitationActionState,
 } from "../_actions";
 import type { ParentInvitationActionState } from "../_actions";
 import styles from "@/app/features/auth/components/auth.module.css";
@@ -18,6 +17,11 @@ type ParentInvitationFormProps = {
   existingActiveParent: boolean;
   /** Name of the kid associated with the invitation. */
   kidName: string;
+};
+
+const initialParentInvitationActionState: ParentInvitationActionState = {
+  errors: {},
+  message: "",
 };
 
 /**
