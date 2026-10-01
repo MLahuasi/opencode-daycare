@@ -9,6 +9,7 @@ import type {
   IdentifierGenerator,
   InvitationCodeGenerator,
   InvitationExpirationPolicy,
+  InvitationMailer,
   InvitationRepository,
   TransactionRunner,
 } from "./ports";
@@ -31,6 +32,8 @@ export type FamilyDependencies = {
   clock: Clock;
   /** Atomic write transaction port. */
   transaction: TransactionRunner;
+  /** Invitation email delivery port. */
+  mailer: InvitationMailer;
 };
 
 /** Additional capabilities required to activate invitation credentials. */

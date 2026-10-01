@@ -8,6 +8,7 @@ import {
 } from "@/src/infrastructure/persistence/repositories";
 import { JsonTransactionRunner } from "@/src/infrastructure/persistence";
 import { createAuthComposition } from "../auth";
+import { JmlqInvitationMailer } from "@/src/infrastructure/adapters/mailer";
 import { randomInt, randomUUID } from "node:crypto";
 
 const INVITATION_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -79,5 +80,6 @@ export function createFamilyComposition(): FamilyComposition {
       now: () => new Date(),
     },
     transaction: new JsonTransactionRunner(),
+    mailer: new JmlqInvitationMailer(),
   };
 }

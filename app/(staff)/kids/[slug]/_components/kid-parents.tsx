@@ -33,19 +33,19 @@ function getParentTone(relationship: ParentRelationship): "blue" | "green" | "pu
 }
 
 type KidParentsProps = {
-  kidId: string;
+  kidSlug: string;
   parents: readonly LinkedParent[];
 };
 
 /**
  * Renders the parents linked to a kid and a non-functional linking control.
  *
- * @param props - Linked parent options and the kid identifier.
- * @param props.kidId - Stable identifier used by the parent-link route.
+ * @param props - Linked parent options and the kid slug.
+ * @param props.kidSlug - Public slug used by the parent invitation route.
  * @param props.parents - Linked person records resolved by the server.
  * @returns The linked parents panel.
  */
-export function KidParents({ kidId, parents }: KidParentsProps) {
+export function KidParents({ kidSlug, parents }: KidParentsProps) {
   return (
     <section aria-labelledby="linked-parents-heading" className={styles.parentsPanel}>
       <h2 id="linked-parents-heading">Padres vinculados</h2>
@@ -71,7 +71,7 @@ export function KidParents({ kidId, parents }: KidParentsProps) {
         ) : null}
         <LinkButton
           className={styles.linkParentButton}
-          href={`/auth/link-parent?kidId=${encodeURIComponent(kidId)}`}
+          href={`/kids/${encodeURIComponent(kidSlug)}/invite-parent`}
           variant="ghost"
         >
           <span aria-hidden="true" className={styles.parentLinkIcon}>+</span>

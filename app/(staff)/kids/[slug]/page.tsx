@@ -98,7 +98,7 @@ export default async function KidProfilePage({
           </div>
           <div className={styles.profileSideColumn}>
             <KidProfileActions />
-            <KidParents kidId={kid.id} parents={linkedParents} />
+            <KidParents kidSlug={kid.slug} parents={linkedParents} />
           </div>
         </div>
       </div>
