@@ -94,8 +94,10 @@ export async function sendParentInvitationAction(
   }
 
   const { APP_URL } = getEnvironment();
-  const activationUrl = new URL("/auth/activate-account", APP_URL);
-  activationUrl.searchParams.set("code", parentInvitation.invitation.code);
+  const activationUrl = new URL(
+    `/auth/parent-invitation/${parentInvitation.invitation.code}`,
+    APP_URL,
+  );
 
   try {
     await sendParentInvitationEmail({
