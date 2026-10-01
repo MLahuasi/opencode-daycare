@@ -112,20 +112,6 @@
     "createdAt": "2026-09-29T21:25:28.557Z"
   },
   {
-    "id": "c0636a39-e392-436d-b5e5-661eb6b6c5ad",
-    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
-    "personId": "person-caro-gimenez",
-    "type": "love",
-    "createdAt": "2026-09-29T21:25:59.195Z"
-  },
-  {
-    "id": "00264f06-40df-4795-a540-8e1caf1d8fc0",
-    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
-    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
-    "type": "love",
-    "createdAt": "2026-09-29T21:27:03.499Z"
-  },
-  {
     "id": "bb187da2-28d5-4fb6-a1d6-e8214ad49bb4",
     "postId": "mateo-first-potty",
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
@@ -138,5 +124,19 @@
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
     "type": "love",
     "createdAt": "2026-09-29T21:27:11.697Z"
+  },
+  {
+    "id": "c2b86319-8585-47ff-aa39-81505f39536c",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-10-01T02:02:58.456Z"
+  },
+  {
+    "id": "4b2af585-8783-4e66-9726-2a9707351e8b",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-10-01T02:04:21.266Z"
   }
 ]
