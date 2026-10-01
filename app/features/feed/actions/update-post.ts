@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/auth";
-import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
+import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
 import { updateFeedPost } from "../services";
 import type { FeedMedia, PersistedFeedPost } from "../types";
@@ -54,7 +54,7 @@ export async function updatePostAction(
     }
   } catch {
     const imageStorage = parsed.uploadedMedia.length
-      ? createCloudinaryImageStorage()
+      ? createPostImageStorage()
       : null;
     await Promise.allSettled(
       parsed.uploadedMedia.map((media) => imageStorage?.delete(media.publicId)),
@@ -66,7 +66,7 @@ export async function updatePostAction(
     (media) => !parsed.media.some((retained) => retained.id === media.id),
   );
   if (removedMedia.length > 0) {
-    const imageStorage = createCloudinaryImageStorage();
+    const imageStorage = createPostImageStorage();
     const failedMedia: FeedMedia[] = [];
 
     for (const media of removedMedia) {

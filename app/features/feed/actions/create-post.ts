@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/auth";
-import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
+import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import { createFeedPost } from "../services";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
@@ -36,7 +36,7 @@ export async function createPostAction(
     });
   } catch {
     const imageStorage = parsed.uploadedMedia.length
-      ? createCloudinaryImageStorage()
+      ? createPostImageStorage()
       : null;
     let cleanupSucceeded = true;
 

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
+import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type { Person } from "@/src/domain/person";
 import type { ParentKid } from "@/app/features/family";
@@ -212,7 +212,7 @@ export async function parsePostSubmission(
     return { success: false, state: errorState("media", "Puedes adjuntar hasta 4 imágenes.") };
   }
 
-  const imageStorage = files.length > 0 ? createCloudinaryImageStorage() : null;
+  const imageStorage = files.length > 0 ? createPostImageStorage() : null;
   const altTexts = getAltTexts(formData);
   const uploadedMedia: FeedMedia[] = [];
 

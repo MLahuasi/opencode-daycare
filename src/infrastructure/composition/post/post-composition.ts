@@ -17,6 +17,15 @@ import { randomUUID } from "node:crypto";
 export type PostComposition = PostDependencies;
 
 /**
+ * Creates the concrete media storage port used by Post entry points.
+ *
+ * @returns Cloudinary-backed image storage for Post media.
+ */
+export function createPostImageStorage() {
+  return createCloudinaryImageStorage();
+}
+
+/**
  * Creates the concrete adapters for Post use cases.
  *
  * @returns Persistence, authorization and media capabilities for Post.
@@ -28,7 +37,7 @@ export function createPostComposition(): PostComposition {
     posts: new PostRepository(),
     comments: new PostCommentRepository(),
     reactions: new PostReactionRepository(),
-    imageStorage: createCloudinaryImageStorage(),
+    imageStorage: createPostImageStorage(),
     authorization: new PostAuthorizationPolicy(access),
     identifiers: {
       /** @returns A UUID identifier. */

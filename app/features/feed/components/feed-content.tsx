@@ -50,7 +50,7 @@ export function FeedContent({
           <span>{overview.attendance} · {overview.date}</span>
         </header>
 
-        <LinkButton className={styles.composer} href="/post" variant="ghost">
+        <LinkButton className={styles.composer} href="/posts/new" variant="ghost">
           <Avatar aria-hidden="true" className={styles.avatar} initial="C" />
           <span className={styles.composerText}>{overview.composerPrompt}</span>
           <span className={styles.camera} aria-hidden="true">

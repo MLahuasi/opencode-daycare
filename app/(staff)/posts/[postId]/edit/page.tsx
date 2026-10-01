@@ -5,7 +5,7 @@ import {
   getFeedById,
   updatePostAction,
 } from "@/app/features/feed/server";
-import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
+import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import {
   PostForm,
   type PostFormInitialValues,
@@ -50,7 +50,7 @@ export default async function EditPostPage({
   }
 
   const imageStorage = post.media.length
-    ? createCloudinaryImageStorage()
+    ? createPostImageStorage()
     : null;
   const existingMedia = imageStorage
     ? post.media.map((media) => ({

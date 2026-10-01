@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
+import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type { FeedOverview, FeedPost, PersistedFeedPost } from "../types";
 import { getFeedEngagementByPostIds } from "./engagement.service";
@@ -71,7 +71,7 @@ export function resolveFeedMediaUrls(
     return posts;
   }
 
-  const imageStorage = createCloudinaryImageStorage();
+  const imageStorage = createPostImageStorage();
   return posts.map((post) => ({
     ...post,
     media: post.media.map((media) => ({
