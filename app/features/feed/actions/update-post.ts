@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
-import { createCloudinaryImageStorage } from "@/app/infrastructure";
+import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
 import { readCollection } from "@/src/infrastructure/persistence";
 import { updateFeedPost } from "../services";
 import type { FeedMedia, PersistedFeedPost } from "../types";

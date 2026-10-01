@@ -10,7 +10,7 @@ import {
   PostReactionRepository,
   PostRepository,
 } from "@/src/infrastructure/persistence/repositories";
-import { createCloudinaryImageStorage } from "@/app/infrastructure";
+import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
 import { randomUUID } from "node:crypto";
 
 /** Concrete server-only dependencies required by Post use cases. */

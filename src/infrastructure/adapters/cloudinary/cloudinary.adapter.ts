@@ -2,10 +2,10 @@ import "server-only";
 
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 import type {
-  ImageAsset,
-  ImageStorage,
-  ImageUploadInput,
-} from "@/app/features/feed";
+  PostImageAsset,
+  PostImageStorage,
+  PostImageUploadInput,
+} from "@/src/application/post/ports";
 
 const SUPPORTED_IMAGE_FORMATS = new Set(["jpg", "jpeg", "png", "webp"]);
 
@@ -23,7 +23,7 @@ type CloudinaryUrlOptions = {
   sign_url: boolean;
   type: "authenticated";
   resource_type: "image";
-  format: ImageAsset["format"];
+  format: PostImageAsset["format"];
   width: number;
   height: number;
   crop: "fill";
@@ -40,17 +40,44 @@ type CloudinaryDestroyOptions = {
 
 /** Minimal Cloudinary gateway required by the provider adapter. */
 export type CloudinaryGateway = {
+  /**
+   * Uploads image bytes using Cloudinary options.
+   *
+   * @param data - Image bytes to upload.
+   * @param options - Provider upload options.
+   * @returns The Cloudinary upload response.
+   */
   upload(
     data: Uint8Array,
     options: CloudinaryUploadOptions,
   ): Promise<UploadApiResponse>;
+  /**
+   * Builds a Cloudinary delivery URL.
+   *
+   * @param publicId - Cloudinary public identifier.
+   * @param options - Provider URL options.
+   * @returns The generated delivery URL.
+   */
   url(publicId: string, options: CloudinaryUrlOptions): string;
+  /**
+   * Removes a Cloudinary asset.
+   *
+   * @param publicId - Cloudinary public identifier.
+   * @param options - Provider deletion options.
+   * @returns The Cloudinary deletion result.
+   */
   destroy(
     publicId: string,
     options: CloudinaryDestroyOptions,
   ): Promise<{ result?: string }>;
 };
 
+/**
+ * Validates the Cloudinary configuration and enables secure URLs.
+ *
+ * @returns Nothing when the provider is configured.
+ * @throws Error when `CLOUDINARY_URL` is missing.
+ */
 function ensureCloudinaryConfiguration(): void {
   if (!process.env.CLOUDINARY_URL?.trim()) {
     throw new Error("CLOUDINARY_URL is required for image operations.");
@@ -59,6 +86,11 @@ function ensureCloudinaryConfiguration(): void {
   cloudinary.config({ secure: true });
 }
 
+/**
+ * Creates a gateway backed by the configured Cloudinary SDK.
+ *
+ * @returns A gateway exposing the provider operations used by the adapter.
+ */
 function createCloudinaryGateway(): CloudinaryGateway {
   ensureCloudinaryConfiguration();
 
@@ -86,7 +118,14 @@ function createCloudinaryGateway(): CloudinaryGateway {
   };
 }
 
-function toImageAsset(result: UploadApiResponse): ImageAsset {
+/**
+ * Converts a Cloudinary upload response to the Post media contract.
+ *
+ * @param result - Provider response returned after an upload.
+ * @returns Persistable authenticated image metadata.
+ * @throws Error when the provider response is not a supported image asset.
+ */
+function toImageAsset(result: UploadApiResponse): PostImageAsset {
   if (
     result.resource_type !== "image" ||
     result.type !== "authenticated" ||
@@ -100,19 +139,20 @@ function toImageAsset(result: UploadApiResponse): ImageAsset {
     publicId: result.public_id,
     resourceType: "image",
     deliveryType: "authenticated",
-    format: result.format as ImageAsset["format"],
+    format: result.format as PostImageAsset["format"],
     width: result.width,
     height: result.height,
     bytes: result.bytes,
   };
 }
 
-/**
- * Cloudinary implementation of the provider-agnostic image storage port.
- *
- * @param gateway - Cloudinary operations injected by the composition root.
- */
-export class CloudinaryImageStorage implements ImageStorage {
+/** Cloudinary implementation of the Post media storage port. */
+export class CloudinaryImageStorage implements PostImageStorage {
+  /**
+   * Creates a Cloudinary media adapter.
+   *
+   * @param gateway - Cloudinary operations injected by the composition root.
+   */
   public constructor(private readonly gateway: CloudinaryGateway) {}
 
   /**
@@ -121,7 +161,7 @@ export class CloudinaryImageStorage implements ImageStorage {
    * @param input - Image bytes and original filename.
    * @returns Persistable Cloudinary asset metadata.
    */
-  public async upload(input: ImageUploadInput): Promise<ImageAsset> {
+  public async upload(input: PostImageUploadInput): Promise<PostImageAsset> {
     const result = await this.gateway.upload(input.data, {
       folder: "daycare/posts",
       resource_type: "image",
@@ -137,10 +177,10 @@ export class CloudinaryImageStorage implements ImageStorage {
   /**
    * Generates a permanent signed delivery URL for an authenticated image.
    *
-   * @param asset - Persisted image metadata.
+   * @param asset - Persisted Cloudinary image metadata.
    * @returns A secure signed Cloudinary URL.
    */
-  public getUrl(asset: ImageAsset): string {
+  public getUrl(asset: PostImageAsset): string {
     return this.gateway.url(asset.publicId, {
       secure: true,
       sign_url: true,
@@ -159,8 +199,8 @@ export class CloudinaryImageStorage implements ImageStorage {
   /**
    * Permanently removes an authenticated image from Cloudinary.
    *
-   * @param publicId - Persisted Cloudinary public ID.
-   * @returns A promise that resolves after deletion.
+   * @param publicId - Persisted Cloudinary public identifier.
+   * @returns A promise that resolves after deletion completes.
    */
   public async delete(publicId: string): Promise<void> {
     const result = await this.gateway.destroy(publicId, {
@@ -178,8 +218,8 @@ export class CloudinaryImageStorage implements ImageStorage {
 /**
  * Creates the configured Cloudinary storage implementation.
  *
- * @returns An image storage port backed by Cloudinary.
+ * @returns A Post image storage port backed by Cloudinary.
  */
-export function createCloudinaryImageStorage(): ImageStorage {
+export function createCloudinaryImageStorage(): PostImageStorage {
   return new CloudinaryImageStorage(createCloudinaryGateway());
 }

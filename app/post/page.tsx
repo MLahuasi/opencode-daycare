@@ -1,4 +1,4 @@
-import { createCloudinaryImageStorage } from "@/app/infrastructure";
+import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
 import { PostForm } from "@/app/features/feed";
 import type { PostFormInitialValues } from "@/app/features/feed";
 import {
@@ -10,6 +10,12 @@ import {
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
 
+/**
+ * Normalizes a query parameter that may contain repeated values.
+ *
+ * @param value - Raw query parameter value.
+ * @returns The first query value, or undefined when no value exists.
+ */
 function getQueryValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }

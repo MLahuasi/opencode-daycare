@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { createCloudinaryImageStorage } from "@/app/infrastructure";
+import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type { Person } from "@/src/domain/person";
 import type { ParentKid } from "@/app/features/family";
@@ -24,20 +24,45 @@ type ParsedPostSubmission =
     }
   | { success: false; state: PostFormActionState };
 
+/**
+ * Creates a serializable field validation state.
+ *
+ * @param field - Form field associated with the error.
+ * @param message - Error message shown for the field.
+ * @returns Serializable action state containing the field error.
+ */
 function errorState(field: keyof PostFormActionState["errors"], message: string) {
   return { errors: { [field]: message }, message: "Revisa los campos marcados." };
 }
 
+/**
+ * Extracts non-empty image files from a submitted form.
+ *
+ * @param formData - Raw values submitted by the post form.
+ * @returns Image files included in the submission.
+ */
 function getFiles(formData: FormData): File[] {
   return formData
     .getAll("images")
     .filter((value): value is File => value instanceof File && value.size > 0);
 }
 
+/**
+ * Builds a stable client-side key for an uploaded file.
+ *
+ * @param file - Image file to identify.
+ * @returns A stable key derived from file metadata.
+ */
 function getFileId(file: File): string {
   return `${file.name}-${file.size}-${file.lastModified}`;
 }
 
+/**
+ * Reads optional alternative text values from form data.
+ *
+ * @param formData - Raw values submitted by the post form.
+ * @returns Alternative text indexed by uploaded file key.
+ */
 function getAltTexts(formData: FormData): Map<string, string> {
   const value = formData.get("imageAlts");
 
@@ -68,6 +93,13 @@ function getAltTexts(formData: FormData): Map<string, string> {
   }
 }
 
+/**
+ * Resolves the existing media retained by an edit submission.
+ *
+ * @param formData - Raw values submitted by the post form.
+ * @param currentMedia - Media currently persisted for the Post.
+ * @returns Existing media selected for retention.
+ */
 function getExistingMedia(
   formData: FormData,
   currentMedia: readonly FeedMedia[],
@@ -90,6 +122,12 @@ function getExistingMedia(
   }
 }
 
+/**
+ * Checks whether all active parents linked to a kid consent to photo sharing.
+ *
+ * @param kidId - Stable identifier of the kid receiving the Post.
+ * @returns Whether every linked active parent has given consent.
+ */
 async function validateConsent(kidId: string): Promise<boolean> {
   const [parentKids, people] = await Promise.all([
     readCollection<ParentKid>("parent-kids.json"),
