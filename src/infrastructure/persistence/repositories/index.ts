@@ -4,3 +4,7 @@ export { KidRepository } from "./kid-repository";
 export { ParentKidRepository } from "./parent-kid-repository";
 export { PersonRepository } from "./person-repository";
 export { RoomRepository } from "./room-repository";
+export { PostCommentRepository } from "./post-comment-repository";
+export { JsonPostAccessRepository } from "./post-access-repository";
+export { PostReactionRepository } from "./post-reaction-repository";
+export { PostRepository } from "./post-repository";

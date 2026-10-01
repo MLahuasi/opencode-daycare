@@ -1,11 +1,16 @@
 import type { FeedPost } from "@/app/features/feed";
-import { FeedPostCard } from "@/app/features/feed";
+import { FeedPostCard } from "@/src/components/domain/post";
 import { toggleFeedReactionAction } from "../actions";
 import type { Person } from "@/src/domain/person";
 import type { FamilyFeedFilter, FamilyFeedOption } from "../types";
 import { FamilyFeedFilters } from "./family-feed-filters";
 import styles from "./family-feed-content.module.css";
 
+/**
+ * Formats the current date for the family feed divider.
+ *
+ * @returns The localized uppercase date label.
+ */
 function formatToday(): string {
   const parts = new Intl.DateTimeFormat("es-ES", {
     day: "numeric",
@@ -17,15 +22,27 @@ function formatToday(): string {
   return `${values.get("weekday")} ${values.get("day")} ${values.get("month")}`.toUpperCase();
 }
 
+/**
+ * Extracts the first visible name segment.
+ *
+ * @param name - Full person name.
+ * @returns The first name segment.
+ */
 function getFirstName(name: string): string {
   return name.trim().split(/\s+/)[0] ?? name;
 }
 
+/** Props accepted by the family feed content component. */
 type FamilyFeedContentProps = {
+  /** Optional classes applied to the feed landmark. */
   className?: string;
+  /** Server-authorized feed filter options. */
   options: readonly FamilyFeedOption[];
+  /** Parent identity displayed in the greeting. */
   person: Pick<Person, "name">;
+  /** Authorized Posts to render as cards. */
   posts: readonly FeedPost[];
+  /** Filter currently applied to the feed. */
   selectedFilter: FamilyFeedFilter;
 };
 
@@ -72,7 +89,7 @@ export function FamilyFeedContent({
               <FeedPostCard
                 canEdit={false}
                 canReact
-                commentHref={`/post-comment/new?postId=${encodeURIComponent(post.id)}`}
+                commentHref={`/posts/${encodeURIComponent(post.id)}/comments/new`}
                 key={post.id}
                 onToggleReaction={toggleFeedReactionAction}
                 post={post}

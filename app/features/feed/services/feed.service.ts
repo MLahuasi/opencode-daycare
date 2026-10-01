@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createCloudinaryImageStorage } from "@/app/infrastructure";
+import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type { FeedOverview, FeedPost, PersistedFeedPost } from "../types";
 import { getFeedEngagementByPostIds } from "./engagement.service";
@@ -10,6 +10,13 @@ type FeedReadOptions = {
   viewerId?: string;
 };
 
+/**
+ * Validates that every feed Post has exactly one destination.
+ *
+ * @param posts - Feed Posts to validate.
+ * @returns Nothing when all Posts are valid.
+ * @throws Error when a Post targets both a kid and a room, or neither.
+ */
 function validateFeedPosts(posts: readonly FeedPost[]): void {
   for (const post of posts) {
     const hasKidDestination = post.kidId !== null && post.kidId !== undefined;
@@ -64,7 +71,7 @@ export function resolveFeedMediaUrls(
     return posts;
   }
 
-  const imageStorage = createCloudinaryImageStorage();
+  const imageStorage = createPostImageStorage();
   return posts.map((post) => ({
     ...post,
     media: post.media.map((media) => ({

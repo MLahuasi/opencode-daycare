@@ -1,24 +1,26 @@
 import { Avatar, CameraIcon, LinkButton } from "@/src/components/ui";
 import type { FeedOverview, FeedPost } from "../types";
-import { FeedPostCard } from "./feed-post-card";
+import { FeedPostCard } from "@/src/components/domain/post";
 import styles from "./feed-content.module.css";
 
+/** Props accepted by the staff feed content component. */
 type FeedContentProps = {
+  /** Whether the current viewer can react to Posts. */
   canReact?: boolean;
+  /** Optional classes applied to the feed landmark. */
   className?: string;
+  /** Optional destination builder for comment creation. */
   commentHref?: (postId: string) => string;
+  /** Server action used to toggle a reaction. */
   onToggleReaction?: (
     postId: string,
   ) => Promise<{ success: boolean; active?: boolean; message?: string }>;
+  /** Room header, greeting and composer copy. */
   overview: FeedOverview;
+  /** Published Posts to render as cards. */
   posts: readonly FeedPost[];
 };
 
-/**
- * Renders the decorative camera icon for the post composer.
- *
- * @returns An inline SVG camera icon.
- */
 /**
  * Renders the static Sala Soles staff feed.
  *
@@ -48,7 +50,7 @@ export function FeedContent({
           <span>{overview.attendance} · {overview.date}</span>
         </header>
 
-        <LinkButton className={styles.composer} href="/post" variant="ghost">
+        <LinkButton className={styles.composer} href="/posts/new" variant="ghost">
           <Avatar aria-hidden="true" className={styles.avatar} initial="C" />
           <span className={styles.composerText}>{overview.composerPrompt}</span>
           <span className={styles.camera} aria-hidden="true">

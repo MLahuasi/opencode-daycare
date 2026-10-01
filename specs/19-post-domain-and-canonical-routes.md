@@ -1,6 +1,6 @@
 # SPEC 19 — Dominio Post y rutas canónicas
 
-> **Status:** Draft
+> **Status:** Implemented
 > **Depends on:** SPEC 12, SPEC 14, SPEC 15, SPEC 18
 > **Date:** 2026-09-30
 > **Objective:** Integrar publicaciones, detalle, comentarios, reacciones y media bajo Post y reemplazar las rutas legacy por la jerarquía oficial `/posts`.
@@ -55,26 +55,26 @@ Los ports se diseñan para consultas y mutaciones necesarias, no para cada archi
 
 ## Acceptance criteria
 
-- [ ] Existen exactamente las cinco rutas oficiales `/posts/...` definidas por esta spec.
-- [ ] `/posts/new` y `/posts/[postId]/edit` pertenecen al área `(staff)`.
-- [ ] `/posts/[postId]` y sus comentarios pertenecen al área `(general)`.
-- [ ] `domain/post` no depende de Application, Infrastructure, Next.js, React ni SDKs.
-- [ ] `application/post` no importa Cloudinary, filesystem ni APIs de navegación.
-- [ ] La composición de Post conecta todos los ports requeridos.
-- [ ] Cloudinary se implementa en `src/infrastructure/adapters/cloudinary`.
-- [ ] Los componentes Post compartidos viven en `src/components/domain/post`.
-- [ ] Las páginas y Server Actions no construyen adapters concretos.
-- [ ] Todos los enlaces internos usan exclusivamente `/posts/...`.
-- [ ] Todos los `revalidatePath` usan exclusivamente las nuevas rutas.
-- [ ] `/post`, `/post-detail`, `/post-comment/new` y `/post-comment/edit` responden 404.
-- [ ] Se conserva autorización por rol, sala, autoría y propiedad de comentarios.
-- [ ] Los contadores siguen derivados de las colecciones relacionadas.
-- [ ] Los JSON de Posts conservan sus registros y estructura.
-- [ ] `npx eslint app src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica todas las rutas oficiales en escritorio y móvil.
+- [x] Existen exactamente las cinco rutas oficiales `/posts/...` definidas por esta spec.
+- [x] `/posts/new` y `/posts/[postId]/edit` pertenecen al área `(staff)`.
+- [x] `/posts/[postId]` y sus comentarios pertenecen al área `(general)`.
+- [x] `domain/post` no depende de Application, Infrastructure, Next.js, React ni SDKs.
+- [x] `application/post` no importa Cloudinary, filesystem ni APIs de navegación.
+- [x] La composición de Post conecta todos los ports requeridos.
+- [x] Cloudinary se implementa en `src/infrastructure/adapters/cloudinary`.
+- [x] Los componentes Post compartidos viven en `src/components/domain/post`.
+- [x] Las páginas y Server Actions no construyen adapters concretos.
+- [x] Todos los enlaces internos usan exclusivamente `/posts/...`.
+- [x] Todos los `revalidatePath` usan exclusivamente las nuevas rutas.
+- [x] `/post`, `/post-detail`, `/post-comment/new` y `/post-comment/edit` responden 404.
+- [x] Se conserva autorización por rol, sala, autoría y propiedad de comentarios.
+- [x] Los contadores siguen derivados de las colecciones relacionadas.
+- [x] Los JSON de Posts conservan sus registros y estructura.
+- [x] `npx eslint app src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica todas las rutas oficiales en escritorio y móvil.
 
 ## Decisions
 
@@ -88,11 +88,11 @@ Los ports se diseñan para consultas y mutaciones necesarias, no para cada archi
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Un enlace antiguo permanece en un componente o acción. | Buscar literalmente todos los segmentos legacy antes de eliminar las rutas. |
+| Risk                                                       | Mitigation                                                                    |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Un enlace antiguo permanece en un componente o acción.     | Buscar literalmente todos los segmentos legacy antes de eliminar las rutas.   |
 | La separación de detalle y comentarios rompe autorización. | Reutilizar casos de uso de Application y verificar cada mutación en servidor. |
-| Route Groups producen paths duplicados. | Validar que cada URL pública tenga una sola página física. |
+| Route Groups producen paths duplicados.                    | Validar que cada URL pública tenga una sola página física.                    |
 
 ## What is **not** in this spec
 

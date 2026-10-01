@@ -28,14 +28,25 @@ const postTypeBadgeVariants: Record<PostDetail["post"]["type"], BadgeVariant> = 
   nap: "purple",
 };
 
+/**
+ * Extracts the uppercase initial used by an avatar.
+ *
+ * @param name - Person or post name used as the avatar source.
+ * @returns The first trimmed character in uppercase.
+ */
 function getInitial(name: string): string {
   return name.trim().charAt(0).toUpperCase();
 }
 
+/** Properties accepted by {@link PostDetailView}. */
 type PostDetailViewProps = {
+  /** URL used by the return-to-feed link. */
   backHref: string;
+  /** Optional classes applied to the content landmark. */
   className?: string;
+  /** Server-authorized projection rendered by the detail view. */
   detail: PostDetail;
+  /** Authenticated person's identifier used to determine comment ownership. */
   viewerPersonId?: string;
 };
 
@@ -137,7 +148,7 @@ export function PostDetailView({
             <h2 id="comments-heading">Comentarios · {comments.length}</h2>
             {detail.viewerRole === "parent" || detail.viewerRole === "personal" ? (
               <LinkButton
-                href={`/post-comment/new?postId=${encodeURIComponent(post.id)}`}
+                href={`/posts/${encodeURIComponent(post.id)}/comments/new`}
                 variant="soft"
               >
                 Comentar
@@ -163,7 +174,7 @@ export function PostDetailView({
                     comment.authorId === viewerPersonId ? (
                       <div className={styles.commentActions}>
                         <LinkButton
-                          href={`/post-comment/edit?id=${encodeURIComponent(comment.id)}`}
+                          href={`/posts/${encodeURIComponent(post.id)}/comments/${encodeURIComponent(comment.id)}/edit`}
                           variant="ghost"
                         >
                           Editar

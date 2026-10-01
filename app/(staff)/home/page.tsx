@@ -25,7 +25,7 @@ export default async function Home() {
       <StaffSidebar navigation={staffNavigationConfig} />
       <FeedContent
         canReact
-        commentHref={(postId) => `/post-comment/new?postId=${encodeURIComponent(postId)}`}
+        commentHref={(postId) => `/posts/${encodeURIComponent(postId)}/comments/new`}
         onToggleReaction={toggleFeedReactionAction}
         overview={feedOverview[0]}
         posts={feedPosts}

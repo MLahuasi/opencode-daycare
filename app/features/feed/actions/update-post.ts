@@ -1,9 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
-import { createCloudinaryImageStorage } from "@/app/infrastructure";
+import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
 import { updateFeedPost } from "../services";
 import type { FeedMedia, PersistedFeedPost } from "../types";
@@ -12,7 +11,7 @@ import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "./types";
 
 /**
- * Revalidates authorization, updates a post, and redirects to the feed.
+ * Revalidates authorization, updates a post, and returns the feed destination.
  *
  * @param _previousState - Previous feedback required by the action contract.
  * @param formData - Submitted post form payload.
@@ -55,7 +54,7 @@ export async function updatePostAction(
     }
   } catch {
     const imageStorage = parsed.uploadedMedia.length
-      ? createCloudinaryImageStorage()
+      ? createPostImageStorage()
       : null;
     await Promise.allSettled(
       parsed.uploadedMedia.map((media) => imageStorage?.delete(media.publicId)),
@@ -67,7 +66,7 @@ export async function updatePostAction(
     (media) => !parsed.media.some((retained) => retained.id === media.id),
   );
   if (removedMedia.length > 0) {
-    const imageStorage = createCloudinaryImageStorage();
+    const imageStorage = createPostImageStorage();
     const failedMedia: FeedMedia[] = [];
 
     for (const media of removedMedia) {
@@ -118,5 +117,6 @@ export async function updatePostAction(
   }
 
   revalidatePath("/home");
-  redirect("/home");
+  revalidatePath(`/posts/${postId}`);
+  return { errors: {}, message: "", redirectTo: "/home" };
 }

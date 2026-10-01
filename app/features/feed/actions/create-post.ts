@@ -1,16 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
-import { createCloudinaryImageStorage } from "@/app/infrastructure";
+import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import { createFeedPost } from "../services";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "./types";
 
 /**
- * Validates authorization, uploads media, persists a new post, and redirects.
+ * Validates authorization, uploads media, persists a new post, and returns its destination.
  *
  * @param _previousState - Previous feedback required by the action contract.
  * @param formData - Submitted post form payload.
@@ -37,7 +36,7 @@ export async function createPostAction(
     });
   } catch {
     const imageStorage = parsed.uploadedMedia.length
-      ? createCloudinaryImageStorage()
+      ? createPostImageStorage()
       : null;
     let cleanupSucceeded = true;
 
@@ -61,5 +60,5 @@ export async function createPostAction(
   }
 
   revalidatePath("/home");
-  redirect("/home");
+  return { errors: {}, message: "", redirectTo: "/home" };
 }
