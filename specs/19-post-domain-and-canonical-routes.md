@@ -1,6 +1,6 @@
 # SPEC 19 — Dominio Post y rutas canónicas
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 12, SPEC 14, SPEC 15, SPEC 18
 > **Date:** 2026-09-30
 > **Objective:** Integrar publicaciones, detalle, comentarios, reacciones y media bajo Post y reemplazar las rutas legacy por la jerarquía oficial `/posts`.
@@ -88,11 +88,11 @@ Los ports se diseñan para consultas y mutaciones necesarias, no para cada archi
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Un enlace antiguo permanece en un componente o acción. | Buscar literalmente todos los segmentos legacy antes de eliminar las rutas. |
+| Risk                                                       | Mitigation                                                                    |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| Un enlace antiguo permanece en un componente o acción.     | Buscar literalmente todos los segmentos legacy antes de eliminar las rutas.   |
 | La separación de detalle y comentarios rompe autorización. | Reutilizar casos de uso de Application y verificar cada mutación en servidor. |
-| Route Groups producen paths duplicados. | Validar que cada URL pública tenga una sola página física. |
+| Route Groups producen paths duplicados.                    | Validar que cada URL pública tenga una sola página física.                    |
 
 ## What is **not** in this spec
 
