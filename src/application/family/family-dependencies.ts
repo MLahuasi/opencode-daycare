@@ -44,7 +44,12 @@ export type FamilyAcceptanceDependencies = FamilyDependencies & {
   passwordHasher: import("../auth/ports").PasswordHasher;
 };
 
-/** Creates a pending person and invitation without creating ParentKid. */
+/**
+ * Creates a pending person and invitation without creating ParentKid.
+ *
+ * @param input - Person and kid data required for the invitation.
+ * @returns The created person and invitation records.
+ */
 export type CreateInvitation = (
   input: CreateInvitationInput,
 ) => Promise<CreatedInvitation>;

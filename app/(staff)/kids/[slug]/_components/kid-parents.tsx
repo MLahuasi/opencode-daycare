@@ -21,6 +21,12 @@ const statusVariants: Record<PersonStatus, "green" | "neutral" | "yellow"> = {
   pending: "yellow",
 };
 
+/**
+ * Maps a parent relationship to the avatar tone used by the profile panel.
+ *
+ * @param relationship - Parent relationship represented by the avatar.
+ * @returns The semantic avatar tone.
+ */
 function getParentTone(relationship: ParentRelationship): "blue" | "green" | "purple" {
   switch (relationship) {
     case "father":
