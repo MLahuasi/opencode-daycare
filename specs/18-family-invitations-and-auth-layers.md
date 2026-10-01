@@ -1,6 +1,6 @@
 # SPEC 18 — Invitaciones Family y capas de Auth
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 09, SPEC 10, SPEC 11, SPEC 17
 > **Date:** 2026-09-30
 > **Objective:** Separar la relación Parent/Tutor-Kid en Family y las credenciales en Auth, con rutas públicas y de personal definitivas para invitaciones.
@@ -50,8 +50,13 @@ src/domain/family/
 Los ports principales son:
 
 ```ts
-interface InvitationMailer { send(input: InvitationEmailInput): Promise<{ messageId: string }> }
-interface PasswordHasher { hash(password: string): Promise<string>; compare(password: string, hash: string): Promise<boolean> }
+interface InvitationMailer {
+  send(input: InvitationEmailInput): Promise<{ messageId: string }>;
+}
+interface PasswordHasher {
+  hash(password: string): Promise<string>;
+  compare(password: string, hash: string): Promise<boolean>;
+}
 ```
 
 ## Implementation plan
@@ -108,11 +113,11 @@ interface PasswordHasher { hash(password: string): Promise<string>; compare(pass
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Un redirect legacy transforma incorrectamente el token. | Validar query `code` y verificar ambos formatos con Playwright. |
-| Auth y Family crean dependencias circulares. | Auth expone credenciales; Family expone invitaciones y relaciones; la composición coordina ambos. |
-| El token queda expuesto a una página no autorizada. | Resolver y validar el token en servidor antes de proyectar datos. |
+| Risk                                                    | Mitigation                                                                                        |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Un redirect legacy transforma incorrectamente el token. | Validar query `code` y verificar ambos formatos con Playwright.                                   |
+| Auth y Family crean dependencias circulares.            | Auth expone credenciales; Family expone invitaciones y relaciones; la composición coordina ambos. |
+| El token queda expuesto a una página no autorizada.     | Resolver y validar el token en servidor antes de proyectar datos.                                 |
 
 ## What is **not** in this spec
 
