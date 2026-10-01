@@ -14,11 +14,6 @@ const nextConfig: NextConfig = {
         destination: "/home",
         permanent: true,
       },
-      {
-        source: "/login",
-        destination: "/auth/login",
-        permanent: true,
-      },
     ];
   },
 };

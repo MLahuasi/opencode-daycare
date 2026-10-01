@@ -2,7 +2,7 @@
 
 import { requireStaffSession } from "@/auth";
 import { redirect } from "next/navigation";
-import { validateLinkParentForm } from "@/app/features/auth/schemas";
+import { validateInviteParentForm } from "../_schemas";
 import { createInvitation, ExistingInvitationPersonError } from "@/src/application/family";
 import { getKidBySlug } from "@/src/application/kid";
 import { createKidComposition } from "@/src/infrastructure/composition/kid";
@@ -29,7 +29,7 @@ export async function sendInviteParentAction(
 ): Promise<InviteParentActionState> {
   await requireStaffSession();
 
-  const validation = validateLinkParentForm({
+  const validation = validateInviteParentForm({
     name: formData.get("name"),
     email: formData.get("email"),
     relationship: formData.get("relationship"),

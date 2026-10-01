@@ -7,8 +7,8 @@ import {
   sendInviteParentAction,
 } from "../_actions";
 import type { InviteParentActionState } from "../_actions";
-import type { LinkParentKid } from "@/app/features/auth/types";
-import styles from "@/app/features/auth/components/link-parent.module.css";
+import type { Kid } from "@/src/domain/kid";
+import styles from "./invite-parent.module.css";
 
 const relationshipOptions = [
   { label: "Mamá", value: "mother" },
@@ -18,7 +18,7 @@ const relationshipOptions = [
 
 type InviteParentFormProps = {
   /** Kid data shown in the invitation form. */
-  kid: LinkParentKid;
+  kid: Pick<Kid, "id" | "name" | "slug">;
 };
 
 /**
