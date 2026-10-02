@@ -3,8 +3,6 @@ export { FamilyFeedContent } from "./components/family-feed-content";
 export { FamilyCommentForm } from "./components/family-comment-form";
 export { DeleteCommentButton } from "./components/delete-comment-button";
 export { FamilyFeedFilters } from "./components/family-feed-filters";
-export { FamilyNavigation } from "./components/family-navigation";
-export { FamilySidebar } from "./components/family-sidebar";
 
 /**
  * Public API of the Family domain.

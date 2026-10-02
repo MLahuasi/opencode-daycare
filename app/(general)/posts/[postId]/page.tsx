@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { FamilySidebar } from "@/app/features/family";
 import { getAuthenticatedFamilyContext } from "@/app/features/family/server";
 import { PostDetailView } from "@/app/features/post-detail";
 import { getPostDetail } from "@/app/features/post-detail/server";
-import { StaffSidebar } from "@/src/components/layout";
+import { FamilySidebar, StaffSidebar } from "@/src/components/layout";
 import { staffNavigationConfig } from "@/src/config";
 
 /** Dynamic parameters accepted by the general Post detail route. */

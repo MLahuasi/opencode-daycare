@@ -6,6 +6,8 @@
  */
 export { StaffSidebar } from "./staff-sidebar";
 export { LogoutButton } from "./logout-button";
+export { FamilyNavigation } from "./family-navigation";
+export { FamilySidebar } from "./family-sidebar";
 export type {
   StaffNavigationConfig,
   StaffNavigationIcon,

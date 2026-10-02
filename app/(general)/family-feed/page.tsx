@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { FamilyFeedContent, FamilySidebar } from "@/app/features/family";
+import { FamilyFeedContent } from "@/app/features/family";
 import {
   getAuthenticatedFamilyContext,
   getFamilyFeed,
@@ -7,6 +7,7 @@ import {
 } from "@/app/features/family/server";
 import type { FamilyFeedFilter } from "@/app/features/family";
 import { requireActiveSession } from "@/auth";
+import { FamilySidebar } from "@/src/components/layout";
 import styles from "./family-feed.module.css";
 
 /**
