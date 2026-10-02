@@ -1,15 +1,26 @@
 import { Avatar, LinkButton } from "@/src/components/ui";
-import type { FamilyFeedFilter, FamilyFeedOption } from "../types";
+import type { FamilyFeedFilter, FamilyFeedOption } from "@/app/features/family/types";
 import styles from "./family-feed-filters.module.css";
 
 const kidAvatarTones = ["blue", "pink", "green", "yellow", "purple", "coral"] as const;
 
+/** Configuration received by the family feed filter navigation. */
 type FamilyFeedFiltersProps = {
+  /** Optional classes applied to the filter navigation. */
   className?: string;
+  /** Filter options authorized for the current parent. */
   options: readonly FamilyFeedOption[];
+  /** Filter currently applied to the feed. */
   selectedFilter: FamilyFeedFilter;
 };
 
+/**
+ * Checks whether a feed filter matches the current selection.
+ *
+ * @param filter - Candidate filter option.
+ * @param selectedFilter - Filter currently applied to the feed.
+ * @returns Whether the candidate filter is active.
+ */
 function isSelected(
   filter: FamilyFeedFilter,
   selectedFilter: FamilyFeedFilter,
@@ -25,6 +36,12 @@ function isSelected(
   return filter.id === selectedFilter.id;
 }
 
+/**
+ * Builds the canonical Family Feed URL for a filter option.
+ *
+ * @param filter - Filter option whose destination should be generated.
+ * @returns The Family Feed URL containing the filter parameters.
+ */
 function getFilterHref(filter: FamilyFeedFilter): string {
   if (filter.kind === "all") {
     return "/family-feed?filter=all";

@@ -7,7 +7,7 @@ import { MAX_FEED_COMMENT_BODY_LENGTH } from "@/app/features/feed";
 import {
   type FeedCommentAction,
   type FeedCommentActionState,
-} from "../actions";
+} from "@/app/features/family/actions";
 import styles from "./family-comment-form.module.css";
 
 const INITIAL_ACTION_STATE: FeedCommentActionState = {

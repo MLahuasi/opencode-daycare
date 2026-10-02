@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { FamilyFeedContent } from "@/app/features/family";
+import { FamilyFeedContent } from "./_components/family-feed-content";
 import {
   getAuthenticatedFamilyContext,
   getFamilyFeed,

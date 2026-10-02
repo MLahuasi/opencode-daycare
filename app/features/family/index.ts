@@ -1,8 +1,4 @@
 export { FamilyHeader } from "./components/family-header";
-export { FamilyFeedContent } from "./components/family-feed-content";
-export { FamilyCommentForm } from "./components/family-comment-form";
-export { DeleteCommentButton } from "./components/delete-comment-button";
-export { FamilyFeedFilters } from "./components/family-feed-filters";
 
 /**
  * Public API of the Family domain.

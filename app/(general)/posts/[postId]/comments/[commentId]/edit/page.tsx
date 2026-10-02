@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { FamilyCommentForm } from "@/app/features/family";
 import { updateFeedCommentAction } from "@/app/features/family/server";
 import { getFeedCommentById } from "@/app/features/feed/server";
 import { getPostDetail } from "@/app/features/post-detail/server";
+import { FamilyCommentForm } from "@/src/components/domain/post";
 
 /** Dynamic parameters accepted by the Post comment edit route. */
 type EditPostCommentPageProps = {
