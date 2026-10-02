@@ -1,6 +1,6 @@
 # SPEC 20 — Family Feed y grupos de acceso
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 13, SPEC 15, SPEC 19
 > **Date:** 2026-09-30
 > **Objective:** Separar las reglas y consultas de Family Feed en sus capas propias y completar la organización de rutas por áreas de acceso.
@@ -85,11 +85,11 @@ src/application/family/feed/queries/
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Se altera accidentalmente la privacidad del feed al extraer predicados. | Comparar resultados para cada rol, niño, sala y filtro antes y después. |
-| La eliminación de `shared` duplica utilidades. | Asignar cada archivo a una responsabilidad concreta y mantener un solo propietario. |
-| Un componente de Family queda ligado a una sola ruta después del traslado. | Mantenerlo en `_components` si no tiene consumidores múltiples. |
+| Risk                                                                       | Mitigation                                                                          |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Se altera accidentalmente la privacidad del feed al extraer predicados.    | Comparar resultados para cada rol, niño, sala y filtro antes y después.             |
+| La eliminación de `shared` duplica utilidades.                             | Asignar cada archivo a una responsabilidad concreta y mantener un solo propietario. |
+| Un componente de Family queda ligado a una sola ruta después del traslado. | Mantenerlo en `_components` si no tiene consumidores múltiples.                     |
 
 ## What is **not** in this spec
 
