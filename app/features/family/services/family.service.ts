@@ -15,6 +15,11 @@ import type {
   FamilyFeedOption,
   ParentKid,
 } from "../types";
+import {
+  buildFamilyFeedOptions,
+  selectActiveFamilyKids,
+  selectFamilyFeedPosts,
+} from "@/src/domain/family/feed";
 
 /** Server-resolved data required to build a parent's authorized view. */
 export type FamilyContext = {
@@ -59,9 +64,7 @@ export async function getAuthenticatedFamilyContext(): Promise<FamilyContext> {
   const authorizedKids = kids.filter((kid) => authorizedKidIds.has(kid.id));
   const authorizedRoomIds = new Set(authorizedKids.map((kid) => kid.roomId));
   const authorizedRooms = rooms.filter((room) => authorizedRoomIds.has(room.id));
-  const activeKids = kids.filter(
-    (kid) => kid.status === "active" && authorizedRoomIds.has(kid.roomId),
-  );
+  const activeKids = selectActiveFamilyKids(kids, authorizedRoomIds);
 
   return {
     person,
@@ -81,31 +84,7 @@ export async function getFamilyFeedOptions(): Promise<
   readonly FamilyFeedOption[]
 > {
   const context = await getAuthenticatedFamilyContext();
-  const activeRoomIds = new Set(context.activeKids.map((kid) => kid.roomId));
-  const activeRooms = context.rooms.filter((room) => activeRoomIds.has(room.id));
-  const options: FamilyFeedOption[] = context.activeKids.map((kid) => ({
-    id: kid.id,
-    label: kid.name,
-    filter: { kind: "kid", id: kid.id },
-  }));
-
-  options.push(
-    ...activeRooms.map((room) => ({
-      id: room.id,
-      label: room.name,
-      filter: { kind: "room", id: room.id } as const,
-    })),
-  );
-
-  if (activeRooms.length > 1) {
-    options.push({
-      id: "all",
-      label: "Todos",
-      filter: { kind: "all" },
-    });
-  }
-
-  return options;
+  return buildFamilyFeedOptions(context.activeKids, context.rooms);
 }
 
 /**
@@ -122,54 +101,14 @@ export async function getFamilyFeed(
     resolveMediaUrls: false,
     viewerId: context.person.id,
   });
-  const kidIds = new Set(context.activeKids.map((kid) => kid.id));
-  const activeRoomIds = new Set(context.activeKids.map((kid) => kid.roomId));
-  const kidsById = new Map(context.activeKids.map((kid) => [kid.id, kid]));
-  const roomIds = new Set(
-    context.rooms
-      .filter((room) => activeRoomIds.has(room.id))
-      .map((room) => room.id),
+  const selectedPosts = selectFamilyFeedPosts(
+    posts,
+    context.activeKids,
+    context.rooms,
+    filter,
   );
 
-  if (filter.kind === "kid" && !kidIds.has(filter.id)) {
-    return [];
-  }
-
-  if (filter.kind === "room" && !roomIds.has(filter.id)) {
-    return [];
-  }
-
-  const authorizedPosts = posts.filter(
-    (post) => {
-      const isRoomAnnouncement =
-        post.kidId === null && post.roomId !== null && roomIds.has(post.roomId);
-      const targetKid = post.kidId ? kidsById.get(post.kidId) : undefined;
-      const isAuthorizedKidPost = targetKid !== undefined;
-
-      if (filter.kind === "kid") {
-        return post.kidId === filter.id;
-      }
-
-      if (filter.kind === "room") {
-        return (
-          (isAuthorizedKidPost && targetKid.roomId === filter.id) ||
-          (isRoomAnnouncement && post.roomId === filter.id)
-        );
-      }
-
-      return isAuthorizedKidPost || isRoomAnnouncement;
-    },
-  );
-  const uniquePosts = new Map(
-    authorizedPosts.map((post) => [post.id, post]),
-  );
-
-  const sortedPosts = [...uniquePosts.values()].sort(
-    (first, second) =>
-      new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime(),
-  );
-
-  return resolveFeedMediaUrls(sortedPosts);
+  return resolveFeedMediaUrls(selectedPosts);
 }
 
 /**
