@@ -1,4 +1,4 @@
-import type { ParentRelationship } from "@/app/features/family";
+import type { ParentRelationship } from "@/src/domain/family";
 
 /** Invitation sent to a person to activate their account. */
 export type Invitation = {

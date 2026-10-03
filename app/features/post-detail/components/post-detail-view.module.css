@@ -258,7 +258,7 @@
 
 @media (max-width: 767px) {
   .container {
-    padding: 24px 16px 32px;
+    padding: 24px 16px calc(92px + env(safe-area-inset-bottom));
   }
 
   .card {

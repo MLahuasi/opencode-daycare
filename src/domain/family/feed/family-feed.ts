@@ -10,3 +10,11 @@ export type FamilyFeedOption = {
   label: string;
   filter: FamilyFeedFilter;
 };
+
+/** Minimum post data required by family feed visibility rules. */
+export type FamilyFeedPost = {
+  id: string;
+  kidId: string | null;
+  roomId: string | null;
+  createdAt: string;
+};

@@ -30,3 +30,17 @@ export type {
   TransactionRunner,
 } from "./ports";
 export { validateInvitationToken } from "./queries";
+export type {
+  FamilyFeedContext,
+  FamilyFeedProjection,
+  FamilyFeedDirectoryReader,
+  FamilyFeedMediaResolver,
+  FamilyFeedParentKidReader,
+  FamilyFeedPersonReader,
+  FamilyFeedPostReader,
+  FamilyFeedQueryDependencies,
+} from "./feed";
+export {
+  getFamilyFeedContext,
+  getFamilyFeedProjection,
+} from "./feed";

@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { FamilyCommentForm } from "@/app/features/family";
-import { createFeedCommentAction } from "@/app/features/family/server";
+import { createFeedCommentAction } from "@/app/features/feed/server";
 import { getPostDetail } from "@/app/features/post-detail/server";
+import { FamilyCommentForm } from "@/src/components/domain/post";
 
 /** Dynamic parameters accepted by the new Post comment route. */
 type NewPostCommentPageProps = {

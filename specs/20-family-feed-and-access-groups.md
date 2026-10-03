@@ -1,6 +1,6 @@
 # SPEC 20 — Family Feed y grupos de acceso
 
-> **Status:** Draft
+> **Status:** Implement
 > **Depends on:** SPEC 13, SPEC 15, SPEC 19
 > **Date:** 2026-09-30
 > **Objective:** Separar las reglas y consultas de Family Feed en sus capas propias y completar la organización de rutas por áreas de acceso.
@@ -55,25 +55,25 @@ src/application/family/feed/queries/
 
 ## Acceptance criteria
 
-- [ ] Las reglas puras de Family Feed viven en `src/domain/family/feed`.
-- [ ] Las consultas, comandos y proyecciones viven en `src/application/family/feed`.
-- [ ] Application no importa React, Next.js, Infrastructure ni APIs HTTP.
-- [ ] Existe composición server-only para Family Feed.
-- [ ] `/family-feed` pertenece a `(general)` y conserva su URL.
-- [ ] `/family-feed/day-summary` conserva su redirect actual.
-- [ ] `/family-feed/account` conserva su redirect actual.
-- [ ] `(staff)` contiene exclusivamente páginas destinadas al personal.
-- [ ] `FamilySidebar` y la navegación estructural se consumen desde `src/components/layout`.
-- [ ] No existe `app/features/family`.
-- [ ] No existe `app/shared`.
-- [ ] No se crea un `(general)/layout.tsx` sin comportamiento compartido real.
-- [ ] Se conservan autorización, filtros, anuncios, deduplicación, orden y engagement.
-- [ ] Los componentes no contienen colecciones mock ni lógica de negocio.
-- [ ] `npx eslint app src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica Family Feed, filtros, Posts compartidos y viewports móviles.
+- [x] Las reglas puras de Family Feed viven en `src/domain/family/feed`.
+- [x] Las consultas, comandos y proyecciones viven en `src/application/family/feed`.
+- [x] Application no importa React, Next.js, Infrastructure ni APIs HTTP.
+- [x] Existe composición server-only para Family Feed.
+- [x] `/family-feed` pertenece a `(general)` y conserva su URL.
+- [x] `/family-feed/day-summary` conserva su redirect actual.
+- [x] `/family-feed/account` conserva su redirect actual.
+- [x] `(staff)` contiene exclusivamente páginas destinadas al personal.
+- [x] `FamilySidebar` y la navegación estructural se consumen desde `src/components/layout`.
+- [x] No existe `app/features/family`.
+- [x] No existe `app/shared`.
+- [x] No se crea un `(general)/layout.tsx` sin comportamiento compartido real.
+- [x] Se conservan autorización, filtros, anuncios, deduplicación, orden y engagement.
+- [x] Los componentes no contienen colecciones mock ni lógica de negocio.
+- [x] `npx eslint app src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica Family Feed, filtros, Posts compartidos y viewports móviles.
 
 ## Decisions
 
@@ -85,11 +85,11 @@ src/application/family/feed/queries/
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Se altera accidentalmente la privacidad del feed al extraer predicados. | Comparar resultados para cada rol, niño, sala y filtro antes y después. |
-| La eliminación de `shared` duplica utilidades. | Asignar cada archivo a una responsabilidad concreta y mantener un solo propietario. |
-| Un componente de Family queda ligado a una sola ruta después del traslado. | Mantenerlo en `_components` si no tiene consumidores múltiples. |
+| Risk                                                                       | Mitigation                                                                          |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Se altera accidentalmente la privacidad del feed al extraer predicados.    | Comparar resultados para cada rol, niño, sala y filtro antes y después.             |
+| La eliminación de `shared` duplica utilidades.                             | Asignar cada archivo a una responsabilidad concreta y mantener un solo propietario. |
+| Un componente de Family queda ligado a una sola ruta después del traslado. | Mantenerlo en `_components` si no tiene consumidores múltiples.                     |
 
 ## What is **not** in this spec
 

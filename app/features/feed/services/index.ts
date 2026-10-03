@@ -15,6 +15,7 @@ export {
   getFeedEngagementByPostIds,
 } from "./engagement.service";
 export { toggleFeedReaction } from "./reaction.service";
+export { getAuthorizedEngagementPosts } from "./engagement-authorization.service";
 export {
   createFeedComment,
   deleteFeedComment,

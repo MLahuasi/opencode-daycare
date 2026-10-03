@@ -3,12 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import {
-  deleteFeedComment,
-  getFeedCommentById,
-} from "@/app/features/feed/server";
-import { getAuthorizedEngagementPosts } from "../services";
-import type { FeedCommentActionState } from "./types";
+import { deleteFeedComment, getFeedCommentById } from "../services/comment.service";
+import { getAuthorizedEngagementPosts } from "../services/engagement-authorization.service";
+import type { FeedCommentActionState } from "./comment-types";
 
 /**
  * Authorizes ownership and physically deletes a person's own comment.

@@ -3,12 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import {
-  createFeedComment,
-  validateFeedCommentForm,
-} from "@/app/features/feed/server";
-import { getAuthorizedEngagementPosts } from "../services";
-import type { FeedCommentActionState } from "./types";
+import { createFeedComment } from "../services/comment.service";
+import { validateFeedCommentForm } from "../schemas";
+import { getAuthorizedEngagementPosts } from "../services/engagement-authorization.service";
+import type { FeedCommentActionState } from "./comment-types";
 
 /**
  * Authorizes a parent or staff member, validates a comment and persists it.

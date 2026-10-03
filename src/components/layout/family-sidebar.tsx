@@ -5,11 +5,21 @@ import { familyNavigationConfig, type FamilyNavigationIcon } from "@/src/config"
 import type { ReactNode } from "react";
 import styles from "./family-sidebar.module.css";
 
+/** Configuration received by the family navigation shell. */
 type FamilySidebarProps = {
+  /** Optional classes applied to the desktop sidebar. */
   className?: string;
+  /** Parent identity displayed in the profile section. */
   person: Pick<Person, "name">;
 };
 
+/**
+ * Renders an inline icon for a configured family navigation item.
+ *
+ * @param props - Icon configuration.
+ * @param props.name - Identifier of the navigation icon to render.
+ * @returns The inline SVG navigation icon.
+ */
 function NavigationIcon({ name }: { name: FamilyNavigationIcon }) {
   const paths: Record<FamilyNavigationIcon, ReactNode> = {
     feed: (
@@ -52,7 +62,7 @@ function NavigationIcon({ name }: { name: FamilyNavigationIcon }) {
  * Renders the family sidebar and its responsive mobile navigation.
  *
  * @param props - Family sidebar configuration.
- * @param props.className - Optional classes applied to the sidebar.
+ * @param props.className - Optional classes applied to the desktop sidebar.
  * @param props.person - Parent identity shown in the sidebar profile.
  * @returns The family navigation shell.
  */

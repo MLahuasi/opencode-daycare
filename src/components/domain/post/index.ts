@@ -1,4 +1,6 @@
 export { FeedPostCard } from "./feed-post-card";
+export { DeleteCommentButton } from "./delete-comment-button";
+export { FamilyCommentForm } from "./family-comment-form";
 export { PostForm } from "./post-form";
 export type { PostFormInitialValues } from "./post-form";
 export { PostFormExistingMedia } from "./post-form-existing-media";
