@@ -1,6 +1,6 @@
 import { StaffSidebar } from "@/src/components/layout";
 import { FeedContent } from "@/app/features/feed";
-import { toggleFeedReactionAction } from "@/app/features/family/server";
+import { toggleFeedReactionAction } from "@/app/features/feed/server";
 import { getFeedOverview, getFeeds } from "@/app/features/feed/services";
 import { staffNavigationConfig } from "@/src/config";
 import { requireActiveSession } from "@/auth";

@@ -4,8 +4,8 @@ import {
   getAuthenticatedFamilyContext,
   getFamilyFeed,
   getFamilyFeedOptions,
-} from "@/app/features/family/server";
-import type { FamilyFeedFilter } from "@/app/features/family";
+} from "@/app/features/feed/server";
+import type { FamilyFeedFilter } from "@/src/domain/family/feed";
 import { requireActiveSession } from "@/auth";
 import { FamilySidebar } from "@/src/components/layout";
 import styles from "./family-feed.module.css";

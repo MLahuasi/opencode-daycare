@@ -4,7 +4,7 @@ import { requireActiveSession } from "@/auth";
 import {
   getFeeds,
   resolveFeedMediaUrls,
-} from "@/app/features/feed/server";
+} from "./feed.service";
 import type { FeedPost } from "@/app/features/feed";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type { Kid } from "@/src/domain/kid";
@@ -13,8 +13,8 @@ import type { Room } from "@/src/domain/room";
 import type {
   FamilyFeedFilter,
   FamilyFeedOption,
-  ParentKid,
-} from "../types";
+} from "@/src/domain/family/feed";
+import type { ParentKid } from "@/src/domain/family";
 import {
   buildFamilyFeedOptions,
   selectActiveFamilyKids,

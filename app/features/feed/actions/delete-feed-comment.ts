@@ -3,22 +3,18 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import {
-  getFeedCommentById,
-  updateFeedComment,
-  validateFeedCommentForm,
-} from "@/app/features/feed/server";
-import { getAuthorizedEngagementPosts } from "../services";
-import type { FeedCommentActionState } from "./types";
+import { deleteFeedComment, getFeedCommentById } from "../services/comment.service";
+import { getAuthorizedEngagementPosts } from "../services/family-feed.service";
+import type { FeedCommentActionState } from "./comment-types";
 
 /**
- * Authorizes ownership, validates and updates a person's own comment.
+ * Authorizes ownership and physically deletes a person's own comment.
  *
  * @param _previousState - Previous feedback required by the action contract.
- * @param formData - Submitted comment ID, post ID and body.
- * @returns Validation or persistence feedback when the update cannot complete.
+ * @param formData - Submitted comment and post identifiers.
+ * @returns Feedback when deletion cannot complete.
  */
-export async function updateFeedCommentAction(
+export async function deleteFeedCommentAction(
   _previousState: FeedCommentActionState,
   formData: FormData,
 ): Promise<FeedCommentActionState> {
@@ -41,7 +37,7 @@ export async function updateFeedCommentAction(
     comment.authorId !== session.user.personId ||
     comment.postId !== postId
   ) {
-    return { errors: {}, message: "No tienes permiso para editar este comentario." };
+    return { errors: {}, message: "No tienes permiso para eliminar este comentario." };
   }
 
   const authorizedPosts = await getAuthorizedEngagementPosts();
@@ -49,25 +45,19 @@ export async function updateFeedCommentAction(
     return { errors: {}, message: "No tienes acceso a esta publicación." };
   }
 
-  const validation = validateFeedCommentForm({ body: formData.get("body") });
-  if (!validation.success) {
-    return { errors: validation.errors, message: "Revisa el comentario." };
-  }
-
   try {
-    const updatedComment = await updateFeedComment({
+    const deleted = await deleteFeedComment({
       authorId: session.user.personId,
-      body: validation.data.body,
       commentId,
     });
 
-    if (!updatedComment) {
+    if (!deleted) {
       return { errors: {}, message: "El comentario ya no está disponible." };
     }
   } catch {
     return {
       errors: {},
-      message: "No pudimos actualizar el comentario. Inténtalo nuevamente.",
+      message: "No pudimos eliminar el comentario. Inténtalo nuevamente.",
     };
   }
 

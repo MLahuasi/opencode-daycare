@@ -7,7 +7,7 @@ import {
   withJsonTransaction,
   writeCollection,
 } from "@/src/infrastructure/persistence";
-import type { ParentKid } from "@/app/features/family";
+import type { ParentKid } from "@/src/domain/family";
 import type { Person } from "@/src/domain/person";
 import { isInvitationExpired, isValidActivationPassword } from "../utils";
 import type { Credential, Invitation } from "../types";

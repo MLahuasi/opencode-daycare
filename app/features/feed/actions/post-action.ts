@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type { Person } from "@/src/domain/person";
-import type { ParentKid } from "@/app/features/family";
+import type { ParentKid } from "@/src/domain/family";
 import {
   MAX_MEDIA_BYTES,
   validatePostForm,

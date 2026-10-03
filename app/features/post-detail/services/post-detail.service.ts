@@ -1,7 +1,7 @@
 import "server-only";
 
 import { requireActiveSession } from "@/auth";
-import { getAuthenticatedFamilyContext } from "@/app/features/family/server";
+import { getAuthenticatedFamilyContext } from "@/app/features/feed/server";
 import {
   getAuthorizedStaffRooms,
   getFeeds,

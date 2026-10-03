@@ -6,7 +6,7 @@ import {
   withWriteLock,
   writeCollection,
 } from "@/src/infrastructure/persistence";
-import type { ParentRelationship } from "@/app/features/family";
+import type { ParentRelationship } from "@/src/domain/family";
 import { createInvitationCode, getInvitationExpiration } from "../utils/invitation-code";
 import type { Invitation } from "../types";
 

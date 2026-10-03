@@ -21,6 +21,13 @@ export {
   getFeedCommentById,
   updateFeedComment,
 } from "./comment.service";
+export {
+  getAuthenticatedFamilyContext,
+  getAuthorizedEngagementPosts,
+  getFamilyFeed,
+  getFamilyFeedOptions,
+  type FamilyContext,
+} from "./family-feed.service";
 export type {
   CreateFeedCommentInput,
   DeleteFeedCommentInput,

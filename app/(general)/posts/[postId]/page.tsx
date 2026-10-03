@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { getAuthenticatedFamilyContext } from "@/app/features/family/server";
+import { getAuthenticatedFamilyContext } from "@/app/features/feed/server";
 import { PostDetailView } from "@/app/features/post-detail";
 import { getPostDetail } from "@/app/features/post-detail/server";
 import { FamilySidebar, StaffSidebar } from "@/src/components/layout";

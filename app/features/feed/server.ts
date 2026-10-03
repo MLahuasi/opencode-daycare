@@ -1,6 +1,13 @@
 import "server-only";
 
-export { createPostAction, updatePostAction } from "./actions";
+export {
+  createPostAction,
+  updatePostAction,
+  toggleFeedReactionAction,
+  createFeedCommentAction,
+  deleteFeedCommentAction,
+  updateFeedCommentAction,
+} from "./actions";
 export { validateFeedCommentForm } from "./schemas";
 export {
   getAuthorizedStaffRooms,
@@ -21,4 +28,10 @@ export {
   deleteFeedComment,
   getFeedCommentById,
   updateFeedComment,
+} from "./services";
+export {
+  getAuthenticatedFamilyContext,
+  getFamilyFeed,
+  getFamilyFeedOptions,
+  type FamilyContext,
 } from "./services";
