@@ -1,13 +1,16 @@
 import { redirect } from "next/navigation";
 import { FamilyFeedContent } from "./_components/family-feed-content";
 import {
-  getAuthenticatedFamilyContext,
-  getFamilyFeed,
-  getFamilyFeedOptions,
-} from "@/app/features/feed/server";
-import type { FamilyFeedFilter } from "@/src/domain/family/feed";
+  getFamilyFeedContext,
+  getFamilyFeedProjection,
+} from "@/src/application/family/feed";
+import {
+  buildFamilyFeedOptions,
+  type FamilyFeedFilter,
+} from "@/src/domain/family/feed";
 import { requireActiveSession } from "@/auth";
 import { FamilySidebar } from "@/src/components/layout";
+import { createFamilyFeedComposition } from "@/src/infrastructure/composition/family";
 import styles from "./family-feed.module.css";
 
 /**
@@ -26,10 +29,15 @@ export default async function FamilyFeedPage({
     redirect("/home");
   }
 
-  const [familyContext, options] = await Promise.all([
-    getAuthenticatedFamilyContext(),
-    getFamilyFeedOptions(),
-  ]);
+  const dependencies = createFamilyFeedComposition();
+  const familyContext = await getFamilyFeedContext(
+    dependencies,
+    session.user.personId,
+  );
+  const options = buildFamilyFeedOptions(
+    familyContext.activeKids,
+    familyContext.rooms,
+  );
   const params = await searchParams;
   const filterKind = Array.isArray(params?.filter)
     ? params.filter[0]
@@ -44,16 +52,20 @@ export default async function FamilyFeedPage({
         ? filterKind === "all"
         : option.filter.kind === filterKind && option.filter.id === filterId,
     )?.filter ?? defaultFilter;
-  const familyPosts = await getFamilyFeed(selectedFilter);
+  const familyFeed = await getFamilyFeedProjection(
+    dependencies,
+    session.user.personId,
+    selectedFilter,
+  );
 
   return (
     <div className={styles.shell}>
-      <FamilySidebar person={familyContext.person} />
+      <FamilySidebar person={familyFeed.context.person} />
       <div className={styles.content}>
         <FamilyFeedContent
           options={options}
-          person={familyContext.person}
-          posts={familyPosts}
+          person={familyFeed.context.person}
+          posts={familyFeed.posts}
           selectedFilter={selectedFilter}
         />
       </div>

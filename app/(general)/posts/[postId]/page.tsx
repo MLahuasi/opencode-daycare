@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { getAuthenticatedFamilyContext } from "@/app/features/feed/server";
+import { getFamilyFeedContext } from "@/src/application/family/feed";
 import { PostDetailView } from "@/app/features/post-detail";
 import { getPostDetail } from "@/app/features/post-detail/server";
 import { FamilySidebar, StaffSidebar } from "@/src/components/layout";
 import { staffNavigationConfig } from "@/src/config";
+import { createFamilyFeedComposition } from "@/src/infrastructure/composition/family";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -31,7 +32,10 @@ export default async function PostDetailPage({
   }
 
   if (session.user.role === "parent") {
-    const familyContext = await getAuthenticatedFamilyContext();
+    const familyContext = await getFamilyFeedContext(
+      createFamilyFeedComposition(),
+      session.user.personId,
+    );
 
     return (
       <div className="flex min-h-screen bg-background text-foreground">

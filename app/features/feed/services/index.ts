@@ -15,19 +15,13 @@ export {
   getFeedEngagementByPostIds,
 } from "./engagement.service";
 export { toggleFeedReaction } from "./reaction.service";
+export { getAuthorizedEngagementPosts } from "./engagement-authorization.service";
 export {
   createFeedComment,
   deleteFeedComment,
   getFeedCommentById,
   updateFeedComment,
 } from "./comment.service";
-export {
-  getAuthenticatedFamilyContext,
-  getAuthorizedEngagementPosts,
-  getFamilyFeed,
-  getFamilyFeedOptions,
-  type FamilyContext,
-} from "./family-feed.service";
 export type {
   CreateFeedCommentInput,
   DeleteFeedCommentInput,

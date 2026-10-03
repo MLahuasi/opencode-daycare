@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
 import { deleteFeedComment, getFeedCommentById } from "../services/comment.service";
-import { getAuthorizedEngagementPosts } from "../services/family-feed.service";
+import { getAuthorizedEngagementPosts } from "../services/engagement-authorization.service";
 import type { FeedCommentActionState } from "./comment-types";
 
 /**

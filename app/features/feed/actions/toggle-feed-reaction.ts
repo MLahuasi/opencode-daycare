@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireActiveSession } from "@/auth";
 import { toggleFeedReaction } from "../services/reaction.service";
-import { getAuthorizedEngagementPosts } from "../services/family-feed.service";
+import { getAuthorizedEngagementPosts } from "../services/engagement-authorization.service";
 
 /** Serializable result returned by the family feed reaction action. */
 export type ToggleFeedReactionResult =

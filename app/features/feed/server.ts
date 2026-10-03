@@ -30,8 +30,5 @@ export {
   updateFeedComment,
 } from "./services";
 export {
-  getAuthenticatedFamilyContext,
-  getFamilyFeed,
-  getFamilyFeedOptions,
-  type FamilyContext,
+  getAuthorizedEngagementPosts,
 } from "./services";

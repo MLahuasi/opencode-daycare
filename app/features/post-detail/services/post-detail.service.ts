@@ -1,7 +1,7 @@
 import "server-only";
 
 import { requireActiveSession } from "@/auth";
-import { getAuthenticatedFamilyContext } from "@/app/features/feed/server";
+import { getFamilyFeedContext } from "@/src/application/family/feed";
 import {
   getAuthorizedStaffRooms,
   getFeeds,
@@ -15,6 +15,7 @@ import type { Kid } from "@/src/domain/kid";
 import type { Person } from "@/src/domain/person";
 import type { Room } from "@/src/domain/room";
 import { readCollection } from "@/src/infrastructure/persistence";
+import { createFamilyFeedComposition } from "@/src/infrastructure/composition/family";
 
 /** Server-resolved records required to project an authorized post detail. */
 export type AuthorizedPostData = {
@@ -74,7 +75,10 @@ export async function getAuthorizedPostData(
     const authorizedRooms = await getAuthorizedStaffRooms(session.user.personId);
     authorizedRoomIds = new Set(authorizedRooms.map((room) => room.id));
   } else {
-    const familyContext = await getAuthenticatedFamilyContext();
+    const familyContext = await getFamilyFeedContext(
+      createFamilyFeedComposition(),
+      session.user.personId,
+    );
     authorizedKids = familyContext.activeKids;
     authorizedRoomIds = new Set(authorizedKids.map((kid) => kid.roomId));
   }

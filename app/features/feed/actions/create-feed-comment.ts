@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
 import { createFeedComment } from "../services/comment.service";
 import { validateFeedCommentForm } from "../schemas";
-import { getAuthorizedEngagementPosts } from "../services/family-feed.service";
+import { getAuthorizedEngagementPosts } from "../services/engagement-authorization.service";
 import type { FeedCommentActionState } from "./comment-types";
 
 /**
