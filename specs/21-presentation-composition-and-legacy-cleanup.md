@@ -1,6 +1,6 @@
 # SPEC 21 — Presentation, Composition y cierre de capas legacy
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 18, SPEC 19, SPEC 20
 > **Date:** 2026-10-02
 > **Objective:** Consolidar Presentation y Composition, conectar el runtime con Application e Infrastructure y eliminar las capas legacy antes del corte de `app/` a `src/app/`.
@@ -100,13 +100,13 @@ Los campos visuales como labels, hrefs, tonos, formatos localizados y mensajes n
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
+| Risk                                                                      | Mitigation                                                                                  |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | El runtime continúa usando servicios legacy después de crear Application. | Verificar consumidores reales y eliminar cada servicio solo después de conectar su entrada. |
-| Composition queda acoplado a una feature de Presentation. | Prohibir imports desde `src/composition` hacia `app/` y usar únicamente ports. |
-| DTOs mezclan datos de negocio con copy visual. | Separar proyección neutral de presenter y view model de Presentation. |
-| Se rompe una Server Action al moverla. | Verificar autorización, revalidación, redirects y estados serializables por mutación. |
-| Se elimina una implementación aún consumida indirectamente. | Ejecutar búsquedas literales y build antes de cada eliminación. |
+| Composition queda acoplado a una feature de Presentation.                 | Prohibir imports desde `src/composition` hacia `app/` y usar únicamente ports.              |
+| DTOs mezclan datos de negocio con copy visual.                            | Separar proyección neutral de presenter y view model de Presentation.                       |
+| Se rompe una Server Action al moverla.                                    | Verificar autorización, revalidación, redirects y estados serializables por mutación.       |
+| Se elimina una implementación aún consumida indirectamente.               | Ejecutar búsquedas literales y build antes de cada eliminación.                             |
 
 ## What is **not** in this spec
 
