@@ -1,5 +1,6 @@
 export { FeedPostCard } from "./feed-post-card";
 export { DeleteCommentButton } from "./delete-comment-button";
+export { PostDetailView } from "./post-detail-view";
 export {
   presentPostDetail,
   type PostDetailCommentViewModel,

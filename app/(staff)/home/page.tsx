@@ -1,7 +1,7 @@
 import { StaffSidebar } from "@/src/presentation/layout";
-import { FeedContent } from "@/app/features/feed";
-import { toggleFeedReactionAction } from "@/app/features/feed/server";
-import { getFeedOverview } from "@/app/features/feed/services";
+import { FeedContent } from "@/src/presentation/feed";
+import { toggleFeedReactionAction } from "@/app/_actions/posts";
+import { getFeedOverview } from "@/src/composition/feed";
 import { getAuthorizedPosts } from "@/src/application/post";
 import { createPostComposition } from "@/src/composition/post";
 import { staffNavigationConfig } from "@/src/presentation/navigation";

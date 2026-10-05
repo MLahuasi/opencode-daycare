@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { updateFeedCommentAction } from "@/app/features/feed/server";
+import { updateFeedCommentAction } from "@/app/_actions/posts";
 import { getPostDetail } from "@/src/application/post";
 import { createPostComposition } from "@/src/composition/post";
 import { FamilyCommentForm } from "@/src/presentation/post";

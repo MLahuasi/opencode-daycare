@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { requireActiveSession } from "@/auth";
 import { getFamilyFeedContext } from "@/src/application/family/feed";
 import { getPostDetail } from "@/src/application/post";
-import { PostDetailView } from "@/app/features/post-detail";
+import { PostDetailView } from "@/src/presentation/post";
 import { FamilySidebar, StaffSidebar } from "@/src/presentation/layout";
 import { staffNavigationConfig } from "@/src/presentation/navigation";
 import { createFamilyFeedComposition } from "@/src/composition/family";

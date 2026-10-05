@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
-import { createPostAction } from "@/app/features/feed/server";
+import { createPostAction } from "@/app/_actions/posts";
 import { getPostTargets } from "@/src/application/post";
 import { createPostComposition } from "@/src/composition/post";
 import {

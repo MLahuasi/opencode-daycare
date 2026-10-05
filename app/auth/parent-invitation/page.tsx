@@ -1,4 +1,4 @@
-import styles from "@/app/features/auth/components/auth.module.css";
+import styles from "@/src/presentation/auth/auth.module.css";
 
 /**
  * Explains that parent invitations must be opened from the email link.
