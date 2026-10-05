@@ -3,7 +3,11 @@
 import { requireStaffSession } from "@/auth";
 import { redirect } from "next/navigation";
 import { validateInviteParentForm } from "../_schemas";
-import { createInvitation, ExistingInvitationPersonError } from "@/src/application/family";
+import {
+  createInvitation,
+  ExistingInvitationParentKidError,
+  ExistingInvitationPersonError,
+} from "@/src/application/family";
 import { getKidBySlug } from "@/src/application/kid";
 import { createKidComposition } from "@/src/composition/kid";
 import { createFamilyComposition } from "@/src/composition/family";
@@ -65,6 +69,13 @@ export async function sendInviteParentAction(
     if (error instanceof ExistingInvitationPersonError) {
       return {
         errors: { email: "Ya existe una persona registrada con este email." },
+        message: "Revisa los campos marcados.",
+      };
+    }
+
+    if (error instanceof ExistingInvitationParentKidError) {
+      return {
+        errors: { email: "Esta persona ya está vinculada con este niño." },
         message: "Revisa los campos marcados.",
       };
     }

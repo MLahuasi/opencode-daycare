@@ -74,6 +74,10 @@ export async function getAuthorizedPosts(
     .filter(({ visible }) => visible)
     .map(({ post }) => post);
 
+  const imageStorage = visiblePosts.some((post) => post.media.length > 0)
+    ? dependencies.imageStorage
+    : null;
+
   return visiblePosts.map((post) => ({
     ...post,
     engagement: derivePostEngagement(
@@ -82,6 +86,12 @@ export async function getAuthorizedPosts(
       reactions,
       viewer.personId,
     ),
+    media: imageStorage
+      ? post.media.map((media) => ({
+          ...media,
+          url: imageStorage.getUrl(media),
+        }))
+      : post.media,
   }));
 }
 

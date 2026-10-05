@@ -94,5 +94,21 @@
     "body": "bebe",
     "createdAt": "2026-10-01T23:06:37.666Z",
     "updatedAt": null
+  },
+  {
+    "id": "d4e23350-866d-4423-97f1-d5bdc164cc62",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "authorId": "person-caro-gimenez",
+    "body": "Pechocho",
+    "createdAt": "2026-10-05T18:28:13.909Z",
+    "updatedAt": null
+  },
+  {
+    "id": "afaa2706-30cc-48f9-850c-7ba3bdd01fbc",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "authorId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "body": "Mi gatito hermoso te amo",
+    "createdAt": "2026-10-05T18:43:12.429Z",
+    "updatedAt": null
   }
 ]

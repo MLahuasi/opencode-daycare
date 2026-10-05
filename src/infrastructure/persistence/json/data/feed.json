@@ -57,14 +57,14 @@
     "authorId": "person-caro-gimenez",
     "subject": "Chewbacca Lahuasi",
     "initial": "C",
-    "time": "02:22",
-    "dateTime": "2026-10-03T02:22:27.601Z",
+    "time": "18:44",
+    "dateTime": "2026-10-05T18:44:27.867Z",
     "authorLabel": "publicado por ti",
     "recipient": "familia de Chewbacca Lahuasi",
     "hasMedia": true,
     "body": "Mi bebe chiquito",
     "createdAt": "2026-09-24T23:19:31.874Z",
-    "updatedAt": "2026-10-03T02:22:27.601Z",
+    "updatedAt": "2026-10-05T18:44:27.867Z",
     "media": [
       {
         "assetId": "5dd3b7baa3cfa7af5b3c49a0d4b2ebb8",
@@ -106,16 +106,16 @@
         "alt": null
       },
       {
-        "assetId": "6189d90003908e05d8527c337bf20f57",
-        "publicId": "daycare/posts/xpciw1ifvj4ofu0blin0",
+        "assetId": "358cf0d2edf309d3cdd6c238ad552510",
+        "publicId": "daycare/posts/wvg7gikxv906rvkzdjch",
         "resourceType": "image",
         "deliveryType": "authenticated",
         "format": "jpg",
         "width": 3000,
         "height": 4000,
-        "bytes": 648455,
-        "id": "7add9cc9-8397-4fc0-a93d-cbc7f7b91c59",
-        "originalName": "IMG_20190131_175716.jpg",
+        "bytes": 898250,
+        "id": "3f085a78-87cd-42e9-b2c3-0d4ce9fbb1e6",
+        "originalName": "IMG_20180824_112234.jpg",
         "alt": null
       }
     ],

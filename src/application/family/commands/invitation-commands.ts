@@ -19,6 +19,9 @@ export class ExistingInvitationPersonError extends Error {}
 /** Error raised when a parent is already linked to a kid. */
 export class ExistingParentKidError extends Error {}
 
+/** Error raised when an invitation duplicates an existing parent-kid link. */
+export class ExistingInvitationParentKidError extends Error {}
+
 /** Error raised when the invitation cannot be accepted. */
 export class InvalidInvitationAcceptanceError extends Error {}
 
@@ -32,7 +35,8 @@ export class InvalidInvitationAcceptanceError extends Error {}
  * @param input.kidId - Stable kid identifier.
  * @param input.relationship - Parent relationship with the kid.
  * @returns The newly created pending person and invitation.
- * @throws ExistingInvitationPersonError when the email already exists.
+ * @throws ExistingInvitationPersonError when the email belongs to another role.
+ * @throws ExistingInvitationParentKidError when the parent is already linked to the kid.
  */
 export async function createInvitation(
   dependencies: FamilyDependencies,
@@ -41,17 +45,30 @@ export async function createInvitation(
   const email = input.email.trim().toLowerCase();
   const existingPerson = await dependencies.people.findByEmail(email);
 
-  if (existingPerson) {
-    throw new ExistingInvitationPersonError("The invitation email already exists.");
+  if (existingPerson && existingPerson.role !== "parent") {
+    throw new ExistingInvitationPersonError(
+      "The invitation email belongs to a non-parent person.",
+    );
   }
 
-  const person: Person = {
+  const person: Person = existingPerson ?? {
     id: dependencies.identifiers.create(),
     name: input.name.trim(),
     email,
     role: "parent",
     status: "pending",
   };
+  const existingParentKid = await dependencies.parentKids.findByParentAndKid(
+    person.id,
+    input.kidId,
+  );
+
+  if (existingParentKid) {
+    throw new ExistingInvitationParentKidError(
+      "The parent is already linked to this kid.",
+    );
+  }
+
   const now = dependencies.clock.now();
   const invitation: Invitation = {
     id: dependencies.identifiers.create(),
@@ -66,7 +83,9 @@ export async function createInvitation(
     acceptedAt: null,
   };
 
-  await dependencies.people.create(person);
+  if (!existingPerson) {
+    await dependencies.people.create(person);
+  }
   await dependencies.invitations.create(invitation);
 
   return { invitation, person };
