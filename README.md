@@ -18,7 +18,7 @@ JSON tipados.
 - Tailwind CSS `4` y CSS Modules.
 - Fredoka y Nunito mediante `next/font/google`.
 - npm como gestor de paquetes.
-- Alias `@/*` apuntando a la raíz del proyecto.
+- Alias `@/*` apuntando a `src/*`.
 
 ## Instalación y ejecución
 
@@ -44,7 +44,7 @@ Comandos disponibles:
 ## Configuración de correo
 
 La integración con `@jmlq/mailer` es exclusivamente server-only y se expone a
-la aplicación mediante `@/app/infrastructure`. Next.js carga las variables desde
+la aplicación mediante `@/infrastructure`. Next.js carga las variables desde
 los archivos `.env*`; la aplicación no inicializa `dotenv` por separado.
 
 Define la configuración SMTP en un archivo local ignorado por Git, por ejemplo
@@ -80,20 +80,28 @@ La plantilla `templates/parent-invitation.html` forma parte de los archivos
 necesarios en runtime. Un despliegue que empaquete solo el output de Next.js,
 como `output: "standalone"`, debe incluir también la carpeta `templates/`.
 
-## Rutas actuales
+## Rutas oficiales
 
 - `/home`: feed del personal o feed familiar filtrado según el rol autenticado.
 - `/`: redirect permanente a `/home`.
 - `/auth/login`: inicio de sesión.
-- `/auth/activate-account`: activación de cuenta; acepta `?code=<valor>`.
-- `/auth/link-parent?kidId=<id>`: formulario protegido para invitar a otro padre
-  desde un perfil de niño.
+- `/auth/parent-invitation`: inicio de activación de una invitación.
+- `/auth/parent-invitation/[token]`: activación de una invitación de padre.
 - `/api/auth/[...nextauth]`: Route Handler de NextAuth v4 para credenciales y sesiones JWT.
 - `/kids`: listado de ocho niños con búsqueda local y badges de alergias.
 - `/kids/[slug]`: perfil de un niño con información básica, notas médicas y padres vinculados.
 - `/kids/edit/[id]`: edición de un niño por ID.
-- `/login`, `/activate-account` y `/kids/:id/edit`: redirects permanentes a sus nuevas rutas.
+- `/kids/new`: alta de un niño.
+- `/kids/[slug]/invite-parent`: invitación de otro padre desde un perfil.
+- `/family-feed`: feed familiar.
+- `/family-feed/day-summary` y `/family-feed/account`: entradas de compatibilidad internas del feed.
+- `/posts/[postId]`, `/posts/new` y `/posts/[postId]/edit`: publicaciones.
+- `/posts/[postId]/comments/new` y `/posts/[postId]/comments/[commentId]/edit`: comentarios.
 - `/kids/[slug]` con un slug desconocido: página 404 propia.
+
+Las rutas legacy `/login`, `/kids/:id/edit`, `/auth/link-parent`, las rutas
+antiguas de Posts, `/activate-account` y `/auth/activate-account` responden 404.
+El redirect de compatibilidad `/` es el único redirect externo conservado.
 
 ### Invitaciones de padres
 
@@ -111,15 +119,16 @@ envíos exitosos actualizan `sentAt` y redirigen al perfil con
 `?invitation=sent`. Los padres autenticados son redirigidos a `/home`.
 
 La activación de una invitación se realiza posteriormente desde
-`/auth/activate-account`: crea o actualiza las credenciales, activa la persona,
+`/auth/parent-invitation/[token]`: crea o actualiza las credenciales, activa la persona,
 crea la relación `ParentKid` y marca `acceptedAt` de forma coordinada. Un fallo
 restaura las colecciones modificadas y conserva la invitación pendiente.
 
 ## Autenticación
 
 La autenticación usa `next-auth@4.24.15` con Credentials Provider, sesiones JWT
-de siete días y cookies HttpOnly. La configuración server-only vive en `auth.ts`
-y obtiene sus valores desde `app/shared/config/server/environment.ts`.
+de siete días y cookies HttpOnly. La configuración server-only se expone desde
+`src/auth.ts` y vive en `src/infrastructure/auth/auth.ts`; obtiene sus valores
+desde `src/infrastructure/config/server/environment.ts`.
 
 Añade estas variables a tu archivo local `.env` o `.env.local`, usando
 `.env.template` como referencia:
@@ -164,33 +173,26 @@ No reutilices la clave demo ni agregues credenciales reales al repositorio.
 
 ## Arquitectura
 
-La aplicación sigue una organización **feature-first**:
+La aplicación separa routing, casos de uso, dominio, adapters, presentación y
+composición. El prefijo físico `src` se oculta en imports mediante `@/*`:
 
 ```text
 open-daycare/
-├── auth.ts                    Configuración server-only de NextAuth v4
-├── types/                     Ampliaciones TypeScript de NextAuth
-├── app/
-│   ├── (staff)/              Rutas de personal sin segmento público
-│   │   ├── home/             Feed en `/home`
-│   │   └── kids/             Listado, perfil y edición de Kids
-│   ├── auth/                 Rutas públicas de autenticación
-│   ├── components/           UI reutilizable y layout de aplicación
-│   │   ├── layout/            StaffSidebar y navegación
-│   │   └── ui/                Componentes visuales reutilizables
-│   ├── data/mocks/            Fixtures estáticos no editables
-│   ├── features/
-│   │   ├── auth/              Componentes, acciones y contratos de Auth
-│   │   ├── family/            Relaciones familiares
-│   │   ├── feed/              Componentes y tipos del feed
-│   │   ├── kids/              Listado, perfiles y tipos de niños
-│   │   ├── people/            Personas
-│   │   └── rooms/             Salas
-│   ├── infrastructure/
-│   │   ├── adapters/jmlq/     Integraciones server-only con paquetes JMLQ
-│   │   └── persistence/json/  Adapter, transacciones y datos JSON editables
-│   └── shared/                Utilidades y configuración transversal
-├── templates/               Plantillas HTML requeridas en runtime
+├── src/
+│   ├── app/                    Routing y adapters de entrada de Next.js
+│   │   ├── (staff)/            Rutas de personal sin segmento público
+│   │   ├── (general)/          Rutas generales y Posts
+│   │   ├── auth/               Rutas públicas de autenticación
+│   │   └── api/auth/[...nextauth]/ Route Handler de NextAuth
+│   ├── application/            Use cases, commands, queries, DTOs y ports
+│   ├── domain/                 Entidades, invariantes y reglas puras
+│   ├── infrastructure/         Repositorios, proveedores y adapters server-only
+│   ├── presentation/           UI, layout, navegación, presenters y view models
+│   ├── composition/            Factories que ensamblan Application e Infrastructure
+│   ├── types/                  Ampliaciones TypeScript de NextAuth
+│   └── auth.ts                 Entry point server-only de autenticación
+├── public/                    Recursos públicos
+├── templates/                 Plantillas HTML requeridas en runtime
 ├── specs/                   Contratos funcionales versionados
 ├── .agents/skills/          Skills del flujo SDD
 ├── .opencode/               Agentes y comandos personalizados
@@ -198,13 +200,14 @@ open-daycare/
 └── .playwright-mcp/         Evidencia de validaciones visuales
 ```
 
-Los modelos de dominio viven en `app/features/<domain>/types/`. Los fixtures
-estáticos viven en `app/data/mocks/` y sus APIs públicas se exponen mediante
-`index.ts`. Los cuatro JSON editables viven en
-`app/infrastructure/persistence/json/data/` y solo se acceden mediante el
-adapter server-only. Las features exponen barrels públicos; sus operaciones de
-servidor se consumen desde entradas `server` explícitas. Los componentes de
-cliente reciben DTOs mínimos proyectados por el servidor.
+Los modelos de dominio viven en `src/domain/`. Los JSON editables viven en
+`src/infrastructure/persistence/json/data/` y solo se acceden mediante el
+adapter server-only. `src/presentation/` no depende de Infrastructure ni
+Composition; `src/application/` no depende de Infrastructure, Next.js ni React;
+`src/domain/` no depende de otras capas ni de proveedores externos. Las páginas
+y Server Actions de `src/app/` delegan en casos de uso ensamblados por
+`src/composition/`. Los Client Components reciben DTOs mínimos proyectados por
+el servidor y no importan Infrastructure ni configuración privada.
 
 ### Diagrama del laboratorio
 
@@ -214,26 +217,25 @@ flowchart TD
     I --> R[npm run dev]
     R --> APP["OpenDayCare<br/>Next.js App Router"]
 
-    APP --> ROUTES["Rutas en app/"]
-    ROUTES --> UI["components/ui"]
-    ROUTES --> FEATURES["features/feed<br/>features/kids<br/>features/auth"]
-    FEATURES --> MOCKS["data/mocks"]
-    FEATURES --> SHARED[shared]
-
-    APP --> INFRA["app/infrastructure<br/>server-only"]
+    APP --> ROUTES["Rutas en src/app/"]
+    ROUTES --> PRESENTATION["src/presentation"]
+    ROUTES --> APPLICATION["src/application"]
+    APPLICATION --> DOMAIN["src/domain"]
+    COMPOSITION["src/composition"] --> APPLICATION
+    COMPOSITION --> INFRA["src/infrastructure<br/>server-only"]
     INFRA --> JSON["persistence/json/data"]
     INFRA --> MAILER["sendParentInvitationEmail"]
     MAILER --> PACKAGE["@jmlq/mailer"]
     MAILER --> TEMPLATE["templates/<br/>parent-invitation.html"]
     PACKAGE --> SMTP["Servidor SMTP"]
-    AUTH["features/auth<br/>parent invitations"] --> MAILER
+    AUTH["src/app/auth<br/>parent invitations"] --> COMPOSITION
 
     U --> SPEC["/spec"]
     SPEC --> FILE["specs/NN-slug.md"]
     FILE --> HUMAN["Revisión y aprobación humana"]
     HUMAN --> IMPL["/spec-impl"]
     IMPL --> GIT["Git<br/>rama spec-NN-slug"]
-    GIT --> CODE["Código en app/"]
+    GIT --> CODE["Código en src/"]
     CODE --> VALIDATE["/spec-acceptance-validator"]
     VALIDATE --> AGENT[Agente personalizado]
     AGENT --> PW[Playwright MCP]
@@ -255,19 +257,6 @@ Las specs se almacenan en `specs/` con el formato `NN-slug.md`. Sus estados son:
 4. `Implement`: implementación realizada y aceptación en validación.
 5. `Implemented`: implementación y aceptación completadas.
 6. `Obsolete`: reemplazada o descartada.
-
-Specs existentes:
-
-| Spec | Estado | Resultado |
-| --- | --- | --- |
-| `01-home-feed.md` | `Implemented` | Feed responsive en `/` |
-| `02-shared-ui-and-mocks.md` | `Implemented` | UI reutilizable y mocks centralizados |
-| `03-kids-and-profiles.md` | `Implemented` | Listado, perfiles, búsqueda y 404 de Kids |
-| `04-kid-allergy-tags.md` | `Implemented` | Badges de alergias y proyección segura |
-| `05-account-activation-and-login.md` | `Approved` | Login, activación y modelos de identidad |
-| `09-account-activation-session-and-login.md` | `Implemented` | Activación persistente, NextAuth v4, login, logout y autorización por rol |
-| `10-parent-linking-and-invitation.md` | `Implement` | Vinculación de padres e invitaciones; aceptación validada salvo prueba SMTP real |
-| `11-family-home-feed.md` | `Implement` | Feed familiar filtrado en Home; responsive y verificaciones Playwright completadas |
 
 ## Flujo Spec Driven Development
 
@@ -391,8 +380,8 @@ Client Components y verificación, consulta `AGENTS.md`.
 
 ## Componentes UI reutilizables
 
-Los componentes visuales compartidos viven en `app/components/ui/` y se
-consumen mediante su barrel público `app/components/ui/index.ts`. No contienen
+Los componentes visuales compartidos viven en `src/presentation/ui/` y se
+consumen mediante su barrel público `src/presentation/ui/index.ts`. No contienen
 datos de negocio: reciben contenido, variantes, destinos y `className` mediante
 props.
 
@@ -401,7 +390,7 @@ en escritorio y móvil:
 
 ```mermaid
 flowchart LR
-    BARREL["app/components/ui/index.ts"]
+    BARREL["src/presentation/ui/index.ts"]
     BARREL --> BRAND[Brand]
     BARREL --> AVATAR[Avatar]
     BARREL --> BUTTON[Button]
@@ -419,8 +408,8 @@ flowchart LR
     SIDEBAR --> DESKTOP[Sidebar de escritorio]
     SIDEBAR --> MOBILE[Navegación inferior móvil]
 
-    HOME["app/(staff)/home/page.tsx"] -->|navigation config| SIDEBAR
-    KIDS["app/(staff)/kids/layout.tsx"] -->|activeSection: children| SIDEBAR
+    HOME["src/app/(staff)/home/page.tsx"] -->|navigation config| SIDEBAR
+    KIDS["src/app/(staff)/kids/layout.tsx"] -->|activeSection: children| SIDEBAR
 ```
 
 Dentro de `NavigationControl`, `LinkButton` se usa cuando una opción tiene un
