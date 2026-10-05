@@ -1,4 +1,4 @@
-import { Avatar, LinkButton } from "@/src/components/ui";
+import { Avatar, LinkButton } from "@/src/presentation/ui";
 import type { FamilyFeedFilter, FamilyFeedOption } from "@/src/domain/family/feed";
 import styles from "./family-feed-filters.module.css";
 

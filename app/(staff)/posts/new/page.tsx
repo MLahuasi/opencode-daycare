@@ -7,7 +7,7 @@ import {
 import {
   PostForm,
   type PostFormInitialValues,
-} from "@/src/components/domain/post";
+} from "@/src/presentation/post";
 
 /**
  * Renders the staff form for creating a new Post.

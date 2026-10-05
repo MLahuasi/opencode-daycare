@@ -3,7 +3,7 @@ import { requireActiveSession } from "@/auth";
 import { getFamilyFeedContext } from "@/src/application/family/feed";
 import { PostDetailView } from "@/app/features/post-detail";
 import { getPostDetail } from "@/app/features/post-detail/server";
-import { FamilySidebar, StaffSidebar } from "@/src/components/layout";
+import { FamilySidebar, StaffSidebar } from "@/src/presentation/layout";
 import { staffNavigationConfig } from "@/src/config";
 import { createFamilyFeedComposition } from "@/src/infrastructure/composition/family";
 

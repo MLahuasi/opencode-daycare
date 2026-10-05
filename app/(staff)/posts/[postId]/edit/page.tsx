@@ -9,7 +9,7 @@ import { createPostImageStorage } from "@/src/infrastructure/composition/post";
 import {
   PostForm,
   type PostFormInitialValues,
-} from "@/src/components/domain/post";
+} from "@/src/presentation/post";
 
 /** Dynamic parameters accepted by the staff Post edit route. */
 type EditPostPageProps = {

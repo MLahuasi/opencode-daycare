@@ -1,6 +1,6 @@
-import { Avatar, CameraIcon, LinkButton } from "@/src/components/ui";
+import { Avatar, CameraIcon, LinkButton } from "@/src/presentation/ui";
 import type { FeedOverview, FeedPost } from "../types";
-import { FeedPostCard } from "@/src/components/domain/post";
+import { FeedPostCard } from "@/src/presentation/post";
 import styles from "./feed-content.module.css";
 
 /** Props accepted by the staff feed content component. */

@@ -1,4 +1,4 @@
-import { LinkButton } from "@/src/components/ui";
+import { LinkButton } from "@/src/presentation/ui";
 import {
   calculateAge,
   getKidRoom,

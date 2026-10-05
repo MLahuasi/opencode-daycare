@@ -8,7 +8,7 @@ import {
   PeopleIcon,
   PlusIcon,
   UserIcon,
-} from "@/src/components/ui";
+} from "@/src/presentation/ui";
 import type { ComponentType, SVGAttributes } from "react";
 import type {
   StaffNavigationConfig,

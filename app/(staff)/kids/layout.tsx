@@ -1,4 +1,4 @@
-import { StaffSidebar } from "@/src/components/layout";
+import { StaffSidebar } from "@/src/presentation/layout";
 import { staffNavigationConfig } from "@/src/config";
 import { requireStaffSession } from "@/auth";
 import type { ReactNode } from "react";

@@ -1,4 +1,4 @@
-import { Button } from "@/src/components/ui";
+import { Button } from "@/src/presentation/ui";
 import styles from "./kid-profile.module.css";
 
 /**

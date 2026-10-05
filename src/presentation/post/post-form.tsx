@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import type { SubmitEvent } from "react";
-import { Button, FormField, LinkButton } from "@/src/components/ui";
+import { Button, FormField, LinkButton } from "@/src/presentation/ui";
 import type { Kid } from "@/src/domain/kid";
 import type { Room } from "@/src/domain/room";
 import { MAX_POST_BODY_LENGTH } from "@/app/features/feed/schemas";

@@ -4,9 +4,9 @@ import {
   LinkButton,
   PhotoIcon,
   type BadgeVariant,
-} from "@/src/components/ui";
+} from "@/src/presentation/ui";
 import { deleteFeedCommentAction } from "@/app/features/feed/server";
-import { DeleteCommentButton } from "@/src/components/domain/post";
+import { DeleteCommentButton } from "@/src/presentation/post";
 import type { PostDetail } from "../types";
 import styles from "./post-detail-view.module.css";
 

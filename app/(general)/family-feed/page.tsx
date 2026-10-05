@@ -9,7 +9,7 @@ import {
   type FamilyFeedFilter,
 } from "@/src/domain/family/feed";
 import { requireActiveSession } from "@/auth";
-import { FamilySidebar } from "@/src/components/layout";
+import { FamilySidebar } from "@/src/presentation/layout";
 import { createFamilyFeedComposition } from "@/src/infrastructure/composition/family";
 import styles from "./family-feed.module.css";
 

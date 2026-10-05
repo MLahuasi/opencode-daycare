@@ -7,7 +7,7 @@ import {
   FormField,
   LinkButton,
   TagsInput,
-} from "@/src/components/ui";
+} from "@/src/presentation/ui";
 import { parseCommaSeparatedTags } from "@/src/utils";
 import type { Room } from "@/src/domain/room";
 import type { KidFormAction, KidFormActionState } from "../_actions/types";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button, CheckboxField, FormField } from "@/src/components/ui";
+import { Button, CheckboxField, FormField } from "@/src/presentation/ui";
 import {
   acceptParentInvitationAction,
 } from "../_actions";
