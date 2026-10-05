@@ -4,7 +4,7 @@ import type {
   InvitationEmailInput,
   InvitationEmailResult,
   InvitationMailer,
-} from "@/src/application/family/ports";
+} from "@/application/family/ports";
 import { sendParentInvitationEmail } from "./parent-invitation-email";
 
 /** Adapter that exposes the current JMLQ mailer through the Family port. */

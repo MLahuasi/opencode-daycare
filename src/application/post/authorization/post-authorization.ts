@@ -1,4 +1,4 @@
-import type { PersistedPost } from "@/src/domain/post";
+import type { PersistedPost } from "@/domain/post";
 import type {
   PostAccessRepository,
   PostAuthorization,

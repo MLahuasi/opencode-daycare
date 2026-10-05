@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { RoomRepository as RoomRepositoryPort } from "@/src/application/kid/ports";
-import type { Room } from "@/src/domain/room";
+import type { RoomRepository as RoomRepositoryPort } from "@/application/kid/ports";
+import type { Room } from "@/domain/room";
 import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 /** JSON-backed persistence adapter for Rooms. */
 export class RoomRepository implements RoomRepositoryPort {

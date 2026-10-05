@@ -1,11 +1,11 @@
 import type {
   FamilyFeedFilter,
   ParentKid,
-} from "@/src/domain/family";
-import type { Kid } from "@/src/domain/kid";
-import type { Person } from "@/src/domain/person";
-import type { Post } from "@/src/domain/post";
-import type { Room } from "@/src/domain/room";
+} from "@/domain/family";
+import type { Kid } from "@/domain/kid";
+import type { Person } from "@/domain/person";
+import type { Post } from "@/domain/post";
+import type { Room } from "@/domain/room";
 
 /** Server-authorized relationships and records used by Family Feed. */
 export type FamilyFeedContext = {

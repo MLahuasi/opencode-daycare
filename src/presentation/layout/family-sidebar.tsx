@@ -1,10 +1,10 @@
-import { Avatar, Brand, LinkButton } from "@/src/presentation/ui";
-import { LogoutButton } from "@/src/presentation/layout";
-import type { Person } from "@/src/domain/person";
+import { Avatar, Brand, LinkButton } from "@/presentation/ui";
+import { LogoutButton } from "@/presentation/layout";
+import type { Person } from "@/domain/person";
 import {
   familyNavigationConfig,
   type FamilyNavigationIcon,
-} from "@/src/presentation/navigation";
+} from "@/presentation/navigation";
 import type { ReactNode } from "react";
 import styles from "./family-sidebar.module.css";
 

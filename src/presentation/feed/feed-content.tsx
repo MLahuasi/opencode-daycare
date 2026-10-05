@@ -1,6 +1,6 @@
-import { Avatar, CameraIcon, LinkButton } from "@/src/presentation/ui";
-import type { Post } from "@/src/domain/post";
-import { FeedPostCard, presentFeedPost } from "@/src/presentation/post";
+import { Avatar, CameraIcon, LinkButton } from "@/presentation/ui";
+import type { Post } from "@/domain/post";
+import { FeedPostCard, presentFeedPost } from "@/presentation/post";
 import styles from "./feed-content.module.css";
 
 /** Visual copy shown by the staff feed header. */

@@ -1,5 +1,5 @@
 import type { CreateCredentialInput } from "./dto/credential";
-import type { Credential } from "@/src/domain/auth";
+import type { Credential } from "@/domain/auth";
 import type {
   AuthIdentifierGenerator,
   CredentialRepository,

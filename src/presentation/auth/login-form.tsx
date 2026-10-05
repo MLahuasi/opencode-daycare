@@ -4,7 +4,7 @@ import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { SubmitEvent } from "react";
 import { useState } from "react";
-import { Button, FormField, LinkButton } from "@/src/presentation/ui";
+import { Button, FormField, LinkButton } from "@/presentation/ui";
 import styles from "./auth.module.css";
 
 /**

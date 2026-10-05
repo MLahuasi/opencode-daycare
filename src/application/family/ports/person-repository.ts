@@ -1,4 +1,4 @@
-import type { Person } from "@/src/domain/person";
+import type { Person } from "@/domain/person";
 
 /** Persistence operations required by Family invitation use cases. */
 export interface FamilyPersonRepository {

@@ -1,4 +1,4 @@
-import type { ParentKid } from "@/src/domain/family";
+import type { ParentKid } from "@/domain/family";
 
 /** Persistence operations required by Family relationship use cases. */
 export interface FamilyParentKidRepository {

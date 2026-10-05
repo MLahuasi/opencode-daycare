@@ -2,10 +2,10 @@ import "server-only";
 
 import type {
   FamilyFeedQueryDependencies,
-} from "@/src/application/family/feed";
-import { derivePostEngagement, hasSinglePostDestination } from "@/src/domain/post";
-import type { Post } from "@/src/domain/post";
-import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
+} from "@/application/family/feed";
+import { derivePostEngagement, hasSinglePostDestination } from "@/domain/post";
+import type { Post } from "@/domain/post";
+import { createCloudinaryImageStorage } from "@/infrastructure/adapters/cloudinary";
 import {
   KidRepository,
   PostCommentRepository,
@@ -14,7 +14,7 @@ import {
   ParentKidRepository,
   PersonRepository,
   RoomRepository,
-} from "@/src/infrastructure/persistence/repositories";
+} from "@/infrastructure/persistence/repositories";
 
 /** Concrete server-only dependencies required by Family Feed queries. */
 export type FamilyFeedComposition = FamilyFeedQueryDependencies;

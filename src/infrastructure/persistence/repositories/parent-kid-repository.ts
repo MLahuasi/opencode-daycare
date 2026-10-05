@@ -1,15 +1,15 @@
 import "server-only";
 
-import type { FamilyParentKidRepository } from "@/src/application/family/ports";
+import type { FamilyParentKidRepository } from "@/application/family/ports";
 import type {
   ParentKidRecord,
   ParentKidRepository as ParentKidRepositoryPort,
-} from "@/src/application/kid/ports";
+} from "@/application/kid/ports";
 import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 /** JSON-backed persistence adapter for parent-to-kid relationships. */
 export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParentKidRepository {

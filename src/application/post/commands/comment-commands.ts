@@ -1,4 +1,4 @@
-import type { PostComment } from "@/src/domain/post";
+import type { PostComment } from "@/domain/post";
 import type { CreateCommentInput, UpdateCommentInput } from "../dto";
 
 /**

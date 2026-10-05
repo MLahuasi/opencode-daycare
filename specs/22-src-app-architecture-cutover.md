@@ -1,6 +1,6 @@
 # SPEC 22 — Corte final del App Router a src
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 16, SPEC 17, SPEC 18, SPEC 19, SPEC 20, SPEC 21
 > **Date:** 2026-09-30
 > **Objective:** Trasladar atómicamente el App Router a `src/app` después del saneamiento de capas y dejar el alias `@/*` apuntando a `src/*`.
@@ -120,11 +120,11 @@ Solo existirán directorios que contengan archivos con responsabilidad concreta.
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Next.js detecta accidentalmente el router antiguo. | Eliminar `app/` raíz antes del build y verificar el árbol físicamente. |
-| El corte mezcla deuda arquitectónica con routing. | Tratar las precondiciones de SPEC 21 como bloqueo previo. |
-| El alias final rompe tipos o imports server-only. | Ejecutar TypeScript, build y búsquedas de imports después del cambio. |
+| Risk                                                  | Mitigation                                                                           |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Next.js detecta accidentalmente el router antiguo.    | Eliminar `app/` raíz antes del build y verificar el árbol físicamente.               |
+| El corte mezcla deuda arquitectónica con routing.     | Tratar las precondiciones de SPEC 21 como bloqueo previo.                            |
+| El alias final rompe tipos o imports server-only.     | Ejecutar TypeScript, build y búsquedas de imports después del cambio.                |
 | Un redirect o Route Handler queda fuera del traslado. | Comparar el inventario de rutas antes y después y verificar cada URL con Playwright. |
 
 ## What is **not** in this spec

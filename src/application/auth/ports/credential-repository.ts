@@ -1,4 +1,4 @@
-import type { Credential } from "@/src/domain/auth";
+import type { Credential } from "@/domain/auth";
 
 /** Persistence operations required by Auth credential use cases. */
 export interface CredentialRepository {

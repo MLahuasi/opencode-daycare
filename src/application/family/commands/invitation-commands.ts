@@ -2,9 +2,9 @@ import {
   getInvitationStatus,
   isInvitationExpired,
   type Invitation,
-} from "@/src/domain/family";
-import { isValidActivationPassword } from "@/src/domain/auth";
-import type { Person } from "@/src/domain/person";
+} from "@/domain/family";
+import { isValidActivationPassword } from "@/domain/auth";
+import type { Person } from "@/domain/person";
 import type {
   CreateInvitationInput,
   CreatedInvitation,

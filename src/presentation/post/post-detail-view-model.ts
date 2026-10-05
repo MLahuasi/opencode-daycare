@@ -1,4 +1,4 @@
-import type { PostDetail } from "@/src/application/post";
+import type { PostDetail } from "@/application/post";
 
 /** Comment formatted for the Post detail view. */
 export type PostDetailCommentViewModel = PostDetail["comments"][number] & {

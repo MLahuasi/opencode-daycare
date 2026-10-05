@@ -1,6 +1,6 @@
-import type { Kid } from "@/src/domain/kid";
-import type { Person } from "@/src/domain/person";
-import type { Room } from "@/src/domain/room";
+import type { Kid } from "@/domain/kid";
+import type { Person } from "@/domain/person";
+import type { Room } from "@/domain/room";
 import type { KidDependencies } from "../kid-dependencies";
 import type { LinkedParent } from "../dto";
 import type { ParentKidRecord } from "../ports";

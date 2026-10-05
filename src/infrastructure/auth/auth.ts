@@ -3,12 +3,12 @@ import "server-only";
 import { getServerSession, type NextAuthOptions, type Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
-import { getEnvironment } from "@/src/infrastructure/config/server";
-import { BcryptPasswordHasher } from "@/src/infrastructure/adapters/password";
+import { getEnvironment } from "@/infrastructure/config/server";
+import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
   CredentialRepository,
   PersonRepository,
-} from "@/src/infrastructure/persistence/repositories";
+} from "@/infrastructure/persistence/repositories";
 
 const { auth: authEnvironment } = getEnvironment();
 

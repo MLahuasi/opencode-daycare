@@ -1,6 +1,6 @@
-import { derivePostEngagement, type Post } from "@/src/domain/post";
-import type { Kid } from "@/src/domain/kid";
-import type { Room } from "@/src/domain/room";
+import { derivePostEngagement, type Post } from "@/domain/post";
+import type { Kid } from "@/domain/kid";
+import type { Room } from "@/domain/room";
 import type { PostViewer } from "../ports";
 import type {
   CreateCommentInput,

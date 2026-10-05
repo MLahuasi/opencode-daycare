@@ -1,11 +1,11 @@
 import "server-only";
 
-import type { PostAccessRepository } from "@/src/application/post/ports";
-import type { Kid } from "@/src/domain/kid";
-import type { ParentKid } from "@/src/domain/family";
+import type { PostAccessRepository } from "@/application/post/ports";
+import type { Kid } from "@/domain/kid";
+import type { ParentKid } from "@/domain/family";
 import {
   readCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 type StaffRoomAssignment = {
   personId: string;

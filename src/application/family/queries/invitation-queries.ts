@@ -1,4 +1,4 @@
-import { getInvitationStatus } from "@/src/domain/family";
+import { getInvitationStatus } from "@/domain/family";
 import type { FamilyDependencies } from "../family-dependencies";
 import type { InvitationTokenResolution } from "../dto/invitation";
 

@@ -8,10 +8,10 @@ import {
   LinkButton,
   PhotoIcon,
   type BadgeVariant,
-} from "@/src/presentation/ui";
+} from "@/presentation/ui";
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
-import type { PostType } from "@/src/domain/post";
+import type { PostType } from "@/domain/post";
 import styles from "./feed-post-card.module.css";
 import type { FeedPostViewModel } from "./feed-post-view-model";
 

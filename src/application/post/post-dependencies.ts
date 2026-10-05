@@ -12,7 +12,7 @@ import type {
   KidRepository,
   PersonRepository,
   RoomRepository,
-} from "@/src/application/kid/ports";
+} from "@/application/kid/ports";
 
 /** Persistence, authorization and provider capabilities required by Post. */
 export type PostDependencies = {

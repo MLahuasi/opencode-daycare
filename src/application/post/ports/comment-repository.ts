@@ -1,4 +1,4 @@
-import type { PostComment } from "@/src/domain/post";
+import type { PostComment } from "@/domain/post";
 
 /** Persistence operations required by Post comment commands. */
 export interface PostCommentRepository {

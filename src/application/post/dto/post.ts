@@ -1,4 +1,4 @@
-import type { Kid } from "@/src/domain/kid";
+import type { Kid } from "@/domain/kid";
 import type {
   Post,
   PostComment,
@@ -6,9 +6,9 @@ import type {
   PostReaction,
   PersistedPost,
   PostType,
-} from "@/src/domain/post";
-import type { Person, PersonRole } from "@/src/domain/person";
-import type { Room } from "@/src/domain/room";
+} from "@/domain/post";
+import type { Person, PersonRole } from "@/domain/person";
+import type { Room } from "@/domain/room";
 
 /** Values required to create a Post. */
 export type CreatePostInput = {

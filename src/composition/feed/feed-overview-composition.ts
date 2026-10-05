@@ -1,6 +1,6 @@
 import "server-only";
 
-import { readCollection } from "@/src/infrastructure/persistence";
+import { readCollection } from "@/infrastructure/persistence";
 
 /** Visual copy persisted for the staff feed header. */
 export type FeedOverviewRecord = {

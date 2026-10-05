@@ -1,4 +1,4 @@
-import type { PostReaction } from "@/src/domain/post";
+import type { PostReaction } from "@/domain/post";
 
 /** Persistence operations required by Post reaction commands. */
 export interface PostReactionRepository {

@@ -1,5 +1,5 @@
-import { getTodayIsoDate } from "@/src/utils";
-import type { Room } from "@/src/domain/room";
+import { getTodayIsoDate } from "@/utils";
+import type { Room } from "@/domain/room";
 import type {
   KidFieldValidationResult,
   KidFormErrors,

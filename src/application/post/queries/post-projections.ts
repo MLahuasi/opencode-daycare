@@ -1,5 +1,5 @@
-import type { PostComment, PostReaction } from "@/src/domain/post";
-import type { Person } from "@/src/domain/person";
+import type { PostComment, PostReaction } from "@/domain/post";
+import type { Person } from "@/domain/person";
 import type {
   PostDetail,
   PostDetailComment,

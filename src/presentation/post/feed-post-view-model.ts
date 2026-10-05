@@ -1,4 +1,4 @@
-import type { Post } from "@/src/domain/post";
+import type { Post } from "@/domain/post";
 
 /** Post data formatted for the family feed card. */
 export type FeedPostViewModel = Post & {

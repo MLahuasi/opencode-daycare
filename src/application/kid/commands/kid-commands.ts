@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { getTodayIsoDate } from "@/src/utils";
-import type { Kid } from "@/src/domain/kid";
+import { getTodayIsoDate } from "@/utils";
+import type { Kid } from "@/domain/kid";
 import type { KidDependencies } from "../kid-dependencies";
 import type { KidFormValues } from "../dto";
 import { normalizeSlug } from "../utils";

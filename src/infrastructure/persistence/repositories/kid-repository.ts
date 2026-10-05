@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { KidRepository as KidRepositoryPort } from "@/src/application/kid/ports";
-import type { Kid } from "@/src/domain/kid";
+import type { KidRepository as KidRepositoryPort } from "@/application/kid/ports";
+import type { Kid } from "@/domain/kid";
 import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 /** JSON-backed persistence adapter for Kids. */
 export class KidRepository implements KidRepositoryPort {

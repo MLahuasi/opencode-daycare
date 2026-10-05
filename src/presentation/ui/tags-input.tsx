@@ -6,7 +6,7 @@ import type {
   InputHTMLAttributes,
   KeyboardEvent,
 } from "react";
-import { parseCommaSeparatedTags } from "@/src/utils";
+import { parseCommaSeparatedTags } from "@/utils";
 import styles from "./tags-input.module.css";
 
 type TagsInputProps = Omit<

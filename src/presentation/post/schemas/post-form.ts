@@ -1,4 +1,4 @@
-import type { PostMedia, PostType } from "@/src/domain/post";
+import type { PostMedia, PostType } from "@/domain/post";
 
 /** Maximum number of images attached to one post. */
 export const MAX_POST_MEDIA = 4;
