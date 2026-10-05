@@ -29,6 +29,35 @@ export type PostTargets = {
 };
 
 /**
+ * Determines whether all active parents linked to a kid consent to photo sharing.
+ *
+ * @param dependencies - Persistence capabilities assembled for Post use cases.
+ * @param kidId - Stable identifier of the kid receiving media.
+ * @returns Whether every linked active parent has given photo-sharing consent.
+ */
+export async function hasPhotoSharingConsent(
+  dependencies: Pick<PostDependencies, "parentKids" | "people">,
+  kidId: string,
+): Promise<boolean> {
+  const [parentKids, people] = await Promise.all([
+    dependencies.parentKids.findAll(),
+    dependencies.people.findAll(),
+  ]);
+  const activeParentIds = new Set(
+    people
+      .filter((person) => person.role === "parent" && person.status === "active")
+      .map((person) => person.id),
+  );
+
+  return parentKids
+    .filter(
+      (parentKid) =>
+        parentKid.kidId === kidId && activeParentIds.has(parentKid.parentId),
+    )
+    .every((parentKid) => parentKid.photoSharingConsent);
+}
+
+/**
  * Resolves active Post destinations authorized for a staff viewer.
  *
  * @param dependencies - Persistence and authorization ports.

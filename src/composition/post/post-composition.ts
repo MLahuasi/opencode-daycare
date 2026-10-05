@@ -6,6 +6,7 @@ import {
 } from "@/application/post";
 import {
   KidRepository,
+  ParentKidRepository,
   PersonRepository,
   RoomRepository,
 } from "@/infrastructure/persistence/repositories";
@@ -41,6 +42,7 @@ export function createPostComposition(): PostComposition {
   return {
     authorizationAccess: access,
     people: new PersonRepository(),
+    parentKids: new ParentKidRepository(),
     kids: new KidRepository(),
     rooms: new RoomRepository(),
     posts: new PostRepository(),
