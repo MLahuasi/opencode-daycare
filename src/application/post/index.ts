@@ -40,6 +40,7 @@ export {
   getAuthorizedPosts,
   getPostDetail,
   getPostTargets,
+  hasPhotoSharingConsent,
   toggleReaction,
   updateComment,
   updatePost,

@@ -1,10 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { createPostImageStorage } from "@/composition/post";
-import { readCollection } from "@/infrastructure/persistence";
-import { getPostTargets } from "@/application/post";
+import { getPostTargets, hasPhotoSharingConsent } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
-import type { Person } from "@/domain/person";
-import type { ParentKid } from "@/domain/family";
 import {
   MAX_MEDIA_BYTES,
   validatePostForm,
@@ -124,30 +121,6 @@ function getExistingMedia(
 }
 
 /**
- * Checks whether all active parents linked to a kid consent to photo sharing.
- *
- * @param kidId - Stable identifier of the kid receiving the Post.
- * @returns Whether every linked active parent has given consent.
- */
-async function validateConsent(kidId: string): Promise<boolean> {
-  const [parentKids, people] = await Promise.all([
-    readCollection<ParentKid>("parent-kids.json"),
-    readCollection<Person>("people.json"),
-  ]);
-  const activeParentIds = new Set(
-    people
-      .filter((person) => person.role === "parent" && person.status === "active")
-      .map((person) => person.id),
-  );
-  const linkedActiveParents = parentKids.filter(
-    (parentKid) =>
-      parentKid.kidId === kidId && activeParentIds.has(parentKid.parentId),
-  );
-
-  return linkedActiveParents.every((parentKid) => parentKid.photoSharingConsent);
-}
-
-/**
  * Validates authorization and uploads new images for a post submission.
  *
  * @param formData - Raw values submitted by the post form.
@@ -207,7 +180,7 @@ export async function parsePostSubmission(
   if (
     targetKid &&
     (files.length > 0 || retainedMedia.length > 0) &&
-    !(await validateConsent(targetKid.id))
+    !(await hasPhotoSharingConsent(createPostComposition(), targetKid.id))
   ) {
     return { success: false, state: errorState("media", "No hay consentimiento vigente de todas las familias activas.") };
   }

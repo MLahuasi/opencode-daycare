@@ -81,31 +81,31 @@ Solo existirán directorios que contengan archivos con responsabilidad concreta.
 
 ## Acceptance criteria
 
-- [ ] Existe `src/app` con todas las rutas, layouts y Route Handlers runtime.
-- [ ] No existe un directorio `app/` raíz.
-- [ ] `tsconfig.json` configura `@/*` hacia `src/*`.
-- [ ] No quedan imports `@/src/...` en el código final.
-- [ ] `src/app` contiene solo routing, páginas, layouts, Route Handlers, adapters de entrada y colaboradores privados de ruta.
-- [ ] No existen `features`, `shared`, `src/components` ni `src/infrastructure/composition`.
-- [ ] Existe `src/presentation` para UI, navegación, presenters y view models.
-- [ ] Existe `src/composition` para ensamblar Application e Infrastructure.
-- [ ] Application no depende de Infrastructure ni de APIs específicas de Next.js.
-- [ ] Domain no depende de Application, Infrastructure, Next.js, React, NextAuth, filesystem ni SDKs externos.
-- [ ] Infrastructure no depende de Presentation, Composition ni `src/app`.
-- [ ] Presentation no depende de Infrastructure ni Composition.
-- [ ] Composition no depende de Presentation ni `src/app`.
-- [ ] Ningún Client Component importa Infrastructure, filesystem o configuración privada.
-- [ ] Las páginas y Server Actions delegan en casos de uso ensamblados por composición.
-- [ ] Solo `/` conserva redirect de compatibilidad; las rutas legacy de activación responden 404 según SPEC 18.
-- [ ] `/login`, `/kids/:id/edit`, `/auth/link-parent` y las cuatro rutas antiguas de Posts responden 404.
-- [ ] Los JSON mantienen hashes byte a byte respecto de la línea base.
-- [ ] No existen directorios vacíos creados únicamente por simetría.
-- [ ] `README.md` y `AGENTS.md` documentan el árbol final y sus límites.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica rutas de staff, general, auth, Posts, Kids, redirects permitidos y 404 legacy en escritorio y móvil.
+- [x] Existe `src/app` con todas las rutas, layouts y Route Handlers runtime.
+- [x] No existe un directorio `app/` raíz.
+- [x] `tsconfig.json` configura `@/*` hacia `src/*`.
+- [x] No quedan imports `@/src/...` en el código final.
+- [x] `src/app` contiene solo routing, páginas, layouts, Route Handlers, adapters de entrada y colaboradores privados de ruta.
+- [x] No existen `features`, `shared`, `src/components` ni `src/infrastructure/composition`.
+- [x] Existe `src/presentation` para UI, navegación, presenters y view models.
+- [x] Existe `src/composition` para ensamblar Application e Infrastructure.
+- [x] Application no depende de Infrastructure ni de APIs específicas de Next.js.
+- [x] Domain no depende de Application, Infrastructure, Next.js, React, NextAuth, filesystem ni SDKs externos.
+- [x] Infrastructure no depende de Presentation, Composition ni `src/app`.
+- [x] Presentation no depende de Infrastructure ni Composition.
+- [x] Composition no depende de Presentation ni `src/app`.
+- [x] Ningún Client Component importa Infrastructure, filesystem o configuración privada.
+- [x] Las páginas y Server Actions delegan en casos de uso ensamblados por composición.
+- [x] Solo `/` conserva redirect de compatibilidad; las rutas legacy de activación responden 404 según SPEC 18.
+- [x] `/login`, `/kids/:id/edit`, `/auth/link-parent` y las cuatro rutas antiguas de Posts responden 404.
+- [x] Los JSON mantienen hashes byte a byte respecto de la línea base.
+- [x] No existen directorios vacíos creados únicamente por simetría.
+- [x] `README.md` y `AGENTS.md` documentan el árbol final y sus límites.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica rutas de staff, general, auth, Posts, Kids, redirects permitidos y 404 legacy en escritorio y móvil.
 
 ## Decisions
 

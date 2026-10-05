@@ -10,6 +10,7 @@ import type {
 } from "./ports";
 import type {
   KidRepository,
+  ParentKidRepository,
   PersonRepository,
   RoomRepository,
 } from "@/application/kid/ports";
@@ -18,6 +19,7 @@ import type {
 export type PostDependencies = {
   authorizationAccess: PostAccessRepository;
   people: PersonRepository;
+  parentKids: ParentKidRepository;
   kids: KidRepository;
   rooms: RoomRepository;
   posts: PostRepository;
