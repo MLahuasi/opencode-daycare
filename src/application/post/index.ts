@@ -33,3 +33,14 @@ export type {
 } from "./ports";
 export { PostAuthorizationPolicy } from "./authorization";
 export { projectPostDetail } from "./queries";
+export {
+  createComment,
+  createPost,
+  deleteComment,
+  getAuthorizedPosts,
+  getPostDetail,
+  getPostTargets,
+  toggleReaction,
+  updateComment,
+  updatePost,
+} from "./use-cases";

@@ -1,4 +1,4 @@
-import { LinkButton } from "@/src/components/ui";
+import { LinkButton } from "@/src/presentation/ui";
 import {
   calculateAge,
   getKidRoom,
@@ -15,7 +15,7 @@ import {
 import styles from "./_components/kid-profile.module.css";
 import { getTodayIsoDate } from "@/src/utils";
 import { requireStaffSession } from "@/auth";
-import { createKidComposition } from "@/src/infrastructure/composition/kid";
+import { createKidComposition } from "@/src/composition/kid";
 import { notFound } from "next/navigation";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;

@@ -4,11 +4,9 @@ export type { ParentRelationship } from "./parent-relationship";
 export { getInvitationStatus, isInvitationExpired } from "./invitation";
 export type {
   FamilyFeedFilter,
-  FamilyFeedOption,
   FamilyFeedPost,
 } from "./feed";
 export {
-  buildFamilyFeedOptions,
   selectActiveFamilyKids,
   selectFamilyFeedPosts,
 } from "./feed";

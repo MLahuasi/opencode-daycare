@@ -41,26 +41,26 @@ function isValidCalendarDate(
 
 function validateKidName(value: unknown): KidFieldValidationResult {
   if (typeof value !== "string") {
-    return { value: "", error: "Ingresa el nombre completo." };
+    return { value: "", error: "nameRequired" };
   }
 
   const normalizedName = value.trim().replace(/\s+/g, " ");
 
   if (!normalizedName) {
-    return { value: normalizedName, error: "Ingresa el nombre completo." };
+    return { value: normalizedName, error: "nameRequired" };
   }
 
   if (normalizedName.length > MAX_NAME_LENGTH) {
     return {
       value: normalizedName,
-      error: "El nombre no puede superar los 120 caracteres.",
+      error: "nameTooLong",
     };
   }
 
   if (normalizedName.split(" ").length < 2) {
     return {
       value: normalizedName,
-      error: "Ingresa al menos un nombre y un apellido.",
+      error: "nameMissingLastName",
     };
   }
 
@@ -72,14 +72,14 @@ function validateKidBirthDate(
   todayIsoDate = getTodayIsoDate(),
 ): KidFieldValidationResult {
   if (typeof value !== "string" || !value.trim()) {
-    return { value: "", error: "Ingresa la fecha de nacimiento." };
+    return { value: "", error: "birthDateRequired" };
   }
 
   const displayDate = value.trim();
   const match = DISPLAY_DATE_PATTERN.exec(displayDate);
 
   if (!match) {
-    return { value: displayDate, error: "Usa el formato dd/mm/aaaa." };
+    return { value: displayDate, error: "birthDateUnexpectedFormat" };
   }
 
   const day = Number(match[1]);
@@ -87,7 +87,7 @@ function validateKidBirthDate(
   const year = Number(match[3]);
 
   if (!isValidCalendarDate(year, month, day)) {
-    return { value: displayDate, error: "Ingresa una fecha válida." };
+    return { value: displayDate, error: "birthDateInvalid" };
   }
 
   const isoDate = `${match[3]}-${match[2]}-${match[1]}`;
@@ -95,7 +95,7 @@ function validateKidBirthDate(
   if (isoDate > todayIsoDate) {
     return {
       value: displayDate,
-      error: "La fecha de nacimiento no puede ser futura.",
+      error: "birthDateFuture",
     };
   }
 
@@ -107,13 +107,13 @@ function validateKidRoomId(
   rooms: readonly Room[],
 ): KidFieldValidationResult {
   if (typeof value !== "string" || !value.trim()) {
-    return { value: "", error: "Selecciona una sala." };
+    return { value: "", error: "roomRequired" };
   }
 
   const roomId = value.trim();
 
   if (!rooms.some((room) => room.id === roomId)) {
-    return { value: roomId, error: "Selecciona una sala válida." };
+    return { value: roomId, error: "roomInvalid" };
   }
 
   return { value: roomId };
@@ -125,7 +125,7 @@ function validateKidAllergies(value: unknown): KidFieldValidationResult {
   }
 
   if (typeof value !== "string") {
-    return { value: "", error: "Las alergias deben ser texto." };
+    return { value: "", error: "allergiesUnexpectedType" };
   }
 
   return { value: parseCommaSeparatedTags(value).join(", ") };
@@ -137,7 +137,7 @@ function validateKidMedicalNotes(value: unknown): KidFieldValidationResult {
   }
 
   if (typeof value !== "string") {
-    return { value: "", error: "Las notas médicas deben ser texto." };
+    return { value: "", error: "medicalNotesUnexpectedType" };
   }
 
   return { value: value.trim() };

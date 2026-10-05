@@ -1,8 +1,9 @@
-import type { FeedPost } from "@/app/features/feed";
-import { FeedPostCard } from "@/src/components/domain/post";
-import { toggleFeedReactionAction } from "@/app/features/feed/actions";
+import type { Post } from "@/src/domain/post";
+import { FeedPostCard, presentFeedPost } from "@/src/presentation/post";
+import { toggleFeedReactionAction } from "@/app/_actions/posts";
 import type { Person } from "@/src/domain/person";
-import type { FamilyFeedFilter, FamilyFeedOption } from "@/src/domain/family/feed";
+import type { FamilyFeedFilter } from "@/src/domain/family/feed";
+import type { FamilyFeedOption } from "@/src/presentation/family";
 import { FamilyFeedFilters } from "./family-feed-filters";
 import styles from "./family-feed-content.module.css";
 
@@ -41,7 +42,7 @@ type FamilyFeedContentProps = {
   /** Parent identity displayed in the greeting. */
   person: Pick<Person, "name">;
   /** Authorized Posts to render as cards. */
-  posts: readonly FeedPost[];
+  posts: readonly Post[];
   /** Filter currently applied to the feed. */
   selectedFilter: FamilyFeedFilter;
 };
@@ -92,7 +93,7 @@ export function FamilyFeedContent({
                 commentHref={`/posts/${encodeURIComponent(post.id)}/comments/new`}
                 key={post.id}
                 onToggleReaction={toggleFeedReactionAction}
-                post={post}
+                post={presentFeedPost(post)}
               />
             ))}
           </div>

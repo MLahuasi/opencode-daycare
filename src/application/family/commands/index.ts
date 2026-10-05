@@ -2,6 +2,7 @@ export {
   acceptInvitation,
   createInvitation,
   createParentKidFromInvitation,
+  ExistingInvitationParentKidError,
   ExistingInvitationPersonError,
   ExistingParentKidError,
   InvalidInvitationAcceptanceError,

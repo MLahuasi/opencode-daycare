@@ -89,5 +89,19 @@
     "kidId": "493c86d1-f2f3-42aa-a36f-656102bf6472",
     "relationship": "mother",
     "photoSharingConsent": true
+  },
+  {
+    "id": "parent-kid-92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8-54f37876-e15f-4aef-a517-c1f6b2e4b31d",
+    "parentId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "kidId": "54f37876-e15f-4aef-a517-c1f6b2e4b31d",
+    "relationship": "guardian",
+    "photoSharingConsent": true
+  },
+  {
+    "id": "parent-kid-0a154e4f-9cfb-478d-b7d0-6103eb04b4e2-54f37876-e15f-4aef-a517-c1f6b2e4b31d",
+    "parentId": "0a154e4f-9cfb-478d-b7d0-6103eb04b4e2",
+    "kidId": "54f37876-e15f-4aef-a517-c1f6b2e4b31d",
+    "relationship": "mother",
+    "photoSharingConsent": true
   }
 ]

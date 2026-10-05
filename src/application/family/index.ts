@@ -3,6 +3,7 @@ export {
   createInvitation,
   createParentKidFromInvitation,
   ExistingInvitationPersonError,
+  ExistingInvitationParentKidError,
   ExistingParentKidError,
   InvalidInvitationAcceptanceError,
 } from "./commands";

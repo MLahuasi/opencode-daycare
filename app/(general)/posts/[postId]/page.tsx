@@ -1,11 +1,14 @@
 import { notFound } from "next/navigation";
 import { requireActiveSession } from "@/auth";
+import { deleteFeedCommentAction } from "@/app/_actions/posts";
 import { getFamilyFeedContext } from "@/src/application/family/feed";
-import { PostDetailView } from "@/app/features/post-detail";
-import { getPostDetail } from "@/app/features/post-detail/server";
-import { FamilySidebar, StaffSidebar } from "@/src/components/layout";
-import { staffNavigationConfig } from "@/src/config";
-import { createFamilyFeedComposition } from "@/src/infrastructure/composition/family";
+import { getPostDetail } from "@/src/application/post";
+import { PostDetailView } from "@/src/presentation/post";
+import { FamilySidebar, StaffSidebar } from "@/src/presentation/layout";
+import { staffNavigationConfig } from "@/src/presentation/navigation";
+import { createFamilyFeedComposition } from "@/src/composition/family";
+import { createPostComposition } from "@/src/composition/post";
+import { presentPostDetail } from "@/src/presentation/post";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -25,11 +28,16 @@ export default async function PostDetailPage({
 }: PostDetailPageProps) {
   const session = await requireActiveSession();
   const { postId } = await params;
-  const detail = await getPostDetail(postId);
+   const detail = await getPostDetail(
+     createPostComposition(),
+     postId,
+     { personId: session.user.personId, role: session.user.role },
+   );
 
-  if (!detail) {
-    notFound();
-  }
+   if (!detail) {
+     notFound();
+   }
+   const viewModel = presentPostDetail(detail);
 
   if (session.user.role === "parent") {
     const familyContext = await getFamilyFeedContext(
@@ -43,7 +51,8 @@ export default async function PostDetailPage({
         <PostDetailView
           backHref="/family-feed"
           className="min-w-0 flex-1"
-          detail={detail}
+          deleteCommentAction={deleteFeedCommentAction}
+          detail={viewModel}
           viewerPersonId={session.user.personId}
         />
       </div>
@@ -56,7 +65,8 @@ export default async function PostDetailPage({
       <PostDetailView
         backHref="/home"
         className="min-w-0 flex-1"
-        detail={detail}
+        deleteCommentAction={deleteFeedCommentAction}
+        detail={viewModel}
         viewerPersonId={session.user.personId}
       />
     </div>

@@ -1,4 +1,4 @@
-import { Avatar, LinkButton } from "@/src/components/ui";
+import { Avatar, LinkButton } from "@/src/presentation/ui";
 import type { Kid } from "@/src/domain/kid";
 import styles from "./kid-profile.module.css";
 

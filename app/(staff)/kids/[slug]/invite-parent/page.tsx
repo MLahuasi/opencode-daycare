@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireStaffSession } from "@/auth";
 import { getKidBySlug } from "@/src/application/kid";
-import { createKidComposition } from "@/src/infrastructure/composition/kid";
+import { createKidComposition } from "@/src/composition/kid";
 import { InviteParentForm } from "./_components";
 
 /**

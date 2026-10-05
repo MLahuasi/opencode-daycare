@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchField } from "@/src/components/ui";
+import { SearchField } from "@/src/presentation/ui";
 import { normalizeName } from "@/src/application/kid";
 import type { KidListItem } from "@/src/application/kid";
 import { KidsEmptyState } from "./kids-empty-state";

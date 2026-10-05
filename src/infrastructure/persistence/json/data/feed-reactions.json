@@ -1,12 +1,5 @@
 [
   {
-    "id": "reaction-mateo-first-potty-1",
-    "postId": "mateo-first-potty",
-    "personId": "parent-diego-fernandez",
-    "type": "love",
-    "createdAt": "2026-06-17T19:25:00.000Z"
-  },
-  {
     "id": "reaction-mateo-first-potty-2",
     "postId": "mateo-first-potty",
     "personId": "parent-carolina-mendez",
@@ -126,24 +119,24 @@
     "createdAt": "2026-09-29T21:27:11.697Z"
   },
   {
-    "id": "c2b86319-8585-47ff-aa39-81505f39536c",
-    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
-    "personId": "person-caro-gimenez",
-    "type": "love",
-    "createdAt": "2026-10-01T02:02:58.456Z"
-  },
-  {
-    "id": "4b2af585-8783-4e66-9726-2a9707351e8b",
-    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
-    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
-    "type": "love",
-    "createdAt": "2026-10-01T02:04:21.266Z"
-  },
-  {
     "id": "04ea16f1-0552-42d2-8df3-a0fb1bf42745",
     "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
     "personId": "2a72a378-638e-4cad-b8bf-b0d1b3e8663f",
     "type": "love",
     "createdAt": "2026-10-01T18:55:36.979Z"
+  },
+  {
+    "id": "e290bf38-0a30-4507-8b79-a11f4cb195cd",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-10-05T18:27:28.374Z"
+  },
+  {
+    "id": "b623b0b8-b452-45b5-9d3a-f2c10eafe280",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-10-05T18:42:58.506Z"
   }
 ]

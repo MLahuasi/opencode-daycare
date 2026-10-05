@@ -2,7 +2,6 @@ import type { Kid } from "@/src/domain/kid";
 import type { Room } from "@/src/domain/room";
 import type {
   FamilyFeedFilter,
-  FamilyFeedOption,
   FamilyFeedPost,
 } from "./family-feed";
 
@@ -20,40 +19,6 @@ export function selectActiveFamilyKids(
   return kids.filter(
     (kid) => kid.status === "active" && authorizedRoomIds.has(kid.roomId),
   );
-}
-
-/**
- * Builds filter options from active children and their authorized rooms.
- *
- * @param activeKids - Active children visible to the family.
- * @param rooms - Rooms authorized for the family.
- * @returns Child, room, and optional all-rooms filter options.
- */
-export function buildFamilyFeedOptions(
-  activeKids: readonly Kid[],
-  rooms: readonly Room[],
-): readonly FamilyFeedOption[] {
-  const activeRoomIds = new Set(activeKids.map((kid) => kid.roomId));
-  const activeRooms = rooms.filter((room) => activeRoomIds.has(room.id));
-  const options: FamilyFeedOption[] = activeKids.map((kid) => ({
-    id: kid.id,
-    label: kid.name,
-    filter: { kind: "kid", id: kid.id },
-  }));
-
-  options.push(
-    ...activeRooms.map((room) => ({
-      id: room.id,
-      label: room.name,
-      filter: { kind: "room", id: room.id } as const,
-    })),
-  );
-
-  if (activeRooms.length > 1) {
-    options.push({ id: "all", label: "Todos", filter: { kind: "all" } });
-  }
-
-  return options;
 }
 
 /**

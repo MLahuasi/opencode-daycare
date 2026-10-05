@@ -7,12 +7,13 @@ import {
   FormField,
   LinkButton,
   TagsInput,
-} from "@/src/components/ui";
+} from "@/src/presentation/ui";
 import { parseCommaSeparatedTags } from "@/src/utils";
 import type { Room } from "@/src/domain/room";
 import type { KidFormAction, KidFormActionState } from "../_actions/types";
 import { validateKidForm } from "@/src/application/kid";
 import type { KidFormErrors, KidFormValues } from "@/src/application/kid";
+import { presentKidFormError } from "@/src/presentation/kid";
 import styles from "./kid-form.module.css";
 
 type KidFormProps = {
@@ -214,7 +215,10 @@ export function KidForm({
               type="text"
               value={name}
             />
-            <FieldError id={errorId("name")} message={errors.name} />
+            <FieldError
+              id={errorId("name")}
+              message={presentKidFormError(errors.name)}
+            />
           </FormField>
 
           <div className={styles.row}>
@@ -242,7 +246,7 @@ export function KidForm({
               />
               <FieldError
                 id={errorId("birthDate")}
-                message={errors.birthDate}
+                message={presentKidFormError(errors.birthDate)}
               />
             </FormField>
 
@@ -284,7 +288,10 @@ export function KidForm({
                   <path d="m6 9 6 6 6-6" />
                 </svg>
               </span>
-              <FieldError id={errorId("roomId")} message={errors.roomId} />
+              <FieldError
+                id={errorId("roomId")}
+                message={presentKidFormError(errors.roomId)}
+              />
             </FormField>
           </div>
 
@@ -305,7 +312,7 @@ export function KidForm({
             />
             <FieldError
               id={errorId("allergies")}
-              message={errors.allergies}
+              message={presentKidFormError(errors.allergies)}
             />
           </FormField>
 
@@ -326,7 +333,7 @@ export function KidForm({
             />
             <FieldError
               id={errorId("medicalNotes")}
-              message={errors.medicalNotes}
+              message={presentKidFormError(errors.medicalNotes)}
             />
           </FormField>
         </div>

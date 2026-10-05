@@ -1,15 +1,13 @@
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
-import {
-  getAuthorizedPostTargets,
-  getFeedById,
-  updatePostAction,
-} from "@/app/features/feed/server";
-import { createPostImageStorage } from "@/src/infrastructure/composition/post";
+import { updatePostAction } from "@/app/_actions/posts";
+import { getPostTargets } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
+import { createPostImageStorage } from "@/src/composition/post";
 import {
   PostForm,
   type PostFormInitialValues,
-} from "@/src/components/domain/post";
+} from "@/src/presentation/post";
 
 /** Dynamic parameters accepted by the staff Post edit route. */
 type EditPostPageProps = {
@@ -29,10 +27,14 @@ export default async function EditPostPage({
 }: EditPostPageProps) {
   const session = await requireStaffSession();
   const { postId } = await params;
-  const [post, targets] = await Promise.all([
-    getFeedById(postId),
-    getAuthorizedPostTargets(session.user.personId),
-  ]);
+   const dependencies = createPostComposition();
+   const [post, targets] = await Promise.all([
+     dependencies.posts.findById(postId),
+     getPostTargets(dependencies, {
+       personId: session.user.personId,
+       role: session.user.role,
+     }),
+   ]);
 
   if (!post || post.authorId !== session.user.personId) {
     redirect("/home");

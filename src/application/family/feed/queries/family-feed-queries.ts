@@ -1,5 +1,4 @@
 import {
-  buildFamilyFeedOptions,
   selectActiveFamilyKids,
   selectFamilyFeedPosts,
   type FamilyFeedFilter,
@@ -55,7 +54,7 @@ export async function getFamilyFeedContext(
  * @param dependencies - Abstract readers and media resolver required by the query.
  * @param parentId - Authenticated parent's person identifier.
  * @param selectedFilter - Child, room, or all-rooms filter.
- * @returns Feed context, options, and filtered Posts.
+ * @returns Feed context and filtered Posts.
  */
 export async function getFamilyFeedProjection(
   dependencies: FamilyFeedQueryDependencies,
@@ -63,10 +62,7 @@ export async function getFamilyFeedProjection(
   selectedFilter: FamilyFeedFilter = { kind: "all" },
 ): Promise<FamilyFeedProjection> {
   const context = await getFamilyFeedContext(dependencies, parentId);
-  const [posts, options] = await Promise.all([
-    dependencies.posts.findForViewer(parentId),
-    Promise.resolve(buildFamilyFeedOptions(context.activeKids, context.rooms)),
-  ]);
+  const posts = await dependencies.posts.findForViewer(parentId);
   const selectedPosts = selectFamilyFeedPosts(
     posts,
     context.activeKids,
@@ -76,7 +72,6 @@ export async function getFamilyFeedProjection(
 
   return {
     context,
-    options,
     posts: await dependencies.media.resolve(selectedPosts),
     selectedFilter,
   };

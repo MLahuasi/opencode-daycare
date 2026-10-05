@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { createFeedCommentAction } from "@/app/features/feed/server";
-import { getPostDetail } from "@/app/features/post-detail/server";
-import { FamilyCommentForm } from "@/src/components/domain/post";
+import { createFeedCommentAction } from "@/app/_actions/posts";
+import { getPostDetail } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
+import { FamilyCommentForm } from "@/src/presentation/post";
+import { presentPostDetail } from "@/src/presentation/post";
 
 /** Dynamic parameters accepted by the new Post comment route. */
 type NewPostCommentPageProps = {
@@ -20,13 +22,18 @@ type NewPostCommentPageProps = {
 export default async function NewPostCommentPage({
   params,
 }: NewPostCommentPageProps) {
-  await requireActiveSession();
   const { postId } = await params;
-  const detail = await getPostDetail(postId);
+  const session = await requireActiveSession();
+  const detail = await getPostDetail(
+    createPostComposition(),
+    postId,
+    { personId: session.user.personId, role: session.user.role },
+  );
 
-  if (!detail) {
-    redirect("/family-feed");
-  }
+   if (!detail) {
+     redirect("/family-feed");
+   }
+   const viewModel = presentPostDetail(detail);
 
   return (
     <main className="flex min-h-screen items-start justify-center px-6 py-10 max-sm:px-4 max-sm:py-6">
@@ -34,7 +41,7 @@ export default async function NewPostCommentPage({
         action={createFeedCommentAction}
         cancelHref={`/posts/${encodeURIComponent(postId)}`}
         postId={postId}
-        postLabel={detail.recipient.label}
+         postLabel={viewModel.recipient.label}
       />
     </main>
   );

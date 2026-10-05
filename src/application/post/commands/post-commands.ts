@@ -5,24 +5,6 @@ import type {
   UpdatePostInput,
 } from "../dto";
 
-function getPresentationValues(input: CreatePostInput, timestamp: string) {
-  const date = new Date(timestamp);
-
-  return {
-    subject: input.subject,
-    initial: input.subject.charAt(0).toUpperCase(),
-    time: date.toLocaleTimeString("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "UTC",
-    }),
-    dateTime: timestamp,
-    authorLabel: "publicado por ti",
-    recipient: input.kidId ? `familia de ${input.subject}` : "toda la sala",
-    hasMedia: input.media.length > 0,
-  };
-}
-
 /**
  * Builds a new persisted Post without performing I/O.
  *
@@ -40,7 +22,8 @@ export function createPostRecord(
     id,
     type: input.type,
     authorId: input.authorId,
-    ...getPresentationValues(input, timestamp),
+    subject: input.subject,
+    dateTime: timestamp,
     body: input.body,
     createdAt: timestamp,
     updatedAt: timestamp,
@@ -71,7 +54,8 @@ export function updatePostRecord(
     ...currentPost,
     type: input.type,
     authorId: input.authorId,
-    ...getPresentationValues(input, timestamp),
+    subject: input.subject,
+    dateTime: timestamp,
     body: input.body,
     updatedAt: timestamp,
     media: input.media,

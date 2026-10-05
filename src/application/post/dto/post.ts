@@ -52,29 +52,26 @@ export type PostDetailProjectionInput = {
   viewerRole: PersonRole;
 };
 
-/** Comment enriched for the Post detail projection. */
+/** Comment enriched with its persisted author for neutral Post projections. */
 export type PostDetailComment = PostComment & {
   author: Person;
-  timeLabel: string;
 };
 
-/** Reaction enriched for the Post detail projection. */
+/** Reaction enriched with its persisted author for neutral Post projections. */
 export type PostDetailReaction = PostReaction & {
   person: Person;
 };
 
-/** Authorized read-only projection rendered by the Post detail view. */
+/** Authorized Post projection before visual formatting. */
 export type PostDetail = {
   author: Person;
-  authorRoleLabel: string;
   comments: readonly PostDetailComment[];
-  createdAtLabel: string;
   post: Post;
   reactions: readonly PostDetailReaction[];
   recipient: {
     id: string;
-    label: string;
     kind: "kid" | "room";
+    name: string;
   };
   viewerRole: PersonRole;
 };
