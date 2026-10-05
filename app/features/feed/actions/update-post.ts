@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/auth";
-import { createPostImageStorage } from "@/src/infrastructure/composition/post";
+import { createPostImageStorage } from "@/src/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
 import { updateFeedPost } from "../services";
 import type { FeedMedia, PersistedFeedPost } from "../types";

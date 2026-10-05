@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import { validateInviteParentForm } from "../_schemas";
 import { createInvitation, ExistingInvitationPersonError } from "@/src/application/family";
 import { getKidBySlug } from "@/src/application/kid";
-import { createKidComposition } from "@/src/infrastructure/composition/kid";
-import { createFamilyComposition } from "@/src/infrastructure/composition/family";
+import { createKidComposition } from "@/src/composition/kid";
+import { createFamilyComposition } from "@/src/composition/family";
 import { getEnvironment } from "@/src/infrastructure/config/server";
 import type { InviteParentActionState } from "./types";
 

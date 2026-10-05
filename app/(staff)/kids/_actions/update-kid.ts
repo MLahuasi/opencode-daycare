@@ -9,7 +9,7 @@ import {
   validateKidForm,
 } from "@/src/application/kid";
 import type { Kid } from "@/src/domain/kid";
-import { createKidComposition } from "@/src/infrastructure/composition/kid";
+import { createKidComposition } from "@/src/composition/kid";
 import type { KidFormActionState } from "./types";
 
 /**

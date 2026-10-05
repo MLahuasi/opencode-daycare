@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { createPostImageStorage } from "@/src/infrastructure/composition/post";
+import { createPostImageStorage } from "@/src/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type { Person } from "@/src/domain/person";
 import type { ParentKid } from "@/src/domain/family";

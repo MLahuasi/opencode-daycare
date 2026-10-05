@@ -4,7 +4,7 @@ import { getServerSession, type NextAuthOptions, type Session } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
 import { getEnvironment } from "@/src/infrastructure/config/server";
-import { createAuthComposition } from "@/src/infrastructure/composition/auth";
+import { createAuthComposition } from "@/src/composition/auth";
 import { PersonRepository } from "@/src/infrastructure/persistence/repositories";
 
 const { auth: authEnvironment } = getEnvironment();

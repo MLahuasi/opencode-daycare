@@ -15,7 +15,7 @@ import type { Kid } from "@/src/domain/kid";
 import type { Person } from "@/src/domain/person";
 import type { Room } from "@/src/domain/room";
 import { readCollection } from "@/src/infrastructure/persistence";
-import { createFamilyFeedComposition } from "@/src/infrastructure/composition/family";
+import { createFamilyFeedComposition } from "@/src/composition/family";
 
 /** Server-resolved records required to project an authorized post detail. */
 export type AuthorizedPostData = {

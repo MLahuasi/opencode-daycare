@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createPostImageStorage } from "@/src/infrastructure/composition/post";
+import { createPostImageStorage } from "@/src/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
 import type { FeedOverview, FeedPost, PersistedFeedPost } from "../types";
 import { getFeedEngagementByPostIds } from "./engagement.service";

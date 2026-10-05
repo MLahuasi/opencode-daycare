@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { acceptInvitation, InvalidInvitationAcceptanceError } from "@/src/application/family";
-import { createFamilyComposition } from "@/src/infrastructure/composition/family";
+import { createFamilyComposition } from "@/src/composition/family";
 import type { ParentInvitationActionState } from "./types";
 
 /**

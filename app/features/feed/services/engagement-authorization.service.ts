@@ -2,7 +2,7 @@ import "server-only";
 
 import { requireActiveSession } from "@/auth";
 import { getFamilyFeedProjection } from "@/src/application/family/feed";
-import { createFamilyFeedComposition } from "@/src/infrastructure/composition/family";
+import { createFamilyFeedComposition } from "@/src/composition/family";
 import { getFeeds } from "./feed.service";
 
 /**

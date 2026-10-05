@@ -5,7 +5,7 @@ import {
   getFeedById,
   updatePostAction,
 } from "@/app/features/feed/server";
-import { createPostImageStorage } from "@/src/infrastructure/composition/post";
+import { createPostImageStorage } from "@/src/composition/post";
 import {
   PostForm,
   type PostFormInitialValues,

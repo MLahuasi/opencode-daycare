@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/auth";
-import { createPostImageStorage } from "@/src/infrastructure/composition/post";
+import { createPostImageStorage } from "@/src/composition/post";
 import { createFeedPost } from "../services";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
