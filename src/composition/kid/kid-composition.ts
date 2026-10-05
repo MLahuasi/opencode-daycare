@@ -5,13 +5,13 @@ import type {
   ParentKidRepository as ParentKidRepositoryPort,
   PersonRepository as PersonRepositoryPort,
   RoomRepository as RoomRepositoryPort,
-} from "@/src/application/kid/ports";
+} from "@/application/kid/ports";
 import {
   KidRepository,
   ParentKidRepository,
   PersonRepository,
   RoomRepository,
-} from "@/src/infrastructure/persistence/repositories";
+} from "@/infrastructure/persistence/repositories";
 
 /** Server-side dependencies required by Kid application use cases. */
 export type KidComposition = {

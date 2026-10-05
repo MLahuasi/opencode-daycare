@@ -1,7 +1,7 @@
 import "server-only";
 
 import bcrypt from "bcryptjs";
-import type { PasswordHasher } from "@/src/application/auth/ports";
+import type { PasswordHasher } from "@/application/auth/ports";
 
 /** Bcrypt-backed password hashing adapter. */
 export class BcryptPasswordHasher implements PasswordHasher {

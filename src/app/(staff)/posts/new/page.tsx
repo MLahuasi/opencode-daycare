@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
 import { createPostAction } from "@/app/_actions/posts";
-import { getPostTargets } from "@/src/application/post";
-import { createPostComposition } from "@/src/composition/post";
+import { getPostTargets } from "@/application/post";
+import { createPostComposition } from "@/composition/post";
 import {
   PostForm,
   type PostFormInitialValues,
-} from "@/src/presentation/post";
+} from "@/presentation/post";
 
 /**
  * Renders the staff form for creating a new Post.

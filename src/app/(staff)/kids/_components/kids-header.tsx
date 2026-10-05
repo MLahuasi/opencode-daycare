@@ -1,4 +1,4 @@
-import { LinkButton } from "@/src/presentation/ui";
+import { LinkButton } from "@/presentation/ui";
 import styles from "./kids-list.module.css";
 
 type KidsHeaderProps = {

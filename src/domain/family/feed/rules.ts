@@ -1,5 +1,5 @@
-import type { Kid } from "@/src/domain/kid";
-import type { Room } from "@/src/domain/room";
+import type { Kid } from "@/domain/kid";
+import type { Room } from "@/domain/room";
 import type {
   FamilyFeedFilter,
   FamilyFeedPost,

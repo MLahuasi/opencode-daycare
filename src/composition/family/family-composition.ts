@@ -1,14 +1,14 @@
 import "server-only";
 
-import type { FamilyAcceptanceDependencies } from "@/src/application/family";
+import type { FamilyAcceptanceDependencies } from "@/application/family";
 import {
   InvitationRepository,
   ParentKidRepository,
   PersonRepository,
-} from "@/src/infrastructure/persistence/repositories";
-import { JsonTransactionRunner } from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence/repositories";
+import { JsonTransactionRunner } from "@/infrastructure/persistence";
 import { createAuthComposition } from "../auth";
-import { JmlqInvitationMailer } from "@/src/infrastructure/adapters/mailer";
+import { JmlqInvitationMailer } from "@/infrastructure/adapters/mailer";
 import { randomInt, randomUUID } from "node:crypto";
 
 const INVITATION_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";

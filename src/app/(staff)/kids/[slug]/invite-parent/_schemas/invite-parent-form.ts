@@ -1,4 +1,4 @@
-import type { ParentRelationship } from "@/src/domain/family";
+import type { ParentRelationship } from "@/domain/family";
 
 const MIN_NAME_LENGTH = 2;
 const MAX_NAME_LENGTH = 120;

@@ -2,7 +2,7 @@ import {
   selectActiveFamilyKids,
   selectFamilyFeedPosts,
   type FamilyFeedFilter,
-} from "@/src/domain/family";
+} from "@/domain/family";
 import type {
   FamilyFeedContext,
   FamilyFeedProjection,

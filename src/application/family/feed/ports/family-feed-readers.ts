@@ -1,8 +1,8 @@
-import type { ParentKid } from "@/src/domain/family";
-import type { Kid } from "@/src/domain/kid";
-import type { Person } from "@/src/domain/person";
-import type { Post } from "@/src/domain/post";
-import type { Room } from "@/src/domain/room";
+import type { ParentKid } from "@/domain/family";
+import type { Kid } from "@/domain/kid";
+import type { Person } from "@/domain/person";
+import type { Post } from "@/domain/post";
+import type { Room } from "@/domain/room";
 
 /** Reads the person required to build an authorized family context. */
 export interface FamilyFeedPersonReader {

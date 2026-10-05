@@ -4,7 +4,7 @@ import {
   LinkButton,
   PhotoIcon,
   type BadgeVariant,
-} from "@/src/presentation/ui";
+} from "@/presentation/ui";
 import { DeleteCommentButton } from "./delete-comment-button";
 import type { FeedCommentAction } from "./contracts";
 import type { PostDetailViewModel } from "./post-detail-view-model";

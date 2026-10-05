@@ -1,4 +1,4 @@
-import { LinkButton } from "@/src/presentation/ui";
+import { LinkButton } from "@/presentation/ui";
 import styles from "./_components/kid-profile.module.css";
 
 /**

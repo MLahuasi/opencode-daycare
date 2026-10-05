@@ -1,4 +1,4 @@
-import type { PersonStatus } from "@/src/domain/person";
+import type { PersonStatus } from "@/domain/person";
 import type { ParentRelationship } from "../ports";
 
 /** Minimal person data required to render a linked parent in a kid profile. */

@@ -2,17 +2,17 @@
 
 import { useActionState, useEffect, useState } from "react";
 import type { SubmitEvent } from "react";
-import { Button, FormField, LinkButton } from "@/src/presentation/ui";
-import type { Kid } from "@/src/domain/kid";
-import type { Room } from "@/src/domain/room";
-import { MAX_POST_BODY_LENGTH } from "@/src/presentation/post/schemas";
+import { Button, FormField, LinkButton } from "@/presentation/ui";
+import type { Kid } from "@/domain/kid";
+import type { Room } from "@/domain/room";
+import { MAX_POST_BODY_LENGTH } from "@/presentation/post/schemas";
 import {
   PostImagePicker,
   type PostImageSelection,
 } from "./post-image-picker";
-import type { PostFormMode } from "@/src/presentation/post/schemas";
-import type { PostType } from "@/src/domain/post";
-import type { PostFormAction, PostFormActionState } from "@/src/presentation/post/contracts";
+import type { PostFormMode } from "@/presentation/post/schemas";
+import type { PostType } from "@/domain/post";
+import type { PostFormAction, PostFormActionState } from "@/presentation/post/contracts";
 import {
   PostFormExistingMedia,
   type PostFormExistingMedia as PostFormExistingMediaValue,

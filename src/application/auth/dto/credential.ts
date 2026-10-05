@@ -1,4 +1,4 @@
-import type { Credential } from "@/src/domain/auth";
+import type { Credential } from "@/domain/auth";
 
 /** Values required to create a stored credential. */
 export type CreateCredentialInput = {

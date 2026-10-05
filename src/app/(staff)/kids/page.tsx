@@ -4,14 +4,14 @@ import {
   getParentKids,
   getRooms,
   parseCommaSeparatedTags,
-} from "@/src/application/kid";
-import type { KidListItem, ParentKidRecord } from "@/src/application/kid";
-import type { Kid } from "@/src/domain/kid";
-import type { Room } from "@/src/domain/room";
+} from "@/application/kid";
+import type { KidListItem, ParentKidRecord } from "@/application/kid";
+import type { Kid } from "@/domain/kid";
+import type { Room } from "@/domain/room";
 import { KidsFilter, KidsHeader } from "./_components";
 import styles from "./_components/kids-list.module.css";
-import { createKidComposition } from "@/src/composition/kid";
-import { getTodayIsoDate } from "@/src/utils";
+import { createKidComposition } from "@/composition/kid";
+import { getTodayIsoDate } from "@/utils";
 import { requireStaffSession } from "@/auth";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;

@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { PostReactionRepository as PostReactionRepositoryPort } from "@/src/application/post/ports";
-import type { PostReaction } from "@/src/domain/post";
+import type { PostReactionRepository as PostReactionRepositoryPort } from "@/application/post/ports";
+import type { PostReaction } from "@/domain/post";
 import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 /** JSON-backed persistence adapter for Post reactions. */
 export class PostReactionRepository implements PostReactionRepositoryPort {

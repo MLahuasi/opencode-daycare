@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
 import { requireActiveSession } from "@/auth";
 import { deleteFeedCommentAction } from "@/app/_actions/posts";
-import { getFamilyFeedContext } from "@/src/application/family/feed";
-import { getPostDetail } from "@/src/application/post";
-import { PostDetailView } from "@/src/presentation/post";
-import { FamilySidebar, StaffSidebar } from "@/src/presentation/layout";
-import { staffNavigationConfig } from "@/src/presentation/navigation";
-import { createFamilyFeedComposition } from "@/src/composition/family";
-import { createPostComposition } from "@/src/composition/post";
-import { presentPostDetail } from "@/src/presentation/post";
+import { getFamilyFeedContext } from "@/application/family/feed";
+import { getPostDetail } from "@/application/post";
+import { PostDetailView } from "@/presentation/post";
+import { FamilySidebar, StaffSidebar } from "@/presentation/layout";
+import { staffNavigationConfig } from "@/presentation/navigation";
+import { createFamilyFeedComposition } from "@/composition/family";
+import { createPostComposition } from "@/composition/post";
+import { presentPostDetail } from "@/presentation/post";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {

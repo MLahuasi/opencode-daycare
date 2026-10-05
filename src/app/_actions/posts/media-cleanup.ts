@@ -1,4 +1,4 @@
-import type { PostImageStorage } from "@/src/application/post";
+import type { PostImageStorage } from "@/application/post";
 
 /**
  * Deletes a provider asset with bounded retries for transient failures.

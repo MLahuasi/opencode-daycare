@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { TransactionRunner } from "@/src/application/family/ports";
+import type { TransactionRunner } from "@/application/family/ports";
 import { withJsonTransaction } from "./json-collection";
 
 const FAMILY_AUTH_COLLECTIONS = [

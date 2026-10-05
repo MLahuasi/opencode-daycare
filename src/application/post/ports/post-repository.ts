@@ -1,4 +1,4 @@
-import type { Post, PersistedPost } from "@/src/domain/post";
+import type { Post, PersistedPost } from "@/domain/post";
 
 /** Persistence operations required by Post commands and queries. */
 export interface PostRepository {

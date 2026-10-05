@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
 import { updateFeedCommentAction } from "@/app/_actions/posts";
-import { getPostDetail } from "@/src/application/post";
-import { createPostComposition } from "@/src/composition/post";
-import { FamilyCommentForm } from "@/src/presentation/post";
-import { presentPostDetail } from "@/src/presentation/post";
+import { getPostDetail } from "@/application/post";
+import { createPostComposition } from "@/composition/post";
+import { FamilyCommentForm } from "@/presentation/post";
+import { presentPostDetail } from "@/presentation/post";
 
 /** Dynamic parameters accepted by the Post comment edit route. */
 type EditPostCommentPageProps = {

@@ -1,3 +1,3 @@
-export type { FeedCommentAction, FeedCommentActionState } from "@/src/presentation/post/contracts";
+export type { FeedCommentAction, FeedCommentActionState } from "@/presentation/post/contracts";
 
 /** Serializable feedback returned by comment actions. */

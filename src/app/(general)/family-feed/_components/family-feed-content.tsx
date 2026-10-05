@@ -1,9 +1,9 @@
-import type { Post } from "@/src/domain/post";
-import { FeedPostCard, presentFeedPost } from "@/src/presentation/post";
+import type { Post } from "@/domain/post";
+import { FeedPostCard, presentFeedPost } from "@/presentation/post";
 import { toggleFeedReactionAction } from "@/app/_actions/posts";
-import type { Person } from "@/src/domain/person";
-import type { FamilyFeedFilter } from "@/src/domain/family/feed";
-import type { FamilyFeedOption } from "@/src/presentation/family";
+import type { Person } from "@/domain/person";
+import type { FamilyFeedFilter } from "@/domain/family/feed";
+import type { FamilyFeedOption } from "@/presentation/family";
 import { FamilyFeedFilters } from "./family-feed-filters";
 import styles from "./family-feed-content.module.css";
 

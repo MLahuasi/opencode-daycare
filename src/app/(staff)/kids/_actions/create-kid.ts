@@ -7,9 +7,9 @@ import {
   createKid,
   getRooms,
   validateKidForm,
-} from "@/src/application/kid";
-import type { Kid } from "@/src/domain/kid";
-import { createKidComposition } from "@/src/composition/kid";
+} from "@/application/kid";
+import type { Kid } from "@/domain/kid";
+import { createKidComposition } from "@/composition/kid";
 import type { KidFormActionState } from "./types";
 
 /**

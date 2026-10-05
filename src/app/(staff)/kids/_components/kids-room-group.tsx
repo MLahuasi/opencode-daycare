@@ -1,4 +1,4 @@
-import type { KidListItem } from "@/src/application/kid";
+import type { KidListItem } from "@/application/kid";
 import { KidCard } from "./kid-card";
 import styles from "./kids-list.module.css";
 

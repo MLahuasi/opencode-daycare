@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { PostCommentRepository as PostCommentRepositoryPort } from "@/src/application/post/ports";
-import type { PostComment } from "@/src/domain/post";
+import type { PostCommentRepository as PostCommentRepositoryPort } from "@/application/post/ports";
+import type { PostComment } from "@/domain/post";
 import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 /** JSON-backed persistence adapter for Post comments. */
 export class PostCommentRepository implements PostCommentRepositoryPort {

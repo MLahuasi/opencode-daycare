@@ -6,7 +6,7 @@ import {
   NodemailerService,
   type Mailer,
 } from "@jmlq/mailer";
-import { getEnvironment } from "@/src/infrastructure/config/server";
+import { getEnvironment } from "@/infrastructure/config/server";
 
 let mailerInstance: Mailer | undefined;
 

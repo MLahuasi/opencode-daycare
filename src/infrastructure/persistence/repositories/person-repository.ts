@@ -1,13 +1,13 @@
 import "server-only";
 
-import type { FamilyPersonRepository } from "@/src/application/family/ports";
-import type { PersonRepository as PersonRepositoryPort } from "@/src/application/kid/ports";
-import type { Person } from "@/src/domain/person";
+import type { FamilyPersonRepository } from "@/application/family/ports";
+import type { PersonRepository as PersonRepositoryPort } from "@/application/kid/ports";
+import type { Person } from "@/domain/person";
 import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 /** JSON-backed persistence adapter for People. */
 export class PersonRepository implements PersonRepositoryPort, FamilyPersonRepository {

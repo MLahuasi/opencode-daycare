@@ -1,10 +1,10 @@
-import { LinkButton } from "@/src/presentation/ui";
+import { LinkButton } from "@/presentation/ui";
 import {
   calculateAge,
   getKidRoom,
   getKids,
   getLinkedParentsByKidId,
-} from "@/src/application/kid";
+} from "@/application/kid";
 import {
   KidBasicInfo,
   KidMedicalNotes,
@@ -13,9 +13,9 @@ import {
   KidProfileHeader,
 } from "./_components";
 import styles from "./_components/kid-profile.module.css";
-import { getTodayIsoDate } from "@/src/utils";
+import { getTodayIsoDate } from "@/utils";
 import { requireStaffSession } from "@/auth";
-import { createKidComposition } from "@/src/composition/kid";
+import { createKidComposition } from "@/composition/kid";
 import { notFound } from "next/navigation";
 
 const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;

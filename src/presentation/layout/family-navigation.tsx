@@ -1,5 +1,5 @@
-import { LinkButton } from "@/src/presentation/ui";
-import type { FamilyNavigationConfig } from "@/src/presentation/navigation";
+import { LinkButton } from "@/presentation/ui";
+import type { FamilyNavigationConfig } from "@/presentation/navigation";
 import styles from "./family-navigation.module.css";
 
 type FamilyNavigationProps = {

@@ -4,4 +4,4 @@ export {
   getAuthSession,
   requireActiveSession,
   requireStaffSession,
-} from "@/src/infrastructure/auth/auth";
+} from "@/infrastructure/auth/auth";

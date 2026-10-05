@@ -1,9 +1,9 @@
 import { ParentInvitationForm } from "../_components";
-import { validateInvitationToken } from "@/src/application/family";
-import { getKidById } from "@/src/application/kid";
-import { createFamilyComposition } from "@/src/composition/family";
-import { createKidComposition } from "@/src/composition/kid";
-import styles from "@/src/presentation/auth/auth.module.css";
+import { validateInvitationToken } from "@/application/family";
+import { getKidById } from "@/application/kid";
+import { createFamilyComposition } from "@/composition/family";
+import { createKidComposition } from "@/composition/kid";
+import styles from "@/presentation/auth/auth.module.css";
 
 type ParentInvitationPageProps = {
   /** Dynamic token route parameters. */

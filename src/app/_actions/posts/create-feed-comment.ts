@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { createComment } from "@/src/application/post";
-import { createPostComposition } from "@/src/composition/post";
-import { validateFeedCommentForm } from "@/src/presentation/post/schemas";
+import { createComment } from "@/application/post";
+import { createPostComposition } from "@/composition/post";
+import { validateFeedCommentForm } from "@/presentation/post/schemas";
 import type { FeedCommentActionState } from "./comment-types";
 
 /**

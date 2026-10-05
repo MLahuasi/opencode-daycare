@@ -1,6 +1,6 @@
-import type { FamilyFeedFilter } from "@/src/domain/family";
-import type { Kid } from "@/src/domain/kid";
-import type { Room } from "@/src/domain/room";
+import type { FamilyFeedFilter } from "@/domain/family";
+import type { Kid } from "@/domain/kid";
+import type { Room } from "@/domain/room";
 
 /** A visual option rendered in the family feed filter navigation. */
 export type FamilyFeedOption = {

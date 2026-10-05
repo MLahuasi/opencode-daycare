@@ -1,7 +1,7 @@
 import {
   isValidActivationPassword,
   type Credential,
-} from "@/src/domain/auth";
+} from "@/domain/auth";
 import type { AuthDependencies } from "../auth-dependencies";
 import type { CreateCredentialInput } from "../dto/credential";
 

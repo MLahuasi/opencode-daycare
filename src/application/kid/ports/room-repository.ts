@@ -1,4 +1,4 @@
-import type { Room } from "@/src/domain/room";
+import type { Room } from "@/domain/room";
 
 /** Persistence operations required to manage daycare rooms. */
 export interface RoomRepository {

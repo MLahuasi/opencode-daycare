@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { PostRepository as PostRepositoryPort } from "@/src/application/post/ports";
-import type { Post, PersistedPost } from "@/src/domain/post";
+import type { PostRepository as PostRepositoryPort } from "@/application/post/ports";
+import type { Post, PersistedPost } from "@/domain/post";
 import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 const EMPTY_ENGAGEMENT = {
   reactionCount: 0,

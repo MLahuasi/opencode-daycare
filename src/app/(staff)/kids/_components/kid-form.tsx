@@ -7,13 +7,13 @@ import {
   FormField,
   LinkButton,
   TagsInput,
-} from "@/src/presentation/ui";
-import { parseCommaSeparatedTags } from "@/src/utils";
-import type { Room } from "@/src/domain/room";
+} from "@/presentation/ui";
+import { parseCommaSeparatedTags } from "@/utils";
+import type { Room } from "@/domain/room";
 import type { KidFormAction, KidFormActionState } from "../_actions/types";
-import { validateKidForm } from "@/src/application/kid";
-import type { KidFormErrors, KidFormValues } from "@/src/application/kid";
-import { presentKidFormError } from "@/src/presentation/kid";
+import { validateKidForm } from "@/application/kid";
+import type { KidFormErrors, KidFormValues } from "@/application/kid";
+import { presentKidFormError } from "@/presentation/kid";
 import styles from "./kid-form.module.css";
 
 type KidFormProps = {

@@ -2,13 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/auth";
-import { createPostImageStorage } from "@/src/composition/post";
-import { updatePost } from "@/src/application/post";
-import { createPostComposition } from "@/src/composition/post";
-import type { PostMedia } from "@/src/domain/post";
+import { createPostImageStorage } from "@/composition/post";
+import { updatePost } from "@/application/post";
+import { createPostComposition } from "@/composition/post";
+import type { PostMedia } from "@/domain/post";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
-import type { PostFormActionState } from "@/src/presentation/post/contracts";
+import type { PostFormActionState } from "@/presentation/post/contracts";
 
 /**
  * Revalidates authorization, updates a post, and returns the feed destination.

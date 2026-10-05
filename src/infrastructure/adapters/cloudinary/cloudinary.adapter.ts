@@ -5,7 +5,7 @@ import type {
   PostImageAsset,
   PostImageStorage,
   PostImageUploadInput,
-} from "@/src/application/post/ports";
+} from "@/application/post/ports";
 
 const SUPPORTED_IMAGE_FORMATS = new Set(["jpg", "jpeg", "png", "webp"]);
 

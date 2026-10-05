@@ -1,4 +1,4 @@
-import type { Kid } from "@/src/domain/kid";
+import type { Kid } from "@/domain/kid";
 
 /** Editable kid values shared by the Add and Edit flows. */
 export type KidFormValues = Pick<

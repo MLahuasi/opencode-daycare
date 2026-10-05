@@ -1,4 +1,4 @@
-import type { Kid } from "@/src/domain/kid";
+import type { Kid } from "@/domain/kid";
 
 /** Persistence operations required by Kid commands and queries. */
 export interface KidRepository {

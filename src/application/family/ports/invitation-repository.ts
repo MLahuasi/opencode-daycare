@@ -1,4 +1,4 @@
-import type { Invitation } from "@/src/domain/family";
+import type { Invitation } from "@/domain/family";
 
 /** Persistence operations required by Family invitation use cases. */
 export interface InvitationRepository {

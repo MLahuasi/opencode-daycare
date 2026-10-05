@@ -1,12 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button, CheckboxField, FormField } from "@/src/presentation/ui";
+import { Button, CheckboxField, FormField } from "@/presentation/ui";
 import {
   acceptParentInvitationAction,
 } from "../_actions";
 import type { ParentInvitationActionState } from "../_actions";
-import styles from "@/src/presentation/auth/auth.module.css";
+import styles from "@/presentation/auth/auth.module.css";
 
 type ParentInvitationFormProps = {
   /** Invitation token received in the email URL. */

@@ -3,19 +3,19 @@ import "server-only";
 import {
   PostAuthorizationPolicy,
   type PostDependencies,
-} from "@/src/application/post";
+} from "@/application/post";
 import {
   KidRepository,
   PersonRepository,
   RoomRepository,
-} from "@/src/infrastructure/persistence/repositories";
+} from "@/infrastructure/persistence/repositories";
 import {
   PostCommentRepository,
   JsonPostAccessRepository,
   PostReactionRepository,
   PostRepository,
-} from "@/src/infrastructure/persistence/repositories";
-import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
+} from "@/infrastructure/persistence/repositories";
+import { createCloudinaryImageStorage } from "@/infrastructure/adapters/cloudinary";
 import { randomUUID } from "node:crypto";
 
 /** Concrete server-only dependencies required by Post use cases. */

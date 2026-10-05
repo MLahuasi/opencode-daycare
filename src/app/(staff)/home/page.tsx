@@ -1,10 +1,10 @@
-import { StaffSidebar } from "@/src/presentation/layout";
-import { FeedContent } from "@/src/presentation/feed";
+import { StaffSidebar } from "@/presentation/layout";
+import { FeedContent } from "@/presentation/feed";
 import { toggleFeedReactionAction } from "@/app/_actions/posts";
-import { getFeedOverview } from "@/src/composition/feed";
-import { getAuthorizedPosts } from "@/src/application/post";
-import { createPostComposition } from "@/src/composition/post";
-import { staffNavigationConfig } from "@/src/presentation/navigation";
+import { getFeedOverview } from "@/composition/feed";
+import { getAuthorizedPosts } from "@/application/post";
+import { createPostComposition } from "@/composition/post";
+import { staffNavigationConfig } from "@/presentation/navigation";
 import { requireActiveSession } from "@/auth";
 import { redirect } from "next/navigation";
 

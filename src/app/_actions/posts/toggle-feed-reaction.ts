@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { requireActiveSession } from "@/auth";
-import { toggleReaction } from "@/src/application/post";
-import { createPostComposition } from "@/src/composition/post";
+import { toggleReaction } from "@/application/post";
+import { createPostComposition } from "@/composition/post";
 
 /** Serializable result returned by the family feed reaction action. */
 export type ToggleFeedReactionResult =

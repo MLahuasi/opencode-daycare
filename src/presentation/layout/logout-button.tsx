@@ -1,7 +1,7 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import { Button } from "@/src/presentation/ui";
+import { Button } from "@/presentation/ui";
 import styles from "./staff-sidebar.module.css";
 
 type LogoutButtonProps = {

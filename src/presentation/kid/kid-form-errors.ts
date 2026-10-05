@@ -1,4 +1,4 @@
-import type { KidFormErrorCode } from "@/src/application/kid";
+import type { KidFormErrorCode } from "@/application/kid";
 
 const kidFormErrorMessages: Record<KidFormErrorCode, string> = {
   allergiesUnexpectedType: "Las alergias deben ser texto.",

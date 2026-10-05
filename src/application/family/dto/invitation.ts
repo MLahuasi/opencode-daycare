@@ -1,5 +1,5 @@
-import type { Invitation, ParentRelationship } from "@/src/domain/family";
-import type { Person } from "@/src/domain/person";
+import type { Invitation, ParentRelationship } from "@/domain/family";
+import type { Person } from "@/domain/person";
 
 /** Values required to start a parent invitation. */
 export type CreateInvitationInput = {

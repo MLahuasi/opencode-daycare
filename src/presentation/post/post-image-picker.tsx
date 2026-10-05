@@ -5,8 +5,8 @@ import type { ChangeEvent, DragEvent } from "react";
 import {
   MAX_MEDIA_BYTES,
   MAX_POST_MEDIA,
-} from "@/src/presentation/post/schemas";
-import { isSupportedImageFile } from "@/src/presentation/post/utils";
+} from "@/presentation/post/schemas";
+import { isSupportedImageFile } from "@/presentation/post/utils";
 import styles from "./post-image-picker.module.css";
 
 /** A selected image and the preview data used by the picker. */

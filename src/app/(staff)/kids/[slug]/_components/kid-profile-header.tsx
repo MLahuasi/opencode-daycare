@@ -1,5 +1,5 @@
-import { Avatar, LinkButton } from "@/src/presentation/ui";
-import type { Kid } from "@/src/domain/kid";
+import { Avatar, LinkButton } from "@/presentation/ui";
+import type { Kid } from "@/domain/kid";
 import styles from "./kid-profile.module.css";
 
 type KidProfileHeaderProps = {

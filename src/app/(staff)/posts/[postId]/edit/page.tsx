@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
 import { updatePostAction } from "@/app/_actions/posts";
-import { getPostTargets } from "@/src/application/post";
-import { createPostComposition } from "@/src/composition/post";
-import { createPostImageStorage } from "@/src/composition/post";
+import { getPostTargets } from "@/application/post";
+import { createPostComposition } from "@/composition/post";
+import { createPostImageStorage } from "@/composition/post";
 import {
   PostForm,
   type PostFormInitialValues,
-} from "@/src/presentation/post";
+} from "@/presentation/post";
 
 /** Dynamic parameters accepted by the staff Post edit route. */
 type EditPostPageProps = {

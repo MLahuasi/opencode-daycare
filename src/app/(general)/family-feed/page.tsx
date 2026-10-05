@@ -3,14 +3,14 @@ import { FamilyFeedContent } from "./_components/family-feed-content";
 import {
   getFamilyFeedContext,
   getFamilyFeedProjection,
-} from "@/src/application/family/feed";
+} from "@/application/family/feed";
 import {
   type FamilyFeedFilter,
-} from "@/src/domain/family/feed";
+} from "@/domain/family/feed";
 import { requireActiveSession } from "@/auth";
-import { FamilySidebar } from "@/src/presentation/layout";
-import { presentFamilyFeedOptions } from "@/src/presentation/family";
-import { createFamilyFeedComposition } from "@/src/composition/family";
+import { FamilySidebar } from "@/presentation/layout";
+import { presentFamilyFeedOptions } from "@/presentation/family";
+import { createFamilyFeedComposition } from "@/composition/family";
 import styles from "./family-feed.module.css";
 
 /**

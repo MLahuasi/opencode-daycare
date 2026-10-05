@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { CredentialRepository as CredentialRepositoryPort } from "@/src/application/auth/ports";
-import type { Credential } from "@/src/domain/auth";
+import type { CredentialRepository as CredentialRepositoryPort } from "@/application/auth/ports";
+import type { Credential } from "@/domain/auth";
 import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 /** JSON-backed persistence adapter for Auth credentials. */
 export class CredentialRepository implements CredentialRepositoryPort {

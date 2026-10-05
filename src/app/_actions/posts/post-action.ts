@@ -1,19 +1,19 @@
 import { randomUUID } from "node:crypto";
-import { createPostImageStorage } from "@/src/composition/post";
-import { readCollection } from "@/src/infrastructure/persistence";
-import { getPostTargets } from "@/src/application/post";
-import { createPostComposition } from "@/src/composition/post";
-import type { Person } from "@/src/domain/person";
-import type { ParentKid } from "@/src/domain/family";
+import { createPostImageStorage } from "@/composition/post";
+import { readCollection } from "@/infrastructure/persistence";
+import { getPostTargets } from "@/application/post";
+import { createPostComposition } from "@/composition/post";
+import type { Person } from "@/domain/person";
+import type { ParentKid } from "@/domain/family";
 import {
   MAX_MEDIA_BYTES,
   validatePostForm,
   type PostFormValues,
-} from "@/src/presentation/post/schemas";
-import type { PostFormActionState } from "@/src/presentation/post/contracts";
+} from "@/presentation/post/schemas";
+import type { PostFormActionState } from "@/presentation/post/contracts";
 import { deleteMediaWithRetry } from "./media-cleanup";
-import type { PostMedia } from "@/src/domain/post";
-import { isSupportedImageFile } from "@/src/presentation/post/utils";
+import type { PostMedia } from "@/domain/post";
+import { isSupportedImageFile } from "@/presentation/post/utils";
 
 type ParsedPostSubmission =
   | {

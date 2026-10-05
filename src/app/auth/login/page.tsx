@@ -1,4 +1,4 @@
-import { AuthShell, LoginForm } from "@/src/presentation/auth";
+import { AuthShell, LoginForm } from "@/presentation/auth";
 
 /**
  * Renders the login route using the shared authentication shell.

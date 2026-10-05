@@ -1,6 +1,6 @@
-import type { PersonRole } from "@/src/domain/person";
-import type { PersistedPost } from "@/src/domain/post";
-import type { Kid } from "@/src/domain/kid";
+import type { PersonRole } from "@/domain/person";
+import type { PersistedPost } from "@/domain/post";
+import type { Kid } from "@/domain/kid";
 
 /** Authenticated identity used by Post authorization. */
 export type PostViewer = {

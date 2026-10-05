@@ -7,11 +7,11 @@ import {
   createInvitation,
   ExistingInvitationParentKidError,
   ExistingInvitationPersonError,
-} from "@/src/application/family";
-import { getKidBySlug } from "@/src/application/kid";
-import { createKidComposition } from "@/src/composition/kid";
-import { createFamilyComposition } from "@/src/composition/family";
-import { getEnvironment } from "@/src/infrastructure/config/server";
+} from "@/application/family";
+import { getKidBySlug } from "@/application/kid";
+import { createKidComposition } from "@/composition/kid";
+import { createFamilyComposition } from "@/composition/family";
+import { getEnvironment } from "@/infrastructure/config/server";
 import type { InviteParentActionState } from "./types";
 
 /**

@@ -1,12 +1,12 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Button, FormField, LinkButton } from "@/src/presentation/ui";
+import { Button, FormField, LinkButton } from "@/presentation/ui";
 import {
   sendInviteParentAction,
 } from "../_actions";
 import type { InviteParentActionState } from "../_actions";
-import type { Kid } from "@/src/domain/kid";
+import type { Kid } from "@/domain/kid";
 import styles from "./invite-parent.module.css";
 
 const relationshipOptions = [

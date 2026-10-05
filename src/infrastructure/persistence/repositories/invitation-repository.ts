@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { InvitationRepository as InvitationRepositoryPort } from "@/src/application/family/ports";
-import type { Invitation } from "@/src/domain/family";
+import type { InvitationRepository as InvitationRepositoryPort } from "@/application/family/ports";
+import type { Invitation } from "@/domain/family";
 import {
   readCollection,
   withWriteLock,
   writeCollection,
-} from "@/src/infrastructure/persistence";
+} from "@/infrastructure/persistence";
 
 /** JSON-backed persistence adapter for Family invitations. */
 export class InvitationRepository implements InvitationRepositoryPort {

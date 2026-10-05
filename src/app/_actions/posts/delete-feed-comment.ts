@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { deleteComment } from "@/src/application/post";
-import { createPostComposition } from "@/src/composition/post";
+import { deleteComment } from "@/application/post";
+import { createPostComposition } from "@/composition/post";
 import type { FeedCommentActionState } from "./comment-types";
 
 /**

@@ -1,4 +1,4 @@
-import type { PostMedia } from "@/src/domain/post";
+import type { PostMedia } from "@/domain/post";
 import styles from "./post-form.module.css";
 
 /** Existing image data displayed by the edit form. */
