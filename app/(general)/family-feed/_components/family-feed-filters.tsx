@@ -1,5 +1,6 @@
 import { Avatar, LinkButton } from "@/src/presentation/ui";
-import type { FamilyFeedFilter, FamilyFeedOption } from "@/src/domain/family/feed";
+import type { FamilyFeedFilter } from "@/src/domain/family/feed";
+import type { FamilyFeedOption } from "@/src/presentation/family";
 import styles from "./family-feed-filters.module.css";
 
 const kidAvatarTones = ["blue", "pink", "green", "yellow", "purple", "coral"] as const;

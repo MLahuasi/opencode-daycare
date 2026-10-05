@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { requireActiveSession } from "@/auth";
+import { deleteFeedCommentAction } from "@/app/_actions/posts";
 import { getFamilyFeedContext } from "@/src/application/family/feed";
 import { getPostDetail } from "@/src/application/post";
 import { PostDetailView } from "@/src/presentation/post";
@@ -50,7 +51,8 @@ export default async function PostDetailPage({
         <PostDetailView
           backHref="/family-feed"
           className="min-w-0 flex-1"
-           detail={viewModel}
+          deleteCommentAction={deleteFeedCommentAction}
+          detail={viewModel}
           viewerPersonId={session.user.personId}
         />
       </div>
@@ -63,7 +65,8 @@ export default async function PostDetailPage({
       <PostDetailView
         backHref="/home"
         className="min-w-0 flex-1"
-         detail={viewModel}
+        deleteCommentAction={deleteFeedCommentAction}
+        detail={viewModel}
         viewerPersonId={session.user.personId}
       />
     </div>

@@ -1,6 +1,6 @@
 # SPEC 21 — Presentation, Composition y cierre de capas legacy
 
-> **Status:** Approved
+> **Status:** Implement
 > **Depends on:** SPEC 18, SPEC 19, SPEC 20
 > **Date:** 2026-10-02
 > **Objective:** Consolidar Presentation y Composition, conectar el runtime con Application e Infrastructure y eliminar las capas legacy antes del corte de `app/` a `src/app/`.
@@ -62,30 +62,30 @@ Los campos visuales como labels, hrefs, tonos, formatos localizados y mensajes n
 
 ## Acceptance criteria
 
-- [ ] Existe `src/presentation/` con UI, layout, navegación y componentes reutilizables.
-- [ ] Existe `src/composition/` con factories server-only de Auth, Family, Kids y Posts.
-- [ ] No existe `src/components/`.
-- [ ] No existe `src/infrastructure/composition/`.
-- [ ] No existe `app/features/`.
-- [ ] No existe `app/infrastructure/`.
-- [ ] No existe `app/shared/`.
-- [ ] `src/domain/` no importa Application, Presentation, Infrastructure, Composition, Next.js, React, filesystem ni SDKs.
-- [ ] `src/application/` no importa Presentation, Infrastructure, Composition, React, Next.js ni APIs HTTP.
-- [ ] `src/infrastructure/` implementa ports sin importar Presentation, Composition ni `app/`.
-- [ ] `src/composition/` conecta ports de Application con adapters de Infrastructure.
-- [ ] `src/presentation/` no importa Infrastructure ni Composition.
-- [ ] Ningún archivo bajo `src/` importa `app/features`, `app/infrastructure` o colaboradores privados de `app`.
-- [ ] Las páginas y Server Actions delegan en Application y usan Composition cuando requieren adapters concretos.
-- [ ] Los componentes exclusivos permanecen junto a sus rutas dentro de `_components`, `_actions` o `_schemas`.
-- [ ] Domain no contiene labels, hrefs, copy, formatos localizados ni view models visuales.
-- [ ] Application contiene DTOs neutrales y no decisiones específicas de UI.
-- [ ] Se conservan autorización, filtros, orden, engagement, redirects y URLs.
+- [x] Existe `src/presentation/` con UI, layout, navegación y componentes reutilizables.
+- [x] Existe `src/composition/` con factories server-only de Auth, Family, Kids y Posts.
+- [x] No existe `src/components/`.
+- [x] No existe `src/infrastructure/composition/`.
+- [x] No existe `app/features/`.
+- [x] No existe `app/infrastructure/`.
+- [x] No existe `app/shared/`.
+- [x] `src/domain/` no importa Application, Presentation, Infrastructure, Composition, Next.js, React, filesystem ni SDKs.
+- [x] `src/application/` no importa Presentation, Infrastructure, Composition, React, Next.js ni APIs HTTP.
+- [x] `src/infrastructure/` implementa ports sin importar Presentation, Composition ni `app/`.
+- [x] `src/composition/` conecta ports de Application con adapters de Infrastructure.
+- [x] `src/presentation/` no importa Infrastructure ni Composition.
+- [x] Ningún archivo bajo `src/` importa `app/features`, `app/infrastructure` o colaboradores privados de `app`.
+- [x] Las páginas y Server Actions delegan en Application y usan Composition cuando requieren adapters concretos.
+- [x] Los componentes exclusivos permanecen junto a sus rutas dentro de `_components`, `_actions` o `_schemas`.
+- [x] Domain no contiene labels, hrefs, copy, formatos localizados ni view models visuales.
+- [x] Application contiene DTOs neutrales y no decisiones específicas de UI.
+- [x] Se conservan autorización, filtros, orden, engagement, redirects y URLs.
 - [ ] Los JSON mantienen sus hashes byte a byte.
-- [ ] `npx eslint app src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica Auth, Home, Kids, Family Feed, Posts, comentarios, reacciones y viewports móviles.
+- [x] `npx eslint app src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica Auth, Home, Kids, Family Feed, Posts, comentarios, reacciones y viewports móviles.
 
 ## Decisions
 

@@ -22,16 +22,10 @@ export type PersistedPost = {
   type: PostType;
   authorId: string;
   subject: string;
-  initial?: string;
-  time: string;
   dateTime: string;
   createdAt: string;
   updatedAt: string;
-  authorLabel?: string;
-  recipient: string;
   body: string;
-  hasMedia?: boolean;
-  mediaLabel?: string;
   media: PostMedia[];
   kidId: string | null;
   roomId: string | null;

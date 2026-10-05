@@ -1,6 +1,7 @@
 export { createKid, updateKid } from "./commands";
 export type {
   KidFieldValidationResult,
+  KidFormErrorCode,
   KidFormErrors,
   KidFormInput,
   KidFormValidationResult,

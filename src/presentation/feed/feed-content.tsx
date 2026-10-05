@@ -1,6 +1,6 @@
 import { Avatar, CameraIcon, LinkButton } from "@/src/presentation/ui";
 import type { Post } from "@/src/domain/post";
-import { FeedPostCard } from "@/src/presentation/post";
+import { FeedPostCard, presentFeedPost } from "@/src/presentation/post";
 import styles from "./feed-content.module.css";
 
 /** Visual copy shown by the staff feed header. */
@@ -80,7 +80,7 @@ export function FeedContent({
               commentHref={commentHref?.(post.id)}
               key={post.id}
               onToggleReaction={onToggleReaction}
-              post={post}
+              post={presentFeedPost(post)}
             />
           ))}
         </div>

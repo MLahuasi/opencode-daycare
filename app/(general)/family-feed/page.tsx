@@ -5,11 +5,11 @@ import {
   getFamilyFeedProjection,
 } from "@/src/application/family/feed";
 import {
-  buildFamilyFeedOptions,
   type FamilyFeedFilter,
 } from "@/src/domain/family/feed";
 import { requireActiveSession } from "@/auth";
 import { FamilySidebar } from "@/src/presentation/layout";
+import { presentFamilyFeedOptions } from "@/src/presentation/family";
 import { createFamilyFeedComposition } from "@/src/composition/family";
 import styles from "./family-feed.module.css";
 
@@ -34,7 +34,7 @@ export default async function FamilyFeedPage({
     dependencies,
     session.user.personId,
   );
-  const options = buildFamilyFeedOptions(
+  const options = presentFamilyFeedOptions(
     familyContext.activeKids,
     familyContext.rooms,
   );

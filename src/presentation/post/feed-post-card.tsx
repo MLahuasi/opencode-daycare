@@ -11,8 +11,9 @@ import {
 } from "@/src/presentation/ui";
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
-import type { Post, PostType } from "@/src/domain/post";
+import type { PostType } from "@/src/domain/post";
 import styles from "./feed-post-card.module.css";
+import type { FeedPostViewModel } from "./feed-post-view-model";
 
 /** Props accepted by the reusable Post card. */
 type FeedPostCardProps = {
@@ -23,7 +24,7 @@ type FeedPostCardProps = {
   /** Optional destination used to create a comment. */
   commentHref?: string;
   /** Post data to display. */
-  post: Post;
+  post: FeedPostViewModel;
   /** Optional classes applied to the card container. */
   className?: string;
   /** Callback used to toggle the viewer's reaction. */

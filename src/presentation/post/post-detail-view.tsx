@@ -5,11 +5,9 @@ import {
   PhotoIcon,
   type BadgeVariant,
 } from "@/src/presentation/ui";
-import { deleteFeedCommentAction } from "@/app/_actions/posts";
-import {
-  DeleteCommentButton,
-  type PostDetailViewModel,
-} from "@/src/presentation/post";
+import { DeleteCommentButton } from "./delete-comment-button";
+import type { FeedCommentAction } from "./contracts";
+import type { PostDetailViewModel } from "./post-detail-view-model";
 import styles from "./post-detail-view.module.css";
 
 const postTypeLabels: Record<PostDetailViewModel["post"]["type"], string> = {
@@ -48,6 +46,8 @@ type PostDetailViewProps = {
   className?: string;
   /** Server-authorized projection rendered by the detail view. */
   detail: PostDetailViewModel;
+  /** Server Action used to delete a comment owned by the current viewer. */
+  deleteCommentAction?: FeedCommentAction;
   /** Authenticated person's identifier used to determine comment ownership. */
   viewerPersonId?: string;
 };
@@ -59,6 +59,7 @@ type PostDetailViewProps = {
  * @param props.backHref - Feed URL used by the return link.
  * @param props.className - Optional classes applied to the content landmark.
  * @param props.detail - Server-authorized post detail projection.
+ * @param props.deleteCommentAction - Server Action used for owned-comment deletion.
  * @param props.viewerPersonId - Authenticated person's identifier, when available.
  * @returns The visual post detail and its read-only relationships.
  */
@@ -66,6 +67,7 @@ export function PostDetailView({
   backHref,
   className = "",
   detail,
+  deleteCommentAction,
   viewerPersonId,
 }: PostDetailViewProps) {
   const { author, comments, post, reactions, recipient } = detail;
@@ -173,7 +175,8 @@ export function PostDetailView({
                     </header>
                     <p>{comment.body}</p>
                     {(detail.viewerRole === "parent" || detail.viewerRole === "personal") &&
-                    comment.authorId === viewerPersonId ? (
+                    comment.authorId === viewerPersonId &&
+                    deleteCommentAction ? (
                       <div className={styles.commentActions}>
                         <LinkButton
                           href={`/posts/${encodeURIComponent(post.id)}/comments/${encodeURIComponent(comment.id)}/edit`}
@@ -182,7 +185,7 @@ export function PostDetailView({
                           Editar
                         </LinkButton>
                         <DeleteCommentButton
-                          action={deleteFeedCommentAction}
+                          action={deleteCommentAction}
                           className={styles.deleteAction}
                           commentId={comment.id}
                           postId={post.id}

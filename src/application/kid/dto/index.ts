@@ -1,5 +1,6 @@
 export type {
   KidFieldValidationResult,
+  KidFormErrorCode,
   KidFormErrors,
   KidFormInput,
   KidFormValidationResult,

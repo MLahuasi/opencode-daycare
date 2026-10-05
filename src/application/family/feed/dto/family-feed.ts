@@ -1,6 +1,5 @@
 import type {
   FamilyFeedFilter,
-  FamilyFeedOption,
   ParentKid,
 } from "@/src/domain/family";
 import type { Kid } from "@/src/domain/kid";
@@ -17,10 +16,9 @@ export type FamilyFeedContext = {
   rooms: readonly Room[];
 };
 
-/** Data projection rendered by the Family Feed route. */
+/** Neutral data projection used by the Family Feed route. */
 export type FamilyFeedProjection = {
   context: FamilyFeedContext;
-  options: readonly FamilyFeedOption[];
   posts: readonly Post[];
   selectedFilter: FamilyFeedFilter;
 };
