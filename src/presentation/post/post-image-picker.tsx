@@ -5,7 +5,7 @@ import type { ChangeEvent, DragEvent } from "react";
 import {
   MAX_MEDIA_BYTES,
   MAX_POST_MEDIA,
-} from "@/app/features/feed/schemas";
+} from "@/src/presentation/post/schemas";
 import { isSupportedImageFile } from "@/app/features/feed/utils";
 import styles from "./post-image-picker.module.css";
 

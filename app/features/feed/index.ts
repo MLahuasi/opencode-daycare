@@ -6,7 +6,7 @@ export {
   MAX_POST_MEDIA,
   validateFeedCommentForm,
   validatePostForm,
-} from "./schemas";
+} from "@/src/presentation/post/schemas";
 export type {
   FeedComment,
   FeedEngagement,
@@ -31,5 +31,5 @@ export type {
   PostFormMode,
   PostFormValidationResult,
   PostFormValues,
-} from "./schemas";
+} from "@/src/presentation/post/schemas";
 export { isSupportedImageFile } from "./utils";

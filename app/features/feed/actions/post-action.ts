@@ -9,8 +9,8 @@ import {
   MAX_MEDIA_BYTES,
   validatePostForm,
   type PostFormValues,
-} from "../schemas";
-import type { PostFormActionState } from "./types";
+} from "@/src/presentation/post/schemas";
+import type { PostFormActionState } from "@/src/presentation/post/contracts";
 import { deleteMediaWithRetry } from "./media-cleanup";
 import type { FeedMedia } from "../types";
 import { isSupportedImageFile } from "../utils";

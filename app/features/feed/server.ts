@@ -8,7 +8,7 @@ export {
   deleteFeedCommentAction,
   updateFeedCommentAction,
 } from "./actions";
-export { validateFeedCommentForm } from "./schemas";
+export { validateFeedCommentForm } from "@/src/presentation/post/schemas";
 export {
   getAuthorizedStaffRooms,
   getFeedOverview,

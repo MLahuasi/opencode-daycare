@@ -3,11 +3,11 @@
 import { useActionState, useState } from "react";
 import type { SubmitEvent } from "react";
 import { Button, FormField, LinkButton } from "@/src/presentation/ui";
-import { MAX_FEED_COMMENT_BODY_LENGTH } from "@/app/features/feed";
-import {
-  type FeedCommentAction,
-  type FeedCommentActionState,
-} from "@/app/features/feed/actions";
+import { MAX_FEED_COMMENT_BODY_LENGTH } from "@/src/presentation/post/schemas";
+import type {
+  FeedCommentAction,
+  FeedCommentActionState,
+} from "@/src/presentation/post/contracts";
 import styles from "./family-comment-form.module.css";
 
 const INITIAL_ACTION_STATE: FeedCommentActionState = {

@@ -6,11 +6,13 @@ import {
   type BadgeVariant,
 } from "@/src/presentation/ui";
 import { deleteFeedCommentAction } from "@/app/features/feed/server";
-import { DeleteCommentButton } from "@/src/presentation/post";
-import type { PostDetail } from "../types";
+import {
+  DeleteCommentButton,
+  type PostDetailViewModel,
+} from "@/src/presentation/post";
 import styles from "./post-detail-view.module.css";
 
-const postTypeLabels: Record<PostDetail["post"]["type"], string> = {
+const postTypeLabels: Record<PostDetailViewModel["post"]["type"], string> = {
   achievement: "Logro",
   activity: "Actividad",
   announcement: "Anuncio",
@@ -19,7 +21,7 @@ const postTypeLabels: Record<PostDetail["post"]["type"], string> = {
   nap: "Descanso",
 };
 
-const postTypeBadgeVariants: Record<PostDetail["post"]["type"], BadgeVariant> = {
+const postTypeBadgeVariants: Record<PostDetailViewModel["post"]["type"], BadgeVariant> = {
   achievement: "green",
   activity: "blue",
   announcement: "announcement",
@@ -45,7 +47,7 @@ type PostDetailViewProps = {
   /** Optional classes applied to the content landmark. */
   className?: string;
   /** Server-authorized projection rendered by the detail view. */
-  detail: PostDetail;
+  detail: PostDetailViewModel;
   /** Authenticated person's identifier used to determine comment ownership. */
   viewerPersonId?: string;
 };

@@ -1,4 +1,4 @@
-import type { FeedMedia, PostType } from "../types";
+import type { PostMedia, PostType } from "@/src/domain/post";
 
 /** Maximum number of images attached to one post. */
 export const MAX_POST_MEDIA = 4;
@@ -31,7 +31,7 @@ export type PostFormValues = {
   kidId: string | null;
   roomId: string | null;
   body: string;
-  media: FeedMedia[];
+  media: PostMedia[];
 };
 
 /** Raw values accepted from a create or edit post form. */
@@ -57,7 +57,7 @@ function normalizeNullableId(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-function validateMediaItem(value: unknown): value is FeedMedia {
+function validateMediaItem(value: unknown): value is PostMedia {
   if (!isRecord(value)) {
     return false;
   }
@@ -93,7 +93,7 @@ function validateMediaItem(value: unknown): value is FeedMedia {
   );
 }
 
-function validateMedia(value: unknown): { value: FeedMedia[]; error?: string } {
+function validateMedia(value: unknown): { value: PostMedia[]; error?: string } {
   if (value === undefined || value === null) {
     return { value: [] };
   }
@@ -113,7 +113,7 @@ function validateMedia(value: unknown): { value: FeedMedia[]; error?: string } {
     return { value: [], error: "Revisa el formato y los metadatos de las imágenes." };
   }
 
-  return { value: value as FeedMedia[] };
+    return { value: value as PostMedia[] };
 }
 
 /**

@@ -3,7 +3,10 @@
 import { useActionState } from "react";
 import type { SubmitEvent } from "react";
 import { Button } from "@/src/presentation/ui";
-import type { FeedCommentAction, FeedCommentActionState } from "@/app/features/feed/actions";
+import type {
+  FeedCommentAction,
+  FeedCommentActionState,
+} from "@/src/presentation/post/contracts";
 
 const INITIAL_ACTION_STATE: FeedCommentActionState = {
   errors: {},

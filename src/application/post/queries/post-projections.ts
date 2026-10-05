@@ -7,22 +7,6 @@ import type {
   PostDetailReaction,
 } from "../dto";
 
-const guayaquilDateTime = new Intl.DateTimeFormat("es-EC", {
-  dateStyle: "long",
-  timeStyle: "short",
-  timeZone: "America/Guayaquil",
-});
-
-const guayaquilTime = new Intl.DateTimeFormat("es-EC", {
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: "America/Guayaquil",
-});
-
-function getPersonRoleLabel(role: Person["role"]): string {
-  return role === "personal" ? "maestra" : "familia";
-}
-
 function projectComments(
   comments: readonly PostComment[],
   people: ReadonlyMap<string, Person>,
@@ -39,7 +23,6 @@ function projectComments(
             {
               ...comment,
               author,
-              timeLabel: guayaquilTime.format(new Date(comment.createdAt)),
             },
           ]
         : [];
@@ -66,17 +49,9 @@ export function projectPostDetail(
   input: PostDetailProjectionInput,
 ): PostDetail | null {
   const recipient = input.recipientKid
-    ? {
-        id: input.recipientKid.id,
-        kind: "kid" as const,
-        label: `familia de ${input.recipientKid.name}`,
-      }
+    ? { id: input.recipientKid.id, kind: "kid" as const, name: input.recipientKid.name }
     : input.recipientRoom
-      ? {
-          id: input.recipientRoom.id,
-          kind: "room" as const,
-          label: `sala ${input.recipientRoom.name}`,
-        }
+      ? { id: input.recipientRoom.id, kind: "room" as const, name: input.recipientRoom.name }
       : null;
 
   if (!recipient) {
@@ -87,9 +62,7 @@ export function projectPostDetail(
 
   return {
     author: input.author,
-    authorRoleLabel: getPersonRoleLabel(input.author.role),
     comments: projectComments(input.comments, people),
-    createdAtLabel: guayaquilDateTime.format(new Date(input.post.createdAt)),
     post: input.post,
     reactions: projectReactions(input.reactions, people),
     recipient,

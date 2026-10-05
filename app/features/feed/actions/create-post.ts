@@ -7,7 +7,7 @@ import { createPost } from "@/src/application/post";
 import { createPostComposition } from "@/src/composition/post";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
-import type { PostFormActionState } from "./types";
+import type { PostFormActionState } from "@/src/presentation/post/contracts";
 
 /**
  * Validates authorization, uploads media, persists a new post, and returns its destination.

@@ -7,6 +7,7 @@ import { FamilySidebar, StaffSidebar } from "@/src/presentation/layout";
 import { staffNavigationConfig } from "@/src/presentation/navigation";
 import { createFamilyFeedComposition } from "@/src/composition/family";
 import { createPostComposition } from "@/src/composition/post";
+import { presentPostDetail } from "@/src/presentation/post";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -32,9 +33,10 @@ export default async function PostDetailPage({
      { personId: session.user.personId, role: session.user.role },
    );
 
-  if (!detail) {
-    notFound();
-  }
+   if (!detail) {
+     notFound();
+   }
+   const viewModel = presentPostDetail(detail);
 
   if (session.user.role === "parent") {
     const familyContext = await getFamilyFeedContext(
@@ -48,7 +50,7 @@ export default async function PostDetailPage({
         <PostDetailView
           backHref="/family-feed"
           className="min-w-0 flex-1"
-          detail={detail}
+           detail={viewModel}
           viewerPersonId={session.user.personId}
         />
       </div>
@@ -61,7 +63,7 @@ export default async function PostDetailPage({
       <PostDetailView
         backHref="/home"
         className="min-w-0 flex-1"
-        detail={detail}
+         detail={viewModel}
         viewerPersonId={session.user.personId}
       />
     </div>

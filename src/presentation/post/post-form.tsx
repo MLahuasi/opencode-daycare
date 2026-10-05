@@ -5,14 +5,14 @@ import type { SubmitEvent } from "react";
 import { Button, FormField, LinkButton } from "@/src/presentation/ui";
 import type { Kid } from "@/src/domain/kid";
 import type { Room } from "@/src/domain/room";
-import { MAX_POST_BODY_LENGTH } from "@/app/features/feed/schemas";
+import { MAX_POST_BODY_LENGTH } from "@/src/presentation/post/schemas";
 import {
   PostImagePicker,
   type PostImageSelection,
 } from "./post-image-picker";
-import type { PostFormMode } from "@/app/features/feed/schemas";
-import type { PostType } from "@/app/features/feed/types";
-import type { PostFormAction, PostFormActionState } from "@/app/features/feed/actions/types";
+import type { PostFormMode } from "@/src/presentation/post/schemas";
+import type { PostType } from "@/src/domain/post";
+import type { PostFormAction, PostFormActionState } from "@/src/presentation/post/contracts";
 import {
   PostFormExistingMedia,
   type PostFormExistingMedia as PostFormExistingMediaValue,

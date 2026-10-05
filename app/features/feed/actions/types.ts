@@ -1,15 +1,3 @@
-import type { PostFormErrors } from "../schemas";
+export type { PostFormAction, PostFormActionState } from "@/src/presentation/post/contracts";
 
 /** Serializable feedback returned by post create and edit actions. */
-export type PostFormActionState = {
-  errors: PostFormErrors;
-  message: string;
-  /** Destination used after a successful mutation. */
-  redirectTo?: string;
-};
-
-/** Server Action contract consumed by the shared post form. */
-export type PostFormAction = (
-  previousState: PostFormActionState,
-  formData: FormData,
-) => Promise<PostFormActionState>;

@@ -8,7 +8,7 @@ import { createPostComposition } from "@/src/composition/post";
 import type { FeedMedia } from "../types";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
-import type { PostFormActionState } from "./types";
+import type { PostFormActionState } from "@/src/presentation/post/contracts";
 
 /**
  * Revalidates authorization, updates a post, and returns the feed destination.

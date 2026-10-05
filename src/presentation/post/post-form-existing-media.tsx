@@ -1,10 +1,10 @@
-import type { FeedMedia } from "@/app/features/feed/types";
+import type { PostMedia } from "@/src/domain/post";
 import styles from "./post-form.module.css";
 
 /** Existing image data displayed by the edit form. */
 export type PostFormExistingMedia = {
   /** Persisted media metadata. */
-  media: FeedMedia;
+  media: PostMedia;
   /** Server-generated delivery URL. */
   url: string;
 };
