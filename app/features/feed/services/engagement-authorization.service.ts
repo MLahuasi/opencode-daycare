@@ -2,8 +2,9 @@ import "server-only";
 
 import { requireActiveSession } from "@/auth";
 import { getFamilyFeedProjection } from "@/src/application/family/feed";
+import { getAuthorizedPosts } from "@/src/application/post";
 import { createFamilyFeedComposition } from "@/src/composition/family";
-import { getFeeds } from "./feed.service";
+import { createPostComposition } from "@/src/composition/post";
 
 /**
  * Loads the Posts that the authenticated person can use for engagement.
@@ -21,8 +22,8 @@ export async function getAuthorizedEngagementPosts() {
     return projection.posts;
   }
 
-  return getFeeds({
-    resolveMediaUrls: false,
-    viewerId: session.user.personId,
-  });
+  return getAuthorizedPosts(
+    createPostComposition(),
+    { personId: session.user.personId, role: session.user.role },
+  );
 }

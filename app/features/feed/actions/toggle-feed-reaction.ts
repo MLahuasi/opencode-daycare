@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { requireActiveSession } from "@/auth";
-import { toggleFeedReaction } from "../services/reaction.service";
-import { getAuthorizedEngagementPosts } from "../services/engagement-authorization.service";
+import { toggleReaction } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 
 /** Serializable result returned by the family feed reaction action. */
 export type ToggleFeedReactionResult =
@@ -26,27 +26,25 @@ export async function toggleFeedReactionAction(
     return { success: false, message: "La publicación no es válida." };
   }
 
-  const authorizedPosts = await getAuthorizedEngagementPosts();
-  if (!authorizedPosts.some((post) => post.id === normalizedPostId)) {
-    return { success: false, message: "No tienes acceso a esta publicación." };
-  }
+   try {
+     const result = await toggleReaction(
+       createPostComposition(),
+       normalizedPostId,
+       { personId: session.user.personId, role: session.user.role },
+     );
 
-  let reaction;
+     if (!result) {
+       return { success: false, message: "No tienes acceso a esta publicación." };
+     }
 
-  try {
-    reaction = await toggleFeedReaction(
-      normalizedPostId,
-      session.user.personId,
-    );
-  } catch {
+     revalidatePath("/family-feed");
+     revalidatePath("/home");
+     revalidatePath(`/posts/${normalizedPostId}`);
+     return { success: true, active: result.active };
+   } catch {
     return {
       success: false,
       message: "No pudimos actualizar tu reacción. Inténtalo nuevamente.",
     };
   }
-  revalidatePath("/family-feed");
-  revalidatePath("/home");
-  revalidatePath(`/posts/${normalizedPostId}`);
-
-  return { success: true, active: reaction !== null };
 }

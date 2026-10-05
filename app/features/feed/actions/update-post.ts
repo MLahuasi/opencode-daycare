@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/auth";
 import { createPostImageStorage } from "@/src/composition/post";
-import { readCollection } from "@/src/infrastructure/persistence";
-import { updateFeedPost } from "../services";
-import type { FeedMedia, PersistedFeedPost } from "../types";
+import { updatePost } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
+import type { FeedMedia } from "../types";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "./types";
@@ -28,8 +28,8 @@ export async function updatePostAction(
     return { errors: { postId: "Indica la publicación que deseas editar." }, message: "Revisa los campos marcados." };
   }
 
-  const posts = await readCollection<PersistedFeedPost>("feed.json");
-  const currentPost = posts.find((post) => post.id === postId);
+  const dependencies = createPostComposition();
+  const currentPost = await dependencies.posts.findById(postId);
 
   if (!currentPost || currentPost.authorId !== session.user.personId) {
     return { errors: {}, message: "No tienes permiso para editar esta publicación." };
@@ -39,15 +39,20 @@ export async function updatePostAction(
   if (!parsed.success) return parsed.state;
 
   try {
-    const updatedPost = await updateFeedPost(postId, {
-      authorId: session.user.personId,
-      body: parsed.values.body,
-      kidId: parsed.values.kidId,
-      media: parsed.media,
-      roomId: parsed.values.roomId,
-      subject: parsed.subject,
-      type: parsed.values.type,
-    });
+    const updatedPost = await updatePost(
+      dependencies,
+      postId,
+      {
+        authorId: session.user.personId,
+       body: parsed.values.body,
+       kidId: parsed.values.kidId,
+       media: parsed.media,
+       roomId: parsed.values.roomId,
+       subject: parsed.subject,
+        type: parsed.values.type,
+      },
+      { personId: session.user.personId, role: session.user.role },
+    );
 
     if (!updatedPost) {
       return { errors: {}, message: "La publicación ya no existe." };
@@ -97,18 +102,23 @@ export async function updatePostAction(
       } catch {
         // The restored post keeps failed deletions addressable for a later retry.
       }
-      await updateFeedPost(postId, {
-        authorId: session.user.personId,
-        body: parsed.values.body,
-        kidId: parsed.values.kidId,
-        media: [
-          ...parsed.media.filter((media) => !uploadedIds.has(media.id)),
-          ...failedMedia,
-        ],
-        roomId: parsed.values.roomId,
-        subject: parsed.subject,
-        type: parsed.values.type,
-      });
+      await updatePost(
+        dependencies,
+        postId,
+        {
+          authorId: session.user.personId,
+          body: parsed.values.body,
+          kidId: parsed.values.kidId,
+          media: [
+            ...parsed.media.filter((media) => !uploadedIds.has(media.id)),
+            ...failedMedia,
+          ],
+          roomId: parsed.values.roomId,
+          subject: parsed.subject,
+          type: parsed.values.type,
+        },
+        { personId: session.user.personId, role: session.user.role },
+      );
       return {
         errors: { media: "No pudimos retirar todas las imágenes. Inténtalo nuevamente." },
         message: "La publicación se guardó, pero algunas imágenes no se pudieron retirar.",

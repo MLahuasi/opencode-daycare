@@ -3,12 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import {
-  getFeedCommentById,
-  updateFeedComment,
-} from "../services/comment.service";
+import { updateComment } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 import { validateFeedCommentForm } from "../schemas";
-import { getAuthorizedEngagementPosts } from "../services/engagement-authorization.service";
 import type { FeedCommentActionState } from "./comment-types";
 
 /**
@@ -35,31 +32,21 @@ export async function updateFeedCommentAction(
     return { errors: {}, message: "El comentario no es válido." };
   }
 
-  const comment = await getFeedCommentById(commentId);
-  if (
-    !comment ||
-    comment.authorId !== session.user.personId ||
-    comment.postId !== postId
-  ) {
-    return { errors: {}, message: "No tienes permiso para editar este comentario." };
-  }
-
-  const authorizedPosts = await getAuthorizedEngagementPosts();
-  if (!authorizedPosts.some((post) => post.id === postId)) {
-    return { errors: {}, message: "No tienes acceso a esta publicación." };
-  }
-
   const validation = validateFeedCommentForm({ body: formData.get("body") });
   if (!validation.success) {
     return { errors: validation.errors, message: "Revisa el comentario." };
   }
 
   try {
-    const updatedComment = await updateFeedComment({
-      authorId: session.user.personId,
-      body: validation.data.body,
-      commentId,
-    });
+     const updatedComment = await updateComment(
+       createPostComposition(),
+       {
+       authorId: session.user.personId,
+       body: validation.data.body,
+       commentId,
+       },
+       { personId: session.user.personId, role: session.user.role },
+     );
 
     if (!updatedComment) {
       return { errors: {}, message: "El comentario ya no está disponible." };

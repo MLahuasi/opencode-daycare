@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { createPostImageStorage } from "@/src/composition/post";
 import { readCollection } from "@/src/infrastructure/persistence";
+import { getPostTargets } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 import type { Person } from "@/src/domain/person";
 import type { ParentKid } from "@/src/domain/family";
 import {
@@ -10,7 +12,6 @@ import {
 } from "../schemas";
 import type { PostFormActionState } from "./types";
 import { deleteMediaWithRetry } from "./media-cleanup";
-import { getAuthorizedPostTargets } from "../services";
 import type { FeedMedia } from "../types";
 import { isSupportedImageFile } from "../utils";
 
@@ -176,7 +177,10 @@ export async function parsePostSubmission(
     return { success: false, state: { errors: initialValidation.errors, message: "Revisa los campos marcados." } };
   }
 
-  const targets = await getAuthorizedPostTargets(personId);
+  const targets = await getPostTargets(
+    createPostComposition(),
+    { personId, role: "personal" },
+  );
   const targetKid = initialValidation.data.kidId
     ? targets.kids.find((kid) => kid.id === initialValidation.data.kidId)
     : undefined;

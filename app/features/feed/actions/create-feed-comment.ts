@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { createFeedComment } from "../services/comment.service";
+import { createComment } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 import { validateFeedCommentForm } from "../schemas";
-import { getAuthorizedEngagementPosts } from "../services/engagement-authorization.service";
 import type { FeedCommentActionState } from "./comment-types";
 
 /**
@@ -31,17 +31,20 @@ export async function createFeedCommentAction(
     return { errors: validation.errors, message: "Revisa el comentario." };
   }
 
-  const authorizedPosts = await getAuthorizedEngagementPosts();
-  if (!authorizedPosts.some((post) => post.id === postId)) {
-    return { errors: {}, message: "No tienes acceso a esta publicación." };
-  }
+   try {
+     const comment = await createComment(
+       createPostComposition(),
+       {
+       authorId: session.user.personId,
+       body: validation.data.body,
+       postId,
+       },
+       { personId: session.user.personId, role: session.user.role },
+     );
 
-  try {
-    await createFeedComment({
-      authorId: session.user.personId,
-      body: validation.data.body,
-      postId,
-    });
+     if (!comment) {
+       return { errors: {}, message: "No tienes acceso a esta publicación." };
+     }
   } catch {
     return {
       errors: {},

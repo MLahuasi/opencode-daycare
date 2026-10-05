@@ -5,6 +5,11 @@ import {
   type PostDependencies,
 } from "@/src/application/post";
 import {
+  KidRepository,
+  PersonRepository,
+  RoomRepository,
+} from "@/src/infrastructure/persistence/repositories";
+import {
   PostCommentRepository,
   JsonPostAccessRepository,
   PostReactionRepository,
@@ -34,6 +39,10 @@ export function createPostComposition(): PostComposition {
   const access = new JsonPostAccessRepository();
 
   return {
+    authorizationAccess: access,
+    people: new PersonRepository(),
+    kids: new KidRepository(),
+    rooms: new RoomRepository(),
     posts: new PostRepository(),
     comments: new PostCommentRepository(),
     reactions: new PostReactionRepository(),

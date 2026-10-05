@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
-import { deleteFeedComment, getFeedCommentById } from "../services/comment.service";
-import { getAuthorizedEngagementPosts } from "../services/engagement-authorization.service";
+import { deleteComment } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 import type { FeedCommentActionState } from "./comment-types";
 
 /**
@@ -31,25 +31,12 @@ export async function deleteFeedCommentAction(
     return { errors: {}, message: "El comentario no es válido." };
   }
 
-  const comment = await getFeedCommentById(commentId);
-  if (
-    !comment ||
-    comment.authorId !== session.user.personId ||
-    comment.postId !== postId
-  ) {
-    return { errors: {}, message: "No tienes permiso para eliminar este comentario." };
-  }
-
-  const authorizedPosts = await getAuthorizedEngagementPosts();
-  if (!authorizedPosts.some((post) => post.id === postId)) {
-    return { errors: {}, message: "No tienes acceso a esta publicación." };
-  }
-
-  try {
-    const deleted = await deleteFeedComment({
-      authorId: session.user.personId,
-      commentId,
-    });
+   try {
+     const deleted = await deleteComment(
+       createPostComposition(),
+       commentId,
+       { personId: session.user.personId, role: session.user.role },
+     );
 
     if (!deleted) {
       return { errors: {}, message: "El comentario ya no está disponible." };

@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/auth";
 import { createPostImageStorage } from "@/src/composition/post";
-import { createFeedPost } from "../services";
+import { createPost } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "./types";
@@ -25,15 +26,23 @@ export async function createPostAction(
   if (!parsed.success) return parsed.state;
 
   try {
-    await createFeedPost({
-      authorId: session.user.personId,
-      body: parsed.values.body,
-      kidId: parsed.values.kidId,
+     const createdPost = await createPost(
+       createPostComposition(),
+       {
+       authorId: session.user.personId,
+       body: parsed.values.body,
+       kidId: parsed.values.kidId,
       media: parsed.media,
       roomId: parsed.values.roomId,
-      subject: parsed.subject,
-      type: parsed.values.type,
-    });
+       subject: parsed.subject,
+       type: parsed.values.type,
+       },
+       { personId: session.user.personId, role: session.user.role },
+     );
+
+     if (!createdPost) {
+       throw new Error("Post creation is not authorized.");
+     }
   } catch {
     const imageStorage = parsed.uploadedMedia.length
       ? createPostImageStorage()

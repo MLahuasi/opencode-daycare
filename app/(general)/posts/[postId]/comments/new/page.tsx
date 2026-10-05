@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
 import { createFeedCommentAction } from "@/app/features/feed/server";
-import { getPostDetail } from "@/app/features/post-detail/server";
+import { getPostDetail } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 import { FamilyCommentForm } from "@/src/presentation/post";
 
 /** Dynamic parameters accepted by the new Post comment route. */
@@ -20,9 +21,13 @@ type NewPostCommentPageProps = {
 export default async function NewPostCommentPage({
   params,
 }: NewPostCommentPageProps) {
-  await requireActiveSession();
   const { postId } = await params;
-  const detail = await getPostDetail(postId);
+  const session = await requireActiveSession();
+  const detail = await getPostDetail(
+    createPostComposition(),
+    postId,
+    { personId: session.user.personId, role: session.user.role },
+  );
 
   if (!detail) {
     redirect("/family-feed");

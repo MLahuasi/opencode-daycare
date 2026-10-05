@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/auth";
 import { updateFeedCommentAction } from "@/app/features/feed/server";
-import { getFeedCommentById } from "@/app/features/feed/server";
-import { getPostDetail } from "@/app/features/post-detail/server";
+import { getPostDetail } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 import { FamilyCommentForm } from "@/src/presentation/post";
 
 /** Dynamic parameters accepted by the Post comment edit route. */
@@ -23,7 +23,8 @@ export default async function EditPostCommentPage({
 }: EditPostCommentPageProps) {
   const session = await requireActiveSession();
   const { commentId, postId } = await params;
-  const comment = await getFeedCommentById(commentId);
+   const dependencies = createPostComposition();
+   const comment = await dependencies.comments.findById(commentId);
 
   if (
     !comment ||
@@ -33,7 +34,11 @@ export default async function EditPostCommentPage({
     redirect("/family-feed");
   }
 
-  const detail = await getPostDetail(postId);
+   const detail = await getPostDetail(
+     dependencies,
+     postId,
+     { personId: session.user.personId, role: session.user.role },
+   );
   if (!detail) {
     redirect("/family-feed");
   }

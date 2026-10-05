@@ -1,7 +1,9 @@
 import { StaffSidebar } from "@/src/presentation/layout";
 import { FeedContent } from "@/app/features/feed";
 import { toggleFeedReactionAction } from "@/app/features/feed/server";
-import { getFeedOverview, getFeeds } from "@/app/features/feed/services";
+import { getFeedOverview } from "@/app/features/feed/services";
+import { getAuthorizedPosts } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 import { staffNavigationConfig } from "@/src/presentation/navigation";
 import { requireActiveSession } from "@/auth";
 import { redirect } from "next/navigation";
@@ -19,7 +21,10 @@ export default async function Home() {
   }
 
   const feedOverview = await getFeedOverview();
-  const feedPosts = await getFeeds();
+   const feedPosts = await getAuthorizedPosts(
+     createPostComposition(),
+     { personId: session.user.personId, role: session.user.role },
+   );
   return (
     <div className="flex min-h-screen bg-background">
       <StaffSidebar navigation={staffNavigationConfig} />

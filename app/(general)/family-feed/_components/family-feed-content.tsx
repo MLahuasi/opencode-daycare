@@ -1,4 +1,4 @@
-import type { FeedPost } from "@/app/features/feed";
+import type { Post } from "@/src/domain/post";
 import { FeedPostCard } from "@/src/presentation/post";
 import { toggleFeedReactionAction } from "@/app/features/feed/actions";
 import type { Person } from "@/src/domain/person";
@@ -41,7 +41,7 @@ type FamilyFeedContentProps = {
   /** Parent identity displayed in the greeting. */
   person: Pick<Person, "name">;
   /** Authorized Posts to render as cards. */
-  posts: readonly FeedPost[];
+  posts: readonly Post[];
   /** Filter currently applied to the feed. */
   selectedFilter: FamilyFeedFilter;
 };

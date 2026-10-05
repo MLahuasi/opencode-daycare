@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/auth";
-import {
-  createPostAction,
-  getAuthorizedPostTargets,
-} from "@/app/features/feed/server";
+import { createPostAction } from "@/app/features/feed/server";
+import { getPostTargets } from "@/src/application/post";
+import { createPostComposition } from "@/src/composition/post";
 import {
   PostForm,
   type PostFormInitialValues,
@@ -16,7 +15,10 @@ import {
  */
 export default async function NewPostPage() {
   const session = await requireStaffSession();
-  const targets = await getAuthorizedPostTargets(session.user.personId);
+   const targets = await getPostTargets(
+     createPostComposition(),
+     { personId: session.user.personId, role: session.user.role },
+   );
   const kidId = targets.kids[0]?.id ?? null;
   const roomId = kidId ? null : targets.rooms[0]?.id ?? null;
 

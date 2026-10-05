@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import { requireActiveSession } from "@/auth";
 import { getFamilyFeedContext } from "@/src/application/family/feed";
+import { getPostDetail } from "@/src/application/post";
 import { PostDetailView } from "@/app/features/post-detail";
-import { getPostDetail } from "@/app/features/post-detail/server";
 import { FamilySidebar, StaffSidebar } from "@/src/presentation/layout";
 import { staffNavigationConfig } from "@/src/presentation/navigation";
 import { createFamilyFeedComposition } from "@/src/composition/family";
+import { createPostComposition } from "@/src/composition/post";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -25,7 +26,11 @@ export default async function PostDetailPage({
 }: PostDetailPageProps) {
   const session = await requireActiveSession();
   const { postId } = await params;
-  const detail = await getPostDetail(postId);
+   const detail = await getPostDetail(
+     createPostComposition(),
+     postId,
+     { personId: session.user.personId, role: session.user.role },
+   );
 
   if (!detail) {
     notFound();
