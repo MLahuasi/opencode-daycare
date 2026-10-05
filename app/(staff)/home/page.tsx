@@ -2,7 +2,7 @@ import { StaffSidebar } from "@/src/presentation/layout";
 import { FeedContent } from "@/app/features/feed";
 import { toggleFeedReactionAction } from "@/app/features/feed/server";
 import { getFeedOverview, getFeeds } from "@/app/features/feed/services";
-import { staffNavigationConfig } from "@/src/config";
+import { staffNavigationConfig } from "@/src/presentation/navigation";
 import { requireActiveSession } from "@/auth";
 import { redirect } from "next/navigation";
 

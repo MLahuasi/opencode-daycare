@@ -4,7 +4,7 @@ import { getFamilyFeedContext } from "@/src/application/family/feed";
 import { PostDetailView } from "@/app/features/post-detail";
 import { getPostDetail } from "@/app/features/post-detail/server";
 import { FamilySidebar, StaffSidebar } from "@/src/presentation/layout";
-import { staffNavigationConfig } from "@/src/config";
+import { staffNavigationConfig } from "@/src/presentation/navigation";
 import { createFamilyFeedComposition } from "@/src/infrastructure/composition/family";
 
 /** Dynamic parameters accepted by the general Post detail route. */
