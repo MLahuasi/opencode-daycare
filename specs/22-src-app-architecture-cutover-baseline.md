@@ -27,6 +27,8 @@ Fecha de registro: 2026-10-05
 | `app/(staff)/kids/[slug]/page.tsx` | `/kids/[slug]` |
 | `app/(staff)/kids/[slug]/invite-parent/page.tsx` | `/kids/[slug]/invite-parent` |
 | `app/(staff)/kids/edit/[id]/page.tsx` | `/kids/edit/[id]` |
+| `app/(staff)/posts/new/page.tsx` | `/posts/new` |
+| `app/(staff)/posts/[postId]/edit/page.tsx` | `/posts/[postId]/edit` |
 | `app/auth/login/page.tsx` | `/auth/login` |
 | `app/auth/parent-invitation/page.tsx` | `/auth/parent-invitation` |
 | `app/auth/parent-invitation/[token]/page.tsx` | `/auth/parent-invitation/[token]` |
