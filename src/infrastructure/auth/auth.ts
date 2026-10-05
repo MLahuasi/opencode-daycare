@@ -4,8 +4,11 @@ import { getServerSession, type NextAuthOptions, type Session } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
 import { getEnvironment } from "@/src/infrastructure/config/server";
-import { createAuthComposition } from "@/src/composition/auth";
-import { PersonRepository } from "@/src/infrastructure/persistence/repositories";
+import { BcryptPasswordHasher } from "@/src/infrastructure/adapters/password";
+import {
+  CredentialRepository,
+  PersonRepository,
+} from "@/src/infrastructure/persistence/repositories";
 
 const { auth: authEnvironment } = getEnvironment();
 
@@ -36,14 +39,15 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const composition = createAuthComposition();
+        const credentialRepository = new CredentialRepository();
+        const passwordHasher = new BcryptPasswordHasher();
         const people = await new PersonRepository().findAll();
         const person = people.find(
           (candidate) =>
             candidate.email.toLowerCase() === email && candidate.status === "active",
         );
         const storedCredential = person
-          ? await composition.credentials.findByPersonId(person.id)
+           ? await credentialRepository.findByPersonId(person.id)
           : null;
 
         if (!person || !storedCredential) {
@@ -51,7 +55,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          if (!(await composition.passwordHasher.compare(password, storedCredential.passwordHash))) {
+           if (!(await passwordHasher.compare(password, storedCredential.passwordHash))) {
             return null;
           }
         } catch {

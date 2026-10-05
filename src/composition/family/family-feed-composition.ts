@@ -3,9 +3,14 @@ import "server-only";
 import type {
   FamilyFeedQueryDependencies,
 } from "@/src/application/family/feed";
-import { getFeeds, resolveFeedMediaUrls } from "@/app/features/feed/server";
+import { derivePostEngagement, hasSinglePostDestination } from "@/src/domain/post";
+import type { Post } from "@/src/domain/post";
+import { createCloudinaryImageStorage } from "@/src/infrastructure/adapters/cloudinary";
 import {
   KidRepository,
+  PostCommentRepository,
+  PostReactionRepository,
+  PostRepository,
   ParentKidRepository,
   PersonRepository,
   RoomRepository,
@@ -24,6 +29,9 @@ export function createFamilyFeedComposition(): FamilyFeedComposition {
   const parentKids = new ParentKidRepository();
   const kids = new KidRepository();
   const rooms = new RoomRepository();
+  const posts = new PostRepository();
+  const comments = new PostCommentRepository();
+  const reactions = new PostReactionRepository();
 
   return {
     directory: {
@@ -31,7 +39,20 @@ export function createFamilyFeedComposition(): FamilyFeedComposition {
       findRooms: () => rooms.findAll(),
     },
     media: {
-      resolve: (posts) => Promise.resolve(resolveFeedMediaUrls(posts)),
+      resolve: async (feedPosts) => {
+        if (!feedPosts.some((post) => post.media.length > 0)) {
+          return feedPosts;
+        }
+
+        const imageStorage = createCloudinaryImageStorage();
+        return feedPosts.map((post) => ({
+          ...post,
+          media: post.media.map((media) => ({
+            ...media,
+            url: imageStorage.getUrl(media),
+          })),
+        }));
+      },
     },
     parentKids: {
       findByParentId: async (parentId) =>
@@ -41,7 +62,32 @@ export function createFamilyFeedComposition(): FamilyFeedComposition {
     },
     people,
     posts: {
-      findForViewer: (viewerId) => getFeeds({ resolveMediaUrls: false, viewerId }),
+      findForViewer: async (viewerId): Promise<readonly Post[]> => {
+        const [persistedPosts, persistedComments, persistedReactions] =
+          await Promise.all([
+            posts.findAll(),
+            comments.findAll(),
+            reactions.findAll(),
+          ]);
+
+        return persistedPosts.map((post) => {
+          if (!hasSinglePostDestination(post)) {
+            throw new Error(
+              `Feed post ${post.id} must have exactly one destination: kidId or roomId.`,
+            );
+          }
+
+          return {
+            ...post,
+            engagement: derivePostEngagement(
+              post.id,
+              persistedComments,
+              persistedReactions,
+              viewerId,
+            ),
+          };
+        });
+      },
     },
   };
 }

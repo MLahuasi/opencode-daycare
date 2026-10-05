@@ -1,5 +1,5 @@
-export { sendParentInvitationEmail } from "./parent-invitation-email";
+export { sendParentInvitationEmail } from "@/src/infrastructure/adapters/mailer/parent-invitation-email";
 export type {
   ParentInvitationEmailInput,
   ParentInvitationEmailResult,
-} from "./parent-invitation-email";
+} from "@/src/infrastructure/adapters/mailer/parent-invitation-email";
