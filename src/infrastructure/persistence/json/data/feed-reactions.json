@@ -42,13 +42,6 @@
     "createdAt": "2026-06-17T14:53:00.000Z"
   },
   {
-    "id": "reaction-mateo-tempera-painting-5",
-    "postId": "mateo-tempera-painting",
-    "personId": "person-caro-gimenez",
-    "type": "love",
-    "createdAt": "2026-06-17T14:54:00.000Z"
-  },
-  {
     "id": "reaction-friday-park-announcement-1",
     "postId": "friday-park-announcement",
     "personId": "parent-diego-fernandez",
@@ -91,20 +84,6 @@
     "createdAt": "2026-06-17T13:05:00.000Z"
   },
   {
-    "id": "reaction-friday-park-announcement-7",
-    "postId": "friday-park-announcement",
-    "personId": "person-caro-gimenez",
-    "type": "love",
-    "createdAt": "2026-06-17T13:06:00.000Z"
-  },
-  {
-    "id": "4f8771fe-7562-4489-873b-cc736f3ab8b0",
-    "postId": "mateo-first-potty",
-    "personId": "person-caro-gimenez",
-    "type": "love",
-    "createdAt": "2026-09-29T21:25:28.557Z"
-  },
-  {
     "id": "bb187da2-28d5-4fb6-a1d6-e8214ad49bb4",
     "postId": "mateo-first-potty",
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
@@ -126,17 +105,52 @@
     "createdAt": "2026-10-01T18:55:36.979Z"
   },
   {
-    "id": "e290bf38-0a30-4507-8b79-a11f4cb195cd",
-    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
-    "personId": "person-caro-gimenez",
-    "type": "love",
-    "createdAt": "2026-10-05T18:27:28.374Z"
-  },
-  {
     "id": "a49e7a86-58ff-45e2-9a77-45d0a9d44922",
     "postId": "friday-park-announcement",
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
     "type": "love",
     "createdAt": "2026-10-05T22:11:57.084Z"
+  },
+  {
+    "id": "e5fa7e3a-95f7-448d-8a26-7ed0944eea9d",
+    "postId": "mateo-first-potty",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-10-05T22:29:32.147Z"
+  },
+  {
+    "id": "36f58573-40f1-4562-b97c-163e8768a151",
+    "postId": "mateo-tempera-painting",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-10-05T22:29:34.810Z"
+  },
+  {
+    "id": "2aa59842-9104-4050-bd09-d9fd223048b9",
+    "postId": "f8a06160-812b-4624-a547-e8ad55d485e2",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-10-05T22:29:40.065Z"
+  },
+  {
+    "id": "90cd29eb-42c9-48fc-b865-ac2657ae4306",
+    "postId": "friday-park-announcement",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-10-05T22:29:42.695Z"
+  },
+  {
+    "id": "44a043f2-3335-4bc1-95f6-9c8f251e1630",
+    "postId": "211c6723-4a1e-46c9-ad7e-11cbf42bab35",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-10-05T22:33:15.642Z"
+  },
+  {
+    "id": "9936f02b-cd1d-4381-985d-35df4bd6c9ac",
+    "postId": "211c6723-4a1e-46c9-ad7e-11cbf42bab35",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-10-05T22:34:07.827Z"
   }
 ]

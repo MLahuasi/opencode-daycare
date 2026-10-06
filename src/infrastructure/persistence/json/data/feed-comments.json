@@ -110,5 +110,21 @@
     "body": "Mi gatito hermoso te amo",
     "createdAt": "2026-10-05T18:43:12.429Z",
     "updatedAt": null
+  },
+  {
+    "id": "8400af2c-bce8-401f-a548-24c6c2de326e",
+    "postId": "211c6723-4a1e-46c9-ad7e-11cbf42bab35",
+    "authorId": "person-caro-gimenez",
+    "body": "Muy lindo",
+    "createdAt": "2026-10-05T22:33:33.142Z",
+    "updatedAt": null
+  },
+  {
+    "id": "3bf23b39-c89c-4959-bb57-6a213596ca42",
+    "postId": "211c6723-4a1e-46c9-ad7e-11cbf42bab35",
+    "authorId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "body": "Mi amor",
+    "createdAt": "2026-10-05T22:34:15.978Z",
+    "updatedAt": null
   }
 ]
