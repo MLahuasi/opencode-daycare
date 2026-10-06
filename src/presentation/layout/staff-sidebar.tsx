@@ -107,10 +107,10 @@ export function StaffSidebar({ activeSection = "feed", className = "", navigatio
       <aside className={`${styles.sidebar} ${className}`} aria-label={navigation.navigationLabel}>
         <Brand name={navigation.brand.name} room={navigation.brand.room} />
 
-        <Button className={styles.newPostButton}>
+        <LinkButton className={styles.newPostButton} href="/posts/new" variant="coral">
           <PlusIcon strokeWidth="2.4" />
           {navigation.newPostLabel}
-        </Button>
+        </LinkButton>
 
         <nav className={styles.navigation} aria-label={navigation.sectionsLabel}>
           {navigation.navigationItems.map((item) => (
