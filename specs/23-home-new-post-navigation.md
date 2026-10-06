@@ -37,14 +37,14 @@ Esta spec no introduce ni modifica estructuras de negocio, datos persistidos ni 
 
 ## Acceptance criteria
 
-- [ ] Una persona de personal autenticada ve el control “Nueva publicación” en `/home`.
-- [ ] El control conserva el texto, la apariencia y el comportamiento responsive actuales.
-- [ ] Al activar el control, la URL final es `http://localhost:3000/posts/new`.
-- [ ] La navegación usa la ruta interna `/posts/new` y no una petición `fetch` ni una pestaña nueva.
-- [ ] `/posts/new` renderiza el encabezado y formulario de nueva publicación después de la navegación.
-- [ ] `/posts/new` conserva la autorización actual para personal autenticado.
-- [ ] El flujo funciona en viewport de escritorio y móvil.
-- [ ] No se crean estructuras de datos, fixtures, persistencia ni reglas de negocio nuevas.
+- [x] Una persona de personal autenticada ve el control “Nueva publicación” en `/home`.
+- [x] El control conserva el texto, la apariencia y el comportamiento responsive actuales.
+- [x] Al activar el control, la URL final es `http://localhost:3000/posts/new`.
+- [x] La navegación usa la ruta interna `/posts/new` y no una petición `fetch` ni una pestaña nueva.
+- [x] `/posts/new` renderiza el encabezado y formulario de nueva publicación después de la navegación.
+- [x] `/posts/new` conserva la autorización actual para personal autenticado.
+- [x] El flujo funciona en viewport de escritorio y móvil.
+- [x] No se crean estructuras de datos, fixtures, persistencia ni reglas de negocio nuevas.
 
 ## Decisions
 
