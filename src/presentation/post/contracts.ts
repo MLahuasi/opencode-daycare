@@ -8,6 +8,8 @@ import type {
 export type PostFormActionState = {
   errors: PostFormErrors;
   message: string;
+  /** Kids whose active family relationships restrict photo sharing. */
+  restrictedKids?: readonly { id: string; name: string }[];
   /** Destination used after a successful mutation. */
   redirectTo?: string;
 };

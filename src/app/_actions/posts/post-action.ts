@@ -193,16 +193,31 @@ export async function parsePostSubmission(
     }
   }
 
-  if (
-    targetKids.length > 0 &&
-    (files.length > 0 || retainedMedia.length > 0) &&
-    !(await Promise.all(
-      targetKids.map((kid) =>
-        hasPhotoSharingConsent(createPostComposition(), kid.id),
-      ),
-    )).every(Boolean)
-  ) {
-    return { success: false, state: errorState("media", "No hay consentimiento vigente de todas las familias activas.") };
+  if (targetKids.length > 0 && (files.length > 0 || retainedMedia.length > 0)) {
+    const consentResults = await Promise.all(
+      targetKids.map(async (kid) => ({
+        hasConsent: await hasPhotoSharingConsent(createPostComposition(), kid.id),
+        kid,
+      })),
+    );
+    const restrictedKids = consentResults
+      .filter(({ hasConsent }) => !hasConsent)
+      .map(({ kid }) => ({ id: kid.id, name: kid.name }));
+
+    if (restrictedKids.length > 0) {
+      return {
+        success: false,
+        state: {
+          ...errorState(
+            "media",
+            `Existen niños con restricciones: ${restrictedKids
+              .map(({ name }) => name)
+              .join(", ")}`,
+          ),
+          restrictedKids,
+        },
+      };
+    }
   }
 
   if (files.length + retainedMedia.length > 4) {
