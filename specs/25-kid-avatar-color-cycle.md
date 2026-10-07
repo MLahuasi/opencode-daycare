@@ -1,6 +1,6 @@
 # SPEC 25 — Alternancia de colores para avatares infantiles
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 24
 > **Date:** 2026-10-07
 > **Objective:** Alternar los seis tonos semánticos existentes en los avatares infantiles según su posición visible para mejorar la identificación visual sin persistir colores.
@@ -106,13 +106,13 @@ La función debe devolver el tono en `index % AVATAR_TONES.length` y no debe dep
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El mismo niño cambia de color entre pantallas. | Documentar que la asignación depende de la posición visible y no del ID. |
-| El filtrado reinicia o desplaza colores incorrectamente. | Calcular el índice después del filtrado y verificar listas mixtas con Playwright. |
-| Un override CSS mantiene todos los avatares azules. | Retirar reglas específicas que sobrescriban los tonos del componente `Avatar`. |
-| El cambio altera avatares de adultos por reutilización del componente. | Aplicar la paleta únicamente a los puntos de renderizado identificados como infantiles. |
-| El tamaño del formulario cambia al usar `Avatar`. | Mantener una variante compacta o conservar el círculo actual con clases de tono semánticas. |
+| Risk                                                                   | Mitigation                                                                                  |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| El mismo niño cambia de color entre pantallas.                         | Documentar que la asignación depende de la posición visible y no del ID.                    |
+| El filtrado reinicia o desplaza colores incorrectamente.               | Calcular el índice después del filtrado y verificar listas mixtas con Playwright.           |
+| Un override CSS mantiene todos los avatares azules.                    | Retirar reglas específicas que sobrescriban los tonos del componente `Avatar`.              |
+| El cambio altera avatares de adultos por reutilización del componente. | Aplicar la paleta únicamente a los puntos de renderizado identificados como infantiles.     |
+| El tamaño del formulario cambia al usar `Avatar`.                      | Mantener una variante compacta o conservar el círculo actual con clases de tono semánticas. |
 
 ## What is **not** in this spec
 
