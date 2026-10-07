@@ -10,6 +10,28 @@ export type FeedPostViewModel = Post & {
   time: string;
 };
 
+export function isChildFeedPost(
+  post: Pick<Post, "kidIds" | "type">,
+): boolean {
+  return post.kidIds.length > 0 && post.type !== "announcement";
+}
+
+export function getKidAvatarPositions(
+  posts: readonly Post[],
+): ReadonlyMap<string, number> {
+  const positions = new Map<string, number>();
+  let position = 0;
+
+  for (const post of posts) {
+    if (isChildFeedPost(post)) {
+      positions.set(post.id, position);
+      position += 1;
+    }
+  }
+
+  return positions;
+}
+
 const feedTimeFormatter = new Intl.DateTimeFormat("es-ES", {
   hour: "2-digit",
   minute: "2-digit",

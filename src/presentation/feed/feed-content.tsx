@@ -1,6 +1,10 @@
 import { Avatar, CameraIcon, LinkButton } from "@/presentation/ui";
 import type { Post } from "@/domain/post";
-import { FeedPostCard, presentFeedPost } from "@/presentation/post";
+import {
+  FeedPostCard,
+  getKidAvatarPositions,
+  presentFeedPost,
+} from "@/presentation/post";
 import styles from "./feed-content.module.css";
 
 /** Visual copy shown by the staff feed header. */
@@ -51,6 +55,8 @@ export function FeedContent({
   overview,
   posts,
 }: FeedContentProps) {
+  const kidAvatarPositions = getKidAvatarPositions(posts);
+
   return (
     <main className={`${styles.feed} ${className}`}>
       <div className={styles.container}>
@@ -78,6 +84,7 @@ export function FeedContent({
             <FeedPostCard
               canReact={canReact}
               commentHref={commentHref?.(post.id)}
+              kidAvatarPosition={kidAvatarPositions.get(post.id)}
               key={post.id}
               onToggleReaction={onToggleReaction}
               post={presentFeedPost(post)}

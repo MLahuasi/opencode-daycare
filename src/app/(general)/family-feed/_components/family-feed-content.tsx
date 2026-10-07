@@ -1,5 +1,9 @@
 import type { Post } from "@/domain/post";
-import { FeedPostCard, presentFeedPost } from "@/presentation/post";
+import {
+  FeedPostCard,
+  getKidAvatarPositions,
+  presentFeedPost,
+} from "@/presentation/post";
 import { toggleFeedReactionAction } from "@/app/_actions/posts";
 import type { Person } from "@/domain/person";
 import type { FamilyFeedFilter } from "@/domain/family/feed";
@@ -65,6 +69,8 @@ export function FamilyFeedContent({
   posts,
   selectedFilter,
 }: FamilyFeedContentProps) {
+  const kidAvatarPositions = getKidAvatarPositions(posts);
+
   return (
     <main className={`${styles.feed} ${className}`}>
       <div className={styles.container}>
@@ -89,8 +95,9 @@ export function FamilyFeedContent({
             {posts.map((post) => (
               <FeedPostCard
                 canEdit={false}
-                canReact
-                commentHref={`/posts/${encodeURIComponent(post.id)}/comments/new`}
+              canReact
+              commentHref={`/posts/${encodeURIComponent(post.id)}/comments/new`}
+              kidAvatarPosition={kidAvatarPositions.get(post.id)}
                 key={post.id}
                 onToggleReaction={toggleFeedReactionAction}
                 post={presentFeedPost(post)}

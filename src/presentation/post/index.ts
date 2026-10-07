@@ -1,5 +1,9 @@
 export { FeedPostCard } from "./feed-post-card";
-export { presentFeedPost } from "./feed-post-view-model";
+export {
+  getKidAvatarPositions,
+  isChildFeedPost,
+  presentFeedPost,
+} from "./feed-post-view-model";
 export type { FeedPostViewModel } from "./feed-post-view-model";
 export { DeleteCommentButton } from "./delete-comment-button";
 export type { FeedCommentAction, FeedCommentActionState, PostFormAction, PostFormActionState } from "./contracts";

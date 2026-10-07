@@ -8,12 +8,16 @@ import {
   LinkButton,
   PhotoIcon,
   type BadgeVariant,
+  getAvatarToneByPosition,
 } from "@/presentation/ui";
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import type { PostType } from "@/domain/post";
 import styles from "./feed-post-card.module.css";
-import type { FeedPostViewModel } from "./feed-post-view-model";
+import {
+  isChildFeedPost,
+  type FeedPostViewModel,
+} from "./feed-post-view-model";
 
 /** Props accepted by the reusable Post card. */
 type FeedPostCardProps = {
@@ -25,6 +29,8 @@ type FeedPostCardProps = {
   commentHref?: string;
   /** Post data to display. */
   post: FeedPostViewModel;
+  /** Visible child position used by the avatar tone cycle. */
+  kidAvatarPosition?: number;
   /** Optional classes applied to the card container. */
   className?: string;
   /** Callback used to toggle the viewer's reaction. */
@@ -90,6 +96,7 @@ export function FeedPostCard({
   canReact = false,
   commentHref,
   className = "",
+  kidAvatarPosition,
   onToggleReaction,
   post,
 }: FeedPostCardProps) {
@@ -104,6 +111,7 @@ export function FeedPostCard({
     count: post.engagement.reactionCount,
   });
   const isAnnouncement = post.type === "announcement";
+  const isChildPost = isChildFeedPost(post);
   const mediaPlaceholderLabel = post.mediaLabel
     ? `Foto · ${post.mediaLabel}`
     : "Imagen adjunta";
@@ -168,7 +176,11 @@ export function FeedPostCard({
               <AnnouncementIcon />
             </div>
           ) : (
-            <Avatar className={styles.avatar} initial={post.initial ?? ""} tone="blue" />
+            <Avatar
+              className={styles.avatar}
+              initial={post.initial ?? ""}
+              tone={isChildPost ? getAvatarToneByPosition(kidAvatarPosition ?? 0) : "blue"}
+            />
           )}
           <div className={styles.author}>
             <h2>{post.subject}</h2>
