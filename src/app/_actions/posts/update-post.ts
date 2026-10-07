@@ -45,10 +45,9 @@ export async function updatePostAction(
       {
         authorId: session.user.personId,
        body: parsed.values.body,
-       kidId: parsed.values.kidId,
-       media: parsed.media,
-       roomId: parsed.values.roomId,
-       subject: parsed.subject,
+        kidIds: parsed.values.kidIds,
+        media: parsed.media,
+        roomId: parsed.values.roomId,
         type: parsed.values.type,
       },
       { personId: session.user.personId, role: session.user.role },
@@ -108,13 +107,12 @@ export async function updatePostAction(
         {
           authorId: session.user.personId,
           body: parsed.values.body,
-          kidId: parsed.values.kidId,
+          kidIds: parsed.values.kidIds,
           media: [
             ...parsed.media.filter((media) => !uploadedIds.has(media.id)),
             ...failedMedia,
           ],
           roomId: parsed.values.roomId,
-          subject: parsed.subject,
           type: parsed.values.type,
         },
         { personId: session.user.personId, role: session.user.role },

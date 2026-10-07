@@ -21,19 +21,19 @@ export type PersistedPost = {
   id: string;
   type: PostType;
   authorId: string;
-  subject: string;
-  dateTime: string;
   createdAt: string;
   updatedAt: string;
   body: string;
   media: PostMedia[];
-  kidId: string | null;
+  kidIds: string[];
   roomId: string | null;
 };
 
 /** Projected Post content rendered by feed and detail views. */
 export type Post = PersistedPost & {
   engagement: PostEngagement;
+  /** Optional subject resolved by an application read projection. */
+  subject?: string;
 };
 
 /**
@@ -54,15 +54,15 @@ export function isPostType(value: string): value is PostType {
 }
 
 /**
- * Checks whether a Post targets exactly one destination.
+ * Checks whether a Post targets one or more kids or one room, but not both.
  *
  * @param post - Post to inspect.
- * @returns Whether the Post targets one kid or one room, but not both.
+ * @returns Whether the Post targets at least one kid or one room, but not both.
  */
 export function hasSinglePostDestination(
-  post: Pick<PersistedPost, "kidId" | "roomId">,
+  post: Pick<PersistedPost, "kidIds" | "roomId">,
 ): boolean {
-  return Boolean(post.kidId) !== Boolean(post.roomId);
+  return (post.kidIds.length > 0) !== Boolean(post.roomId);
 }
 
 /**

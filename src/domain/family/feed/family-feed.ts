@@ -7,7 +7,7 @@ export type FamilyFeedFilter =
 /** Minimum post data required by family feed visibility rules. */
 export type FamilyFeedPost = {
   id: string;
-  kidId: string | null;
+  kidIds: readonly string[];
   roomId: string | null;
   createdAt: string;
 };

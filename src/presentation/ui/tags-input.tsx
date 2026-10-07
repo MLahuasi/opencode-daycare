@@ -7,6 +7,7 @@ import type {
   KeyboardEvent,
 } from "react";
 import { parseCommaSeparatedTags } from "@/utils";
+import { Button } from "./button";
 import styles from "./tags-input.module.css";
 
 type TagsInputProps = Omit<
@@ -123,11 +124,12 @@ export function TagsInput({
       {tags.map((tag, index) => (
         <span className={styles.tag} key={`${tag}-${index}`}>
           <span>{tag}</span>
-          <button
+          <Button
             aria-label={`${removeLabel} ${tag}`}
             disabled={isReadOnly}
             onClick={() => removeTag(index)}
             type="button"
+            variant="ghost"
           >
             <svg
               aria-hidden="true"
@@ -139,7 +141,7 @@ export function TagsInput({
             >
               <path d="m4 4 8 8M12 4l-8 8" />
             </svg>
-          </button>
+          </Button>
         </span>
       ))}
       <input

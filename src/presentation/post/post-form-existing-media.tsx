@@ -1,4 +1,5 @@
 import type { PostMedia } from "@/domain/post";
+import { Button } from "@/presentation/ui";
 import styles from "./post-form.module.css";
 
 /** Existing image data displayed by the edit form. */
@@ -38,9 +39,9 @@ export function PostFormExistingMedia({
           {/* Signed provider URLs are already available; native image keeps this preview unoptimized. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img alt={media.alt ?? media.originalName} src={url} />
-          <button onClick={() => onRemove(media.id)} type="button">
+          <Button onClick={() => onRemove(media.id)} type="button" variant="ghost">
             Eliminar
-          </button>
+          </Button>
         </li>
       ))}
     </ul>

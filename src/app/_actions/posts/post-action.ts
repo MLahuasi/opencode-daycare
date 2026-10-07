@@ -11,6 +11,10 @@ import type { PostFormActionState } from "@/presentation/post/contracts";
 import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostMedia } from "@/domain/post";
 import { isSupportedImageFile } from "@/presentation/post/utils";
+import {
+  createRestrictionConfirmationToken,
+  verifyRestrictionConfirmationToken,
+} from "./restriction-confirmation";
 
 type ParsedPostSubmission =
   | {
@@ -18,7 +22,6 @@ type ParsedPostSubmission =
       values: PostFormValues;
       media: PostMedia[];
       uploadedMedia: PostMedia[];
-      subject: string;
     }
   | { success: false; state: PostFormActionState };
 
@@ -120,6 +123,23 @@ function getExistingMedia(
   }
 }
 
+function getSubmittedKidIds(value: FormDataEntryValue | null): string[] {
+  if (typeof value !== "string") return [];
+
+  try {
+    const ids: unknown = JSON.parse(value);
+    return Array.isArray(ids)
+      ? ids.filter((id): id is string => typeof id === "string")
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function haveSameIds(first: readonly string[], second: readonly string[]): boolean {
+  return first.length === second.length && first.every((id) => second.includes(id));
+}
+
 /**
  * Validates authorization and uploads new images for a post submission.
  *
@@ -135,10 +155,11 @@ export async function parsePostSubmission(
 ): Promise<ParsedPostSubmission> {
   const files = getFiles(formData);
   const retainedMedia = getExistingMedia(formData, existingMedia);
+  const submittedConfirmation = formData.get("restrictionConfirmation");
   const initialValidation = validatePostForm({
     body: formData.get("body"),
     hasImages: files.length > 0 || retainedMedia.length > 0,
-    kidId: formData.get("kidId"),
+    kidIds: getSubmittedKidIds(formData.get("kidIds")),
     media: retainedMedia,
     mode: formData.get("mode"),
     postId: formData.get("postId"),
@@ -154,14 +175,52 @@ export async function parsePostSubmission(
     createPostComposition(),
     { personId, role: "personal" },
   );
-  const targetKid = initialValidation.data.kidId
-    ? targets.kids.find((kid) => kid.id === initialValidation.data.kidId)
-    : undefined;
+  const targetKids = targets.kids.filter((kid) =>
+    initialValidation.data.kidIds.includes(kid.id),
+  );
   const targetRoom = initialValidation.data.roomId
     ? targets.rooms.find((room) => room.id === initialValidation.data.roomId)
     : undefined;
 
-  if (!targetKid && !targetRoom) {
+  const confirmation =
+    typeof submittedConfirmation === "string" && submittedConfirmation
+      ? verifyRestrictionConfirmationToken(
+          submittedConfirmation,
+          personId,
+          initialValidation.data.postId ?? null,
+        )
+      : null;
+
+  if (submittedConfirmation && !confirmation) {
+    return {
+      success: false,
+      state: errorState("media", "La confirmación de restricciones ya no es válida."),
+    };
+  }
+
+  if (
+    confirmation &&
+    !haveSameIds(
+      initialValidation.data.kidIds,
+      confirmation.kidIds.filter(
+        (kidId) => !confirmation.restrictedKidIds.includes(kidId),
+      ),
+    )
+  ) {
+    return {
+      success: false,
+      state: errorState(
+        "destination",
+        "El destino de la publicación cambió. Revísalo e inténtalo nuevamente.",
+      ),
+    };
+  }
+
+  if (
+    (initialValidation.data.kidIds.length > 0 &&
+      targetKids.length !== initialValidation.data.kidIds.length) ||
+    (initialValidation.data.kidIds.length === 0 && !targetRoom)
+  ) {
     return { success: false, state: errorState("destination", "El destino no está autorizado.") };
   }
 
@@ -177,12 +236,38 @@ export async function parsePostSubmission(
     }
   }
 
-  if (
-    targetKid &&
-    (files.length > 0 || retainedMedia.length > 0) &&
-    !(await hasPhotoSharingConsent(createPostComposition(), targetKid.id))
-  ) {
-    return { success: false, state: errorState("media", "No hay consentimiento vigente de todas las familias activas.") };
+  if (targetKids.length > 0 && (files.length > 0 || retainedMedia.length > 0)) {
+    const consentResults = await Promise.all(
+      targetKids.map(async (kid) => ({
+        hasConsent: await hasPhotoSharingConsent(createPostComposition(), kid.id),
+        kid,
+      })),
+    );
+    const restrictedKids = consentResults
+      .filter(({ hasConsent }) => !hasConsent)
+      .map(({ kid }) => ({ id: kid.id, name: kid.name }));
+
+    if (restrictedKids.length > 0) {
+      const restrictionMessage = `Existen niños con restricciones: ${restrictedKids
+        .map(({ name }) => name)
+        .join(", ")}`;
+      const restrictionConfirmation = createRestrictionConfirmationToken({
+        kidIds: initialValidation.data.kidIds,
+        personId,
+        postId: initialValidation.data.postId ?? null,
+        restrictedKidIds: restrictedKids.map(({ id }) => id),
+      });
+
+      return {
+        success: false,
+        state: {
+          errors: { media: restrictionMessage },
+          message: restrictionMessage,
+          restrictedKids,
+          restrictionConfirmation,
+        },
+      };
+    }
   }
 
   if (files.length + retainedMedia.length > 4) {
@@ -264,6 +349,5 @@ export async function parsePostSubmission(
     values: finalValidation.data,
     media: finalMedia,
     uploadedMedia,
-    subject: targetKid?.name ?? targetRoom?.name ?? "Anuncio general",
   };
 }

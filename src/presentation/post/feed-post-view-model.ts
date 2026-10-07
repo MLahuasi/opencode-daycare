@@ -23,13 +23,16 @@ const feedTimeFormatter = new Intl.DateTimeFormat("es-ES", {
  * @returns The visual feed card model.
  */
 export function presentFeedPost(post: Post): FeedPostViewModel {
+  const subject = post.subject ?? (post.kidIds.length > 1 ? "Varios niños" : "Anuncio general");
+
   return {
     ...post,
     authorLabel: "publicado por ti",
     hasMedia: post.media.length > 0,
-    initial: post.subject.trim().charAt(0).toUpperCase(),
+    initial: subject.trim().charAt(0).toUpperCase(),
     mediaLabel: post.media[0]?.alt ?? post.media[0]?.originalName,
-    recipient: post.kidId ? `familia de ${post.subject}` : "toda la sala",
-    time: feedTimeFormatter.format(new Date(post.dateTime)),
+    recipient: post.kidIds.length > 0 ? `familia de ${subject}` : "toda la sala",
+    subject,
+    time: feedTimeFormatter.format(new Date(post.createdAt)),
   };
 }

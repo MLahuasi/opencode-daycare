@@ -28,6 +28,19 @@ export type PostTargets = {
   rooms: readonly Room[];
 };
 
+function getPostSubject(
+  post: PostRecord,
+  kidsById: ReadonlyMap<string, Kid>,
+  roomsById: ReadonlyMap<string, Room>,
+): string {
+  if (post.kidIds.length > 1) return "Varios niños";
+  if (post.kidIds.length === 1) {
+    return kidsById.get(post.kidIds[0])?.name ?? "Varios niños";
+  }
+
+  return roomsById.get(post.roomId ?? "")?.name ?? "Anuncio general";
+}
+
 /**
  * Determines whether all active parents linked to a kid consent to photo sharing.
  *
@@ -88,11 +101,15 @@ export async function getAuthorizedPosts(
   dependencies: PostDependencies,
   viewer: PostViewer,
 ): Promise<readonly Post[]> {
-  const [posts, comments, reactions] = await Promise.all([
+  const [posts, comments, reactions, kids, rooms] = await Promise.all([
     dependencies.posts.findAll(),
     dependencies.comments.findAll(),
     dependencies.reactions.findAll(),
+    dependencies.kids.findAll(),
+    dependencies.rooms.findAll(),
   ]);
+  const kidsById = new Map(kids.map((kid) => [kid.id, kid]));
+  const roomsById = new Map(rooms.map((room) => [room.id, room]));
   const visibility = await Promise.all(
     posts.map(async (post) => ({
       post,
@@ -109,6 +126,7 @@ export async function getAuthorizedPosts(
 
   return visiblePosts.map((post) => ({
     ...post,
+    subject: getPostSubject(post, kidsById, roomsById),
     engagement: derivePostEngagement(
       post.id,
       comments,
@@ -147,7 +165,7 @@ export async function getPostDetail(
       dependencies.people.findAll(),
       dependencies.comments.findAll(),
       dependencies.reactions.findAll(),
-      post.kidId ? dependencies.kids.findById(post.kidId) : Promise.resolve(null),
+      post.kidIds[0] ? dependencies.kids.findById(post.kidIds[0]) : Promise.resolve(null),
       post.roomId ? dependencies.rooms.findById(post.roomId) : Promise.resolve(null),
     ]);
   const author = people.find((person) => person.id === post.authorId);

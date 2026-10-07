@@ -22,13 +22,11 @@ export function createPostRecord(
     id,
     type: input.type,
     authorId: input.authorId,
-    subject: input.subject,
-    dateTime: timestamp,
     body: input.body,
     createdAt: timestamp,
     updatedAt: timestamp,
     media: input.media,
-    kidId: input.kidId,
+    kidIds: input.kidIds,
     roomId: input.roomId,
   };
 }
@@ -54,12 +52,10 @@ export function updatePostRecord(
     ...currentPost,
     type: input.type,
     authorId: input.authorId,
-    subject: input.subject,
-    dateTime: timestamp,
     body: input.body,
     updatedAt: timestamp,
     media: input.media,
-    kidId: input.kidId,
+    kidIds: input.kidIds,
     roomId: input.roomId,
   };
 }

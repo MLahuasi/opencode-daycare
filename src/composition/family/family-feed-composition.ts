@@ -70,6 +70,13 @@ export function createFamilyFeedComposition(): FamilyFeedComposition {
             reactions.findAll(),
           ]);
 
+        const [allKids, allRooms] = await Promise.all([
+          kids.findAll(),
+          rooms.findAll(),
+        ]);
+        const kidsById = new Map(allKids.map((kid) => [kid.id, kid]));
+        const roomsById = new Map(allRooms.map((room) => [room.id, room]));
+
         return persistedPosts.map((post) => {
           if (!hasSinglePostDestination(post)) {
             throw new Error(
@@ -79,6 +86,12 @@ export function createFamilyFeedComposition(): FamilyFeedComposition {
 
           return {
             ...post,
+            subject:
+              post.kidIds.length > 1
+                ? "Varios niños"
+                : post.kidIds.length === 1
+                  ? (kidsById.get(post.kidIds[0])?.name ?? "Varios niños")
+                  : (roomsById.get(post.roomId ?? "")?.name ?? "Anuncio general"),
             engagement: derivePostEngagement(
               post.id,
               persistedComments,

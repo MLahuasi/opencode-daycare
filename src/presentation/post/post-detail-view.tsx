@@ -84,7 +84,7 @@ export function PostDetailView({
 
         <article className={styles.card}>
           <header className={styles.postHeader}>
-            <Avatar initial={getInitial(post.subject)} size="lg" tone="blue" />
+            <Avatar initial={getInitial(recipient.label)} size="lg" tone="blue" />
             <div className={styles.headingCopy}>
               <h1>{recipient.kind === "kid" ? recipient.label.replace(/^familia de /, "") : recipient.label}</h1>
               <p>

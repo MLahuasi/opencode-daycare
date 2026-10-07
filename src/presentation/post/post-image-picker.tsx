@@ -7,6 +7,7 @@ import {
   MAX_POST_MEDIA,
 } from "@/presentation/post/schemas";
 import { isSupportedImageFile } from "@/presentation/post/utils";
+import { Button } from "@/presentation/ui";
 import styles from "./post-image-picker.module.css";
 
 /** A selected image and the preview data used by the picker. */
@@ -248,14 +249,15 @@ export function PostImagePicker({
         </span>
         <strong>Agrega imágenes</strong>
         <span>Arrástralas aquí o elige archivos desde tu dispositivo</span>
-        <button
+        <Button
           className={styles.chooseButton}
           disabled={disabled || images.length >= maxImages}
           onClick={() => inputRef.current?.click()}
           type="button"
+          variant="coral"
         >
           Elegir imágenes
-        </button>
+        </Button>
         <small>JPEG, PNG o WebP · máximo 10 MB por imagen · hasta {maxImages} nuevas</small>
       </div>
 
@@ -284,14 +286,15 @@ export function PostImagePicker({
                     value={image.alt}
                   />
                 </label>
-                <button
+                <Button
                   className={styles.removeButton}
                   disabled={disabled}
                   onClick={() => removeImage(image.id)}
                   type="button"
+                  variant="ghost"
                 >
                   Eliminar imagen
-                </button>
+                </Button>
               </div>
             </li>
           ))}

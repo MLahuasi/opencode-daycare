@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import type { SubmitEvent } from "react";
 import { Button, FormField, LinkButton } from "@/presentation/ui";
 import type { Kid } from "@/domain/kid";
@@ -34,8 +34,8 @@ export type PostFormInitialValues = {
   body: string;
   /** Persisted images available during editing. */
   existingMedia: readonly PostFormExistingMediaValue[];
-  /** Initially selected kid identifier. */
-  kidId: string | null;
+  /** Initially selected kid identifiers. */
+  kidIds: readonly string[];
   /** Form operation mode. */
   mode: PostFormMode;
   /** Identifier of the Post being edited. */
@@ -105,11 +105,15 @@ export function PostForm({
   const [existingMedia, setExistingMedia] = useState(
     initialValues.existingMedia,
   );
-  const [kidId, setKidId] = useState(initialValues.kidId);
+  const [kidIds, setKidIds] = useState<string[]>([...initialValues.kidIds]);
   const [roomId, setRoomId] = useState(initialValues.roomId);
   const [type, setType] = useState<PostType>(initialValues.type);
+  const [restrictionConfirmation, setRestrictionConfirmation] = useState("");
   const [images, setImages] = useState<readonly PostImageSelection[]>([]);
   const [error, setError] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
+  const restrictionDialogRef = useRef<HTMLDialogElement>(null);
+  const shouldResubmitRef = useRef(false);
   const serverError = actionState.message || Object.values(actionState.errors)[0] || "";
 
   useEffect(() => {
@@ -118,14 +122,47 @@ export function PostForm({
     }
   }, [actionState.redirectTo]);
 
+  useEffect(() => {
+    const dialog = restrictionDialogRef.current;
+
+    if (actionState.restrictedKids?.length && dialog && !dialog.open) {
+      dialog.showModal();
+    }
+  }, [actionState.restrictedKids]);
+
+  useEffect(() => {
+    if (!shouldResubmitRef.current) return;
+
+    shouldResubmitRef.current = false;
+    formRef.current?.requestSubmit();
+  }, [kidIds]);
+
   /**
-   * Selects a kid destination and clears the room destination.
+   * Toggles a kid destination and clears the room destination.
    *
-   * @param nextKidId - Identifier of the selected kid.
+   * @param nextKidId - Identifier of the toggled kid.
    * @returns Nothing after updating the destination state.
    */
-  function selectKid(nextKidId: string) {
-    setKidId(nextKidId);
+  function toggleKid(nextKidId: string) {
+    setKidIds((current) =>
+      current.includes(nextKidId)
+        ? current.filter((kidId) => kidId !== nextKidId)
+        : [...current, nextKidId],
+    );
+    setRoomId(null);
+    setError("");
+  }
+
+  /**
+   * Toggles all authorized kids as the Post destination.
+   *
+   * @returns Nothing after updating the destination state.
+   */
+  function toggleAllKids() {
+    setKidIds((current) =>
+      current.length === kids.length ? [] : kids.map((kid) => kid.id),
+    );
+    setRestrictionConfirmation("");
     setRoomId(null);
     setError("");
   }
@@ -138,10 +175,28 @@ export function PostForm({
    */
   function selectRoom(nextRoomId: string) {
     setRoomId(nextRoomId);
-    setKidId(null);
+    setKidIds([]);
+    setRestrictionConfirmation("");
     setExistingMedia([]);
     setImages([]);
     setError("");
+  }
+
+  /**
+   * Excludes restricted kids and submits the same form again without uploading
+   * media until the server has revalidated the remaining destination.
+   */
+  function continueWithoutRestrictedKids() {
+    const restrictedIds = new Set(
+      actionState.restrictedKids?.map(({ id }) => id) ?? [],
+    );
+
+    setKidIds((current) =>
+      current.filter((kidId) => !restrictedIds.has(kidId)),
+    );
+    setRestrictionConfirmation(actionState.restrictionConfirmation ?? "");
+    restrictionDialogRef.current?.close();
+    shouldResubmitRef.current = true;
   }
 
   /**
@@ -174,6 +229,7 @@ export function PostForm({
       className={`${styles.form} ${className}`}
       noValidate
       onSubmit={handleSubmit}
+      ref={formRef}
     >
       <header className={styles.header}>
         <LinkButton className={styles.cancel} href={cancelHref} variant="ghost">
@@ -196,8 +252,13 @@ export function PostForm({
         {initialValues.postId ? (
           <input name="postId" type="hidden" value={initialValues.postId} />
         ) : null}
-        <input name="kidId" type="hidden" value={kidId ?? ""} />
+        <input name="kidIds" type="hidden" value={JSON.stringify(kidIds)} />
         <input name="roomId" type="hidden" value={roomId ?? ""} />
+        <input
+          name="restrictionConfirmation"
+          type="hidden"
+          value={restrictionConfirmation}
+        />
         <input name="type" type="hidden" value={type} />
         <input
           name="imageAlts"
@@ -210,15 +271,26 @@ export function PostForm({
           value={JSON.stringify(existingMedia.map(({ media }) => media.id))}
         />
 
-        <fieldset className={styles.section}>
-          <legend>Para</legend>
-          <div className={styles.pills}>
-            {kids.map((kid) => (
+          <fieldset className={styles.section}>
+            <legend>Para</legend>
+            <div className={styles.pills}>
+              {kids.length > 0 ? (
+                <Button
+                  aria-pressed={kidIds.length === kids.length}
+                  className={`${styles.roomPill} ${kidIds.length === kids.length ? styles.selected : ""}`}
+                  onClick={toggleAllKids}
+                  type="button"
+                  variant="ghost"
+                >
+                  Todos
+                </Button>
+              ) : null}
+              {kids.map((kid) => (
               <button
-                aria-pressed={kidId === kid.id}
-                className={`${styles.targetPill} ${kidId === kid.id ? styles.selected : ""}`}
+                aria-pressed={kidIds.includes(kid.id)}
+                className={`${styles.targetPill} ${kidIds.includes(kid.id) ? styles.selected : ""}`}
                 key={kid.id}
-                onClick={() => selectKid(kid.id)}
+                onClick={() => toggleKid(kid.id)}
                 type="button"
               >
                 <span aria-hidden="true" className={styles.initial}>{getInitial(kid.name)}</span>
@@ -270,7 +342,7 @@ export function PostForm({
           <small id="post-body-count">{body.length}/{MAX_POST_BODY_LENGTH}</small>
         </FormField>
 
-        {kidId ? (
+        {kidIds.length > 0 ? (
           <fieldset className={styles.section}>
             <legend>Fotos</legend>
             <PostFormExistingMedia
@@ -294,6 +366,28 @@ export function PostForm({
           </p>
         ) : null}
       </div>
+
+      <dialog
+        aria-labelledby="post-restriction-title"
+        className={styles.restrictionDialog}
+        onCancel={() => restrictionDialogRef.current?.close()}
+        ref={restrictionDialogRef}
+      >
+        <h2 id="post-restriction-title">Restricciones de fotos</h2>
+        <p>{actionState.message}</p>
+        <div className={styles.restrictionActions}>
+          <Button
+            onClick={() => restrictionDialogRef.current?.close()}
+            type="button"
+            variant="ghost"
+          >
+            Volver al formulario
+          </Button>
+          <Button onClick={continueWithoutRestrictedKids} type="button">
+            Continuar sin ellos
+          </Button>
+        </div>
+      </dialog>
     </form>
   );
 }

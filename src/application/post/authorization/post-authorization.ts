@@ -29,11 +29,14 @@ export class PostAuthorizationPolicy implements PostAuthorization {
       const roomIds = new Set(
         await this.access.findStaffRoomIds(viewer.personId),
       );
-      const postRoomId = post.roomId ??
-        (post.kidId
-          ? (await this.access.findKidById(post.kidId))?.roomId
-          : undefined);
-      return postRoomId !== undefined && roomIds.has(postRoomId);
+      if (post.roomId !== null) return roomIds.has(post.roomId);
+
+      const targetKids = await Promise.all(
+        post.kidIds.map((kidId) => this.access.findKidById(kidId)),
+      );
+      return targetKids.every(
+        (kid) => kid !== null && roomIds.has(kid.roomId),
+      );
     }
 
     const parentKidIds = await this.access.findParentKidIds(viewer.personId);
@@ -41,8 +44,8 @@ export class PostAuthorizationPolicy implements PostAuthorization {
     const activeKidIds = new Set(activeKids.map((kid) => kid.id));
     const activeRoomIds = new Set(activeKids.map((kid) => kid.roomId));
 
-    return post.kidId
-      ? activeKidIds.has(post.kidId)
+    return post.kidIds.length > 0
+      ? post.kidIds.some((kidId) => activeKidIds.has(kidId))
       : post.roomId !== null && activeRoomIds.has(post.roomId);
   }
 
@@ -55,18 +58,21 @@ export class PostAuthorizationPolicy implements PostAuthorization {
    */
   public async canCreate(
     viewer: PostViewer,
-    post: Pick<PersistedPost, "kidId" | "roomId">,
+    post: Pick<PersistedPost, "kidIds" | "roomId">,
   ): Promise<boolean> {
     if (viewer.role !== "personal") return false;
 
     const roomIds = new Set(
       await this.access.findStaffRoomIds(viewer.personId),
     );
-    const postRoomId = post.roomId ??
-      (post.kidId
-        ? (await this.access.findKidById(post.kidId))?.roomId
-        : undefined);
-    return postRoomId !== undefined && roomIds.has(postRoomId);
+    if (post.roomId !== null) return roomIds.has(post.roomId);
+
+    const targetKids = await Promise.all(
+      post.kidIds.map((kidId) => this.access.findKidById(kidId)),
+    );
+    return targetKids.length > 0 && targetKids.every(
+      (kid) => kid !== null && roomIds.has(kid.roomId),
+    );
   }
 
   /**
