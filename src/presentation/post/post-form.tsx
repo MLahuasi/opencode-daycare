@@ -376,11 +376,6 @@ export function PostForm({
       >
         <h2 id="post-restriction-title">Restricciones de fotos</h2>
         <p>{actionState.message}</p>
-        <ul>
-          {actionState.restrictedKids?.map(({ id, name }) => (
-            <li key={id}>{name}</li>
-          ))}
-        </ul>
         <div className={styles.restrictionActions}>
           <Button
             onClick={() => restrictionDialogRef.current?.close()}

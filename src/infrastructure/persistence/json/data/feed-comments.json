@@ -118,5 +118,21 @@
     "body": "Mi amor",
     "createdAt": "2026-10-05T22:34:15.978Z",
     "updatedAt": null
+  },
+  {
+    "id": "3cefd18e-e044-4101-9132-9cfb003ecb9c",
+    "postId": "35ca5d49-5f0e-4170-8b9a-f1ab4939173d",
+    "authorId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "body": "Hermoso",
+    "createdAt": "2026-10-07T22:19:54.504Z",
+    "updatedAt": null
+  },
+  {
+    "id": "98ad9a2f-cd46-4615-b2d8-87acf88613ec",
+    "postId": "35ca5d49-5f0e-4170-8b9a-f1ab4939173d",
+    "authorId": "person-caro-gimenez",
+    "body": "Si",
+    "createdAt": "2026-10-07T22:20:27.473Z",
+    "updatedAt": null
   }
 ]

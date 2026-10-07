@@ -7,7 +7,9 @@
     "updatedAt": "2026-06-17T19:20:00.000Z",
     "body": "¡Usó el orinal solito por primera vez! Estaba feliz de contárselo a todos. Un gran paso.",
     "media": [],
-    "kidIds": ["kid-mateo-fernandez"],
+    "kidIds": [
+      "kid-mateo-fernandez"
+    ],
     "roomId": null
   },
   {
@@ -18,7 +20,9 @@
     "updatedAt": "2026-06-17T14:40:00.000Z",
     "body": "Pintamos con témperas esta mañana. Mateo eligió el azul para todo y se concentró un montón mezclando colores.",
     "media": [],
-    "kidIds": ["kid-mateo-fernandez"],
+    "kidIds": [
+      "kid-mateo-fernandez"
+    ],
     "roomId": null
   },
   {
@@ -93,7 +97,9 @@
         "alt": null
       }
     ],
-    "kidIds": ["a8728bae-1aba-41c4-a50d-cc3cc192548b"],
+    "kidIds": [
+      "a8728bae-1aba-41c4-a50d-cc3cc192548b"
+    ],
     "roomId": null
   },
   {
@@ -157,7 +163,59 @@
         "alt": null
       }
     ],
-    "kidIds": ["a8728bae-1aba-41c4-a50d-cc3cc192548b"],
+    "kidIds": [
+      "a8728bae-1aba-41c4-a50d-cc3cc192548b"
+    ],
+    "roomId": null
+  },
+  {
+    "id": "35ca5d49-5f0e-4170-8b9a-f1ab4939173d",
+    "type": "activity",
+    "authorId": "person-caro-gimenez",
+    "body": "Este es mi chiquito",
+    "createdAt": "2026-10-07T22:10:46.229Z",
+    "updatedAt": "2026-10-07T22:18:13.493Z",
+    "media": [
+      {
+        "assetId": "92ba2d7f506d52087d64373141eb51d1",
+        "publicId": "daycare/posts/h2sravcqmolruowzyucu",
+        "resourceType": "image",
+        "deliveryType": "authenticated",
+        "format": "jpg",
+        "width": 3000,
+        "height": 4000,
+        "bytes": 595306,
+        "id": "225cd647-59d5-4ebf-bcc7-c3ad61fa88d1",
+        "originalName": "IMG_20181218_145117_HHT.jpg",
+        "alt": null
+      }
+    ],
+    "kidIds": [
+      "a8728bae-1aba-41c4-a50d-cc3cc192548b",
+      "e73240ec-9849-4060-8b75-79a1a1e917dc"
+    ],
+    "roomId": null
+  },
+  {
+    "id": "dae7b444-2db1-4009-aca4-d905bdb8453d",
+    "type": "announcement",
+    "authorId": "person-caro-gimenez",
+    "body": "el viernes es feriado",
+    "createdAt": "2026-10-07T22:18:46.326Z",
+    "updatedAt": "2026-10-07T22:18:46.326Z",
+    "media": [],
+    "kidIds": [
+      "kid-mateo-fernandez",
+      "kid-sofia-mendez",
+      "kid-benjamin-ruiz",
+      "kid-valentina-soto",
+      "kid-tomas-diaz",
+      "kid-emma-castro",
+      "kid-lucas-romero",
+      "kid-olivia-vega",
+      "a8728bae-1aba-41c4-a50d-cc3cc192548b",
+      "e73240ec-9849-4060-8b75-79a1a1e917dc"
+    ],
     "roomId": null
   }
 ]

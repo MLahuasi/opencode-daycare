@@ -91,10 +91,17 @@
     "createdAt": "2026-10-05T22:33:15.642Z"
   },
   {
-    "id": "9936f02b-cd1d-4381-985d-35df4bd6c9ac",
+    "id": "dbd502af-22f9-451d-b726-787739fc73f9",
+    "postId": "35ca5d49-5f0e-4170-8b9a-f1ab4939173d",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-10-07T22:19:32.787Z"
+  },
+  {
+    "id": "37c8ae34-5fa7-4757-9097-ff1f16ee0436",
     "postId": "211c6723-4a1e-46c9-ad7e-11cbf42bab35",
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
     "type": "love",
-    "createdAt": "2026-10-05T22:34:07.827Z"
+    "createdAt": "2026-10-07T22:19:43.606Z"
   }
 ]

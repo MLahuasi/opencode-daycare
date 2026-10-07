@@ -188,7 +188,13 @@
 }
 
 .restrictionDialog {
+  position: fixed;
+  inset: 50% auto auto 50%;
   width: min(calc(100% - 32px), 440px);
+  max-height: calc(100vh - 32px);
+  margin: 0;
+  transform: translate(-50%, -50%);
+  overflow: auto;
   border: 1px solid var(--color-border);
   border-radius: 18px;
   background: var(--color-form-card);
@@ -198,7 +204,7 @@
 }
 
 .restrictionDialog::backdrop {
-  background: var(--color-ghost-active);
+  background: var(--color-modal-backdrop);
 }
 
 .restrictionDialog h2 {

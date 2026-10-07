@@ -248,6 +248,9 @@ export async function parsePostSubmission(
       .map(({ kid }) => ({ id: kid.id, name: kid.name }));
 
     if (restrictedKids.length > 0) {
+      const restrictionMessage = `Existen niños con restricciones: ${restrictedKids
+        .map(({ name }) => name)
+        .join(", ")}`;
       const restrictionConfirmation = createRestrictionConfirmationToken({
         kidIds: initialValidation.data.kidIds,
         personId,
@@ -258,12 +261,8 @@ export async function parsePostSubmission(
       return {
         success: false,
         state: {
-          ...errorState(
-            "media",
-            `Existen niños con restricciones: ${restrictedKids
-              .map(({ name }) => name)
-              .join(", ")}`,
-          ),
+          errors: { media: restrictionMessage },
+          message: restrictionMessage,
           restrictedKids,
           restrictionConfirmation,
         },
