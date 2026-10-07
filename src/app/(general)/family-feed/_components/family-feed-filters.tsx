@@ -1,9 +1,7 @@
-import { Avatar, LinkButton } from "@/presentation/ui";
+import { Avatar, getAvatarToneByPosition, LinkButton } from "@/presentation/ui";
 import type { FamilyFeedFilter } from "@/domain/family/feed";
 import type { FamilyFeedOption } from "@/presentation/family";
 import styles from "./family-feed-filters.module.css";
-
-const kidAvatarTones = ["blue", "pink", "green", "yellow", "purple", "coral"] as const;
 
 /** Configuration received by the family feed filter navigation. */
 type FamilyFeedFiltersProps = {
@@ -65,12 +63,20 @@ export function FamilyFeedFilters({
   options,
   selectedFilter,
 }: FamilyFeedFiltersProps) {
+  const kidPositions = new Map<string, number>();
+
+  for (const option of options) {
+    if (option.filter.kind === "kid") {
+      kidPositions.set(option.id, kidPositions.size);
+    }
+  }
+
   return (
     <nav
       aria-label="Filtrar publicaciones"
       className={`${styles.navigation} ${className}`}
     >
-      {options.map((option, index) => {
+      {options.map((option) => {
         const active = isSelected(option.filter, selectedFilter);
 
         return (
@@ -86,7 +92,7 @@ export function FamilyFeedFilters({
                 aria-hidden="true"
                 initial={option.label.trim().charAt(0).toUpperCase()}
                 size="sm"
-                tone={kidAvatarTones[index % kidAvatarTones.length]}
+                tone={getAvatarToneByPosition(kidPositions.get(option.id) ?? 0)}
               />
             ) : null}
             {option.label}
