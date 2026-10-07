@@ -10,6 +10,8 @@ export type PostFormActionState = {
   message: string;
   /** Kids whose active family relationships restrict photo sharing. */
   restrictedKids?: readonly { id: string; name: string }[];
+  /** Short-lived server confirmation required to exclude restricted kids. */
+  restrictionConfirmation?: string;
   /** Destination used after a successful mutation. */
   redirectTo?: string;
 };

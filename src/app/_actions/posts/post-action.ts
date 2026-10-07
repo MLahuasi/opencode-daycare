@@ -11,6 +11,10 @@ import type { PostFormActionState } from "@/presentation/post/contracts";
 import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostMedia } from "@/domain/post";
 import { isSupportedImageFile } from "@/presentation/post/utils";
+import {
+  createRestrictionConfirmationToken,
+  verifyRestrictionConfirmationToken,
+} from "./restriction-confirmation";
 
 type ParsedPostSubmission =
   | {
@@ -132,6 +136,10 @@ function getSubmittedKidIds(value: FormDataEntryValue | null): string[] {
   }
 }
 
+function haveSameIds(first: readonly string[], second: readonly string[]): boolean {
+  return first.length === second.length && first.every((id) => second.includes(id));
+}
+
 /**
  * Validates authorization and uploads new images for a post submission.
  *
@@ -147,6 +155,7 @@ export async function parsePostSubmission(
 ): Promise<ParsedPostSubmission> {
   const files = getFiles(formData);
   const retainedMedia = getExistingMedia(formData, existingMedia);
+  const submittedConfirmation = formData.get("restrictionConfirmation");
   const initialValidation = validatePostForm({
     body: formData.get("body"),
     hasImages: files.length > 0 || retainedMedia.length > 0,
@@ -172,6 +181,40 @@ export async function parsePostSubmission(
   const targetRoom = initialValidation.data.roomId
     ? targets.rooms.find((room) => room.id === initialValidation.data.roomId)
     : undefined;
+
+  const confirmation =
+    typeof submittedConfirmation === "string" && submittedConfirmation
+      ? verifyRestrictionConfirmationToken(
+          submittedConfirmation,
+          personId,
+          initialValidation.data.postId ?? null,
+        )
+      : null;
+
+  if (submittedConfirmation && !confirmation) {
+    return {
+      success: false,
+      state: errorState("media", "La confirmación de restricciones ya no es válida."),
+    };
+  }
+
+  if (
+    confirmation &&
+    !haveSameIds(
+      initialValidation.data.kidIds,
+      confirmation.kidIds.filter(
+        (kidId) => !confirmation.restrictedKidIds.includes(kidId),
+      ),
+    )
+  ) {
+    return {
+      success: false,
+      state: errorState(
+        "destination",
+        "El destino de la publicación cambió. Revísalo e inténtalo nuevamente.",
+      ),
+    };
+  }
 
   if (
     (initialValidation.data.kidIds.length > 0 &&
@@ -205,6 +248,13 @@ export async function parsePostSubmission(
       .map(({ kid }) => ({ id: kid.id, name: kid.name }));
 
     if (restrictedKids.length > 0) {
+      const restrictionConfirmation = createRestrictionConfirmationToken({
+        kidIds: initialValidation.data.kidIds,
+        personId,
+        postId: initialValidation.data.postId ?? null,
+        restrictedKidIds: restrictedKids.map(({ id }) => id),
+      });
+
       return {
         success: false,
         state: {
@@ -215,6 +265,7 @@ export async function parsePostSubmission(
               .join(", ")}`,
           ),
           restrictedKids,
+          restrictionConfirmation,
         },
       };
     }

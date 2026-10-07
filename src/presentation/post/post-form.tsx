@@ -108,6 +108,7 @@ export function PostForm({
   const [kidIds, setKidIds] = useState<string[]>([...initialValues.kidIds]);
   const [roomId, setRoomId] = useState(initialValues.roomId);
   const [type, setType] = useState<PostType>(initialValues.type);
+  const [restrictionConfirmation, setRestrictionConfirmation] = useState("");
   const [images, setImages] = useState<readonly PostImageSelection[]>([]);
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
@@ -161,6 +162,8 @@ export function PostForm({
     setKidIds((current) =>
       current.length === kids.length ? [] : kids.map((kid) => kid.id),
     );
+    setRestrictionConfirmation("");
+    setRestrictionConfirmation("");
     setRoomId(null);
     setError("");
   }
@@ -174,6 +177,7 @@ export function PostForm({
   function selectRoom(nextRoomId: string) {
     setRoomId(nextRoomId);
     setKidIds([]);
+    setRestrictionConfirmation("");
     setExistingMedia([]);
     setImages([]);
     setError("");
@@ -191,6 +195,7 @@ export function PostForm({
     setKidIds((current) =>
       current.filter((kidId) => !restrictedIds.has(kidId)),
     );
+    setRestrictionConfirmation(actionState.restrictionConfirmation ?? "");
     restrictionDialogRef.current?.close();
     shouldResubmitRef.current = true;
   }
@@ -250,6 +255,11 @@ export function PostForm({
         ) : null}
         <input name="kidIds" type="hidden" value={JSON.stringify(kidIds)} />
         <input name="roomId" type="hidden" value={roomId ?? ""} />
+        <input
+          name="restrictionConfirmation"
+          type="hidden"
+          value={restrictionConfirmation}
+        />
         <input name="type" type="hidden" value={type} />
         <input
           name="imageAlts"
