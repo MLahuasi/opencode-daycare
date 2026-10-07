@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import type { SubmitEvent } from "react";
 import { Button, FormField, LinkButton } from "@/presentation/ui";
 import type { Kid } from "@/domain/kid";
@@ -110,6 +110,9 @@ export function PostForm({
   const [type, setType] = useState<PostType>(initialValues.type);
   const [images, setImages] = useState<readonly PostImageSelection[]>([]);
   const [error, setError] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
+  const restrictionDialogRef = useRef<HTMLDialogElement>(null);
+  const shouldResubmitRef = useRef(false);
   const serverError = actionState.message || Object.values(actionState.errors)[0] || "";
 
   useEffect(() => {
@@ -117,6 +120,21 @@ export function PostForm({
       window.location.assign(actionState.redirectTo);
     }
   }, [actionState.redirectTo]);
+
+  useEffect(() => {
+    const dialog = restrictionDialogRef.current;
+
+    if (actionState.restrictedKids?.length && dialog && !dialog.open) {
+      dialog.showModal();
+    }
+  }, [actionState.restrictedKids]);
+
+  useEffect(() => {
+    if (!shouldResubmitRef.current) return;
+
+    shouldResubmitRef.current = false;
+    formRef.current?.requestSubmit();
+  }, [kidIds]);
 
   /**
    * Toggles a kid destination and clears the room destination.
@@ -162,6 +180,22 @@ export function PostForm({
   }
 
   /**
+   * Excludes restricted kids and submits the same form again without uploading
+   * media until the server has revalidated the remaining destination.
+   */
+  function continueWithoutRestrictedKids() {
+    const restrictedIds = new Set(
+      actionState.restrictedKids?.map(({ id }) => id) ?? [],
+    );
+
+    setKidIds((current) =>
+      current.filter((kidId) => !restrictedIds.has(kidId)),
+    );
+    restrictionDialogRef.current?.close();
+    shouldResubmitRef.current = true;
+  }
+
+  /**
    * Performs client-side validation before submitting the form action.
    *
    * @param event - Form submit event.
@@ -191,6 +225,7 @@ export function PostForm({
       className={`${styles.form} ${className}`}
       noValidate
       onSubmit={handleSubmit}
+      ref={formRef}
     >
       <header className={styles.header}>
         <LinkButton className={styles.cancel} href={cancelHref} variant="ghost">
@@ -322,6 +357,33 @@ export function PostForm({
           </p>
         ) : null}
       </div>
+
+      <dialog
+        aria-labelledby="post-restriction-title"
+        className={styles.restrictionDialog}
+        onCancel={() => restrictionDialogRef.current?.close()}
+        ref={restrictionDialogRef}
+      >
+        <h2 id="post-restriction-title">Restricciones de fotos</h2>
+        <p>{actionState.message}</p>
+        <ul>
+          {actionState.restrictedKids?.map(({ id, name }) => (
+            <li key={id}>{name}</li>
+          ))}
+        </ul>
+        <div className={styles.restrictionActions}>
+          <Button
+            onClick={() => restrictionDialogRef.current?.close()}
+            type="button"
+            variant="ghost"
+          >
+            Volver al formulario
+          </Button>
+          <Button onClick={continueWithoutRestrictedKids} type="button">
+            Continuar sin ellos
+          </Button>
+        </div>
+      </dialog>
     </form>
   );
 }
