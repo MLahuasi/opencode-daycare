@@ -1,4 +1,5 @@
 export { Avatar } from "./avatar";
+export { AVATAR_TONES, getAvatarToneByPosition } from "./avatar-tones";
 export { Badge } from "./badge";
 export { BellIcon } from "./bell-icon";
 export { Brand } from "./brand";
@@ -17,4 +18,5 @@ export { SearchField } from "./search-field";
 export { SunIcon } from "./sun-icon";
 export { TagsInput } from "./tags-input";
 export type { BadgeVariant } from "./badge";
+export type { AvatarTone } from "./avatar-tones";
 export { UserIcon } from "./user-icon";

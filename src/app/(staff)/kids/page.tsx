@@ -14,11 +14,8 @@ import { createKidComposition } from "@/composition/kid";
 import { getTodayIsoDate } from "@/utils";
 import { requireStaffSession } from "@/auth";
 
-const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
-
 function toKidListItem(
   kid: Kid,
-  index: number,
   asOfDate: string,
   parentKids: readonly ParentKidRecord[],
   rooms: readonly Room[],
@@ -30,7 +27,6 @@ function toKidListItem(
     initial: kid.name.trim().charAt(0).toUpperCase(),
     age: calculateAge(kid.birthDate, asOfDate),
     parentCount: parentKids.filter((parentKid) => parentKid.kidId === kid.id).length,
-    avatarTone: AVATAR_TONES[index % AVATAR_TONES.length],
     shouldLinkParent: parentKids.every((parentKid) => parentKid.kidId !== kid.id),
     allergies: parseCommaSeparatedTags(kid.allergies),
   };
@@ -51,8 +47,8 @@ export default async function KidsPage() {
     getRooms(dependencies),
   ]);
   const today = getTodayIsoDate();
-  const listItems = kids.map((kid, index) =>
-    toKidListItem(kid, index, today, parentKids, rooms),
+  const listItems = kids.map((kid) =>
+    toKidListItem(kid, today, parentKids, rooms),
   );
 
   return (

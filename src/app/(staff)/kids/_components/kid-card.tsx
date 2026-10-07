@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Avatar, Badge } from "@/presentation/ui";
+import type { AvatarTone } from "@/presentation/ui";
 import type { KidListItem } from "@/application/kid";
 import styles from "./kids-list.module.css";
 
 type KidCardProps = {
   kid: KidListItem;
+  tone: AvatarTone;
 };
 
 const ALLERGY_BADGE_VARIANTS = [
@@ -15,20 +17,6 @@ const ALLERGY_BADGE_VARIANTS = [
   "blue",
   "purple",
 ] as const;
-
-function getAvatarTone(value: string): "coral" | "blue" | "pink" | "green" | "yellow" | "purple" {
-  switch (value) {
-    case "blue":
-    case "pink":
-    case "green":
-    case "yellow":
-    case "purple":
-    case "coral":
-      return value;
-    default:
-      return "coral";
-  }
-}
 
 function getParentLabel(parentCount: number): string {
   return parentCount === 1
@@ -43,14 +31,14 @@ function getParentLabel(parentCount: number): string {
  * @param props.kid - Safe list DTO used to render the card.
  * @returns A link to the kid's canonical profile route.
  */
-export function KidCard({ kid }: KidCardProps) {
+export function KidCard({ kid, tone }: KidCardProps) {
   return (
     <Link className={styles.card} href={`/kids/${kid.slug}`}>
       <Avatar
         aria-hidden="true"
         className={styles.cardAvatar}
         initial={kid.initial}
-        tone={getAvatarTone(kid.avatarTone)}
+        tone={tone}
       />
       <span className={styles.cardContent}>
         <span className={styles.cardName}>{kid.name}</span>

@@ -6,7 +6,6 @@ export type KidListItem = {
   initial: string;
   age: number;
   parentCount: number;
-  avatarTone: string;
   shouldLinkParent: boolean;
   allergies: string[];
 };
