@@ -1,4 +1,4 @@
-import { LinkButton } from "@/presentation/ui";
+import { getAvatarToneByPosition, LinkButton } from "@/presentation/ui";
 import {
   calculateAge,
   getKidRoom,
@@ -17,8 +17,6 @@ import { getTodayIsoDate } from "@/utils";
 import { requireStaffSession } from "@/auth";
 import { createKidComposition } from "@/composition/kid";
 import { notFound } from "next/navigation";
-
-const AVATAR_TONES = ["blue", "pink", "green", "yellow", "purple"] as const;
 
 /**
  * Returns the canonical kid slugs generated at build time.
@@ -55,8 +53,7 @@ export default async function KidProfilePage({
     : rawInvitation;
   const dependencies = createKidComposition();
   const kids = await getKids(dependencies);
-  const kidIndex = kids.findIndex((candidate) => candidate.slug === slug);
-  const kid = kids[kidIndex];
+  const kid = kids.find((candidate) => candidate.slug === slug);
 
   if (!kid) {
     notFound();
@@ -68,7 +65,7 @@ export default async function KidProfilePage({
   ]);
   const roomName = room?.name ?? "Sin sala asignada";
   const age = calculateAge(kid.birthDate, getTodayIsoDate());
-  const avatarTone = AVATAR_TONES[kidIndex % AVATAR_TONES.length];
+  const avatarTone = getAvatarToneByPosition(0);
 
   return (
     <main className={styles.page}>
