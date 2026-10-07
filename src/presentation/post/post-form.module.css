@@ -127,12 +127,17 @@
   height: 26px;
   place-items: center;
   border-radius: 50%;
-  background: var(--color-child-avatar-background);
-  color: var(--color-child-avatar);
   font-family: var(--font-display), sans-serif;
   font-size: 13px;
   font-weight: 600;
 }
+
+.initial.coral { background: var(--color-coral-light); color: var(--color-on-coral); }
+.initial.blue { background: var(--color-child-avatar-background); color: var(--color-child-avatar); }
+.initial.pink { background: var(--color-avatar-pink-background); color: var(--color-avatar-pink); }
+.initial.green { background: var(--color-avatar-green-background); color: var(--color-avatar-green); }
+.initial.yellow { background: var(--color-avatar-yellow-background); color: var(--color-avatar-yellow); }
+.initial.purple { background: var(--color-avatar-purple-background); color: var(--color-avatar-purple); }
 
 .typePill {
   border-color: transparent;
