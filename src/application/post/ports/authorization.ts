@@ -57,7 +57,10 @@ export interface PostAuthorization {
    * @param post - Post destination being evaluated.
    * @returns Whether the viewer can create the Post.
    */
-  canCreate(viewer: PostViewer, post: Pick<PersistedPost, "kidId" | "roomId">): Promise<boolean>;
+  canCreate(
+    viewer: PostViewer,
+    post: Pick<PersistedPost, "kidIds" | "roomId">,
+  ): Promise<boolean>;
   /**
    * Checks whether a viewer can edit a Post.
    *

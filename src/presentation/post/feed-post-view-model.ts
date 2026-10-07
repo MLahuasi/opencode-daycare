@@ -29,7 +29,7 @@ export function presentFeedPost(post: Post): FeedPostViewModel {
     hasMedia: post.media.length > 0,
     initial: post.subject.trim().charAt(0).toUpperCase(),
     mediaLabel: post.media[0]?.alt ?? post.media[0]?.originalName,
-    recipient: post.kidId ? `familia de ${post.subject}` : "toda la sala",
+    recipient: post.kidIds.length > 0 ? `familia de ${post.subject}` : "toda la sala",
     time: feedTimeFormatter.format(new Date(post.dateTime)),
   };
 }

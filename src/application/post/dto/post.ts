@@ -14,7 +14,7 @@ import type { Room } from "@/domain/room";
 export type CreatePostInput = {
   authorId: string;
   body: string;
-  kidId: string | null;
+  kidIds: string[];
   media: PostMedia[];
   roomId: string | null;
   subject: string;

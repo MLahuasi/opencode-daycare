@@ -50,15 +50,20 @@ export function selectFamilyFeedPosts<T extends FamilyFeedPost>(
 
   const authorizedPosts = posts.filter((post) => {
     const isRoomAnnouncement =
-      post.kidId === null && post.roomId !== null && roomIds.has(post.roomId);
-    const targetKid = post.kidId ? kidsById.get(post.kidId) : undefined;
-    const isAuthorizedKidPost = targetKid !== undefined;
+      post.kidIds.length === 0 &&
+      post.roomId !== null &&
+      roomIds.has(post.roomId);
+    const targetKids = post.kidIds
+      .map((kidId) => kidsById.get(kidId))
+      .filter((kid): kid is Kid => kid !== undefined);
+    const isAuthorizedKidPost = targetKids.length > 0;
 
-    if (filter.kind === "kid") return post.kidId === filter.id;
+    if (filter.kind === "kid") return post.kidIds.includes(filter.id);
 
     if (filter.kind === "room") {
       return (
-        (isAuthorizedKidPost && targetKid.roomId === filter.id) ||
+        (isAuthorizedKidPost &&
+          targetKids.some((kid) => kid.roomId === filter.id)) ||
         (isRoomAnnouncement && post.roomId === filter.id)
       );
     }

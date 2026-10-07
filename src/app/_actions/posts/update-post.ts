@@ -45,7 +45,7 @@ export async function updatePostAction(
       {
         authorId: session.user.personId,
        body: parsed.values.body,
-       kidId: parsed.values.kidId,
+        kidIds: parsed.values.kidId ? [parsed.values.kidId] : [],
        media: parsed.media,
        roomId: parsed.values.roomId,
        subject: parsed.subject,
@@ -108,7 +108,7 @@ export async function updatePostAction(
         {
           authorId: session.user.personId,
           body: parsed.values.body,
-          kidId: parsed.values.kidId,
+          kidIds: parsed.values.kidId ? [parsed.values.kidId] : [],
           media: [
             ...parsed.media.filter((media) => !uploadedIds.has(media.id)),
             ...failedMedia,

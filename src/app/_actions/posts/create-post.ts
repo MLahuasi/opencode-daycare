@@ -31,7 +31,7 @@ export async function createPostAction(
        {
        authorId: session.user.personId,
        body: parsed.values.body,
-       kidId: parsed.values.kidId,
+       kidIds: parsed.values.kidId ? [parsed.values.kidId] : [],
       media: parsed.media,
       roomId: parsed.values.roomId,
        subject: parsed.subject,

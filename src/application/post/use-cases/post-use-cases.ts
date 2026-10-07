@@ -147,7 +147,7 @@ export async function getPostDetail(
       dependencies.people.findAll(),
       dependencies.comments.findAll(),
       dependencies.reactions.findAll(),
-      post.kidId ? dependencies.kids.findById(post.kidId) : Promise.resolve(null),
+      post.kidIds[0] ? dependencies.kids.findById(post.kidIds[0]) : Promise.resolve(null),
       post.roomId ? dependencies.rooms.findById(post.roomId) : Promise.resolve(null),
     ]);
   const author = people.find((person) => person.id === post.authorId);

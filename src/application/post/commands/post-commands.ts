@@ -28,7 +28,7 @@ export function createPostRecord(
     createdAt: timestamp,
     updatedAt: timestamp,
     media: input.media,
-    kidId: input.kidId,
+    kidIds: input.kidIds,
     roomId: input.roomId,
   };
 }
@@ -59,7 +59,7 @@ export function updatePostRecord(
     body: input.body,
     updatedAt: timestamp,
     media: input.media,
-    kidId: input.kidId,
+    kidIds: input.kidIds,
     roomId: input.roomId,
   };
 }

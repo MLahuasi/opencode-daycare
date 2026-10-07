@@ -40,8 +40,9 @@ export default async function EditPostPage({
     redirect("/home");
   }
 
-  const targetKid = post.kidId
-    ? targets.kids.find((kid) => kid.id === post.kidId)
+  const targetKidId = post.kidIds[0] ?? null;
+  const targetKid = targetKidId
+    ? targets.kids.find((kid) => kid.id === targetKidId)
     : undefined;
   const targetRoom = post.roomId
     ? targets.rooms.find((room) => room.id === post.roomId)
@@ -63,7 +64,7 @@ export default async function EditPostPage({
   const initialValues: PostFormInitialValues = {
     body: post.body,
     existingMedia,
-    kidId: post.kidId,
+    kidId: targetKidId,
     mode: "edit",
     postId: post.id,
     roomId: post.roomId,
