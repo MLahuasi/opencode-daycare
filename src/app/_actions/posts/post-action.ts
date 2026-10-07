@@ -18,7 +18,6 @@ type ParsedPostSubmission =
       values: PostFormValues;
       media: PostMedia[];
       uploadedMedia: PostMedia[];
-      subject: string;
     }
   | { success: false; state: PostFormActionState };
 
@@ -264,6 +263,5 @@ export async function parsePostSubmission(
     values: finalValidation.data,
     media: finalMedia,
     uploadedMedia,
-    subject: targetKid?.name ?? targetRoom?.name ?? "Anuncio general",
   };
 }

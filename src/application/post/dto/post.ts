@@ -17,7 +17,6 @@ export type CreatePostInput = {
   kidIds: string[];
   media: PostMedia[];
   roomId: string | null;
-  subject: string;
   type: PostType;
 };
 

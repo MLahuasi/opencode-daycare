@@ -173,7 +173,7 @@ export function FeedPostCard({
           <div className={styles.author}>
             <h2>{post.subject}</h2>
             <p>
-              <time dateTime={post.dateTime}>{post.time}</time>
+              <time dateTime={post.createdAt}>{post.time}</time>
               {post.authorLabel ? ` · ${post.authorLabel}` : ""}
             </p>
           </div>

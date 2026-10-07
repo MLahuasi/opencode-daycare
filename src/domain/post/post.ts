@@ -21,8 +21,6 @@ export type PersistedPost = {
   id: string;
   type: PostType;
   authorId: string;
-  subject: string;
-  dateTime: string;
   createdAt: string;
   updatedAt: string;
   body: string;
@@ -34,6 +32,8 @@ export type PersistedPost = {
 /** Projected Post content rendered by feed and detail views. */
 export type Post = PersistedPost & {
   engagement: PostEngagement;
+  /** Optional subject resolved by an application read projection. */
+  subject?: string;
 };
 
 /**
