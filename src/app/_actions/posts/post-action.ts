@@ -119,6 +119,19 @@ function getExistingMedia(
   }
 }
 
+function getSubmittedKidIds(value: FormDataEntryValue | null): string[] {
+  if (typeof value !== "string") return [];
+
+  try {
+    const ids: unknown = JSON.parse(value);
+    return Array.isArray(ids)
+      ? ids.filter((id): id is string => typeof id === "string")
+      : [];
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Validates authorization and uploads new images for a post submission.
  *
@@ -137,7 +150,7 @@ export async function parsePostSubmission(
   const initialValidation = validatePostForm({
     body: formData.get("body"),
     hasImages: files.length > 0 || retainedMedia.length > 0,
-    kidId: formData.get("kidId"),
+    kidIds: getSubmittedKidIds(formData.get("kidIds")),
     media: retainedMedia,
     mode: formData.get("mode"),
     postId: formData.get("postId"),
@@ -153,14 +166,18 @@ export async function parsePostSubmission(
     createPostComposition(),
     { personId, role: "personal" },
   );
-  const targetKid = initialValidation.data.kidId
-    ? targets.kids.find((kid) => kid.id === initialValidation.data.kidId)
-    : undefined;
+  const targetKids = targets.kids.filter((kid) =>
+    initialValidation.data.kidIds.includes(kid.id),
+  );
   const targetRoom = initialValidation.data.roomId
     ? targets.rooms.find((room) => room.id === initialValidation.data.roomId)
     : undefined;
 
-  if (!targetKid && !targetRoom) {
+  if (
+    (initialValidation.data.kidIds.length > 0 &&
+      targetKids.length !== initialValidation.data.kidIds.length) ||
+    (initialValidation.data.kidIds.length === 0 && !targetRoom)
+  ) {
     return { success: false, state: errorState("destination", "El destino no está autorizado.") };
   }
 
@@ -177,9 +194,13 @@ export async function parsePostSubmission(
   }
 
   if (
-    targetKid &&
+    targetKids.length > 0 &&
     (files.length > 0 || retainedMedia.length > 0) &&
-    !(await hasPhotoSharingConsent(createPostComposition(), targetKid.id))
+    !(await Promise.all(
+      targetKids.map((kid) =>
+        hasPhotoSharingConsent(createPostComposition(), kid.id),
+      ),
+    )).every(Boolean)
   ) {
     return { success: false, state: errorState("media", "No hay consentimiento vigente de todas las familias activas.") };
   }

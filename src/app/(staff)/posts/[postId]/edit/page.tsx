@@ -40,15 +40,16 @@ export default async function EditPostPage({
     redirect("/home");
   }
 
-  const targetKidId = post.kidIds[0] ?? null;
-  const targetKid = targetKidId
-    ? targets.kids.find((kid) => kid.id === targetKidId)
-    : undefined;
+  const targetKids = targets.kids.filter((kid) => post.kidIds.includes(kid.id));
   const targetRoom = post.roomId
     ? targets.rooms.find((room) => room.id === post.roomId)
     : undefined;
 
-  if (!targetKid && !targetRoom) {
+  if (post.kidIds.length > 0 && targetKids.length !== post.kidIds.length) {
+    redirect("/home");
+  }
+
+  if (targetKids.length === 0 && !targetRoom) {
     redirect("/home");
   }
 
@@ -64,7 +65,7 @@ export default async function EditPostPage({
   const initialValues: PostFormInitialValues = {
     body: post.body,
     existingMedia,
-    kidId: targetKidId,
+    kidIds: post.kidIds,
     mode: "edit",
     postId: post.id,
     roomId: post.roomId,

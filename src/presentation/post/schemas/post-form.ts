@@ -28,7 +28,7 @@ export type PostFormValues = {
   mode: PostFormMode;
   postId?: string;
   type: PostType;
-  kidId: string | null;
+  kidIds: string[];
   roomId: string | null;
   body: string;
   media: PostMedia[];
@@ -55,6 +55,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function normalizeNullableId(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function normalizeIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  return [...new Set(value.flatMap((item) => {
+    const id = normalizeNullableId(item);
+    return id ? [id] : [];
+  }))];
 }
 
 function validateMediaItem(value: unknown): value is PostMedia {
@@ -131,7 +140,7 @@ export function validatePostForm(
     ? (input.type as PostType)
     : null;
   const postId = normalizeNullableId(input.postId);
-  const kidId = normalizeNullableId(input.kidId);
+  const kidIds = normalizeIds(input.kidIds);
   const roomId = normalizeNullableId(input.roomId);
   const body = typeof input.body === "string" ? input.body.trim() : "";
   const media = validateMedia(input.media);
@@ -142,8 +151,8 @@ export function validatePostForm(
   if (mode === "edit" && !postId) {
     errors.postId = "Indica la publicación que deseas editar.";
   }
-  if (Boolean(kidId) === Boolean(roomId)) {
-    errors.destination = "Selecciona exactamente un niño o una sala.";
+  if ((kidIds.length === 0) === (roomId === null)) {
+    errors.destination = "Selecciona al menos un niño o una sala.";
   }
   if (typeof input.body !== "string" && !hasImages) {
     errors.body = "La descripción es obligatoria cuando no hay imágenes.";
@@ -165,7 +174,7 @@ export function validatePostForm(
       mode,
       ...(postId ? { postId } : {}),
       type,
-      kidId,
+      kidIds,
       roomId,
       body,
       media: media.value,

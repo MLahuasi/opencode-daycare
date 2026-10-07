@@ -19,17 +19,16 @@ export default async function NewPostPage() {
      createPostComposition(),
      { personId: session.user.personId, role: session.user.role },
    );
-  const kidId = targets.kids[0]?.id ?? null;
-  const roomId = kidId ? null : targets.rooms[0]?.id ?? null;
+   const roomId = targets.kids.length === 0 ? targets.rooms[0]?.id ?? null : null;
 
-  if (!kidId && !roomId) {
+   if (targets.kids.length === 0 && !roomId) {
     redirect("/home");
   }
 
   const initialValues: PostFormInitialValues = {
     body: "",
     existingMedia: [],
-    kidId,
+    kidIds: [],
     mode: "create",
     roomId,
     type: "activity",

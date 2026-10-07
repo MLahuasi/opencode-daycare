@@ -34,8 +34,8 @@ export type PostFormInitialValues = {
   body: string;
   /** Persisted images available during editing. */
   existingMedia: readonly PostFormExistingMediaValue[];
-  /** Initially selected kid identifier. */
-  kidId: string | null;
+  /** Initially selected kid identifiers. */
+  kidIds: readonly string[];
   /** Form operation mode. */
   mode: PostFormMode;
   /** Identifier of the Post being edited. */
@@ -105,7 +105,7 @@ export function PostForm({
   const [existingMedia, setExistingMedia] = useState(
     initialValues.existingMedia,
   );
-  const [kidId, setKidId] = useState(initialValues.kidId);
+  const [kidIds, setKidIds] = useState<string[]>([...initialValues.kidIds]);
   const [roomId, setRoomId] = useState(initialValues.roomId);
   const [type, setType] = useState<PostType>(initialValues.type);
   const [images, setImages] = useState<readonly PostImageSelection[]>([]);
@@ -119,13 +119,17 @@ export function PostForm({
   }, [actionState.redirectTo]);
 
   /**
-   * Selects a kid destination and clears the room destination.
+   * Toggles a kid destination and clears the room destination.
    *
-   * @param nextKidId - Identifier of the selected kid.
+   * @param nextKidId - Identifier of the toggled kid.
    * @returns Nothing after updating the destination state.
    */
-  function selectKid(nextKidId: string) {
-    setKidId(nextKidId);
+  function toggleKid(nextKidId: string) {
+    setKidIds((current) =>
+      current.includes(nextKidId)
+        ? current.filter((kidId) => kidId !== nextKidId)
+        : [...current, nextKidId],
+    );
     setRoomId(null);
     setError("");
   }
@@ -138,7 +142,7 @@ export function PostForm({
    */
   function selectRoom(nextRoomId: string) {
     setRoomId(nextRoomId);
-    setKidId(null);
+    setKidIds([]);
     setExistingMedia([]);
     setImages([]);
     setError("");
@@ -196,7 +200,7 @@ export function PostForm({
         {initialValues.postId ? (
           <input name="postId" type="hidden" value={initialValues.postId} />
         ) : null}
-        <input name="kidId" type="hidden" value={kidId ?? ""} />
+        <input name="kidIds" type="hidden" value={JSON.stringify(kidIds)} />
         <input name="roomId" type="hidden" value={roomId ?? ""} />
         <input name="type" type="hidden" value={type} />
         <input
@@ -215,10 +219,10 @@ export function PostForm({
           <div className={styles.pills}>
             {kids.map((kid) => (
               <button
-                aria-pressed={kidId === kid.id}
-                className={`${styles.targetPill} ${kidId === kid.id ? styles.selected : ""}`}
+                aria-pressed={kidIds.includes(kid.id)}
+                className={`${styles.targetPill} ${kidIds.includes(kid.id) ? styles.selected : ""}`}
                 key={kid.id}
-                onClick={() => selectKid(kid.id)}
+                onClick={() => toggleKid(kid.id)}
                 type="button"
               >
                 <span aria-hidden="true" className={styles.initial}>{getInitial(kid.name)}</span>
@@ -270,7 +274,7 @@ export function PostForm({
           <small id="post-body-count">{body.length}/{MAX_POST_BODY_LENGTH}</small>
         </FormField>
 
-        {kidId ? (
+        {kidIds.length > 0 ? (
           <fieldset className={styles.section}>
             <legend>Fotos</legend>
             <PostFormExistingMedia
