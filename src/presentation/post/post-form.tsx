@@ -135,6 +135,19 @@ export function PostForm({
   }
 
   /**
+   * Toggles all authorized kids as the Post destination.
+   *
+   * @returns Nothing after updating the destination state.
+   */
+  function toggleAllKids() {
+    setKidIds((current) =>
+      current.length === kids.length ? [] : kids.map((kid) => kid.id),
+    );
+    setRoomId(null);
+    setError("");
+  }
+
+  /**
    * Selects a room destination and clears media intended for a kid.
    *
    * @param nextRoomId - Identifier of the selected room.
@@ -214,10 +227,21 @@ export function PostForm({
           value={JSON.stringify(existingMedia.map(({ media }) => media.id))}
         />
 
-        <fieldset className={styles.section}>
-          <legend>Para</legend>
-          <div className={styles.pills}>
-            {kids.map((kid) => (
+          <fieldset className={styles.section}>
+            <legend>Para</legend>
+            <div className={styles.pills}>
+              {kids.length > 0 ? (
+                <Button
+                  aria-pressed={kidIds.length === kids.length}
+                  className={`${styles.roomPill} ${kidIds.length === kids.length ? styles.selected : ""}`}
+                  onClick={toggleAllKids}
+                  type="button"
+                  variant="ghost"
+                >
+                  Todos
+                </Button>
+              ) : null}
+              {kids.map((kid) => (
               <button
                 aria-pressed={kidIds.includes(kid.id)}
                 className={`${styles.targetPill} ${kidIds.includes(kid.id) ? styles.selected : ""}`}
