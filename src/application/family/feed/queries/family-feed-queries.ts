@@ -37,7 +37,7 @@ export async function getFamilyFeedContext(
   const authorizedKids = kids.filter((kid) => authorizedKidIds.has(kid.id));
   const authorizedRoomIds = new Set(authorizedKids.map((kid) => kid.roomId));
   const authorizedRooms = rooms.filter((room) => authorizedRoomIds.has(room.id));
-  const activeKids = selectActiveFamilyKids(kids, authorizedRoomIds);
+  const activeKids = selectActiveFamilyKids(kids, authorizedKidIds);
 
   return {
     person,

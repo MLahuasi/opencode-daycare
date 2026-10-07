@@ -6,18 +6,18 @@ import type {
 } from "./family-feed";
 
 /**
- * Selects active children whose rooms belong to the authorized room set.
+ * Selects active children directly linked to the authorized family member.
  *
  * @param kids - Children available in the daycare.
- * @param authorizedRoomIds - Room identifiers visible to the family.
- * @returns Active children in authorized rooms.
+ * @param authorizedKidIds - Child identifiers linked to the family member.
+ * @returns Active children linked to the family member.
  */
 export function selectActiveFamilyKids(
   kids: readonly Kid[],
-  authorizedRoomIds: ReadonlySet<string>,
+  authorizedKidIds: ReadonlySet<string>,
 ): readonly Kid[] {
   return kids.filter(
-    (kid) => kid.status === "active" && authorizedRoomIds.has(kid.roomId),
+    (kid) => kid.status === "active" && authorizedKidIds.has(kid.id),
   );
 }
 
