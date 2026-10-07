@@ -163,7 +163,6 @@ export function PostForm({
       current.length === kids.length ? [] : kids.map((kid) => kid.id),
     );
     setRestrictionConfirmation("");
-    setRestrictionConfirmation("");
     setRoomId(null);
     setError("");
   }

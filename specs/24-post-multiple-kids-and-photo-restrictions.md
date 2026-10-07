@@ -1,6 +1,6 @@
 # SPEC 24 — Publicaciones para varios niños y restricciones de fotos
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 12, SPEC 15, SPEC 19, SPEC 20, SPEC 22
 > **Date:** 2026-10-07
 > **Objective:** Permitir que el personal cree y edite una publicación para uno, varios o todos los niños autorizados, excluyendo con confirmación previa a los niños con restricciones cuando existan fotos.
@@ -92,38 +92,38 @@ La acción de guardado podrá incluir un indicador de confirmación emitido por 
 
 ## Acceptance criteria
 
-- [ ] `/posts/new` inicia sin niños seleccionados.
-- [ ] El formulario permite seleccionar y deseleccionar varios niños activos autorizados.
-- [ ] El botón `Todos` selecciona todos los niños autorizados cuando no están todos seleccionados.
-- [ ] El botón `Todos` deselecciona todos los niños cuando ya están todos seleccionados.
-- [ ] Seleccionar un niño limpia la sala seleccionada.
-- [ ] Seleccionar una sala limpia todos los niños seleccionados.
-- [ ] Una publicación infantil se persiste como un único registro con `kidIds` únicos.
-- [ ] Una publicación nunca persiste simultáneamente `kidIds` y `roomId` con valores activos.
-- [ ] El formulario de edición carga todos los `kidIds` persistidos.
-- [ ] La edición permite agregar y quitar niños autorizados.
-- [ ] Una publicación sin fotos puede incluir niños con o sin consentimiento.
-- [ ] El servidor evalúa restricciones para fotos nuevas y retenidas antes de subir o guardar media.
-- [ ] El mensaje previo usa exactamente el formato `Existen niños con restricciones: Nombre, Nombre` con nombres completos.
-- [ ] El diálogo permite volver al formulario sin persistir ni subir fotos.
-- [ ] Continuar excluye los niños restringidos y guarda la publicación restante.
-- [ ] Si todos los niños están restringidos y existen fotos, continuar no guarda y devuelve un error recuperable al formulario.
-- [ ] El servidor revalida la confirmación y los destinatarios en la segunda fase.
-- [ ] Las publicaciones familiares infantiles solo son visibles para personas vinculadas directamente con al menos un `kidIds`.
-- [ ] Una familia autorizada para un destinatario puede ver e interactuar con la publicación compartida.
-- [ ] Al editar destinatarios se conserva el engagement compatible con la autorización actual.
-- [ ] Los comentarios o reacciones incompatibles con la autorización final se eliminan de los JSON relacionados.
-- [ ] Las publicaciones de sala conservan su visibilidad, exclusividad y prohibición de fotos actuales.
-- [ ] `feed.json` no contiene `kidId`, `subject`, `dateTime` ni campos derivados de presentación.
-- [ ] `feed.json` conserva todos los IDs, cuerpos, autores, media y timestamps canónicos válidos.
-- [ ] Los JSON no contienen lectores duales ni parches de compatibilidad para el modelo anterior.
-- [ ] Los contratos de `kidId` de `parent-kids.json` e invitaciones no se modifican por esta migración.
-- [ ] El flujo funciona en viewport de escritorio y móvil.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica creación, edición, consentimiento, acceso familiar y engagement.
+- [x] `/posts/new` inicia sin niños seleccionados.
+- [x] El formulario permite seleccionar y deseleccionar varios niños activos autorizados.
+- [x] El botón `Todos` selecciona todos los niños autorizados cuando no están todos seleccionados.
+- [x] El botón `Todos` deselecciona todos los niños cuando ya están todos seleccionados.
+- [x] Seleccionar un niño limpia la sala seleccionada.
+- [x] Seleccionar una sala limpia todos los niños seleccionados.
+- [x] Una publicación infantil se persiste como un único registro con `kidIds` únicos.
+- [x] Una publicación nunca persiste simultáneamente `kidIds` y `roomId` con valores activos.
+- [x] El formulario de edición carga todos los `kidIds` persistidos.
+- [x] La edición permite agregar y quitar niños autorizados.
+- [x] Una publicación sin fotos puede incluir niños con o sin consentimiento.
+- [x] El servidor evalúa restricciones para fotos nuevas y retenidas antes de subir o guardar media.
+- [x] El mensaje previo usa exactamente el formato `Existen niños con restricciones: Nombre, Nombre` con nombres completos.
+- [x] El diálogo permite volver al formulario sin persistir ni subir fotos.
+- [x] Continuar excluye los niños restringidos y guarda la publicación restante.
+- [x] Si todos los niños están restringidos y existen fotos, continuar no guarda y devuelve un error recuperable al formulario.
+- [x] El servidor revalida la confirmación y los destinatarios en la segunda fase.
+- [x] Las publicaciones familiares infantiles solo son visibles para personas vinculadas directamente con al menos un `kidIds`.
+- [x] Una familia autorizada para un destinatario puede ver e interactuar con la publicación compartida.
+- [x] Al editar destinatarios se conserva el engagement compatible con la autorización actual.
+- [x] Los comentarios o reacciones incompatibles con la autorización final se eliminan de los JSON relacionados.
+- [x] Las publicaciones de sala conservan su visibilidad, exclusividad y prohibición de fotos actuales.
+- [x] `feed.json` no contiene `kidId`, `subject`, `dateTime` ni campos derivados de presentación.
+- [x] `feed.json` conserva todos los IDs, cuerpos, autores, media y timestamps canónicos válidos.
+- [x] Los JSON no contienen lectores duales ni parches de compatibilidad para el modelo anterior.
+- [x] Los contratos de `kidId` de `parent-kids.json` e invitaciones no se modifican por esta migración.
+- [x] El flujo funciona en viewport de escritorio y móvil.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica creación, edición, consentimiento, acceso familiar y engagement.
 
 ## Decisions
 
