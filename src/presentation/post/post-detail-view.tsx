@@ -138,13 +138,13 @@ export function PostDetailView({
 
           <div className={styles.reactionSummary} aria-label={`${reactions.length} reacciones`}>
             <span className={styles.reactionAvatars}>
-              {reactions.slice(0, 3).map((reaction) => (
+              {reactions.slice(0, 3).map((reaction, index) => (
                 <Avatar
                   className={styles.reactionAvatar}
                   initial={getInitial(reaction.person.name)}
                   key={reaction.id}
                   size="sm"
-                  tone="purple"
+                  tone={getAvatarToneByPosition(index)}
                 />
               ))}
             </span>

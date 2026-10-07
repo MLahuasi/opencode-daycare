@@ -134,5 +134,29 @@
     "body": "Si",
     "createdAt": "2026-10-07T22:20:27.473Z",
     "updatedAt": null
+  },
+  {
+    "id": "2e4d7094-d528-4697-aaf6-4f08c7f81ff1",
+    "postId": "f6c02a08-deca-4aab-aaa0-bfb6fc33e9ce",
+    "authorId": "person-caro-gimenez",
+    "body": "Lindo feriado",
+    "createdAt": "2026-10-07T23:17:30.662Z",
+    "updatedAt": null
+  },
+  {
+    "id": "2f82e5d2-799a-4212-ab2b-d6b5fbbe907d",
+    "postId": "f6c02a08-deca-4aab-aaa0-bfb6fc33e9ce",
+    "authorId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "body": "Gracias",
+    "createdAt": "2026-10-07T23:17:59.683Z",
+    "updatedAt": null
+  },
+  {
+    "id": "716a33d6-452f-470c-bbd0-62e97bae5512",
+    "postId": "f6c02a08-deca-4aab-aaa0-bfb6fc33e9ce",
+    "authorId": "69d0be26-7460-41cf-b44e-652716b72ef4",
+    "body": "hermoso",
+    "createdAt": "2026-10-07T23:23:09.881Z",
+    "updatedAt": null
   }
 ]

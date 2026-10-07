@@ -19,12 +19,13 @@
 - Usar `coral`, posición cero, en pantallas con un único avatar infantil aislado.
 - Mantener el tamaño compacto actual de las iniciales en los pills del formulario.
 - Mantener contraste y estados seleccionados existentes.
+- Alternar los colores de los avatares de reacciones de Posts según su posición visible.
 
 **Out of scope (for future specs):**
 
 - Agregar colores, gradientes o tokens visuales nuevos.
 - Persistir `avatarTone` en `kids.json`, `feed.json` u otra colección.
-- Cambiar colores de avatares de personal, familias, padres, comentarios o reacciones.
+- Cambiar colores de avatares de personal, familias, padres o comentarios.
 - Cambiar el significado de los avatares de sala o anuncios.
 - Rediseñar los componentes de avatar.
 - Crear preferencias de color por usuario.
@@ -61,7 +62,8 @@ La función debe devolver el tono en `index % AVATAR_TONES.length` y no debe dep
 5. Adaptar la sección “Para” de `/posts/new` y `/posts/[postId]/edit` para alternar los seis tonos sin cambiar el tamaño compacto de las iniciales.
 6. Adaptar las tarjetas de Feed para pasar la posición del avatar infantil visible, excluyendo salas y anuncios, y eliminar overrides CSS que impidan aplicar el tono.
 7. Adaptar el detalle de Posts para usar `coral` en el avatar infantil aislado y conservar un tratamiento no infantil para salas y anuncios.
-8. Verificar contraste, estados seleccionados, búsqueda, filtros, listas mixtas, responsive y accesibilidad en todas las pantallas incluidas.
+8. Adaptar los avatares de reacciones del detalle de Posts para alternar los seis tonos según su posición visible.
+9. Verificar contraste, estados seleccionados, búsqueda, filtros, listas mixtas, responsive y accesibilidad en todas las pantallas incluidas.
 
 ## Acceptance criteria
 
@@ -81,7 +83,8 @@ La función debe devolver el tono en `index % AVATAR_TONES.length` y no debe dep
 - [ ] Las tarjetas de salas y anuncios no desplazan la posición de los avatares infantiles.
 - [ ] Una publicación con `Varios niños` consume una posición del ciclo como publicación infantil.
 - [ ] El detalle de una publicación infantil usa `coral` como posición cero.
-- [ ] Los avatares de personal, familias, padres, comentarios y reacciones no cambian por esta spec.
+- [ ] Los avatares de reacciones alternan los seis tonos según su posición visible.
+- [ ] Los avatares de personal, familias, padres y comentarios no cambian por esta spec.
 - [ ] No se persiste `avatarTone` en ningún JSON ni contrato de dominio.
 - [ ] La alternancia funciona en viewport de escritorio y móvil.
 - [ ] Los cambios no producen errores de consola ni violaciones de accesibilidad en los flujos verificados.
@@ -102,6 +105,7 @@ La función debe devolver el tono en `index % AVATAR_TONES.length` y no debe dep
 - **Sí:** contar solo avatares infantiles, porque salas, anuncios y perfiles no representan niños individuales.
 - **Sí:** usar `coral` en un avatar infantil aislado, porque ocupa la posición cero del ciclo.
 - **Sí:** incluir `Varios niños` en el ciclo, porque representa una publicación infantil compartida.
+- **Sí:** alternar los avatares de reacciones, porque forman parte de la identidad visual visible del Post.
 - **No:** cambiar avatares de adultos, porque requieren una semántica visual independiente.
 
 ## Risks
