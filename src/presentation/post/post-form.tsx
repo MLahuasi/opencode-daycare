@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 import type { SubmitEvent } from "react";
-import { Button, FormField, LinkButton } from "@/presentation/ui";
+import { Button, FormField, getAvatarToneByPosition, LinkButton } from "@/presentation/ui";
 import type { Kid } from "@/domain/kid";
 import type { Room } from "@/domain/room";
 import { MAX_POST_BODY_LENGTH } from "@/presentation/post/schemas";
@@ -285,18 +285,27 @@ export function PostForm({
                   Todos
                 </Button>
               ) : null}
-              {kids.map((kid) => (
-              <button
-                aria-pressed={kidIds.includes(kid.id)}
-                className={`${styles.targetPill} ${kidIds.includes(kid.id) ? styles.selected : ""}`}
-                key={kid.id}
-                onClick={() => toggleKid(kid.id)}
-                type="button"
-              >
-                <span aria-hidden="true" className={styles.initial}>{getInitial(kid.name)}</span>
-                {kid.name.split(" ")[0]}
-              </button>
-            ))}
+              {kids.map((kid, index) => {
+                const tone = getAvatarToneByPosition(index);
+
+                return (
+                  <button
+                    aria-pressed={kidIds.includes(kid.id)}
+                    className={`${styles.targetPill} ${kidIds.includes(kid.id) ? styles.selected : ""}`}
+                    key={kid.id}
+                    onClick={() => toggleKid(kid.id)}
+                    type="button"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`${styles.initial} ${styles[tone]}`}
+                    >
+                      {getInitial(kid.name)}
+                    </span>
+                    {kid.name.split(" ")[0]}
+                  </button>
+                );
+              })}
             {rooms.map((room) => (
               <button
                 aria-pressed={roomId === room.id}

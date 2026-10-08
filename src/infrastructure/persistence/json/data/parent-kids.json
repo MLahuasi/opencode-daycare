@@ -103,5 +103,12 @@
     "kidId": "54f37876-e15f-4aef-a517-c1f6b2e4b31d",
     "relationship": "mother",
     "photoSharingConsent": true
+  },
+  {
+    "id": "parent-kid-69d0be26-7460-41cf-b44e-652716b72ef4-a8728bae-1aba-41c4-a50d-cc3cc192548b",
+    "parentId": "69d0be26-7460-41cf-b44e-652716b72ef4",
+    "kidId": "a8728bae-1aba-41c4-a50d-cc3cc192548b",
+    "relationship": "mother",
+    "photoSharingConsent": true
   }
 ]

@@ -25,15 +25,16 @@ export function KidsFilter({ items }: KidsFilterProps) {
   const filteredItems = normalizedQuery
     ? items.filter((item) => normalizeName(item.name).includes(normalizedQuery))
     : items;
-  const itemsByRoom = new Map<string, KidListItem[]>();
+  const itemsByRoom = new Map<string, { item: KidListItem; position: number }[]>();
 
-  for (const item of filteredItems) {
+  for (const [position, item] of filteredItems.entries()) {
     const roomItems = itemsByRoom.get(item.room);
+    const visibleItem = { item, position };
 
     if (roomItems) {
-      roomItems.push(item);
+      roomItems.push(visibleItem);
     } else {
-      itemsByRoom.set(item.room, [item]);
+      itemsByRoom.set(item.room, [visibleItem]);
     }
   }
 
@@ -48,7 +49,7 @@ export function KidsFilter({ items }: KidsFilterProps) {
       />
       {filteredItems.length > 0 ? (
         Array.from(itemsByRoom, ([room, roomItems]) => (
-          <KidsRoomGroup key={room} kids={roomItems} room={room} />
+          <KidsRoomGroup key={room} items={roomItems} room={room} />
         ))
       ) : (
         <KidsEmptyState />

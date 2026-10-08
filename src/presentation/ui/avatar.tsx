@@ -1,7 +1,6 @@
 import type { HTMLAttributes } from "react";
 import styles from "./avatar.module.css";
-
-type AvatarTone = "coral" | "blue" | "pink" | "green" | "yellow" | "purple";
+import type { AvatarTone } from "./avatar-tones";
 type AvatarSize = "sm" | "md" | "lg";
 
 type AvatarProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {

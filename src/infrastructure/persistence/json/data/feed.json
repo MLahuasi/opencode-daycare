@@ -217,5 +217,53 @@
       "e73240ec-9849-4060-8b75-79a1a1e917dc"
     ],
     "roomId": null
+  },
+  {
+    "id": "f6c02a08-deca-4aab-aaa0-bfb6fc33e9ce",
+    "type": "announcement",
+    "authorId": "person-caro-gimenez",
+    "body": "Lunes feriado",
+    "createdAt": "2026-10-07T23:16:41.333Z",
+    "updatedAt": "2026-10-07T23:17:10.919Z",
+    "media": [
+      {
+        "assetId": "3904ec500f92ef616055e3b090857b8c",
+        "publicId": "daycare/posts/pj1mlyynq5a5sem3yel8",
+        "resourceType": "image",
+        "deliveryType": "authenticated",
+        "format": "jpg",
+        "width": 3000,
+        "height": 4000,
+        "bytes": 648455,
+        "id": "05015b55-23aa-4f15-a4c3-55433252e9b2",
+        "originalName": "IMG_20190131_175716.jpg",
+        "alt": null
+      },
+      {
+        "assetId": "cf2d90d285263b3cd0377315d87f0b73",
+        "publicId": "daycare/posts/xdmp9pzepnj2uu0utpwp",
+        "resourceType": "image",
+        "deliveryType": "authenticated",
+        "format": "jpg",
+        "width": 4000,
+        "height": 2250,
+        "bytes": 328735,
+        "id": "71f0a167-2735-4c46-9e0b-0379574c20d8",
+        "originalName": "IMG_20191215_090723.jpg",
+        "alt": null
+      }
+    ],
+    "kidIds": [
+      "kid-sofia-mendez",
+      "kid-benjamin-ruiz",
+      "kid-valentina-soto",
+      "kid-tomas-diaz",
+      "kid-emma-castro",
+      "kid-lucas-romero",
+      "kid-olivia-vega",
+      "a8728bae-1aba-41c4-a50d-cc3cc192548b",
+      "e73240ec-9849-4060-8b75-79a1a1e917dc"
+    ],
+    "roomId": null
   }
 ]

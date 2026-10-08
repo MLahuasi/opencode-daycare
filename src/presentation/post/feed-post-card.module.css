@@ -36,8 +36,6 @@
   flex: none;
   place-items: center;
   border-radius: 50%;
-  background: var(--color-child-avatar-background);
-  color: var(--color-child-avatar);
   font-family: var(--font-fredoka), sans-serif;
   font-size: 17px;
   font-weight: 600;

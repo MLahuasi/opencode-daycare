@@ -103,5 +103,26 @@
     "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
     "type": "love",
     "createdAt": "2026-10-07T22:19:43.606Z"
+  },
+  {
+    "id": "d0704390-fc07-46c8-b02e-ce0d160bfe3f",
+    "postId": "f6c02a08-deca-4aab-aaa0-bfb6fc33e9ce",
+    "personId": "person-caro-gimenez",
+    "type": "love",
+    "createdAt": "2026-10-07T23:17:17.592Z"
+  },
+  {
+    "id": "75f05e77-5c00-40a5-9e62-297483699b22",
+    "postId": "f6c02a08-deca-4aab-aaa0-bfb6fc33e9ce",
+    "personId": "92a69f5f-0f6c-44f4-9e6d-abd6985f7ed8",
+    "type": "love",
+    "createdAt": "2026-10-07T23:17:51.460Z"
+  },
+  {
+    "id": "7e9d3327-913c-4f38-a40c-d26becc63db9",
+    "postId": "f6c02a08-deca-4aab-aaa0-bfb6fc33e9ce",
+    "personId": "69d0be26-7460-41cf-b44e-652716b72ef4",
+    "type": "love",
+    "createdAt": "2026-10-07T23:23:02.791Z"
   }
 ]

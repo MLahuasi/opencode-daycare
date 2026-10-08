@@ -1,6 +1,6 @@
 # SPEC 25 — Alternancia de colores para avatares infantiles
 
-> **Status:** Draft
+> **Status:** Implemented
 > **Depends on:** SPEC 24
 > **Date:** 2026-10-07
 > **Objective:** Alternar los seis tonos semánticos existentes en los avatares infantiles según su posición visible para mejorar la identificación visual sin persistir colores.
@@ -19,12 +19,13 @@
 - Usar `coral`, posición cero, en pantallas con un único avatar infantil aislado.
 - Mantener el tamaño compacto actual de las iniciales en los pills del formulario.
 - Mantener contraste y estados seleccionados existentes.
+- Alternar los colores de los avatares de reacciones de Posts según su posición visible.
 
 **Out of scope (for future specs):**
 
 - Agregar colores, gradientes o tokens visuales nuevos.
 - Persistir `avatarTone` en `kids.json`, `feed.json` u otra colección.
-- Cambiar colores de avatares de personal, familias, padres, comentarios o reacciones.
+- Cambiar colores de avatares de personal, familias, padres o comentarios.
 - Cambiar el significado de los avatares de sala o anuncios.
 - Rediseñar los componentes de avatar.
 - Crear preferencias de color por usuario.
@@ -61,35 +62,37 @@ La función debe devolver el tono en `index % AVATAR_TONES.length` y no debe dep
 5. Adaptar la sección “Para” de `/posts/new` y `/posts/[postId]/edit` para alternar los seis tonos sin cambiar el tamaño compacto de las iniciales.
 6. Adaptar las tarjetas de Feed para pasar la posición del avatar infantil visible, excluyendo salas y anuncios, y eliminar overrides CSS que impidan aplicar el tono.
 7. Adaptar el detalle de Posts para usar `coral` en el avatar infantil aislado y conservar un tratamiento no infantil para salas y anuncios.
-8. Verificar contraste, estados seleccionados, búsqueda, filtros, listas mixtas, responsive y accesibilidad en todas las pantallas incluidas.
+8. Adaptar los avatares de reacciones del detalle de Posts para alternar los seis tonos según su posición visible.
+9. Verificar contraste, estados seleccionados, búsqueda, filtros, listas mixtas, responsive y accesibilidad en todas las pantallas incluidas.
 
 ## Acceptance criteria
 
-- [ ] Existe una única paleta pública con los tonos `coral`, `blue`, `pink`, `green`, `yellow` y `purple`.
-- [ ] La paleta no agrega colores ni tokens fuera de `src/app/globals.css`.
-- [ ] La función de ciclo asigna tonos según la posición visible y reinicia después del sexto tono.
-- [ ] La función de ciclo es pura y no depende de infraestructura ni datos persistidos.
-- [ ] `/kids` alterna tonos según el orden visible después de aplicar búsqueda o filtros.
-- [ ] El índice de colores en `/kids` continúa globalmente entre grupos de salas.
-- [ ] `/kids/[slug]` usa `coral` para el avatar infantil aislado.
-- [ ] Los filtros de `/family-feed` asignan el primer tono `coral` al primer niño visible.
-- [ ] Salas y opciones no infantiles de Family Feed no consumen posiciones del ciclo.
-- [ ] La sección “Para” de Posts alterna los seis tonos entre niños visibles.
-- [ ] El tamaño compacto de las iniciales de Posts se conserva.
-- [ ] Los estados seleccionados de los pills mantienen contraste legible con cada tono.
-- [ ] Las tarjetas de Feed asignan colores solo a avatares de publicaciones infantiles.
-- [ ] Las tarjetas de salas y anuncios no desplazan la posición de los avatares infantiles.
-- [ ] Una publicación con `Varios niños` consume una posición del ciclo como publicación infantil.
-- [ ] El detalle de una publicación infantil usa `coral` como posición cero.
-- [ ] Los avatares de personal, familias, padres, comentarios y reacciones no cambian por esta spec.
-- [ ] No se persiste `avatarTone` en ningún JSON ni contrato de dominio.
-- [ ] La alternancia funciona en viewport de escritorio y móvil.
-- [ ] Los cambios no producen errores de consola ni violaciones de accesibilidad en los flujos verificados.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Playwright verifica Kids, Family Feed, Posts y detalles en los viewports definidos.
+- [x] Existe una única paleta pública con los tonos `coral`, `blue`, `pink`, `green`, `yellow` y `purple`.
+- [x] La paleta no agrega colores ni tokens fuera de `src/app/globals.css`.
+- [x] La función de ciclo asigna tonos según la posición visible y reinicia después del sexto tono.
+- [x] La función de ciclo es pura y no depende de infraestructura ni datos persistidos.
+- [x] `/kids` alterna tonos según el orden visible después de aplicar búsqueda o filtros.
+- [x] El índice de colores en `/kids` continúa globalmente entre grupos de salas.
+- [x] `/kids/[slug]` usa `coral` para el avatar infantil aislado.
+- [x] Los filtros de `/family-feed` asignan el primer tono `coral` al primer niño visible.
+- [x] Salas y opciones no infantiles de Family Feed no consumen posiciones del ciclo.
+- [x] La sección “Para” de Posts alterna los seis tonos entre niños visibles.
+- [x] El tamaño compacto de las iniciales de Posts se conserva.
+- [x] Los estados seleccionados de los pills mantienen contraste legible con cada tono.
+- [x] Las tarjetas de Feed asignan colores solo a avatares de publicaciones infantiles.
+- [x] Las tarjetas de salas y anuncios no desplazan la posición de los avatares infantiles.
+- [x] Una publicación con `Varios niños` consume una posición del ciclo como publicación infantil.
+- [x] El detalle de una publicación infantil usa `coral` como posición cero.
+- [x] Los avatares de reacciones alternan los seis tonos según su posición visible.
+- [x] Los avatares de personal, familias, padres y comentarios no cambian por esta spec.
+- [x] No se persiste `avatarTone` en ningún JSON ni contrato de dominio.
+- [x] La alternancia funciona en viewport de escritorio y móvil.
+- [x] Los cambios no producen errores de consola ni violaciones de accesibilidad en los flujos verificados.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] Playwright verifica Kids, Family Feed, Posts y detalles en los viewports definidos.
 
 ## Decisions
 
@@ -102,17 +105,18 @@ La función debe devolver el tono en `index % AVATAR_TONES.length` y no debe dep
 - **Sí:** contar solo avatares infantiles, porque salas, anuncios y perfiles no representan niños individuales.
 - **Sí:** usar `coral` en un avatar infantil aislado, porque ocupa la posición cero del ciclo.
 - **Sí:** incluir `Varios niños` en el ciclo, porque representa una publicación infantil compartida.
+- **Sí:** alternar los avatares de reacciones, porque forman parte de la identidad visual visible del Post.
 - **No:** cambiar avatares de adultos, porque requieren una semántica visual independiente.
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El mismo niño cambia de color entre pantallas. | Documentar que la asignación depende de la posición visible y no del ID. |
-| El filtrado reinicia o desplaza colores incorrectamente. | Calcular el índice después del filtrado y verificar listas mixtas con Playwright. |
-| Un override CSS mantiene todos los avatares azules. | Retirar reglas específicas que sobrescriban los tonos del componente `Avatar`. |
-| El cambio altera avatares de adultos por reutilización del componente. | Aplicar la paleta únicamente a los puntos de renderizado identificados como infantiles. |
-| El tamaño del formulario cambia al usar `Avatar`. | Mantener una variante compacta o conservar el círculo actual con clases de tono semánticas. |
+| Risk                                                                   | Mitigation                                                                                  |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| El mismo niño cambia de color entre pantallas.                         | Documentar que la asignación depende de la posición visible y no del ID.                    |
+| El filtrado reinicia o desplaza colores incorrectamente.               | Calcular el índice después del filtrado y verificar listas mixtas con Playwright.           |
+| Un override CSS mantiene todos los avatares azules.                    | Retirar reglas específicas que sobrescriban los tonos del componente `Avatar`.              |
+| El cambio altera avatares de adultos por reutilización del componente. | Aplicar la paleta únicamente a los puntos de renderizado identificados como infantiles.     |
+| El tamaño del formulario cambia al usar `Avatar`.                      | Mantener una variante compacta o conservar el círculo actual con clases de tono semánticas. |
 
 ## What is **not** in this spec
 

@@ -1,10 +1,11 @@
 import { Avatar, LinkButton } from "@/presentation/ui";
+import type { AvatarTone } from "@/presentation/ui";
 import type { Kid } from "@/domain/kid";
 import styles from "./kid-profile.module.css";
 
 type KidProfileHeaderProps = {
   age: number;
-  avatarTone: "coral" | "blue" | "pink" | "green" | "yellow" | "purple";
+  avatarTone: AvatarTone;
   editHref: string;
   kid: Kid;
   roomName: string;

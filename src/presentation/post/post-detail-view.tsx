@@ -1,6 +1,7 @@
 import {
   Avatar,
   Badge,
+  getAvatarToneByPosition,
   LinkButton,
   PhotoIcon,
   type BadgeVariant,
@@ -84,7 +85,15 @@ export function PostDetailView({
 
         <article className={styles.card}>
           <header className={styles.postHeader}>
-            <Avatar initial={getInitial(recipient.label)} size="lg" tone="blue" />
+            <Avatar
+              initial={getInitial(recipient.label)}
+              size="lg"
+              tone={
+                recipient.kind === "kid" && post.type !== "announcement"
+                  ? getAvatarToneByPosition(0)
+                  : "blue"
+              }
+            />
             <div className={styles.headingCopy}>
               <h1>{recipient.kind === "kid" ? recipient.label.replace(/^familia de /, "") : recipient.label}</h1>
               <p>
@@ -129,13 +138,13 @@ export function PostDetailView({
 
           <div className={styles.reactionSummary} aria-label={`${reactions.length} reacciones`}>
             <span className={styles.reactionAvatars}>
-              {reactions.slice(0, 3).map((reaction) => (
+              {reactions.slice(0, 3).map((reaction, index) => (
                 <Avatar
                   className={styles.reactionAvatar}
                   initial={getInitial(reaction.person.name)}
                   key={reaction.id}
                   size="sm"
-                  tone="purple"
+                  tone={getAvatarToneByPosition(index)}
                 />
               ))}
             </span>
