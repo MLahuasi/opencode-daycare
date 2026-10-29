@@ -1,6 +1,6 @@
 # SPEC DATABASE 02 — Módulo auth: `users` y `credentials`
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC DATABASE 01, SPEC 26
 > **Date:** 2026-10-29
 > **Objective:** Crear las tablas `users` y `credentials` con sus enums, relación y seed de ejemplo para Caro Giménez mediante migraciones versionadas aplicadas a Supabase.
@@ -97,13 +97,15 @@ Normalización:
 personal → staff
 ```
 
-Credencial asociada, tomada de `credential.json`:
+Credencial asociada, identificada en `credential.json`:
 
 ```text
 credential-caro-gimenez
 personId: person-caro-gimenez
-passwordHash: $2b$12$XU0dIsFwQ4L8zUWUJWMizeynioWBpLtOyWVT/8ZWGkxX4P0r8lZSi
+passwordHash: $2a$12$w/T4K04U1TSrCv5CGhh8meKTRdE7wG0/wWnW1Jbj8tylt5k6FyA6a
 ```
+
+El hash del JSON fuente no validaba la contraseña de prueba en PostgreSQL. Para este seed se generó un nuevo hash bcrypt compatible con `crypt()`; el JSON fuente no se modifica.
 
 Credencial funcional para pruebas:
 
@@ -138,26 +140,26 @@ El seed debe:
 
 ## Acceptance criteria
 
-- [ ] Existe una migración versionada en `src/infrastructure/persistence/migrations/`.
-- [ ] Existe un seed versionado en el mismo directorio.
-- [ ] Existen `user_role` y `user_status`.
-- [ ] `public.users` existe con las columnas especificadas.
-- [ ] `public.credentials` existe con las columnas especificadas.
-- [ ] `users.daycare_id` referencia `daycares.id`.
-- [ ] `credentials.user_id` referencia `users.id`.
-- [ ] `credentials.user_id` es único.
-- [ ] `(users.daycare_id, users.email)` es único.
-- [ ] RLS está habilitado en ambas tablas.
-- [ ] No existen políticas públicas permisivas.
-- [ ] Existe Caro Giménez vinculada a `Guardería Sala Soles`.
-- [ ] El rol persistido es `staff`.
-- [ ] El estado persistido es `active`.
-- [ ] Existe su credencial con el hash indicado.
-- [ ] La credencial de prueba permite autenticarse con `caro@opendaycare.com` y `OpenDayCare1!`.
-- [ ] Ejecutar el seed nuevamente no duplica usuario ni credencial.
-- [ ] `password_hash` no es accesible mediante políticas de cliente.
-- [ ] No se modificaron los JSON existentes.
-- [ ] No se modificó el runtime.
+- [x] Existe una migración versionada en `src/infrastructure/persistence/migrations/`.
+- [x] Existe un seed versionado en el mismo directorio.
+- [x] Existen `user_role` y `user_status`.
+- [x] `public.users` existe con las columnas especificadas.
+- [x] `public.credentials` existe con las columnas especificadas.
+- [x] `users.daycare_id` referencia `daycares.id`.
+- [x] `credentials.user_id` referencia `users.id`.
+- [x] `credentials.user_id` es único.
+- [x] `(users.daycare_id, users.email)` es único.
+- [x] RLS está habilitado en ambas tablas.
+- [x] No existen políticas públicas permisivas.
+- [x] Existe Caro Giménez vinculada a `Guardería Sala Soles`.
+- [x] El rol persistido es `staff`.
+- [x] El estado persistido es `active`.
+- [x] Existe su credencial con el hash indicado.
+- [x] La credencial de prueba permite autenticarse con `caro@opendaycare.com` y `OpenDayCare1!`.
+- [x] Ejecutar el seed nuevamente no duplica usuario ni credencial.
+- [x] `password_hash` no es accesible mediante políticas de cliente.
+- [x] No se modificaron los JSON existentes.
+- [x] No se modificó el runtime.
 
 ## Decisions
 
@@ -169,6 +171,7 @@ El seed debe:
 - **Sí:** habilitar RLS sin políticas públicas iniciales.
 - **Sí:** hacer el seed idempotente.
 - **Sí:** documentar `OpenDayCare1!` como contraseña de prueba para validar el flujo de autenticación.
+- **Sí:** usar un hash bcrypt compatible con PostgreSQL para el seed, porque el hash original del JSON no validaba la contraseña de prueba.
 - **No:** conservar IDs legacy.
 - **No:** vincular `users` con `auth.users`.
 - **No:** cargar todos los usuarios o credenciales JSON.
