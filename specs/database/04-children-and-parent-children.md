@@ -1,6 +1,6 @@
 # SPEC DATABASE 04 — Módulo children: `children` y `parent_children`
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC DATABASE 01, SPEC DATABASE 02, SPEC DATABASE 03, SPEC 26
 > **Date:** 2026-10-29
 > **Objective:** Crear las tablas `children` y `parent_children` con sus enums, relaciones, índices, RLS y seed idempotente de los niños del módulo mediante migraciones versionadas aplicadas a Supabase.
@@ -181,44 +181,44 @@ El seed debe:
 ## Acceptance criteria
 
 - [ ] Existe una spec en `specs/database/04-children-and-parent-children.md` en estado `Draft`.
-- [ ] Existen migraciones versionadas para los enums, `children`, `parent_children`, RLS, índices y seed.
-- [ ] Cada cambio DDL y de seed está contenido en una migración SQL versionada independiente y ordenada.
-- [ ] No se aplican cambios DDL directos fuera del patrón de migraciones.
-- [ ] Las migraciones locales no colisionan con el historial remoto de Supabase.
-- [ ] Existe el enum `child_status` con `active` e `inactive`.
-- [ ] Existe el enum `relationship_type` con `father`, `mother` y `guardian`.
-- [ ] `public.children` existe con las columnas especificadas.
-- [ ] `children.id` es UUID con default `gen_random_uuid()`.
-- [ ] `children.daycare_id` referencia `daycares.id` con `ON DELETE RESTRICT`.
-- [ ] `children.room_id` referencia `rooms.id` con `ON DELETE RESTRICT` y acepta `NULL`.
-- [ ] `(children.daycare_id, children.slug)` es único.
-- [ ] `allergy_tags` es `text[]`, no acepta `NULL` y tiene default array vacío.
-- [ ] `status` usa `child_status` y tiene default `active`.
-- [ ] `public.parent_children` existe con las columnas especificadas.
-- [ ] `parent_children.id` es UUID con default `gen_random_uuid()`.
-- [ ] `parent_children.parent_id` referencia `users.id` con `ON DELETE RESTRICT`.
-- [ ] `parent_children.child_id` referencia `children.id` con `ON DELETE RESTRICT`.
-- [ ] `(parent_children.parent_id, parent_children.child_id)` es único.
-- [ ] RLS está habilitado en `children` y `parent_children`.
-- [ ] No existen políticas públicas permisivas en las tablas nuevas.
-- [ ] Existen los índices `children(daycare_id, status, room_id)` y `parent_children(child_id)`.
-- [ ] El seed localiza `Guardería Sala Soles` por nombre y dirección.
-- [ ] El seed falla explícitamente si falta la guardería.
-- [ ] El seed falla explícitamente si falta una sala referenciada.
-- [ ] El seed crea exactamente 12 niños correspondientes a `kids.json`.
-- [ ] Cada niño usa un UUID nuevo y no persiste su ID legacy del JSON.
-- [ ] Las salas de los niños se resuelven dentro de `Guardería Sala Soles`.
-- [ ] Las alergias se persisten como códigos ingleses definidos en la spec.
-- [ ] Los textos de `medicalNotes` se preservan en `medical_notes`.
-- [ ] `parent_children` se crea sin filas porque no se migran usuarios parent.
-- [ ] La validación manual confirma que las FKs de `parent_children` rechazan referencias inexistentes.
-- [ ] La validación manual confirma que la unicidad de `parent_children` rechaza duplicados.
-- [ ] Ejecutar nuevamente el seed no duplica niños.
-- [ ] Ejecutar nuevamente el seed conserva los UUID existentes por `(daycare_id, slug)`.
-- [ ] No se conceden grants nuevos a `anon` o `authenticated`.
-- [ ] No se modifican `kids.json`, `parent-kids.json`, `people.json` ni otros JSON existentes.
-- [ ] No se modifica el runtime de la aplicación.
-- [ ] Las migraciones aplicadas aparecen en el historial remoto de Supabase.
+- [x] Existen migraciones versionadas para los enums, `children`, `parent_children`, RLS, índices y seed.
+- [x] Cada cambio DDL y de seed está contenido en una migración SQL versionada independiente y ordenada.
+- [x] No se aplican cambios DDL directos fuera del patrón de migraciones.
+- [x] Las migraciones locales no colisionan con el historial remoto de Supabase.
+- [x] Existe el enum `child_status` con `active` e `inactive`.
+- [x] Existe el enum `relationship_type` con `father`, `mother` y `guardian`.
+- [x] `public.children` existe con las columnas especificadas.
+- [x] `children.id` es UUID con default `gen_random_uuid()`.
+- [x] `children.daycare_id` referencia `daycares.id` con `ON DELETE RESTRICT`.
+- [x] `children.room_id` referencia `rooms.id` con `ON DELETE RESTRICT` y acepta `NULL`.
+- [x] `(children.daycare_id, children.slug)` es único.
+- [x] `allergy_tags` es `text[]`, no acepta `NULL` y tiene default array vacío.
+- [x] `status` usa `child_status` y tiene default `active`.
+- [x] `public.parent_children` existe con las columnas especificadas.
+- [x] `parent_children.id` es UUID con default `gen_random_uuid()`.
+- [x] `parent_children.parent_id` referencia `users.id` con `ON DELETE RESTRICT`.
+- [x] `parent_children.child_id` referencia `children.id` con `ON DELETE RESTRICT`.
+- [x] `(parent_children.parent_id, parent_children.child_id)` es único.
+- [x] RLS está habilitado en `children` y `parent_children`.
+- [x] No existen políticas públicas permisivas en las tablas nuevas.
+- [x] Existen los índices `children(daycare_id, status, room_id)` y `parent_children(child_id)`.
+- [x] El seed localiza `Guardería Sala Soles` por nombre y dirección.
+- [x] El seed falla explícitamente si falta la guardería.
+- [x] El seed falla explícitamente si falta una sala referenciada.
+- [x] El seed crea exactamente 12 niños correspondientes a `kids.json`.
+- [x] Cada niño usa un UUID nuevo y no persiste su ID legacy del JSON.
+- [x] Las salas de los niños se resuelven dentro de `Guardería Sala Soles`.
+- [x] Las alergias se persisten como códigos ingleses definidos en la spec.
+- [x] Los textos de `medicalNotes` se preservan en `medical_notes`.
+- [x] `parent_children` se crea sin filas porque no se migran usuarios parent.
+- [x] La validación manual confirma que las FKs de `parent_children` rechazan referencias inexistentes.
+- [x] La validación manual confirma que la unicidad de `parent_children` rechaza duplicados.
+- [x] Ejecutar nuevamente el seed no duplica niños.
+- [x] Ejecutar nuevamente el seed conserva los UUID existentes por `(daycare_id, slug)`.
+- [x] No se conceden grants nuevos a `anon` o `authenticated`.
+- [x] No se modifican `kids.json`, `parent-kids.json`, `people.json` ni otros JSON existentes.
+- [x] No se modifica el runtime de la aplicación.
+- [x] Las migraciones aplicadas aparecen en el historial remoto de Supabase.
 
 ## Decisions
 
