@@ -1,6 +1,6 @@
 # SPEC DATABASE 06 — Módulo social-media: publicaciones y engagement
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC DATABASE 01, SPEC DATABASE 02, SPEC DATABASE 03, SPEC DATABASE 04, SPEC DATABASE 05, SPEC 26
 > **Date:** 2026-10-29
 > **Objective:** Crear las tablas sociales `posts`, `post_children`, `post_media`, `reactions` y `comments` con sus enums, relaciones, restricciones, índices y RLS mediante migraciones versionadas aplicadas a Supabase.
@@ -199,65 +199,65 @@ Las restricciones primarias y únicas cubrirán los índices de `id`, `(post_id,
 
 ## Acceptance criteria
 
-- [ ] Existe `20261029000025_create_social_media_enums.sql`.
-- [ ] Existe `20261029000026_create_posts.sql`.
-- [ ] Existe `20261029000027_enable_posts_rls.sql`.
-- [ ] Existe `20261029000028_create_post_children.sql`.
-- [ ] Existe `20261029000029_enable_post_children_rls.sql`.
-- [ ] Existe `20261029000030_create_post_media.sql`.
-- [ ] Existe `20261029000031_enable_post_media_rls.sql`.
-- [ ] Existe `20261029000032_create_reactions.sql`.
-- [ ] Existe `20261029000033_enable_reactions_rls.sql`.
-- [ ] Existe `20261029000034_create_comments.sql`.
-- [ ] Existe `20261029000035_enable_comments_rls.sql`.
-- [ ] Existe `20261029000036_create_social_media_indexes.sql`.
-- [ ] Existe `post_type` con `food`, `nap`, `activity`, `achievement`, `mood` y `announcement`.
-- [ ] Existe `reaction_type` con `love`.
-- [ ] Existe `media_resource_type` con `image`.
-- [ ] Existe `media_delivery_type` con `authenticated`.
-- [ ] Existe `media_format` con `jpg`, `jpeg`, `png` y `webp`.
-- [ ] `public.posts` existe con las columnas especificadas.
-- [ ] `posts.id` es UUID con default `gen_random_uuid()`.
-- [ ] `posts.daycare_id` referencia `daycares.id` con `ON DELETE RESTRICT`.
-- [ ] `posts.author_id` referencia `users.id` con `ON DELETE RESTRICT`.
-- [ ] `posts.room_id` referencia `rooms.id` con `ON DELETE RESTRICT` y acepta `NULL`.
-- [ ] `posts.type` usa `post_type`.
-- [ ] `posts.created_at` y `posts.updated_at` son obligatorios sin default.
-- [ ] `public.post_children` existe con la PK compuesta `(post_id, child_id)`.
-- [ ] `post_children.post_id` referencia `posts.id` con `ON DELETE CASCADE`.
-- [ ] `post_children.child_id` referencia `children.id` con `ON DELETE RESTRICT`.
-- [ ] `public.post_media` existe con las columnas especificadas.
-- [ ] `post_media.post_id` referencia `posts.id` con `ON DELETE CASCADE`.
-- [ ] `post_media.resource_type` usa `media_resource_type` y tiene default `image`.
-- [ ] `post_media.delivery_type` usa `media_delivery_type` y tiene default `authenticated`.
-- [ ] `post_media.format` usa `media_format`.
-- [ ] `post_media.width`, `height` y `bytes` rechazan valores menores o iguales a cero.
-- [ ] `post_media.position` rechaza valores negativos.
-- [ ] `(post_media.post_id, post_media.position)` es único.
-- [ ] `public.reactions` existe con las columnas especificadas.
-- [ ] `reactions.post_id` referencia `posts.id` con `ON DELETE CASCADE`.
-- [ ] `reactions.user_id` referencia `users.id` con `ON DELETE CASCADE`.
-- [ ] `reactions.type` usa `reaction_type` y tiene default `love`.
-- [ ] `(reactions.post_id, reactions.user_id)` es único.
-- [ ] `public.comments` existe con las columnas especificadas.
-- [ ] `comments.post_id` referencia `posts.id` con `ON DELETE CASCADE`.
-- [ ] `comments.author_id` referencia `users.id` con `ON DELETE CASCADE`.
-- [ ] `comments.body` rechaza texto cuya longitud normalizada no esté entre 1 y 500.
-- [ ] RLS está habilitado en `posts`, `post_children`, `post_media`, `reactions` y `comments`.
-- [ ] No existen políticas públicas permisivas en las cinco tablas.
-- [ ] Existen los índices de publicaciones, destinos, medios, reacciones y comentarios definidos en la spec.
-- [ ] Toda FK no cubierta por una PK o restricción única tiene un índice adecuado.
-- [ ] No se insertan filas iniciales en ninguna tabla social.
-- [ ] No se migran filas desde `feed.json`.
-- [ ] No se migran filas desde `feed-reactions.json`.
-- [ ] No se migran filas desde `feed-comments.json`.
-- [ ] No se crean usuarios parent para resolver autores de engagement.
-- [ ] No se crean triggers, funciones ni jobs para enforcement de invariantes cruzadas.
-- [ ] No se conceden grants nuevos a `anon` o `authenticated`.
-- [ ] No se modifican los JSON existentes.
-- [ ] No se modifica el runtime de la aplicación.
-- [ ] Las migraciones aplicadas aparecen en el historial remoto de Supabase.
-- [ ] Los advisors no reportan nuevas FKs sin índices.
+- [x] Existe `20261029000025_create_social_media_enums.sql`.
+- [x] Existe `20261029000026_create_posts.sql`.
+- [x] Existe `20261029000027_enable_posts_rls.sql`.
+- [x] Existe `20261029000028_create_post_children.sql`.
+- [x] Existe `20261029000029_enable_post_children_rls.sql`.
+- [x] Existe `20261029000030_create_post_media.sql`.
+- [x] Existe `20261029000031_enable_post_media_rls.sql`.
+- [x] Existe `20261029000032_create_reactions.sql`.
+- [x] Existe `20261029000033_enable_reactions_rls.sql`.
+- [x] Existe `20261029000034_create_comments.sql`.
+- [x] Existe `20261029000035_enable_comments_rls.sql`.
+- [x] Existe `20261029000036_create_social_media_indexes.sql`.
+- [x] Existe `post_type` con `food`, `nap`, `activity`, `achievement`, `mood` y `announcement`.
+- [x] Existe `reaction_type` con `love`.
+- [x] Existe `media_resource_type` con `image`.
+- [x] Existe `media_delivery_type` con `authenticated`.
+- [x] Existe `media_format` con `jpg`, `jpeg`, `png` y `webp`.
+- [x] `public.posts` existe con las columnas especificadas.
+- [x] `posts.id` es UUID con default `gen_random_uuid()`.
+- [x] `posts.daycare_id` referencia `daycares.id` con `ON DELETE RESTRICT`.
+- [x] `posts.author_id` referencia `users.id` con `ON DELETE RESTRICT`.
+- [x] `posts.room_id` referencia `rooms.id` con `ON DELETE RESTRICT` y acepta `NULL`.
+- [x] `posts.type` usa `post_type`.
+- [x] `posts.created_at` y `posts.updated_at` son obligatorios sin default.
+- [x] `public.post_children` existe con la PK compuesta `(post_id, child_id)`.
+- [x] `post_children.post_id` referencia `posts.id` con `ON DELETE CASCADE`.
+- [x] `post_children.child_id` referencia `children.id` con `ON DELETE RESTRICT`.
+- [x] `public.post_media` existe con las columnas especificadas.
+- [x] `post_media.post_id` referencia `posts.id` con `ON DELETE CASCADE`.
+- [x] `post_media.resource_type` usa `media_resource_type` y tiene default `image`.
+- [x] `post_media.delivery_type` usa `media_delivery_type` y tiene default `authenticated`.
+- [x] `post_media.format` usa `media_format`.
+- [x] `post_media.width`, `height` y `bytes` rechazan valores menores o iguales a cero.
+- [x] `post_media.position` rechaza valores negativos.
+- [x] `(post_media.post_id, post_media.position)` es único.
+- [x] `public.reactions` existe con las columnas especificadas.
+- [x] `reactions.post_id` referencia `posts.id` con `ON DELETE CASCADE`.
+- [x] `reactions.user_id` referencia `users.id` con `ON DELETE CASCADE`.
+- [x] `reactions.type` usa `reaction_type` y tiene default `love`.
+- [x] `(reactions.post_id, reactions.user_id)` es único.
+- [x] `public.comments` existe con las columnas especificadas.
+- [x] `comments.post_id` referencia `posts.id` con `ON DELETE CASCADE`.
+- [x] `comments.author_id` referencia `users.id` con `ON DELETE CASCADE`.
+- [x] `comments.body` rechaza texto cuya longitud normalizada no esté entre 1 y 500.
+- [x] RLS está habilitado en `posts`, `post_children`, `post_media`, `reactions` y `comments`.
+- [x] No existen políticas públicas permisivas en las cinco tablas.
+- [x] Existen los índices de publicaciones, destinos, medios, reacciones y comentarios definidos en la spec.
+- [x] Toda FK no cubierta por una PK o restricción única tiene un índice adecuado.
+- [x] No se insertan filas iniciales en ninguna tabla social.
+- [x] No se migran filas desde `feed.json`.
+- [x] No se migran filas desde `feed-reactions.json`.
+- [x] No se migran filas desde `feed-comments.json`.
+- [x] No se crean usuarios parent para resolver autores de engagement.
+- [x] No se crean triggers, funciones ni jobs para enforcement de invariantes cruzadas.
+- [x] No se conceden grants nuevos a `anon` o `authenticated`.
+- [x] No se modifican los JSON existentes.
+- [x] No se modifica el runtime de la aplicación.
+- [x] Las migraciones aplicadas aparecen en el historial remoto de Supabase.
+- [x] Los advisors no reportan nuevas FKs sin índices.
 
 ## Decisions
 
