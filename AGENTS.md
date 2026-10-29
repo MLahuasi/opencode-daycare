@@ -31,6 +31,16 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - Guardar todos los logs, capturas, videos, traces y demás artefactos de Playwright en `.playwright-mcp/<Feature>/`.
 - Usar Context7 para documentación actual de frameworks y librerías.
 
+## Supabase y MCP
+
+- La configuración del servidor MCP de Supabase vive en `opencode.json` bajo `mcp.supabase`.
+- El servidor remoto apunta al proyecto Supabase con referencia `sthqfcwtnggupgnilqcr`.
+- El MCP de Supabase tiene habilitadas las capacidades `docs`, `account`, `database`, `debugging`, `development`, `functions` y `branching`.
+- La configuración del MCP no implica autenticación. Si el servidor solicita autorización, ejecutar `opencode mcp auth supabase` y completar el flujo OAuth en el navegador; después recargar la sesión de OpenCode.
+- No guardar tokens personales, claves `service_role` ni secretos en `opencode.json`, el código fuente o variables `NEXT_PUBLIC_*`.
+- Antes de cambiar el esquema remoto, consultar primero las tablas existentes y preferir desarrollo local, migraciones revisables y verificación posterior.
+- La referencia documental externa está en `../info/opencode-daycare/references/open-daycare-schema.md`; es un diccionario de diseño, no DDL ejecutable ni fuente de runtime.
+
 ## Workflow
 
 - Para funcionalidades grandes, cargar `spec`; para implementar una spec aprobada, cargar `spec-impl` y respetar sus pausas de revisión.
