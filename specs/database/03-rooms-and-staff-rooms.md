@@ -111,27 +111,27 @@ El ID legacy `staff-room-caro-soles` no se persiste.
 ## Acceptance criteria
 
 - [ ] Existe una spec en `specs/database/03-rooms-and-staff-rooms.md` en estado `Draft`.
-- [ ] Existen migraciones versionadas para `rooms`, `staff_rooms` y sus seeds.
-- [ ] No se crean enums nuevos para este módulo.
-- [ ] `public.rooms` existe con las columnas especificadas.
-- [ ] `rooms.id` es UUID con default `gen_random_uuid()`.
-- [ ] `rooms.daycare_id` referencia `daycares.id` con `ON DELETE RESTRICT`.
-- [ ] `(rooms.daycare_id, rooms.name)` es único.
-- [ ] `public.staff_rooms` existe con las columnas especificadas.
-- [ ] La PK de `staff_rooms` es `(staff_id, room_id)`.
-- [ ] `staff_rooms.staff_id` referencia `users.id` con `ON DELETE CASCADE`.
-- [ ] `staff_rooms.room_id` referencia `rooms.id` con `ON DELETE CASCADE`.
-- [ ] RLS está habilitado en `rooms` y `staff_rooms`.
-- [ ] No existen políticas públicas permisivas en las tablas nuevas.
-- [ ] Existe exactamente una sala `Soles` para `Guardería Sala Soles`.
-- [ ] Existe exactamente una sala `Girasoles` para `Guardería Sala Soles`.
-- [ ] Existe exactamente una sala `Patitos` para `Guardería Sala Soles`.
-- [ ] Existe exactamente una asignación entre Caro Giménez y `Soles`.
-- [ ] La asignación se resuelve usando UUID nuevos y no IDs legacy.
+- [x] Existen migraciones versionadas para `rooms`, `staff_rooms` y sus seeds.
+- [x] No se crean enums nuevos para este módulo.
+- [x] `public.rooms` existe con las columnas especificadas.
+- [x] `rooms.id` es UUID con default `gen_random_uuid()`.
+- [x] `rooms.daycare_id` referencia `daycares.id` con `ON DELETE RESTRICT`.
+- [x] `(rooms.daycare_id, rooms.name)` es único.
+- [x] `public.staff_rooms` existe con las columnas especificadas.
+- [x] La PK de `staff_rooms` es `(staff_id, room_id)`.
+- [x] `staff_rooms.staff_id` referencia `users.id` con `ON DELETE CASCADE`.
+- [x] `staff_rooms.room_id` referencia `rooms.id` con `ON DELETE CASCADE`.
+- [x] RLS está habilitado en `rooms` y `staff_rooms`.
+- [x] No existen políticas públicas permisivas en las tablas nuevas.
+- [x] Existe exactamente una sala `Soles` para `Guardería Sala Soles`.
+- [x] Existe exactamente una sala `Girasoles` para `Guardería Sala Soles`.
+- [x] Existe exactamente una sala `Patitos` para `Guardería Sala Soles`.
+- [x] Existe exactamente una asignación entre Caro Giménez y `Soles`.
+- [x] La asignación se resuelve usando UUID nuevos y no IDs legacy.
 - [ ] El seed falla si falta la guardería, Caro o la sala `Soles` requerida.
-- [ ] Ejecutar el seed nuevamente no duplica salas ni asignaciones.
-- [ ] No se modifican `rooms.json`, `staff-rooms.json` ni otros JSON existentes.
-- [ ] No se modifica el runtime de la aplicación.
+- [x] Ejecutar el seed nuevamente no duplica salas ni asignaciones.
+- [x] No se modifican `rooms.json`, `staff-rooms.json` ni otros JSON existentes.
+- [x] No se modifica el runtime de la aplicación.
 
 ## Decisions
 
