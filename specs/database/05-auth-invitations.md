@@ -1,6 +1,6 @@
 # SPEC DATABASE 05 — Módulo auth: `invitations`
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC DATABASE 01, SPEC DATABASE 02, SPEC DATABASE 03, SPEC DATABASE 04, SPEC 26
 > **Date:** 2026-10-29
 > **Objective:** Crear la tabla `invitations` del módulo Auth con sus relaciones, restricciones, índices, RLS y asignaciones de sala necesarias para que la aplicación gestione la creación y aceptación de cuentas parent.
@@ -140,40 +140,40 @@ Esta migración no crea invitaciones ni modifica otras filas de usuarios, niños
 
 ## Acceptance criteria
 
-- [ ] Existe `20261029000020_create_invitation_enum.sql`.
-- [ ] Existe `20261029000021_create_invitations.sql`.
-- [ ] Existe `20261029000022_enable_invitations_rls.sql`.
-- [ ] Existe `20261029000023_create_invitation_indexes.sql`.
-- [ ] Existe `20261029000024_assign_caro_to_rooms.sql`.
-- [ ] Existe el enum `invitation_status` con `pending`, `accepted` y `expired`.
-- [ ] `public.invitations` existe con todas las columnas especificadas.
-- [ ] `invitations.id` es UUID con default `gen_random_uuid()`.
-- [ ] `invitations.daycare_id` referencia `daycares.id` con `ON DELETE RESTRICT`.
-- [ ] `invitations.child_id` referencia `children.id` con `ON DELETE RESTRICT`.
-- [ ] `invitations.invited_by_user_id` referencia `users.id` con `ON DELETE RESTRICT`.
-- [ ] `invitations.accepted_user_id` referencia `users.id` con `ON DELETE RESTRICT` y acepta `NULL`.
-- [ ] `invitations.relationship` usa `relationship_type`.
-- [ ] `invitations.code` es único y obligatorio.
-- [ ] `invitations.status` usa `invitation_status` y tiene default `pending`.
-- [ ] Las invitaciones `accepted` requieren `accepted_user_id` y `accepted_at`.
-- [ ] Las invitaciones `pending` y `expired` no admiten `accepted_user_id` ni `accepted_at`.
-- [ ] RLS está habilitado en `invitations`.
-- [ ] No existen políticas públicas permisivas en `invitations`.
-- [ ] Existen índices para `daycare_id/status`, `child_id/status`, `invited_by_user_id`, `accepted_user_id`, `email/status` y `expires_at/status`.
-- [ ] No se insertan filas iniciales en `invitations`.
-- [ ] El seed o migración previa de asignaciones deja a Caro asignada a `Soles`, `Girasoles` y `Patitos`.
-- [ ] La migración de asignaciones falla si falta la guardería, Caro o una sala requerida.
-- [ ] Repetir la migración de asignaciones no duplica filas en `staff_rooms`.
-- [ ] No se migran filas desde `invitation.json`.
-- [ ] No se migran usuarios desde `people.json`.
-- [ ] No se migran credenciales desde `credential.json`.
-- [ ] No se migran relaciones desde `parent-kids.json`.
-- [ ] No se crean funciones, triggers ni jobs para aceptar o expirar invitaciones.
-- [ ] No se conceden grants nuevos a `anon` o `authenticated`.
-- [ ] No se modifican los JSON existentes.
-- [ ] No se modifica el runtime de la aplicación.
-- [ ] Las migraciones aplicadas aparecen en el historial remoto de Supabase.
-- [ ] Los advisors de seguridad y rendimiento no reportan nuevas claves foráneas sin índices.
+- [x] Existe `20261029000020_create_invitation_enum.sql`.
+- [x] Existe `20261029000021_create_invitations.sql`.
+- [x] Existe `20261029000022_enable_invitations_rls.sql`.
+- [x] Existe `20261029000023_create_invitation_indexes.sql`.
+- [x] Existe `20261029000024_assign_caro_to_rooms.sql`.
+- [x] Existe el enum `invitation_status` con `pending`, `accepted` y `expired`.
+- [x] `public.invitations` existe con todas las columnas especificadas.
+- [x] `invitations.id` es UUID con default `gen_random_uuid()`.
+- [x] `invitations.daycare_id` referencia `daycares.id` con `ON DELETE RESTRICT`.
+- [x] `invitations.child_id` referencia `children.id` con `ON DELETE RESTRICT`.
+- [x] `invitations.invited_by_user_id` referencia `users.id` con `ON DELETE RESTRICT`.
+- [x] `invitations.accepted_user_id` referencia `users.id` con `ON DELETE RESTRICT` y acepta `NULL`.
+- [x] `invitations.relationship` usa `relationship_type`.
+- [x] `invitations.code` es único y obligatorio.
+- [x] `invitations.status` usa `invitation_status` y tiene default `pending`.
+- [x] Las invitaciones `accepted` requieren `accepted_user_id` y `accepted_at`.
+- [x] Las invitaciones `pending` y `expired` no admiten `accepted_user_id` ni `accepted_at`.
+- [x] RLS está habilitado en `invitations`.
+- [x] No existen políticas públicas permisivas en `invitations`.
+- [x] Existen índices para `daycare_id/status`, `child_id/status`, `invited_by_user_id`, `accepted_user_id`, `email/status` y `expires_at/status`.
+- [x] No se insertan filas iniciales en `invitations`.
+- [x] El seed o migración previa de asignaciones deja a Caro asignada a `Soles`, `Girasoles` y `Patitos`.
+- [x] La migración de asignaciones falla si falta la guardería, Caro o una sala requerida.
+- [x] Repetir la migración de asignaciones no duplica filas en `staff_rooms`.
+- [x] No se migran filas desde `invitation.json`.
+- [x] No se migran usuarios desde `people.json`.
+- [x] No se migran credenciales desde `credential.json`.
+- [x] No se migran relaciones desde `parent-kids.json`.
+- [x] No se crean funciones, triggers ni jobs para aceptar o expirar invitaciones.
+- [x] No se conceden grants nuevos a `anon` o `authenticated`.
+- [x] No se modifican los JSON existentes.
+- [x] No se modifica el runtime de la aplicación.
+- [x] Las migraciones aplicadas aparecen en el historial remoto de Supabase.
+- [x] Los advisors de seguridad y rendimiento no reportan nuevas claves foráneas sin índices.
 
 ## Decisions
 
