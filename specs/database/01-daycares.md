@@ -1,6 +1,6 @@
 # SPEC DATABASE 01 — Primera tabla `daycares`
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 26
 > **Date:** 2026-10-29
 > **Objective:** Crear la tabla raíz `daycares` mediante scripts de migración y seed versionados, aplicarlos al proyecto Supabase configurado y habilitar RLS.
@@ -67,23 +67,23 @@ Si ya existe una guardería con el mismo `name` y `address`, el seed no debe ins
 
 ## Acceptance criteria
 
-- [ ] Existe un script de migración versionado en `src/infrastructure/persistence/migrations/`.
-- [ ] Existe un script de seed versionado en `src/infrastructure/persistence/migrations/`.
-- [ ] La migración crea `public.daycares`.
-- [ ] `id` es UUID, clave primaria y usa `gen_random_uuid()` por defecto.
-- [ ] `name` es `text NOT NULL`.
-- [ ] `address` es `text NOT NULL`.
-- [ ] `created_at` usa `timestamptz NOT NULL DEFAULT now()`.
-- [ ] `updated_at` usa `timestamptz NOT NULL DEFAULT now()`.
-- [ ] RLS está habilitado en `public.daycares`.
-- [ ] No existen políticas públicas permisivas.
-- [ ] La migración fue aplicada correctamente en Supabase.
-- [ ] El seed fue aplicado correctamente en Supabase.
-- [ ] Existe un registro con nombre `Guardería Sala Soles` y dirección `Av. Principal 123, Centro`.
-- [ ] Ejecutar el seed más de una vez no duplica el registro.
-- [ ] La tabla puede consultarse mediante las herramientas MCP de Supabase.
-- [ ] No se modificó la persistencia JSON.
-- [ ] No se modificó el runtime de la aplicación.
+- [x] Existe un script de migración versionado en `src/infrastructure/persistence/migrations/`.
+- [x] Existe un script de seed versionado en `src/infrastructure/persistence/migrations/`.
+- [x] La migración crea `public.daycares`.
+- [x] `id` es UUID, clave primaria y usa `gen_random_uuid()` por defecto.
+- [x] `name` es `text NOT NULL`.
+- [x] `address` es `text NOT NULL`.
+- [x] `created_at` usa `timestamptz NOT NULL DEFAULT now()`.
+- [x] `updated_at` usa `timestamptz NOT NULL DEFAULT now()`.
+- [x] RLS está habilitado en `public.daycares`.
+- [x] No existen políticas públicas permisivas.
+- [x] La migración fue aplicada correctamente en Supabase.
+- [x] El seed fue aplicado correctamente en Supabase.
+- [x] Existe un registro con nombre `Guardería Sala Soles` y dirección `Av. Principal 123, Centro`.
+- [x] Ejecutar el seed más de una vez no duplica el registro.
+- [x] La tabla puede consultarse mediante las herramientas MCP de Supabase.
+- [x] No se modificó la persistencia JSON.
+- [x] No se modificó el runtime de la aplicación.
 
 ## Decisions
 
