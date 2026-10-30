@@ -1,6 +1,6 @@
 # SPEC DATABASE 02 — Esquema y seeds del módulo social-media
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC DATABASE 01, SPEC 26
 > **Date:** 2026-10-30
 > **Objective:** Crear, poblar y verificar en Supabase las tablas del módulo `social-media` mediante exactamente dos migraciones, sin modificar el runtime JSON existente.
@@ -203,34 +203,34 @@ La implementación debe crear dos archivos posteriores a las migraciones existen
 
 ## Acceptance criteria
 
-- [ ] Existen exactamente dos migraciones nuevas versionadas en `src/infrastructure/persistence/migrations/`.
-- [ ] Las versiones nuevas no colisionan con migraciones locales ni remotas.
-- [ ] Existen los cinco enums con exactamente los valores definidos en `schema_db.md`.
-- [ ] Existen exactamente las seis tablas `feed`, `feed_kids`, `feed_media`, `feed_comments`, `feed_overview` y `feed_reactions`.
-- [ ] Cada tabla tiene PK UUID, `daycare_id NOT NULL` y columnas de auditoría según el contrato.
-- [ ] Las FKs entre tablas del módulo incluyen `daycare_id`.
-- [ ] `feed_kids` aplica `UNIQUE (feed_id, kid_id)`.
-- [ ] `feed_media` aplica `UNIQUE (feed_id, position)` y conserva posiciones zero-based.
-- [ ] `feed_overview` aplica unicidad sobre `daycare_id`.
-- [ ] `feed_comments.updated_at` permite `NULL`.
-- [ ] RLS está habilitado en las seis tablas.
-- [ ] No existen políticas ni grants nuevos para `anon` o `authenticated`.
-- [ ] El seed usa exactamente los cuatro JSON definidos y no modifica sus contenidos.
-- [ ] El seed crea o reutiliza exactamente una guardería llamada `Guardería Sala Soles`.
-- [ ] El seed genera UUID nuevos para todos los registros sociales.
-- [ ] Ningún ID fuente queda persistido como PK o FK.
-- [ ] El seed crea 8 filas `feed`, 25 `feed_kids`, 11 `feed_media`, 20 `feed_comments`, 1 `feed_overview` y 18 `feed_reactions`.
-- [ ] Todas las referencias a personas, niños, salas y publicaciones se resuelven correctamente.
-- [ ] El seed falla y revierte la transacción ante una referencia no resuelta.
-- [ ] El seed es idempotente y conserva UUID existentes al repetirse.
-- [ ] No existen relaciones huérfanas ni referencias entre guarderías.
-- [ ] Se conserva `feed_comments.updated_at = NULL` cuando el JSON lo indica.
-- [ ] Se conserva el orden zero-based de todos los elementos de media.
-- [ ] Las migraciones aparecen aplicadas en el historial remoto de Supabase.
-- [ ] Los advisors se revisan y no reportan una exposición cliente no intencionada ni FKs sociales sin índices requeridos.
-- [ ] `git diff --check` termina correctamente.
-- [ ] Los JSON fuente permanecen byte a byte sin modificaciones.
-- [ ] El runtime de la aplicación no cambia.
+- [x] Existen exactamente dos migraciones nuevas versionadas en `src/infrastructure/persistence/migrations/`.
+- [x] Las versiones nuevas no colisionan con migraciones locales ni remotas.
+- [x] Existen los cinco enums con exactamente los valores definidos en `schema_db.md`.
+- [x] Existen exactamente las seis tablas `feed`, `feed_kids`, `feed_media`, `feed_comments`, `feed_overview` y `feed_reactions`.
+- [x] Cada tabla tiene PK UUID, `daycare_id NOT NULL` y columnas de auditoría según el contrato.
+- [x] Las FKs entre tablas del módulo incluyen `daycare_id`.
+- [x] `feed_kids` aplica `UNIQUE (feed_id, kid_id)`.
+- [x] `feed_media` aplica `UNIQUE (feed_id, position)` y conserva posiciones zero-based.
+- [x] `feed_overview` aplica unicidad sobre `daycare_id`.
+- [x] `feed_comments.updated_at` permite `NULL`.
+- [x] RLS está habilitado en las seis tablas.
+- [x] No existen políticas ni grants nuevos para `anon` o `authenticated`.
+- [x] El seed usa exactamente los cuatro JSON definidos y no modifica sus contenidos.
+- [x] El seed crea o reutiliza exactamente una guardería llamada `Guardería Sala Soles`.
+- [x] El seed genera UUID nuevos para todos los registros sociales.
+- [x] Ningún ID fuente queda persistido como PK o FK.
+- [x] El seed crea 8 filas `feed`, 25 `feed_kids`, 11 `feed_media`, 20 `feed_comments`, 1 `feed_overview` y 18 `feed_reactions`.
+- [x] Todas las referencias a personas, niños, salas y publicaciones se resuelven correctamente.
+- [x] El seed falla y revierte la transacción ante una referencia no resuelta.
+- [x] El seed es idempotente y conserva UUID existentes al repetirse.
+- [x] No existen relaciones huérfanas ni referencias entre guarderías.
+- [x] Se conserva `feed_comments.updated_at = NULL` cuando el JSON lo indica.
+- [x] Se conserva el orden zero-based de todos los elementos de media.
+- [x] Las migraciones aparecen aplicadas en el historial remoto de Supabase.
+- [x] Los advisors se revisan y no reportan una exposición cliente no intencionada ni FKs sociales sin índices requeridos.
+- [x] `git diff --check` termina correctamente.
+- [x] Los JSON fuente permanecen byte a byte sin modificaciones.
+- [x] El runtime de la aplicación no cambia.
 
 ## Decisions taken and discarded
 
