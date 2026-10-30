@@ -1,0 +1,22 @@
+create table public.post_media (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.posts(id) on delete cascade,
+  asset_id text not null,
+  public_id text not null,
+  original_name text not null,
+  resource_type public.media_resource_type not null default 'image',
+  delivery_type public.media_delivery_type not null default 'authenticated',
+  format public.media_format not null,
+  width integer not null,
+  height integer not null,
+  bytes integer not null,
+  position integer not null,
+  alt text,
+  url text,
+  created_at timestamptz not null default now(),
+  constraint post_media_width_positive_check check (width > 0),
+  constraint post_media_height_positive_check check (height > 0),
+  constraint post_media_bytes_positive_check check (bytes > 0),
+  constraint post_media_position_non_negative_check check (position >= 0),
+  constraint post_media_post_position_key unique (post_id, position)
+);
