@@ -1,5 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "references": {
+    "schema_db": {
+      "path": "../info/opencode-daycare/references/schemas"
+    }
+  },
   "mcp": {
     "playwright": {
       "type": "local",
@@ -13,6 +18,11 @@
       "headers": {
         "Authorization": "Bearer ctx7sk-d3584aa8-f0bb-470f-834f-3c5f5c049dcc"
       }
+    },
+    "supabase": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp?project_ref=spnklkddhyxrsioenflc&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching",
+      "enabled": true
     }
   },
   "command": {
