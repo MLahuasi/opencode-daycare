@@ -1,6 +1,6 @@
 # SPEC DATABASE 01 — Daycare y módulos auth, rooms y children
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 26
 > **Date:** 2026-10-30
 > **Objective:** Crear y poblar mediante exactamente dos migraciones versionadas las tablas raíz `daycares` y las tablas relacionadas de `auth`, `rooms` y `children`, conforme a `schema_db.md`, aplicándolas y verificándolas en Supabase.
@@ -193,28 +193,28 @@ Los scripts no deben modificar, mover ni eliminar los archivos JSON fuente.
 
 ## Acceptance criteria
 
-- [ ] Existe una migración estructural y una migración de seed, ambas versionadas en `src/infrastructure/persistence/migrations/`.
-- [ ] Las dos versiones no colisionan con el historial local o remoto.
-- [ ] Existen los enums `person_role`, `person_status`, `parent_relationship` y `kid_status` con exactamente los valores de `schema_db.md`.
-- [ ] Existen exactamente las ocho tablas `daycares`, `people`, `credential`, `invitation`, `rooms`, `staff_rooms`, `kids` y `parent_kids`.
-- [ ] Cada tabla tiene una PK UUID y cada tabla de negocio tiene un `daycare_id NOT NULL`.
-- [ ] `people` aplica unicidad por guardería sobre `lower(email)`.
-- [ ] `rooms` aplica unicidad por guardería sobre `name`.
-- [ ] Las relaciones entre tablas del mismo daycare usan FKs compuestas con `daycare_id`.
-- [ ] Las tablas raíz no tienen acciones referenciales en cascada que permitan borrado accidental desde dependientes.
-- [ ] RLS está habilitado en las ocho tablas.
-- [ ] No existen políticas ni grants nuevos para `anon` o `authenticated`.
-- [ ] El seed crea o reutiliza exactamente una guardería llamada `Guardería Sala Soles`.
-- [ ] El seed carga los siete JSON definidos y conserva los valores requeridos, incluidos strings vacíos y `NULL`.
-- [ ] Cada registro fuente recibe un UUID nuevo y ningún ID legacy queda persistido.
-- [ ] Todas las referencias de `credential`, `invitation`, `staff_rooms`, `kids` y `parent_kids` se resuelven correctamente.
-- [ ] El seed falla y revierte la transacción cuando una referencia no existe.
-- [ ] El seed es idempotente y no duplica registros al ejecutarse nuevamente.
-- [ ] Los conteos cargados coinciden con los registros presentes en los siete JSON y no existen relaciones huérfanas.
-- [ ] Las migraciones aparecen aplicadas en el historial remoto de Supabase.
-- [ ] Los advisors de seguridad y rendimiento no reportan nuevas FKs sin índices ni exposición RLS no intencionada.
-- [ ] Los JSON fuente permanecen byte a byte sin modificaciones.
-- [ ] No se modifica el runtime de la aplicación.
+- [x] Existe una migración estructural y una migración de seed, ambas versionadas en `src/infrastructure/persistence/migrations/`.
+- [x] Las dos versiones no colisionan con el historial local o remoto.
+- [x] Existen los enums `person_role`, `person_status`, `parent_relationship` y `kid_status` con exactamente los valores de `schema_db.md`.
+- [x] Existen exactamente las ocho tablas `daycares`, `people`, `credential`, `invitation`, `rooms`, `staff_rooms`, `kids` y `parent_kids`.
+- [x] Cada tabla tiene una PK UUID y cada tabla de negocio tiene un `daycare_id NOT NULL`.
+- [x] `people` aplica unicidad por guardería sobre `lower(email)`.
+- [x] `rooms` aplica unicidad por guardería sobre `name`.
+- [x] Las relaciones entre tablas del mismo daycare usan FKs compuestas con `daycare_id`.
+- [x] Las tablas raíz no tienen acciones referenciales en cascada que permitan borrado accidental desde dependientes.
+- [x] RLS está habilitado en las ocho tablas.
+- [x] No existen políticas ni grants nuevos para `anon` o `authenticated`.
+- [x] El seed crea o reutiliza exactamente una guardería llamada `Guardería Sala Soles`.
+- [x] El seed carga los siete JSON definidos y conserva los valores requeridos, incluidos strings vacíos y `NULL`.
+- [x] Cada registro fuente recibe un UUID nuevo y ningún ID legacy queda persistido.
+- [x] Todas las referencias de `credential`, `invitation`, `staff_rooms`, `kids` y `parent_kids` se resuelven correctamente.
+- [x] El seed falla y revierte la transacción cuando una referencia no existe.
+- [x] El seed es idempotente y no duplica registros al ejecutarse nuevamente.
+- [x] Los conteos cargados coinciden con los registros presentes en los siete JSON y no existen relaciones huérfanas.
+- [x] Las migraciones aparecen aplicadas en el historial remoto de Supabase.
+- [x] Los advisors de seguridad y rendimiento no reportan nuevas FKs sin índices ni exposición RLS no intencionada.
+- [x] Los JSON fuente permanecen byte a byte sin modificaciones.
+- [x] No se modifica el runtime de la aplicación.
 
 ## Decisions taken and discarded
 
