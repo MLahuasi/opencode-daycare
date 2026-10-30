@@ -2,7 +2,8 @@
   "$schema": "https://opencode.ai/config.json",
   "references": {
     "schema_db": {
-      "path": "../info/opencode-daycare/references/schemas"
+      "path": "../info/opencode-daycare/references/schemas",
+      "description": "Schema de base de datos, tablas, columnas y referencias a crear, esto no está implementado en la base de datos, solo es para referencia"
     }
   },
 
@@ -37,11 +38,5 @@
       "/tmp/**": "allow"
     },
     "bash": "allow"
-  },
-  "references": {
-    "docs": {
-      "path": "../info/opencode-daycare/references",
-      "description": "Schema de base de datos, tablas, columnas y referencias a crear, esto no está implementado en la base de datos, solo es para referencia"
-    }
   }
 }
