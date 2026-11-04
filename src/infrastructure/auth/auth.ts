@@ -3,14 +3,15 @@ import "server-only";
 import { getServerSession, type NextAuthOptions, type Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
-import { getEnvironment } from "@/infrastructure/config/server";
+import { getApplicationEnvironment, getAuthEnvironment } from "@/config/server";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
   CredentialRepository,
   PersonRepository,
 } from "@/infrastructure/persistence/repositories";
 
-const { auth: authEnvironment } = getEnvironment();
+const authEnvironment = getAuthEnvironment();
+const applicationEnvironment = getApplicationEnvironment();
 
 /** Concrete NextAuth v4 configuration for the application's credential session. */
 export const authOptions: NextAuthOptions = {
@@ -87,7 +88,7 @@ export const authOptions: NextAuthOptions = {
         httpOnly: authEnvironment.AUTH_SESSION_COOKIE_HTTP_ONLY,
         sameSite: authEnvironment.AUTH_SESSION_COOKIE_SAME_SITE,
         secure:
-          process.env.NODE_ENV === "production" ||
+          applicationEnvironment.nodeEnvironment === "production" ||
           authEnvironment.AUTH_SESSION_COOKIE_SECURE,
         path: authEnvironment.AUTH_SESSION_COOKIE_PATH,
       },

@@ -12,7 +12,7 @@ import { KidsFilter, KidsHeader } from "./_components";
 import styles from "./_components/kids-list.module.css";
 import { createKidComposition } from "@/composition/kid";
 import { getTodayIsoDate } from "@/utils";
-import { requireStaffSession } from "@/auth";
+import { requireStaffSession } from "@/composition/auth";
 
 function toKidListItem(
   kid: Kid,

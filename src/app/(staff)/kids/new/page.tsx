@@ -3,7 +3,7 @@ import type { KidFormValues } from "@/application/kid";
 import { getRooms } from "@/application/kid";
 import { createKidComposition } from "@/composition/kid";
 import { createKidAction } from "../_actions";
-import { requireStaffSession } from "@/auth";
+import { requireStaffSession } from "@/composition/auth";
 
 const EMPTY_KID_FORM_VALUES: KidFormValues = {
   name: "",

@@ -6,7 +6,7 @@ import {
   NodemailerService,
   type Mailer,
 } from "@jmlq/mailer";
-import { getEnvironment } from "@/infrastructure/config/server";
+import { getMailerEnvironment } from "@/config/server";
 
 let mailerInstance: Mailer | undefined;
 
@@ -20,7 +20,7 @@ export function getMailer(): Mailer {
     return mailerInstance;
   }
 
-  const { mailer } = getEnvironment();
+  const mailer = getMailerEnvironment();
   const mailerClient = new NodemailerService({
     host: mailer.MAIL_HOST,
     port: mailer.MAIL_PORT,

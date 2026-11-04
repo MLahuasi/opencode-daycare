@@ -14,7 +14,7 @@ import {
 } from "./_components";
 import styles from "./_components/kid-profile.module.css";
 import { getTodayIsoDate } from "@/utils";
-import { requireStaffSession } from "@/auth";
+import { requireStaffSession } from "@/composition/auth";
 import { createKidComposition } from "@/composition/kid";
 import { notFound } from "next/navigation";
 

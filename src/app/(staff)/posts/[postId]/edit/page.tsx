@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { requireStaffSession } from "@/auth";
+import { requireStaffSession } from "@/composition/auth";
 import { updatePostAction } from "@/app/_actions/posts";
 import { getPostTargets } from "@/application/post";
 import { createPostComposition } from "@/composition/post";

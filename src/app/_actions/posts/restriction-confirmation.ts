@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { getEnvironment } from "@/infrastructure/config/server";
+import { getAuthEnvironment } from "@/config/server";
 
 const TOKEN_MAX_AGE_MS = 10 * 60 * 1000;
 
@@ -22,7 +22,7 @@ function decode(value: string): string {
 }
 
 function sign(value: string): string {
-  return createHmac("sha256", getEnvironment().auth.AUTH_SECRET)
+  return createHmac("sha256", getAuthEnvironment().AUTH_SECRET)
     .update(value)
     .digest("base64url");
 }

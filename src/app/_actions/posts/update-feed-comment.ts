@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireActiveSession } from "@/auth";
+import { requireActiveSession } from "@/composition/auth";
 import { updateComment } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 import { validateFeedCommentForm } from "@/presentation/post/schemas";
