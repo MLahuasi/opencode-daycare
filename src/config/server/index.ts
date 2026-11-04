@@ -6,6 +6,7 @@ export {
   getCloudinaryEnvironment,
   getMailerEnvironment,
   getSupabaseEnvironment,
+  validateEnvironment,
 } from "./environment";
 
 export type {

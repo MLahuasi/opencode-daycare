@@ -2,7 +2,6 @@ import "server-only";
 
 import { existsSync } from "node:fs";
 import path from "node:path";
-import env from "env-var";
 
 export type ApplicationEnvironment = {
   appUrl: string;
@@ -52,56 +51,77 @@ export type Environment = {
 let cachedEnvironment: Environment | undefined;
 
 function readRequiredString(name: string): string {
-  const value = env.get(name).required().asString().trim();
+  const value = process.env[name]?.trim();
 
   if (!value) {
-    throw new Error(`[environment] ${name} must not be empty`);
+    throw new Error(`[environment] Invalid or missing variable: ${name}`);
   }
 
   return value;
 }
 
-function readAppUrl(): string {
-  const value = readRequiredString("APP_URL");
+function readUrl(name: string, protocols: readonly string[]): string {
+  const value = readRequiredString(name);
   let parsedUrl: URL;
 
   try {
     parsedUrl = new URL(value);
   } catch {
-    throw new Error("[environment] APP_URL must be a valid URL");
+    throw new Error(`[environment] Invalid URL variable: ${name}`);
   }
 
-  if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-    throw new Error("[environment] APP_URL must use HTTP or HTTPS");
+  if (!protocols.includes(parsedUrl.protocol)) {
+    throw new Error(`[environment] Invalid URL protocol for variable: ${name}`);
   }
 
-  return parsedUrl.toString().replace(/\/$/, "");
+  return name === "APP_URL" ? parsedUrl.toString().replace(/\/$/, "") : value;
 }
 
 function readPositiveInteger(name: string): number {
-  return env.get(name).required().asIntPositive();
+  const value = readRequiredString(name);
+  const parsedValue = Number(value);
+
+  if (!Number.isInteger(parsedValue) || parsedValue <= 0) {
+    throw new Error(`[environment] Invalid positive integer variable: ${name}`);
+  }
+
+  return parsedValue;
 }
 
 function readBoolean(name: string): boolean {
-  return env.get(name).required().asEnum(["true", "false"]) === "true";
+  const value = readRequiredString(name);
+
+  if (value !== "true" && value !== "false") {
+    throw new Error(`[environment] Invalid boolean variable: ${name}`);
+  }
+
+  return value === "true";
+}
+
+function readEnum<T extends string>(name: string, values: readonly T[]): T {
+  const value = readRequiredString(name);
+
+  if (!values.includes(value as T)) {
+    throw new Error(`[environment] Invalid enum variable: ${name}`);
+  }
+
+  return value as T;
 }
 
 function readEnvironment(): Environment {
   const mailTemplatePath = path.join(process.cwd(), "templates");
 
   if (!existsSync(mailTemplatePath)) {
-    throw new Error(
-      `[environment] Mail template directory does not exist: ${mailTemplatePath}`,
-    );
+    throw new Error("[environment] Invalid runtime path variable: MAIL_TEMPLATE_PATH");
   }
 
   return {
     application: {
-      appUrl: readAppUrl(),
-      nodeEnvironment: env
-        .get("NODE_ENV")
-        .default("development")
-        .asEnum(["development", "test", "production"]),
+      appUrl: readUrl("APP_URL", ["http:", "https:"]),
+      nodeEnvironment: readEnum(
+        "NODE_ENV",
+        ["development", "test", "production"],
+      ),
     },
     auth: {
       AUTH_SECRET: readRequiredString("AUTH_SECRET"),
@@ -113,10 +133,10 @@ function readEnvironment(): Environment {
         "AUTH_SESSION_COOKIE_HTTP_ONLY",
       ),
       AUTH_SESSION_COOKIE_SECURE: readBoolean("AUTH_SESSION_COOKIE_SECURE"),
-      AUTH_SESSION_COOKIE_SAME_SITE: env
-        .get("AUTH_SESSION_COOKIE_SAME_SITE")
-        .required()
-        .asEnum(["lax", "strict", "none"]),
+      AUTH_SESSION_COOKIE_SAME_SITE: readEnum(
+        "AUTH_SESSION_COOKIE_SAME_SITE",
+        ["lax", "strict", "none"],
+      ),
       AUTH_SESSION_COOKIE_PATH: readRequiredString("AUTH_SESSION_COOKIE_PATH"),
       AUTH_SIGN_IN_PATH: readRequiredString("AUTH_SIGN_IN_PATH"),
     },
@@ -131,19 +151,26 @@ function readEnvironment(): Environment {
       MAIL_TEMPLATE_EXTENSION: readRequiredString("MAIL_TEMPLATE_EXTENSION"),
     },
     cloudinary: {
-      url: readRequiredString("CLOUDINARY_URL"),
+      url: readUrl("CLOUDINARY_URL", ["cloudinary:"]),
     },
     supabase: {
-      url: readRequiredString("NEXT_PUBLIC_SUPABASE_URL"),
+      url: readUrl("NEXT_PUBLIC_SUPABASE_URL", ["http:", "https:"]),
       publishableKey: readRequiredString("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
       dbPassword: readRequiredString("SUPABASE_DB_PASSWORD"),
     },
   };
 }
 
+/** Validates and caches the complete server-side environment. */
+export function validateEnvironment(): void {
+  if (!cachedEnvironment) {
+    cachedEnvironment = readEnvironment();
+  }
+}
+
 function getCachedEnvironment(): Environment {
-  cachedEnvironment ??= readEnvironment();
-  return cachedEnvironment;
+  validateEnvironment();
+  return cachedEnvironment as Environment;
 }
 
 /** Returns the validated application configuration. */
