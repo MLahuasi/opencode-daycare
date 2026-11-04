@@ -438,7 +438,6 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 
 Plan de implementación
 
-13. Crear bootstrap.ts.
 14. Crear instrumentation.ts.
 15. Refactorizar Composition de Auth.
 16. Eliminar src/auth.ts y migrar consumidores.
