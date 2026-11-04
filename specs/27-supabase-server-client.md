@@ -438,8 +438,6 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 
 Plan de implementación
 
-1.  Añadir variables Supabase a .env.template.
-2.  Mover y tipar la configuración server-only.
 3.  Centralizar lectura, validación y caché del entorno.
 4.  Crear src/config/runtime.ts.
 5.  Crear el port DatabaseConnectionChecker.

@@ -11,7 +11,7 @@ import {
 import { getKidBySlug } from "@/application/kid";
 import { createKidComposition } from "@/composition/kid";
 import { createFamilyComposition } from "@/composition/family";
-import { getEnvironment } from "@/infrastructure/config/server";
+import { getApplicationEnvironment } from "@/config/server";
 import type { InviteParentActionState } from "./types";
 
 /**
@@ -86,10 +86,10 @@ export async function sendInviteParentAction(
     };
   }
 
-  const { APP_URL } = getEnvironment();
+  const { appUrl } = getApplicationEnvironment();
   const invitationUrl = new URL(
     `/auth/parent-invitation/${createdInvitation.invitation.code}`,
-    APP_URL,
+    appUrl,
   ).toString();
 
   try {

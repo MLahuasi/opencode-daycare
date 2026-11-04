@@ -6,6 +6,7 @@ import type {
   PostImageStorage,
   PostImageUploadInput,
 } from "@/application/post/ports";
+import { getCloudinaryEnvironment } from "@/config/server";
 
 const SUPPORTED_IMAGE_FORMATS = new Set(["jpg", "jpeg", "png", "webp"]);
 
@@ -79,10 +80,7 @@ export type CloudinaryGateway = {
  * @throws Error when `CLOUDINARY_URL` is missing.
  */
 function ensureCloudinaryConfiguration(): void {
-  if (!process.env.CLOUDINARY_URL?.trim()) {
-    throw new Error("CLOUDINARY_URL is required for image operations.");
-  }
-
+  getCloudinaryEnvironment();
   cloudinary.config({ secure: true });
 }
 
