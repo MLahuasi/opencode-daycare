@@ -438,7 +438,6 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 
 Plan de implementación
 
-6.  Crear el caso de uso checkDatabaseConnection.
 7.  Crear DatabaseClientProvider<TClient>.
 8.  Crear proveedor Supabase y fachada databaseClient.
 9.  Crear comprobador del Data API con timeout de cinco segundos.
