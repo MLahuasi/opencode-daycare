@@ -2,6 +2,7 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { SupabaseClientProvider } from "./supabase/supabase-client-provider";
+import { SupabaseConnectionChecker } from "./supabase/supabase-connection-checker";
 
 let databaseClientInstance: SupabaseClient | undefined;
 let initializationPromise: Promise<void> | undefined;
@@ -19,5 +20,10 @@ export const databaseClient = {
   initialize(): Promise<void> {
     initializationPromise ??= initializeDatabaseClient();
     return initializationPromise;
+  },
+  /** Checks the configured Supabase Data API gateway once initialized. */
+  async checkConnection(): Promise<void> {
+    await this.initialize();
+    await new SupabaseConnectionChecker().check();
   },
 };

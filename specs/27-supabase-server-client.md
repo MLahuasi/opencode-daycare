@@ -438,7 +438,6 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 
 Plan de implementación
 
-9.  Crear comprobador del Data API con timeout de cinco segundos.
 10. Crear fachada y proveedor JMLQ.
 11. Crear fachada y proveedor Cloudinary.
 12. Crear composiciones de clientes y bootstrap.
