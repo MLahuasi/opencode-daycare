@@ -1,6 +1,6 @@
 # SPEC 27 — Cliente Supabase server-side y verificación de arranque
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 22
 > **Date:** 2026-10-30
 > **Objective:** Centralizar la configuración server-only y la inicialización de los clientes externos mediante `bootstrap.ts`, conectar la capacidad de base de datos a través de una fachada provider-neutral y verificar la disponibilidad de su Data API durante el arranque, corrigiendo además el acceso público de Auth para que pase por Composition.
@@ -311,89 +311,89 @@ no consulta tablas, no lee el body y no concede permisos adicionales.
 
 ## Acceptance criteria
 
-- [ ] `.env.template` contiene `NEXT_PUBLIC_SUPABASE_URL` con un placeholder de URL.
-- [ ] `.env.template` contiene `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` con un placeholder de clave publicable.
-- [ ] Existe `src/config/server/environment.ts` como único lector de variables de entorno de la aplicación.
-- [ ] No existe `src/infrastructure/config/server/` como dueño de la configuración transversal.
-- [ ] `validateEnvironment()` valida todas las variables runtime requeridas antes de inicializar clientes.
-- [ ] La validación rechaza variables ausentes, vacías, URLs inválidas, enums inválidos, booleanos inválidos e enteros no positivos.
-- [ ] La validación incluye `SUPABASE_DB_PASSWORD`, aunque el check Data API no la utilice.
-- [ ] Existen getters tipados para application, auth, mailer, Cloudinary y Supabase.
-- [ ] Los getters reutilizan la configuración validada y no leen `process.env` directamente.
-- [ ] Los errores de configuración identifican el nombre de la variable sin mostrar su valor.
-- [ ] Existe `src/config/runtime.ts` para el runtime de Next.js.
-- [ ] No existen lecturas directas de `process.env` o `env.get()` fuera de los módulos de configuración autorizados.
-- [ ] Existe `src/application/database/ports/database-connection-checker.ts`.
-- [ ] `DatabaseConnectionChecker` no importa Next.js, Supabase ni Infrastructure.
-- [ ] Existe el caso de uso `checkDatabaseConnection` en Application.
-- [ ] El caso de uso solo depende del port `DatabaseConnectionChecker`.
-- [ ] Existe `src/infrastructure/adapters/database/database-client-provider.ts`.
-- [ ] `DatabaseClientProvider<TClient>` abstrae únicamente la creación del cliente y no define consultas.
-- [ ] Existe `src/infrastructure/adapters/database/supabase/supabase-client-provider.ts`.
-- [ ] `SupabaseClientProvider` implementa `DatabaseClientProvider` usando `@supabase/supabase-js`.
-- [ ] Existe `src/infrastructure/adapters/database/supabase/supabase-connection-checker.ts`.
-- [ ] `SupabaseConnectionChecker` implementa el port de Application sin exponer tipos de Supabase.
-- [ ] El proveedor y el comprobador importan `server-only` antes de usar configuración o SDK server-side.
-- [ ] `databaseClient` expone una fachada provider-neutral y no expone tipos ni instancias de Supabase.
-- [ ] `databaseClient.initialize()` es idempotente y comparte una única Promise concurrente por instancia.
-- [ ] `databaseClient` se construye mediante Composition y usa únicamente getters de configuración.
-- [ ] La comprobación realiza una solicitud real `GET /rest/v1/` al Data API.
-- [ ] La comprobación usa la clave publicable solo en código server-side y nunca la registra.
-- [ ] La comprobación tiene un timeout máximo de cinco segundos y no realiza reintentos.
-- [ ] La comprobación no consulta tablas ni descarga filas.
-- [ ] Existe `src/infrastructure/adapters/database/server.ts`.
-- [ ] Existe `src/infrastructure/adapters/database/index.ts`.
-- [ ] Existe `mailerClient` como fachada provider-neutral.
-- [ ] `mailerClient.initialize()` construye transporte y renderer sin abrir una conexión SMTP.
-- [ ] `mailerClient` no expone JMLQ, Nodemailer ni sus tipos.
-- [ ] Existe `imageStorageClient` como fachada provider-neutral.
-- [ ] `imageStorageClient.initialize()` configura Cloudinary sin ejecutar uploads ni deletes.
-- [ ] `imageStorageClient` no expone Cloudinary ni sus tipos.
-- [ ] Los proveedores concretos solo son importados por sus fachadas o Composition.
-- [ ] Existe `src/composition/database/database-composition.ts`.
-- [ ] Composition ensambla el caso de uso con el adapter Supabase.
-- [ ] Existe `src/bootstrap.ts` con `bootstrapApplication()`.
-- [ ] `bootstrap.ts` está marcado como server-only y no ejecuta efectos secundarios al importarse.
-- [ ] `bootstrapApplication()` es idempotente y comparte una única `Promise` por instancia.
-- [ ] El bootstrap valida el entorno antes de ejecutar la comprobación de Supabase.
-- [ ] El bootstrap registra mensajes sanitizados de inicio, entorno validado, conexión y aplicación lista en orden.
-- [ ] El bootstrap inicializa `databaseClient`, `mailerClient` e `imageStorageClient` mediante Composition.
-- [ ] Un fallo al construir cualquiera de los tres clientes impide que la instancia se considere lista.
-- [ ] El bootstrap no realiza una conexión remota SMTP ni operaciones remotas de Cloudinary.
-- [ ] Existe `src/instrumentation.ts` con `register()`.
-- [ ] `instrumentation.ts` solo actúa como adaptador del lifecycle de Next.js.
-- [ ] `instrumentation.ts` importa dinámicamente `bootstrap.ts` dentro de `register()`.
-- [ ] `instrumentation.ts` limita el bootstrap al runtime Node.js.
-- [ ] La comprobación se ejecuta una vez por instancia Node antes de aceptar requests.
-- [ ] El arranque registra `[database] Supabase Data API connection successful` cuando la respuesta es válida.
-- [ ] Un timeout, una URL inválida, una clave inválida o una respuesta no exitosa producen un error sanitizado.
-- [ ] Un fallo de conexión impide que la instancia se considere lista.
-- [ ] No existe endpoint público ni página de diagnóstico para esta comprobación.
-- [ ] No se conceden permisos adicionales a `anon` o `authenticated` para realizar el check.
-- [ ] No se crean `src/utils/supabase/client.ts`, `src/utils/supabase/server.ts` ni `src/utils/supabase/middleware.ts`.
-- [ ] No se crea `src/proxy.ts` ni `middleware.ts` para Supabase.
-- [ ] No se crea ninguna ruta, página o consulta contra `todos`.
-- [ ] No se modifican los repositorios JSON existentes ni sus fixtures.
-- [ ] No se cambian las reglas funcionales de NextAuth, sus sesiones, cookies, redirects ni permisos.
-- [ ] No existe `src/auth.ts` como barrel directo de Infrastructure.
-- [ ] No quedan imports `@/auth` en `src`.
-- [ ] Los consumidores de Auth acceden mediante Composition y no importan directamente `@/infrastructure/auth`.
-- [ ] La composición de Auth conserva el comportamiento actual del Route Handler y de los guards de sesión.
-- [ ] No se implementan repositorios Supabase ni cambios en rutas o Composition fuera del ensamblaje del check, bootstrap y Auth composition.
-- [ ] Domain y Presentation no importan ningún SDK, proveedor concreto ni fachada server-only.
-- [ ] Application no importa Infrastructure, ningún SDK, Next.js, configuración server-only ni `fetch` para esta funcionalidad.
-- [ ] Ningún Client Component importa Infrastructure o configuración privada.
-- [ ] `README.md` documenta que las variables se configuran fuera de Git y que la clave publicable no es un secreto.
-- [ ] `README.md` documenta que esta entrega no implementa Supabase Auth, consultas de tablas, migraciones ni repositorios Supabase, y que la refactorización de NextAuth no cambia su comportamiento.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] `git diff --check` termina correctamente.
-- [ ] La enmienda de pruebas manuales usa `GET /rest/v1/rpc/__opendaycare_readiness_probe__` como sonda inexistente.
-- [ ] La comprobación considera `404` como respuesta exitosa del gateway y mantiene como fallos `401`, `403`, timeout, errores de red y otros estados.
-- [ ] No se crea la función de sonda, no se consultan tablas y no se usa una clave secreta para readiness.
-- [ ] `npm run start` completa el bootstrap y deja la aplicación operativa con los logs esperados en orden.
-- [ ] Los incidentes adicionales de pruebas manuales se documentan mediante pasos consecutivos sin reescribir los pasos 1–19.
+- [x] `.env.template` contiene `NEXT_PUBLIC_SUPABASE_URL` con un placeholder de URL.
+- [x] `.env.template` contiene `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` con un placeholder de clave publicable.
+- [x] Existe `src/config/server/environment.ts` como único lector de variables de entorno de la aplicación.
+- [x] No existe `src/infrastructure/config/server/` como dueño de la configuración transversal.
+- [x] `validateEnvironment()` valida todas las variables runtime requeridas antes de inicializar clientes.
+- [x] La validación rechaza variables ausentes, vacías, URLs inválidas, enums inválidos, booleanos inválidos e enteros no positivos.
+- [x] La validación incluye `SUPABASE_DB_PASSWORD`, aunque el check Data API no la utilice.
+- [x] Existen getters tipados para application, auth, mailer, Cloudinary y Supabase.
+- [x] Los getters reutilizan la configuración validada y no leen `process.env` directamente.
+- [x] Los errores de configuración identifican el nombre de la variable sin mostrar su valor.
+- [x] Existe `src/config/runtime.ts` para el runtime de Next.js.
+- [x] No existen lecturas directas de `process.env` o `env.get()` fuera de los módulos de configuración autorizados.
+- [x] Existe `src/application/database/ports/database-connection-checker.ts`.
+- [x] `DatabaseConnectionChecker` no importa Next.js, Supabase ni Infrastructure.
+- [x] Existe el caso de uso `checkDatabaseConnection` en Application.
+- [x] El caso de uso solo depende del port `DatabaseConnectionChecker`.
+- [x] Existe `src/infrastructure/adapters/database/database-client-provider.ts`.
+- [x] `DatabaseClientProvider<TClient>` abstrae únicamente la creación del cliente y no define consultas.
+- [x] Existe `src/infrastructure/adapters/database/supabase/supabase-client-provider.ts`.
+- [x] `SupabaseClientProvider` implementa `DatabaseClientProvider` usando `@supabase/supabase-js`.
+- [x] Existe `src/infrastructure/adapters/database/supabase/supabase-connection-checker.ts`.
+- [x] `SupabaseConnectionChecker` implementa el port de Application sin exponer tipos de Supabase.
+- [x] El proveedor y el comprobador importan `server-only` antes de usar configuración o SDK server-side.
+- [x] `databaseClient` expone una fachada provider-neutral y no expone tipos ni instancias de Supabase.
+- [x] `databaseClient.initialize()` es idempotente y comparte una única Promise concurrente por instancia.
+- [x] `databaseClient` se construye mediante Composition y usa únicamente getters de configuración.
+- [x] La comprobación realiza una solicitud real `GET /rest/v1/rpc/__opendaycare_readiness_probe__` al Data API.
+- [x] La comprobación usa la clave publicable solo en código server-side y nunca la registra.
+- [x] La comprobación tiene un timeout máximo de cinco segundos y no realiza reintentos.
+- [x] La comprobación no consulta tablas ni descarga filas.
+- [x] Existe `src/infrastructure/adapters/database/server.ts`.
+- [x] Existe `src/infrastructure/adapters/database/index.ts`.
+- [x] Existe `mailerClient` como fachada provider-neutral.
+- [x] `mailerClient.initialize()` construye transporte y renderer sin abrir una conexión SMTP.
+- [x] `mailerClient` no expone JMLQ, Nodemailer ni sus tipos.
+- [x] Existe `imageStorageClient` como fachada provider-neutral.
+- [x] `imageStorageClient.initialize()` configura Cloudinary sin ejecutar uploads ni deletes.
+- [x] `imageStorageClient` no expone Cloudinary ni sus tipos.
+- [x] Los proveedores concretos solo son importados por sus fachadas o Composition.
+- [x] Existe `src/composition/database/database-composition.ts`.
+- [x] Composition ensambla el caso de uso con el adapter Supabase.
+- [x] Existe `src/bootstrap.ts` con `bootstrapApplication()`.
+- [x] `bootstrap.ts` está marcado como server-only y no ejecuta efectos secundarios al importarse.
+- [x] `bootstrapApplication()` es idempotente y comparte una única `Promise` por instancia.
+- [x] El bootstrap valida el entorno antes de ejecutar la comprobación de Supabase.
+- [x] El bootstrap registra mensajes sanitizados de inicio, entorno validado, conexión y aplicación lista en orden.
+- [x] El bootstrap inicializa `databaseClient`, `mailerClient` e `imageStorageClient` mediante Composition.
+- [x] Un fallo al construir cualquiera de los tres clientes impide que la instancia se considere lista.
+- [x] El bootstrap no realiza una conexión remota SMTP ni operaciones remotas de Cloudinary.
+- [x] Existe `src/instrumentation.ts` con `register()`.
+- [x] `instrumentation.ts` solo actúa como adaptador del lifecycle de Next.js.
+- [x] `instrumentation.ts` importa dinámicamente `bootstrap.ts` dentro de `register()`.
+- [x] `instrumentation.ts` limita el bootstrap al runtime Node.js.
+- [x] La comprobación se ejecuta una vez por instancia Node antes de aceptar requests.
+- [x] El arranque registra `[database] Supabase Data API connection successful` cuando la respuesta es válida.
+- [x] Un timeout, una URL inválida, una clave inválida o una respuesta no exitosa producen un error sanitizado.
+- [x] Un fallo de conexión impide que la instancia se considere lista.
+- [x] No existe endpoint público ni página de diagnóstico para esta comprobación.
+- [x] No se conceden permisos adicionales a `anon` o `authenticated` para realizar el check.
+- [x] No se crean `src/utils/supabase/client.ts`, `src/utils/supabase/server.ts` ni `src/utils/supabase/middleware.ts`.
+- [x] No se crea `src/proxy.ts` ni `middleware.ts` para Supabase.
+- [x] No se crea ninguna ruta, página o consulta contra `todos`.
+- [x] No se modifican los repositorios JSON existentes ni sus fixtures.
+- [x] No se cambian las reglas funcionales de NextAuth, sus sesiones, cookies, redirects ni permisos.
+- [x] No existe `src/auth.ts` como barrel directo de Infrastructure.
+- [x] No quedan imports `@/auth` en `src`.
+- [x] Los consumidores de Auth acceden mediante Composition y no importan directamente `@/infrastructure/auth`.
+- [x] La composición de Auth conserva el comportamiento actual del Route Handler y de los guards de sesión.
+- [x] No se implementan repositorios Supabase ni cambios en rutas o Composition fuera del ensamblaje del check, bootstrap y Auth composition.
+- [x] Domain y Presentation no importan ningún SDK, proveedor concreto ni fachada server-only.
+- [x] Application no importa Infrastructure, ningún SDK, Next.js, configuración server-only ni `fetch` para esta funcionalidad.
+- [x] Ningún Client Component importa Infrastructure o configuración privada.
+- [x] `README.md` documenta que las variables se configuran fuera de Git y que la clave publicable no es un secreto.
+- [x] `README.md` documenta que esta entrega no implementa Supabase Auth, consultas de tablas, migraciones ni repositorios Supabase, y que la refactorización de NextAuth no cambia su comportamiento.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] `git diff --check` termina correctamente.
+- [x] La enmienda de pruebas manuales usa `GET /rest/v1/rpc/__opendaycare_readiness_probe__` como sonda inexistente.
+- [x] La comprobación considera `404` como respuesta exitosa del gateway y mantiene como fallos `401`, `403`, timeout, errores de red y otros estados.
+- [x] No se crea la función de sonda, no se consultan tablas y no se usa una clave secreta para readiness.
+- [x] `npm run start` completa el bootstrap y deja la aplicación operativa con los logs esperados en orden.
+- [x] Los incidentes adicionales de pruebas manuales se documentan mediante pasos consecutivos sin reescribir los pasos 1–19.
 
 ## Decisions
 
