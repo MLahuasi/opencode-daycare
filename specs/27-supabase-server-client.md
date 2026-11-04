@@ -438,7 +438,6 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 
 Plan de implementación
 
-5.  Crear el port DatabaseConnectionChecker.
 6.  Crear el caso de uso checkDatabaseConnection.
 7.  Crear DatabaseClientProvider<TClient>.
 8.  Crear proveedor Supabase y fachada databaseClient.
