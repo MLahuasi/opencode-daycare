@@ -50,6 +50,13 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 ## Arquitectura específica del proyecto
 
 - No crear `features`, `shared`, `src/components` ni `src/infrastructure/composition` en este repositorio.
+- La configuración transversal server-only vive en `src/config/server/`; `src/config/server/environment.ts` es el único lector de variables runtime y expone getters tipados por sección.
+- `src/config/runtime.ts` es el único getter autorizado para conocer el runtime de Next.js desde adaptadores como `src/instrumentation.ts`.
+- `src/bootstrap.ts` coordina la validación del entorno, la inicialización idempotente de clientes externos y los checks de readiness; no es un barrel general de Infrastructure ni un service locator de request.
+- `src/instrumentation.ts` debe mantenerse como adaptador mínimo de Next.js: exporta `register()`, carga `bootstrap.ts` dinámicamente y limita el bootstrap al runtime Node.js.
+- Las fachadas server-only `databaseClient`, `mailerClient` e `imageStorageClient` son las únicas APIs públicas de sus capacidades; no exponen SDKs, proveedores ni tipos concretos.
+- Los proveedores Supabase, JMLQ y Cloudinary permanecen dentro de Infrastructure y solo se ensamblan desde sus fachadas o Composition.
+- La composición server-side de Auth vive en `src/composition/auth/`; los consumidores no importan `@/auth` ni `@/infrastructure/auth` directamente.
 - `src/presentation/ui/index.ts` es el barrel público de UI y `src/presentation/navigation/index.ts` el de navegación.
 - Consumir UI y navegación desde `@/presentation/ui` y `@/presentation/navigation`.
 - Mantener componentes específicos de una ruta dentro de `src/app/**/_components`, `src/app/**/_actions` o `src/app/**/_schemas`.
@@ -63,6 +70,8 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - Los contratos de dominio se importan desde `@/domain/<domain>` y no se duplican en fixtures.
 - Los fixtures son deterministas: IDs, fechas, códigos y relaciones permanecen estables entre ejecuciones.
 - Configuración compartida usa constantes; configuración de entorno usa variables de entorno.
+- Ningún módulo fuera de `src/config/server/environment.ts` y `src/config/runtime.ts` lee directamente `process.env` o `env.get()`.
+- Las variables de entorno se configuran fuera de Git. Una variable `NEXT_PUBLIC_*` puede ser publicable, pero no elimina los límites server-only del SDK ni de su configuración.
 - Los servicios de dominio no construyen rutas físicas ni importan `node:fs`; usan el adapter JSON server-only.
 
 ## Rutas específicas
@@ -71,6 +80,7 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - Las rutas públicas de autenticación viven bajo `src/app/auth/`: `/auth/login`, `/auth/parent-invitation` y `/auth/parent-invitation/[token]`.
 - Solo `/` se conserva como redirect externo permanente en `next.config.ts`; las rutas legacy aprobadas responden 404.
 - Ningún Client Component importa `@/infrastructure`, filesystem, una entrada `server` ni configuración privada.
+- Ningún Client Component importa `@/config/server`, `@/bootstrap`, una fachada server-only ni un SDK externo.
 
 ## Excepciones de estilos del proyecto
 
@@ -84,6 +94,9 @@ Antes de finalizar:
 - Confirmar que no se introduzcan fixtures fuera de la ubicación aprobada y que los JSON editables estén dentro de `src/infrastructure/persistence/json/data/`.
 - Confirmar que fixtures y componentes UI se consuman mediante sus barrels públicos.
 - Revisar que los modelos de dominio estén definidos en `src/domain/<domain>/`.
+- Revisar que Composition sea el único punto que ensamble Application con proveedores concretos y que Auth se consuma mediante `@/composition/auth`.
+- Revisar que el bootstrap inicialice database, mailer e image storage sin conexiones SMTP ni operaciones Cloudinary, y que solo compruebe el gateway Data API de Supabase.
+- Revisar que no se filtren secretos, URLs completas, claves, headers, bodies ni detalles de respuestas en logs o errores de arranque.
 - Buscar colores literales fuera de `src/app/globals.css`.
 - Ejecutar `npx eslint src`, `npx tsc --noEmit --incremental false` y `npm run build` cuando apliquen.
 

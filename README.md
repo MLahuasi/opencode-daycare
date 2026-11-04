@@ -43,8 +43,8 @@ Comandos disponibles:
 
 ## Configuración de correo
 
-La integración con `@jmlq/mailer` es exclusivamente server-only y se expone a
-la aplicación mediante `@/infrastructure`. Next.js carga las variables desde
+La integración con `@jmlq/mailer` es exclusivamente server-only y se controla
+mediante la fachada `mailerClient` de Infrastructure. Next.js carga las variables desde
 los archivos `.env*`; la aplicación no inicializa `dotenv` por separado.
 
 Define la configuración SMTP en un archivo local ignorado por Git, por ejemplo
@@ -70,11 +70,10 @@ MAIL_TEMPLATE_EXTENSION=html
 HTTP o HTTPS y se utiliza para construir los enlaces de activación sin depender
 de cabeceras de petición.
 
-Las variables del mailer se validan al solicitarlo por primera vez. Las variables
-de autenticación se validan al cargar la configuración de NextAuth, por lo que
-deben estar presentes también durante el build. Una configuración ausente o
-inválida falla con un error explícito. Las credenciales reales nunca se
-versionan: `.gitignore` permite únicamente el archivo de ejemplo `.env.template`.
+Las variables del mailer se validan durante el bootstrap de la aplicación. Una
+configuración ausente o inválida impide que el servidor se considere listo. Las
+credenciales reales nunca se versionan: `.gitignore` permite únicamente el archivo
+de ejemplo `.env.template`.
 
 La plantilla `templates/parent-invitation.html` forma parte de los archivos
 necesarios en runtime. Un despliegue que empaquete solo el output de Next.js,
@@ -98,6 +97,44 @@ como `output: "standalone"`, debe incluir también la carpeta `templates/`.
 - `/posts/[postId]`, `/posts/new` y `/posts/[postId]/edit`: publicaciones.
 - `/posts/[postId]/comments/new` y `/posts/[postId]/comments/[commentId]/edit`: comentarios.
 - `/kids/[slug]` con un slug desconocido: página 404 propia.
+
+## Supabase y arranque server-side
+
+La configuración transversal se centraliza en `src/config/server/environment.ts`.
+Los consumidores reciben únicamente getters tipados por sección:
+
+- `getApplicationEnvironment()`
+- `getAuthEnvironment()`
+- `getMailerEnvironment()`
+- `getCloudinaryEnvironment()`
+- `getSupabaseEnvironment()`
+
+Configura estas variables en `.env.local` o en el gestor de secretos del entorno,
+fuera de Git:
+
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+SUPABASE_DB_PASSWORD=your_database_password
+```
+
+La clave `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` es una clave publicable, no un
+secreto; aun así, esta integración usa el cliente únicamente desde server-side.
+`bootstrap.ts` valida todo el entorno y configura, en orden, `databaseClient`,
+`mailerClient` e `imageStorageClient`. Después comprueba únicamente el gateway del
+Data API con `GET /rest/v1/`, con un timeout de cinco segundos. El resultado no
+consulta tablas ni descarga filas.
+
+`src/instrumentation.ts` es el adaptador mínimo del lifecycle de Next.js y carga
+dinámicamente `src/bootstrap.ts` solo en el runtime Node.js. El bootstrap es
+idempotente y detiene la preparación del servidor ante cualquier error de
+configuración o conexión.
+
+Esta entrega no implementa Supabase Auth, consultas de tablas, migraciones, seeds,
+RLS ni repositorios Supabase. Tampoco realiza conexiones SMTP ni operaciones de
+Cloudinary durante el arranque. La refactorización de NextAuth mantiene Credentials,
+sesiones JWT, cookies, redirects y permisos sin cambios; su API server-side se
+consume desde `@/composition/auth`.
 
 Las rutas legacy `/login`, `/kids/:id/edit`, `/auth/link-parent`, las rutas
 antiguas de Posts, `/activate-account` y `/auth/activate-account` responden 404.
@@ -126,9 +163,10 @@ restaura las colecciones modificadas y conserva la invitación pendiente.
 ## Autenticación
 
 La autenticación usa `next-auth@4.24.15` con Credentials Provider, sesiones JWT
-de siete días y cookies HttpOnly. La configuración server-only se expone desde
-`src/auth.ts` y vive en `src/infrastructure/auth/auth.ts`; obtiene sus valores
-desde `src/infrastructure/config/server/environment.ts`.
+de siete días y cookies HttpOnly. La API server-side se expone mediante
+`src/composition/auth/`, mientras que la implementación concreta permanece en
+Infrastructure. La configuración obtiene sus valores desde
+`src/config/server/environment.ts`.
 
 Añade estas variables a tu archivo local `.env` o `.env.local`, usando
 `.env.template` como referencia:
@@ -186,11 +224,14 @@ open-daycare/
 │   │   └── api/auth/[...nextauth]/ Route Handler de NextAuth
 │   ├── application/            Use cases, commands, queries, DTOs y ports
 │   ├── domain/                 Entidades, invariantes y reglas puras
+│   ├── config/                 Configuración runtime y server-only tipada
 │   ├── infrastructure/         Repositorios, proveedores y adapters server-only
 │   ├── presentation/           UI, layout, navegación, presenters y view models
 │   ├── composition/            Factories que ensamblan Application e Infrastructure
+│   ├── bootstrap.ts             Inicialización server-only idempotente
+│   ├── instrumentation.ts       Adaptador del lifecycle de Next.js
 │   ├── types/                  Ampliaciones TypeScript de NextAuth
-│   └── auth.ts                 Entry point server-only de autenticación
+│   └── ...                      Entrypoints y colaboradores de ruta
 ├── public/                    Recursos públicos
 ├── templates/                 Plantillas HTML requeridas en runtime
 ├── specs/                   Contratos funcionales versionados
@@ -218,17 +259,35 @@ flowchart TD
     R --> APP["OpenDayCare<br/>Next.js App Router"]
 
     APP --> ROUTES["Rutas en src/app/"]
-    ROUTES --> PRESENTATION["src/presentation"]
-    ROUTES --> APPLICATION["src/application"]
-    APPLICATION --> DOMAIN["src/domain"]
-    COMPOSITION["src/composition"] --> APPLICATION
+    ROUTES --> PRESENTATION["src/presentation<br/>UI y navegación"]
+    ROUTES --> COMPOSITION["src/composition<br/>Composition Root"]
+    COMPOSITION --> APPLICATION["src/application<br/>casos de uso y ports"]
+    APPLICATION --> DOMAIN["src/domain<br/>reglas y modelos"]
     COMPOSITION --> INFRA["src/infrastructure<br/>server-only"]
     INFRA --> JSON["persistence/json/data"]
-    INFRA --> MAILER["sendParentInvitationEmail"]
-    MAILER --> PACKAGE["@jmlq/mailer"]
-    MAILER --> TEMPLATE["templates/<br/>parent-invitation.html"]
-    PACKAGE --> SMTP["Servidor SMTP"]
-    AUTH["src/app/auth<br/>parent invitations"] --> COMPOSITION
+    COMPOSITION --> AUTH["composition/auth"]
+    AUTH --> NEXTAUTH["infrastructure/auth<br/>NextAuth"]
+
+    INSTRUMENTATION["src/instrumentation.ts"] --> RUNTIME["src/config/runtime.ts"]
+    INSTRUMENTATION -->|import dinámico en Node.js| BOOTSTRAP["src/bootstrap.ts"]
+    BOOTSTRAP --> ENV["src/config/server/environment.ts"]
+    BOOTSTRAP --> BOOT_COMPOSITION["composition/bootstrap"]
+    BOOTSTRAP --> DB_COMPOSITION["composition/database"]
+    BOOT_COMPOSITION --> DB["databaseClient"]
+    BOOT_COMPOSITION --> MAILER["mailerClient"]
+    BOOT_COMPOSITION --> IMAGE["imageStorageClient"]
+    DB_COMPOSITION --> CHECK["checkDatabaseConnection"]
+    CHECK --> DB_PORT["DatabaseConnectionChecker"]
+    DB --> SUPABASE_PROVIDER["Supabase provider"]
+    SUPABASE_PROVIDER --> SUPABASE["Supabase Data API<br/>GET /rest/v1/"]
+    MAILER --> JMLQ["JMLQ/Nodemailer"]
+    JMLQ --> TEMPLATE["templates/<br/>parent-invitation.html"]
+    JMLQ -. no arranque SMTP .-> SMTP["Servidor SMTP"]
+    IMAGE --> CLOUDINARY["Cloudinary provider"]
+    CLOUDINARY -. no arranque remoto .-> CLOUDINARY_API["Cloudinary API"]
+    ENV -. getters tipados .-> DB
+    ENV -. getters tipados .-> MAILER
+    ENV -. getters tipados .-> IMAGE
 
     U --> SPEC["/spec"]
     SPEC --> FILE["specs/NN-slug.md"]
@@ -242,6 +301,13 @@ flowchart TD
     PW --> ART[".playwright-mcp/<Feature>/"]
     AGENT --> C7["Context7 MCP<br/>documentación actual"]
 ```
+
+El diagrama se mantiene alineado con la arquitectura actual: las rutas no
+construyen adapters, Application solo conoce ports y Composition ensambla las
+implementaciones. El flujo de arranque es independiente del flujo de requests;
+`instrumentation.ts` carga el bootstrap únicamente en Node.js. Mailer y
+Cloudinary se configuran durante el arranque, pero solo el gateway Data API de
+Supabase se verifica remotamente.
 
 ## ¿Qué es una spec?
 
