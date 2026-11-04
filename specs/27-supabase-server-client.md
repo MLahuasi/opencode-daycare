@@ -438,7 +438,6 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 
 Plan de implementación
 
-11. Crear fachada y proveedor Cloudinary.
 12. Crear composiciones de clientes y bootstrap.
 13. Crear bootstrap.ts.
 14. Crear instrumentation.ts.
