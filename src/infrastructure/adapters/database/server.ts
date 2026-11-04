@@ -26,4 +26,8 @@ export const databaseClient = {
     await this.initialize();
     await new SupabaseConnectionChecker().check();
   },
+  /** Implements the application database connection-checking port. */
+  check(): Promise<void> {
+    return this.checkConnection();
+  },
 };
