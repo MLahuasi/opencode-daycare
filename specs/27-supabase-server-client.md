@@ -288,6 +288,26 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 17. Actualizar `README.md` para documentar getters, clientes, fachadas, flujo de arranque y límites.
 18. Revisar que ningún archivo fuera de la configuración centralizada lea `process.env` o `env.get()` directamente.
 19. Ejecutar ESLint, TypeScript, build y `git diff --check` sin modificar los repositorios JSON ni las reglas funcionales de autenticación.
+20. Registrar el incidente detectado durante la prueba manual: la ruta raíz `GET /rest/v1/` responde `401` cuando se usa una clave publicable, aunque la configuración sea válida.
+21. Ajustar el mecanismo de readiness para usar `GET /rest/v1/rpc/__opendaycare_readiness_probe__` y considerar `404` como respuesta exitosa del gateway, sin crear la función, consultar tablas ni usar una clave secreta.
+22. Actualizar los criterios y la documentación afectados por el incidente, conservando los pasos 1–19 como historial y dejando explícita la enmienda del endpoint y de la respuesta esperada.
+23. Verificar el incidente corregido con ESLint, TypeScript, build, `git diff --check` y `npm run start`, comprobando el orden de los logs y que el servidor quede operativo.
+24. Documentar cualquier incidente adicional descubierto durante pruebas manuales como un paso consecutivo nuevo, indicando causa, ajuste, límites de seguridad y verificación posterior, sin reescribir pasos ya ejecutados.
+
+## Manual test amendments
+
+### Incident 01 — Data API root rejects publishable keys
+
+La prueba manual de `npm run start` confirmó que `GET /rest/v1/` responde `401`
+con la clave publishable configurada. La documentación actual de Supabase
+restringe la ruta raíz del esquema OpenAPI para claves no privilegiadas.
+
+Los pasos 1–19 se conservan sin modificaciones. Para cerrar la spec con la
+aplicación operativa, el paso 21 sustituye únicamente el endpoint y la
+interpretación de respuesta del check de readiness: se usa la sonda inexistente
+`/rest/v1/rpc/__opendaycare_readiness_probe__` y `404` confirma que el gateway
+recibió la solicitud y aceptó la clave. La implementación no crea la función,
+no consulta tablas, no lee el body y no concede permisos adicionales.
 
 ## Acceptance criteria
 
@@ -369,6 +389,11 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 - [ ] `npx tsc --noEmit --incremental false` termina correctamente.
 - [ ] `npm run build` termina correctamente.
 - [ ] `git diff --check` termina correctamente.
+- [ ] La enmienda de pruebas manuales usa `GET /rest/v1/rpc/__opendaycare_readiness_probe__` como sonda inexistente.
+- [ ] La comprobación considera `404` como respuesta exitosa del gateway y mantiene como fallos `401`, `403`, timeout, errores de red y otros estados.
+- [ ] No se crea la función de sonda, no se consultan tablas y no se usa una clave secreta para readiness.
+- [ ] `npm run start` completa el bootstrap y deja la aplicación operativa con los logs esperados en orden.
+- [ ] Los incidentes adicionales de pruebas manuales se documentan mediante pasos consecutivos sin reescribir los pasos 1–19.
 
 ## Decisions
 
@@ -433,10 +458,3 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 - Verificación SMTP, uploads Cloudinary u otras operaciones remotas de negocio durante el arranque.
 - Uso de `bootstrap.ts` como barrel general de Infrastructure, service locator o API de Auth por request.
 - Exposición de SDKs o proveedores concretos desde `databaseClient`, `mailerClient` o `imageStorageClient`.
-
----
-
-Plan de implementación
-
-18. Revisar accesos directos a variables de entorno.
-19. Ejecutar ESLint, TypeScript, build y git diff --check.

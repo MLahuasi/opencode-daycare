@@ -100,7 +100,7 @@ flowchart TB
     CHECK_USE_CASE --> DB_PORT[DatabaseConnectionChecker]
     DB_FACADE --> DB_PORT
     DB_FACADE --> SUPABASE_PROVIDER[infrastructure/adapters/database/supabase]
-    SUPABASE_PROVIDER --> SUPABASE[Supabase Data API<br/>GET /rest/v1/]
+    SUPABASE_PROVIDER --> SUPABASE[Supabase Data API<br/>readiness RPC probe]
     MAIL_FACADE --> JMLQ[infrastructure/adapters/mailer/jmlq]
     JMLQ -. no startup connection .-> SMTP[SMTP]
     IMAGE_FACADE --> CLOUDINARY[infrastructure/adapters/image-storage/cloudinary]

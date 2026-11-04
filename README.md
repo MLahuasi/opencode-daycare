@@ -122,8 +122,10 @@ La clave `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` es una clave publicable, no un
 secreto; aun así, esta integración usa el cliente únicamente desde server-side.
 `bootstrap.ts` valida todo el entorno y configura, en orden, `databaseClient`,
 `mailerClient` e `imageStorageClient`. Después comprueba únicamente el gateway del
-Data API con `GET /rest/v1/`, con un timeout de cinco segundos. El resultado no
-consulta tablas ni descarga filas.
+Data API con la sonda inexistente
+`GET /rest/v1/rpc/__opendaycare_readiness_probe__`, con un timeout de cinco
+segundos. Una respuesta `404` confirma que el gateway recibió la solicitud; no
+se crea la función, no se consultan tablas ni se descargan filas.
 
 `src/instrumentation.ts` es el adaptador mínimo del lifecycle de Next.js y carga
 dinámicamente `src/bootstrap.ts` solo en el runtime Node.js. El bootstrap es
@@ -279,7 +281,7 @@ flowchart TD
     DB_COMPOSITION --> CHECK["checkDatabaseConnection"]
     CHECK --> DB_PORT["DatabaseConnectionChecker"]
     DB --> SUPABASE_PROVIDER["Supabase provider"]
-    SUPABASE_PROVIDER --> SUPABASE["Supabase Data API<br/>GET /rest/v1/"]
+    SUPABASE_PROVIDER --> SUPABASE["Supabase Data API<br/>readiness RPC probe"]
     MAILER --> JMLQ["JMLQ/Nodemailer"]
     JMLQ --> TEMPLATE["templates/<br/>parent-invitation.html"]
     JMLQ -. no arranque SMTP .-> SMTP["Servidor SMTP"]
