@@ -438,7 +438,6 @@ Esta refactorización es estructural: no cambia el proveedor Credentials, la est
 
 Plan de implementación
 
-16. Eliminar src/auth.ts y migrar consumidores.
 17. Actualizar README.md.
 18. Revisar accesos directos a variables de entorno.
 19. Ejecutar ESLint, TypeScript, build y git diff --check.

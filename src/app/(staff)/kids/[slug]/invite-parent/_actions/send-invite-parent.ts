@@ -1,6 +1,6 @@
 "use server";
 
-import { requireStaffSession } from "@/auth";
+import { requireStaffSession } from "@/composition/auth";
 import { redirect } from "next/navigation";
 import { validateInviteParentForm } from "../_schemas";
 import {

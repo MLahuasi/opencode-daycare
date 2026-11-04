@@ -3,7 +3,7 @@ import type { KidFormValues } from "@/application/kid";
 import { getKidById, getRooms } from "@/application/kid";
 import { createKidComposition } from "@/composition/kid";
 import { updateKidAction } from "../../_actions";
-import { requireStaffSession } from "@/auth";
+import { requireStaffSession } from "@/composition/auth";
 import { notFound } from "next/navigation";
 
 /**

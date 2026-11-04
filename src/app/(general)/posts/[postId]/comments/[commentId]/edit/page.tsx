@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { requireActiveSession } from "@/auth";
+import { requireActiveSession } from "@/composition/auth";
 import { updateFeedCommentAction } from "@/app/_actions/posts";
 import { getPostDetail } from "@/application/post";
 import { createPostComposition } from "@/composition/post";

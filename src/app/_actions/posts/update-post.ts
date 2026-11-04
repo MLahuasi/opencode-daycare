@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireStaffSession } from "@/auth";
+import { requireStaffSession } from "@/composition/auth";
 import { createPostImageStorage } from "@/composition/post";
 import { updatePost } from "@/application/post";
 import { createPostComposition } from "@/composition/post";

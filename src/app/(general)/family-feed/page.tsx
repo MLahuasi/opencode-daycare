@@ -7,7 +7,7 @@ import {
 import {
   type FamilyFeedFilter,
 } from "@/domain/family/feed";
-import { requireActiveSession } from "@/auth";
+import { requireActiveSession } from "@/composition/auth";
 import { FamilySidebar } from "@/presentation/layout";
 import { presentFamilyFeedOptions } from "@/presentation/family";
 import { createFamilyFeedComposition } from "@/composition/family";

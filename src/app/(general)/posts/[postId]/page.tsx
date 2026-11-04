@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { requireActiveSession } from "@/auth";
+import { requireActiveSession } from "@/composition/auth";
 import { deleteFeedCommentAction } from "@/app/_actions/posts";
 import { getFamilyFeedContext } from "@/application/family/feed";
 import { getPostDetail } from "@/application/post";

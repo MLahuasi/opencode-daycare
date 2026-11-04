@@ -1,6 +1,6 @@
 import { StaffSidebar } from "@/presentation/layout";
 import { staffNavigationConfig } from "@/presentation/navigation";
-import { requireStaffSession } from "@/auth";
+import { requireStaffSession } from "@/composition/auth";
 import type { ReactNode } from "react";
 
 /**

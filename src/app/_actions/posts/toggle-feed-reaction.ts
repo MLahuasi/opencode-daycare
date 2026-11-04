@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireActiveSession } from "@/auth";
+import { requireActiveSession } from "@/composition/auth";
 import { toggleReaction } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 

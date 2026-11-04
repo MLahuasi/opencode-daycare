@@ -5,7 +5,7 @@ import { getFeedOverview } from "@/composition/feed";
 import { getAuthorizedPosts } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 import { staffNavigationConfig } from "@/presentation/navigation";
-import { requireActiveSession } from "@/auth";
+import { requireActiveSession } from "@/composition/auth";
 import { redirect } from "next/navigation";
 
 /**
