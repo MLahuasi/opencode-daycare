@@ -1,6 +1,6 @@
 # SPEC 29 — Persistencia PostgreSQL de Auth e invitaciones
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 28
 > **Date:** 2026-11-05
 > **Objective:** Implementar los adapters PostgreSQL de personas, credenciales e invitaciones y transportar `daycareId` por login, sesión y aceptación de invitaciones sin activar todavía PostgreSQL en el runtime normal.
@@ -104,11 +104,11 @@ Las búsquedas deberán usar siempre:
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El usuario omite o manipula `daycareId`. | Validar UUID, consultar la guardería y comprobar pertenencia en cada operación. |
-| Aceptaciones concurrentes duplican la relación. | Transacción, lectura bloqueada y manejo del error de unicidad existente. |
-| Las sesiones existentes contienen IDs JSON. | Invalidarlas durante SPEC 32 antes de activar PostgreSQL. |
+| Risk                                            | Mitigation                                                                      |
+| ----------------------------------------------- | ------------------------------------------------------------------------------- |
+| El usuario omite o manipula `daycareId`.        | Validar UUID, consultar la guardería y comprobar pertenencia en cada operación. |
+| Aceptaciones concurrentes duplican la relación. | Transacción, lectura bloqueada y manejo del error de unicidad existente.        |
+| Las sesiones existentes contienen IDs JSON.     | Invalidarlas durante SPEC 32 antes de activar PostgreSQL.                       |
 
 ## What is **not** in this spec
 
@@ -116,3 +116,19 @@ Las búsquedas deberán usar siempre:
 - Cambios de esquema, RLS, grants o funciones SQL.
 - Activación productiva de Auth PostgreSQL antes del cutover.
 - Administración de guarderías.
+
+---
+
+Plan de implementación
+
+1.  Crear mappers PostgreSQL de Person, Credential e Invitation.
+2.  Implementar PostgresPersonRepository.
+3.  Implementar PostgresCredentialRepository.
+4.  Implementar PostgresInvitationRepository.
+5.  Crear el port de transacción de Auth.
+6.  Implementar la aceptación atómica de invitación.
+7.  Añadir y validar daycareId en el login.
+8.  Añadir y validar daycareId en JWT y sesión.
+9.  Añadir daycareId a creación y navegación de invitaciones.
+10. Probar login, aceptación, rollback y aislamiento tenant con PostgreSQL remoto.
+11. Verificar continuidad del runtime JSON y rutas existentes.
