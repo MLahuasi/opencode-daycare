@@ -1,4 +1,6 @@
 import { AuthShell, LoginForm } from "@/presentation/auth";
+import { getApplicationEnvironment } from "@/config/server";
+import { createDaycareComposition } from "@/composition/daycare";
 
 /**
  * Renders the login route using the shared authentication shell.
@@ -20,6 +22,11 @@ export default async function LoginPage({
   const daycareId = Array.isArray(params.daycareId)
     ? params.daycareId[0]
     : params.daycareId;
+  const resolvedDaycareId =
+    daycareId ??
+    (getApplicationEnvironment().isBuild
+      ? undefined
+      : await createDaycareComposition().getCurrentDaycareId());
 
   return (
     <AuthShell
@@ -27,7 +34,7 @@ export default async function LoginPage({
       eyebrow="Sala Soles"
       title={<>El día de cada niño,<br />compartido con su familia.</>}
     >
-      <LoginForm activated={activated} daycareId={daycareId} />
+      <LoginForm activated={activated} daycareId={resolvedDaycareId} />
     </AuthShell>
   );
 }
