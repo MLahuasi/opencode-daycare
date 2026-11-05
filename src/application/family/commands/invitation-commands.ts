@@ -49,7 +49,7 @@ export async function createInvitation(
     throw new Error("Cannot create an invitation for a missing kid.");
   }
 
-  const existingPerson = await dependencies.people.findByEmail(email);
+  const existingPerson = await dependencies.people.findByEmail(kid.daycareId, email);
 
   if (existingPerson && existingPerson.role !== "parent") {
     throw new ExistingInvitationPersonError(

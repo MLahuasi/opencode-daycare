@@ -49,18 +49,12 @@ export const authOptions: NextAuthOptions = {
 
         const credentialRepository = new CredentialRepository();
         const passwordHasher = new BcryptPasswordHasher();
-        const people = await new PersonRepository().findAll();
-        const person = people.find(
-          (candidate) =>
-            candidate.daycareId === daycareId &&
-            candidate.email.toLowerCase() === email &&
-            candidate.status === "active",
-        );
+        const person = await new PersonRepository().findByEmail(daycareId, email);
         const storedCredential = person
-           ? await credentialRepository.findByPersonId(person.id)
+          ? await credentialRepository.findByPersonId(daycareId, person.id)
           : null;
 
-        if (!person || !storedCredential) {
+        if (!person || person.status !== "active" || !storedCredential) {
           return null;
         }
 

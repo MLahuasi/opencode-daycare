@@ -11,12 +11,13 @@ export interface FamilyPersonRepository {
   findById(id: string): Promise<Person | null>;
 
   /**
-   * Finds a person by normalized email address.
+   * Finds a person by a normalized email address within one daycare.
    *
+   * @param daycareId - Stable daycare identifier.
    * @param email - Normalized email address.
    * @returns The person or `null` when it does not exist.
    */
-  findByEmail(email: string): Promise<Person | null>;
+  findByEmail(daycareId: string, email: string): Promise<Person | null>;
 
   /**
    * Persists a newly created pending person.

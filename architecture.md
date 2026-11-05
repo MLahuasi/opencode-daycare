@@ -88,6 +88,8 @@ flowchart TB
     COMPOSITION --> AUTH[composition/auth<br/>server-side Auth API]
     AUTH --> AUTH_INFRA[infrastructure/auth<br/>NextAuth implementation]
     COMPOSITION --> PERSISTENCE[infrastructure/persistence<br/>JSON repositories]
+    COMPOSITION --> POSTGRES[infrastructure/persistence/postgres<br/>PostgreSQL adapters]
+    POSTGRES --> POOLER[Supabase Session Pooler<br/>postgres.js]
 
     INSTRUMENTATION[src/instrumentation.ts<br/>Next.js lifecycle adapter] -->|NEXT_RUNTIME === nodejs| NODE_INSTRUMENTATION[src/instrumentation-node.ts<br/>Node.js bridge]
     NODE_INSTRUMENTATION -->|dynamic import| BOOTSTRAP[src/bootstrap.ts<br/>idempotent startup]
@@ -100,8 +102,8 @@ flowchart TB
     DB_COMPOSITION --> CHECK_USE_CASE[checkDatabaseConnection]
     CHECK_USE_CASE --> DB_PORT[DatabaseConnectionChecker]
     DB_FACADE --> DB_PORT
-    DB_FACADE --> SUPABASE_PROVIDER[infrastructure/adapters/database/supabase]
-    SUPABASE_PROVIDER --> SUPABASE[Supabase Data API<br/>readiness RPC probe]
+    DB_FACADE --> POSTGRES
+    POSTGRES --> READINESS[PostgreSQL SELECT 1<br/>readiness]
     MAIL_FACADE --> JMLQ[infrastructure/adapters/mailer/jmlq]
     JMLQ -. no startup connection .-> SMTP[SMTP]
     IMAGE_FACADE --> CLOUDINARY[infrastructure/adapters/image-storage/cloudinary]
@@ -122,9 +124,12 @@ flowchart TB
 
 Solid arrows represent application dependencies or startup orchestration.
 Dashed arrows represent intentionally absent startup operations: mailer and
-Cloudinary are configured, but only the Supabase Data API gateway participates
-in readiness verification. `Application` knows only ports; `Composition` is the
-place where those ports meet concrete Infrastructure adapters.
+Cloudinary are configured, but no SMTP or Cloudinary operation runs during
+startup. PostgreSQL readiness uses `SELECT 1` through the Session Pooler.
+Database migrations are deployment artifacts under `supabase/migrations/` and
+are executed explicitly through Supabase CLI, never from bootstrap. `Application`
+knows only ports; `Composition` is the place where those ports meet concrete
+Infrastructure adapters.
 
 ## Persistence
 
@@ -141,8 +146,19 @@ place where those ports meet concrete Infrastructure adapters.
   Public facades use capability names such as `databaseClient`, `mailerClient`
   and `imageStorageClient`, without leaking provider instances or types.
 - Initialize external clients through Composition and `bootstrap.ts`. Client
-  construction and remote readiness checks are separate operations; only the
-  database Data API gateway is checked during startup in this integration.
+  construction and remote readiness checks are separate operations. The current
+  database facade checks PostgreSQL with `SELECT 1` through the configured
+  Session Pooler.
+- Keep `src/infrastructure/persistence/json/` and
+  `src/infrastructure/persistence/postgres/` as separate persistence
+  implementations. Do not translate JSON IDs to PostgreSQL IDs inside a shared
+  repository.
+- Store deployable schema migrations and data migrations in
+  `supabase/migrations/`, not in the runtime `src/` tree. Execute them with the
+  package scripts after linking the intended Supabase project.
+- `CurrentDaycareProvider` is a provisional PostgreSQL adapter used to obtain the
+  single operational daycare for the login default. It must be replaced by an
+  explicit daycare selector when multiple daycares are exposed to users.
 
 ## Server and Client Boundaries
 
@@ -155,6 +171,8 @@ place where those ports meet concrete Infrastructure adapters.
   configuration, server-only modules or persistence collections.
 - Route entrypoints and server actions may use framework server APIs, but must
   delegate business behavior to application services assembled by composition.
+- Server route entrypoints must not import PostgreSQL clients or repositories
+  directly; concrete database assembly belongs in `src/composition/`.
 - `src/bootstrap.ts` and all external-client facades are server-only. They must
   not be imported by Client Components or browser-facing code.
 - Public environment names prefixed with `NEXT_PUBLIC_` do not make a module

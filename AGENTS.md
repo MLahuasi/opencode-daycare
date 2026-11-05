@@ -19,13 +19,15 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 
 ## Proyecto
 
-- Next.js 16.3.5 con App Router, React 19.2.8, TypeScript estricto y Tailwind CSS 4.
+- Next.js 16.4.3 con App Router, React 19.2.8, TypeScript estricto y Tailwind CSS 4.
 - El código vive en `src/`; el App Router vive en `src/app/` y `@/*` resuelve desde `src/*`. Usar npm y conservar `package-lock.json`.
 - Seguir las convenciones de archivos y las advertencias de la guía local de Next.js; no repetirlas ni contradecirlas aquí.
 
 ## Comandos y referencias
 
 - `npm run dev`, `npm run build`, `npm run start`, `npm run lint`.
+- `npm run db:migrate:dry-run` y `npm run db:migrate` para validar y aplicar
+  migraciones Supabase al proyecto remoto enlazado.
 - Typecheck: `npx tsc --noEmit --incremental false`.
 - `references/` no es runtime. No editar `references/screens/support.js` ni `next-env.d.ts`.
 - Guardar todos los logs, capturas, videos, traces y demás artefactos de Playwright en `.playwright-mcp/<Feature>/`.
@@ -34,11 +36,13 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 ## Supabase y MCP
 
 - La configuración del servidor MCP de Supabase vive en `opencode.json` bajo `mcp.supabase`.
-- El servidor remoto apunta al proyecto Supabase con referencia `sthqfcwtnggupgnilqcr`.
+- El proyecto Supabase remoto se selecciona mediante `supabase link`; no fijar un proyecto de producción en código ni en documentación operativa.
 - El MCP de Supabase tiene habilitadas las capacidades `docs`, `account`, `database`, `debugging`, `development`, `functions` y `branching`.
 - La configuración del MCP no implica autenticación. Si el servidor solicita autorización, ejecutar `opencode mcp auth supabase` y completar el flujo OAuth en el navegador; después recargar la sesión de OpenCode.
 - No guardar tokens personales, claves `service_role` ni secretos en `opencode.json`, el código fuente o variables `NEXT_PUBLIC_*`.
+- El MCP de Supabase se reserva para documentación, inspección y migraciones autorizadas; no se usa para ejecutar operaciones normales de la aplicación.
 - Antes de cambiar el esquema remoto, consultar primero las tablas existentes y preferir desarrollo local, migraciones revisables y verificación posterior.
+- Las migraciones y seeds SQL versionados viven en `supabase/migrations/`; no se ejecutan desde el bootstrap ni desde una ruta HTTP.
 - La referencia documental externa está en `../info/opencode-daycare/references/open-daycare-schema.md`; es un diccionario de diseño, no DDL ejecutable ni fuente de runtime.
 
 ## Workflow
@@ -55,7 +59,9 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - `src/bootstrap.ts` coordina la validación del entorno, la inicialización idempotente de clientes externos y los checks de readiness; no es un barrel general de Infrastructure ni un service locator de request.
 - `src/instrumentation.ts` debe mantenerse como adaptador mínimo de Next.js: exporta `register()`, carga `bootstrap.ts` dinámicamente y limita el bootstrap al runtime Node.js.
 - Las fachadas server-only `databaseClient`, `mailerClient` e `imageStorageClient` son las únicas APIs públicas de sus capacidades; no exponen SDKs, proveedores ni tipos concretos.
-- Los proveedores Supabase, JMLQ y Cloudinary permanecen dentro de Infrastructure y solo se ensamblan desde sus fachadas o Composition.
+- Los proveedores PostgreSQL, JMLQ y Cloudinary permanecen dentro de Infrastructure y solo se ensamblan desde sus fachadas o Composition.
+- PostgreSQL usa `postgres.js` mediante el Session Pooler IPv4 configurado por `SUPABASE_DB_HOST`, `SUPABASE_DB_PORT`, `SUPABASE_DB_USERNAME` y `SUPABASE_DB_PASSWORD`.
+- `databaseClient` comprueba readiness mediante `SELECT 1`; no existe una dependencia runtime de `supabase-js` ni de `NEXT_PUBLIC_SUPABASE_*`.
 - La composición server-side de Auth vive en `src/composition/auth/`; los consumidores no importan `@/auth` ni `@/infrastructure/auth` directamente.
 - `src/presentation/ui/index.ts` es el barrel público de UI y `src/presentation/navigation/index.ts` el de navegación.
 - Consumir UI y navegación desde `@/presentation/ui` y `@/presentation/navigation`.
@@ -73,6 +79,8 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - Ningún módulo fuera de `src/config/server/environment.ts` lee directamente `process.env` o `env.get()`, salvo `src/instrumentation.ts` para `process.env.NEXT_RUNTIME` exclusivamente.
 - Las variables de entorno se configuran fuera de Git. Una variable `NEXT_PUBLIC_*` puede ser publicable, pero no elimina los límites server-only del SDK ni de su configuración.
 - Los servicios de dominio no construyen rutas físicas ni importan `node:fs`; usan el adapter JSON server-only.
+- `src/infrastructure/persistence/json/` y `src/infrastructure/persistence/postgres/` son implementaciones separadas; no traducir IDs JSON a IDs PostgreSQL dentro de un repositorio compartido.
+- `CurrentDaycareProvider` es provisional y obtiene la única guardería operativa para el login. Debe reemplazarse por un selector explícito cuando se habiliten múltiples guarderías.
 
 ## Rutas específicas
 
@@ -95,7 +103,7 @@ Antes de finalizar:
 - Confirmar que fixtures y componentes UI se consuman mediante sus barrels públicos.
 - Revisar que los modelos de dominio estén definidos en `src/domain/<domain>/`.
 - Revisar que Composition sea el único punto que ensamble Application con proveedores concretos y que Auth se consuma mediante `@/composition/auth`.
-- Revisar que el bootstrap inicialice database, mailer e image storage sin conexiones SMTP ni operaciones Cloudinary, y que solo compruebe el gateway Data API de Supabase.
+- Revisar que el bootstrap inicialice database, mailer e image storage sin conexiones SMTP ni operaciones Cloudinary, y que compruebe PostgreSQL mediante `SELECT 1`.
 - Revisar que no se filtren secretos, URLs completas, claves, headers, bodies ni detalles de respuestas en logs o errores de arranque.
 - Buscar colores literales fuera de `src/app/globals.css`.
 - Ejecutar `npx eslint src`, `npx tsc --noEmit --incremental false` y `npm run build` cuando apliquen.

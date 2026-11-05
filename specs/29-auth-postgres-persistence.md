@@ -1,6 +1,6 @@
 # SPEC 29 — Persistencia PostgreSQL de Auth e invitaciones
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 28
 > **Date:** 2026-11-05
 > **Objective:** Implementar los adapters PostgreSQL de personas, credenciales e invitaciones y transportar `daycareId` por login, sesión y aceptación de invitaciones sin activar todavía PostgreSQL en el runtime normal.
@@ -75,23 +75,23 @@ Las búsquedas deberán usar siempre:
 
 ## Acceptance criteria
 
-- [ ] No existe búsqueda de persona por email sin `daycareId`.
-- [ ] Dos personas con el mismo email en distintas guarderías pueden autenticarse seleccionando tenants distintos.
-- [ ] Un email correcto con `daycareId` incorrecto no autentica.
-- [ ] JWT y sesión contienen `daycareId`.
-- [ ] Una sesión con `personId` y `daycareId` incompatibles se rechaza.
-- [ ] Los enlaces de invitación incluyen el tenant.
-- [ ] Un token consultado con otro `daycareId` no devuelve la invitación.
-- [ ] La aceptación actualiza todas las entidades relacionadas dentro de una transacción.
-- [ ] Un error durante aceptación revierte relación, credential, persona e invitación.
-- [ ] Las pruebas PostgreSQL no usan los JSON del módulo.
-- [ ] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS`.
-- [ ] Las pruebas remotas revierten todas sus escrituras.
-- [ ] El login y la aceptación JSON existentes continúan funcionando antes del cutover.
-- [ ] No se modifica Supabase Auth ni la lógica de passwords.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
+- [x] No existe búsqueda de persona por email sin `daycareId`.
+- [x] Dos personas con el mismo email en distintas guarderías pueden autenticarse seleccionando tenants distintos.
+- [x] Un email correcto con `daycareId` incorrecto no autentica.
+- [x] JWT y sesión contienen `daycareId`.
+- [x] Una sesión con `personId` y `daycareId` incompatibles se rechaza.
+- [x] Los enlaces de invitación incluyen el tenant.
+- [x] Un token consultado con otro `daycareId` no devuelve la invitación.
+- [x] La aceptación actualiza todas las entidades relacionadas dentro de una transacción.
+- [x] Un error durante aceptación revierte relación, credential, persona e invitación.
+- [x] Las pruebas PostgreSQL no usan los JSON del módulo.
+- [x] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS`.
+- [x] Las pruebas remotas revierten todas sus escrituras.
+- [x] El login y la aceptación JSON existentes continúan funcionando antes del cutover.
+- [x] No se modifica Supabase Auth ni la lógica de passwords.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
 
 ## Decisions
 
@@ -118,17 +118,3 @@ Las búsquedas deberán usar siempre:
 - Administración de guarderías.
 
 ---
-
-Plan de implementación
-
-1.  Crear mappers PostgreSQL de Person, Credential e Invitation.
-2.  Implementar PostgresPersonRepository.
-3.  Implementar PostgresCredentialRepository.
-4.  Implementar PostgresInvitationRepository.
-5.  Crear el port de transacción de Auth.
-6.  Implementar la aceptación atómica de invitación.
-7.  Añadir y validar daycareId en el login.
-8.  Añadir y validar daycareId en JWT y sesión.
-9.  Añadir daycareId a creación y navegación de invitaciones.
-10. Probar login, aceptación, rollback y aislamiento tenant con PostgreSQL remoto.
-11. Verificar continuidad del runtime JSON y rutas existentes.
