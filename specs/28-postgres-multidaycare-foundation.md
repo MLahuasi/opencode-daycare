@@ -122,6 +122,5 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 
 Plan de implementación
 
-8.  Crear CurrentDaycareProvider.
 9.  Crear contexto de pruebas con transacción y rollback.
 10. Verificar compilación y continuidad de adapters JSON.

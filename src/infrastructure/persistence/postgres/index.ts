@@ -5,6 +5,11 @@ export {
   derivePostgresHost,
   PostgresClientProvider,
 } from "./postgres-client-provider";
+export {
+  CurrentDaycareNotFoundError,
+  CurrentDaycareProvider,
+  MultipleCurrentDaycaresError,
+} from "./current-daycare-provider";
 export type { FeedRelations } from "./mappers";
 export {
   mapCredentialRow,
