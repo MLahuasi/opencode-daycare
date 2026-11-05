@@ -51,7 +51,7 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 
 - No crear `features`, `shared`, `src/components` ni `src/infrastructure/composition` en este repositorio.
 - La configuración transversal server-only vive en `src/config/server/`; `src/config/server/environment.ts` es el único lector de variables runtime y expone getters tipados por sección.
-- `src/config/runtime.ts` es el único getter autorizado para conocer el runtime de Next.js desde adaptadores como `src/instrumentation.ts`.
+- `src/instrumentation.ts` puede leer directamente `process.env.NEXT_RUNTIME` como excepción exclusiva exigida por Next.js para separar los bundles Edge y Node.js; no puede leer ninguna otra variable runtime.
 - `src/bootstrap.ts` coordina la validación del entorno, la inicialización idempotente de clientes externos y los checks de readiness; no es un barrel general de Infrastructure ni un service locator de request.
 - `src/instrumentation.ts` debe mantenerse como adaptador mínimo de Next.js: exporta `register()`, carga `bootstrap.ts` dinámicamente y limita el bootstrap al runtime Node.js.
 - Las fachadas server-only `databaseClient`, `mailerClient` e `imageStorageClient` son las únicas APIs públicas de sus capacidades; no exponen SDKs, proveedores ni tipos concretos.
@@ -70,7 +70,7 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - Los contratos de dominio se importan desde `@/domain/<domain>` y no se duplican en fixtures.
 - Los fixtures son deterministas: IDs, fechas, códigos y relaciones permanecen estables entre ejecuciones.
 - Configuración compartida usa constantes; configuración de entorno usa variables de entorno.
-- Ningún módulo fuera de `src/config/server/environment.ts` y `src/config/runtime.ts` lee directamente `process.env` o `env.get()`.
+- Ningún módulo fuera de `src/config/server/environment.ts` lee directamente `process.env` o `env.get()`, salvo `src/instrumentation.ts` para `process.env.NEXT_RUNTIME` exclusivamente.
 - Las variables de entorno se configuran fuera de Git. Una variable `NEXT_PUBLIC_*` puede ser publicable, pero no elimina los límites server-only del SDK ni de su configuración.
 - Los servicios de dominio no construyen rutas físicas ni importan `node:fs`; usan el adapter JSON server-only.
 

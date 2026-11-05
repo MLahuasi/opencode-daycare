@@ -270,8 +270,8 @@ flowchart TD
     COMPOSITION --> AUTH["composition/auth"]
     AUTH --> NEXTAUTH["infrastructure/auth<br/>NextAuth"]
 
-    INSTRUMENTATION["src/instrumentation.ts"] --> RUNTIME["src/config/runtime.ts"]
-    INSTRUMENTATION -->|import dinámico en Node.js| BOOTSTRAP["src/bootstrap.ts"]
+    INSTRUMENTATION["src/instrumentation.ts"] -->|NEXT_RUNTIME === nodejs| NODE_INSTRUMENTATION["src/instrumentation-node.ts"]
+    NODE_INSTRUMENTATION -->|import dinámico| BOOTSTRAP["src/bootstrap.ts"]
     BOOTSTRAP --> ENV["src/config/server/environment.ts"]
     BOOTSTRAP --> BOOT_COMPOSITION["composition/bootstrap"]
     BOOTSTRAP --> DB_COMPOSITION["composition/database"]
