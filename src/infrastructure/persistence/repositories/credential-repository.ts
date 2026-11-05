@@ -12,15 +12,24 @@ import {
 /** JSON-backed persistence adapter for Auth credentials. */
 export class CredentialRepository implements CredentialRepositoryPort {
   /**
-   * Finds a credential by person identifier.
+   * Finds a credential by person identifier within one daycare.
    *
+   * @param daycareId - Stable daycare identifier.
    * @param personId - Stable person identifier.
    * @returns The credential or `null` when it does not exist.
    */
-  async findByPersonId(personId: string): Promise<Credential | null> {
+  async findByPersonId(
+    daycareId: string,
+    personId: string,
+  ): Promise<Credential | null> {
     const credentials = await readDaycareScopedCollection<Credential>("credential.json");
 
-    return credentials.find((credential) => credential.personId === personId) ?? null;
+    return (
+      credentials.find(
+        (credential) =>
+          credential.daycareId === daycareId && credential.personId === personId,
+      ) ?? null
+    );
   }
 
   /**

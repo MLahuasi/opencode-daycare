@@ -11,8 +11,8 @@ import type {
   InvitationExpirationPolicy,
   InvitationMailer,
   InvitationRepository,
-  TransactionRunner,
 } from "./ports";
+import type { AuthTransactionRunner } from "../auth/ports";
 import type { KidRepository } from "../kid/ports";
 
 /** Persistence and clock capabilities required by Family use cases. */
@@ -34,7 +34,7 @@ export type FamilyDependencies = {
   /** Current-time provider. */
   clock: Clock;
   /** Atomic write transaction port. */
-  transaction: TransactionRunner;
+  transaction: AuthTransactionRunner;
   /** Invitation email delivery port. */
   mailer: InvitationMailer;
 };

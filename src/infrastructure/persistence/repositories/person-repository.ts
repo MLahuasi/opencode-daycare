@@ -34,15 +34,22 @@ export class PersonRepository implements PersonRepositoryPort, FamilyPersonRepos
   }
 
   /**
-   * Finds a person by normalized email.
+   * Finds a person by normalized email within one daycare.
    *
+   * @param daycareId - Stable daycare identifier.
    * @param email - Normalized email address.
    * @returns The person or `null` when it does not exist.
    */
-  async findByEmail(email: string): Promise<Person | null> {
+  async findByEmail(daycareId: string, email: string): Promise<Person | null> {
     const people = await this.findAll();
 
-    return people.find((person) => person.email.toLowerCase() === email.toLowerCase()) ?? null;
+    return (
+      people.find(
+        (person) =>
+          person.daycareId === daycareId &&
+          person.email.toLowerCase() === email.toLowerCase(),
+      ) ?? null
+    );
   }
 
   /**

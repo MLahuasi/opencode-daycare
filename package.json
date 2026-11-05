@@ -6,12 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:migrate:dry-run": "npx --yes supabase@3.0.0 db push --remote --dry-run --skip-vault",
+    "db:migrate": "npx --yes supabase@3.0.0 db push --remote --yes --skip-vault"
   },
   "dependencies": {
     "@jmlq/mailer": "^0.0.1-beta.2",
-    "@supabase/ssr": "^0.12.7",
-    "@supabase/supabase-js": "^2.118.0",
     "bcryptjs": "3.0.3",
     "cloudinary": "^2.11.0",
     "env-var": "^7.5.0",
@@ -20,7 +20,8 @@
     "nodemailer": "^10.3.1",
     "postgres": "4.0.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1"
   },
   "overrides": {
     "next-auth": {

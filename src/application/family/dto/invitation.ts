@@ -38,6 +38,8 @@ export type InvitationTokenResolution = {
 export type AcceptInvitationInput = {
   /** Token received in the invitation URL. */
   code: string;
+  /** Daycare tenant received in the invitation URL. */
+  daycareId: string;
   /** Email address supplied by the parent. */
   email: string;
   /** New password for a pending parent account. */

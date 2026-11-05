@@ -1,15 +1,14 @@
 import "server-only";
 
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { SupabaseClientProvider } from "./supabase/supabase-client-provider";
-import { SupabaseConnectionChecker } from "./supabase/supabase-connection-checker";
+import type { PostgresClient } from "@/infrastructure/persistence/postgres/client/postgres-client";
+import { PostgresClientProvider } from "@/infrastructure/persistence/postgres/client/postgres-client-provider";
 
-let databaseClientInstance: SupabaseClient | undefined;
+let databaseClientInstance: PostgresClient | undefined;
 let initializationPromise: Promise<void> | undefined;
 
 async function initializeDatabaseClient(): Promise<void> {
   if (!databaseClientInstance) {
-    const provider = new SupabaseClientProvider();
+    const provider = new PostgresClientProvider();
     databaseClientInstance = provider.createClient();
   }
 }
@@ -21,10 +20,10 @@ export const databaseClient = {
     initializationPromise ??= initializeDatabaseClient();
     return initializationPromise;
   },
-  /** Checks the configured Supabase Data API gateway once initialized. */
+  /** Checks the configured PostgreSQL connection once initialized. */
   async checkConnection(): Promise<void> {
     await this.initialize();
-    await new SupabaseConnectionChecker().check();
+    await databaseClientInstance!`SELECT 1`;
   },
   /** Implements the application database connection-checking port. */
   check(): Promise<void> {

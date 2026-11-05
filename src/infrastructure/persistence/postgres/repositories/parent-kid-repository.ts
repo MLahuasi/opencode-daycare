@@ -1,0 +1,45 @@
+import "server-only";
+
+import type { ParentKid } from "@/domain/family";
+import { mapParentKidRow } from "../mappers";
+import type { PostgresQueryClient } from "../client/postgres-client";
+import type { Tables } from "../types";
+
+/** PostgreSQL persistence adapter for daycare-scoped parent-kid links. */
+export class PostgresParentKidRepository {
+  public constructor(private readonly client: PostgresQueryClient) {}
+
+  async findByParentAndKid(
+    daycareId: string,
+    parentId: string,
+    kidId: string,
+  ): Promise<ParentKid | null> {
+    const rows = await this.client<Tables<"parent_kids">[]>`
+      SELECT daycare_id, id, parent_id, kid_id, relationship,
+             photo_sharing_consent, created_at, updated_at
+      FROM parent_kids
+      WHERE daycare_id = ${daycareId}
+        AND parent_id = ${parentId}
+        AND kid_id = ${kidId}
+      LIMIT 1
+    `;
+
+    return rows[0] ? mapParentKidRow(rows[0]) : null;
+  }
+
+  async create(parentKid: ParentKid): Promise<void> {
+    await this.client`
+      INSERT INTO parent_kids (
+        daycare_id, id, parent_id, kid_id, relationship, photo_sharing_consent
+      )
+      VALUES (
+        ${parentKid.daycareId},
+        ${parentKid.id},
+        ${parentKid.parentId},
+        ${parentKid.kidId},
+        ${parentKid.relationship},
+        ${parentKid.photoSharingConsent}
+      )
+    `;
+  }
+}

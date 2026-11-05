@@ -12,6 +12,8 @@ import {
 
 const authEnvironment = getAuthEnvironment();
 const applicationEnvironment = getApplicationEnvironment();
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /** Concrete NextAuth v4 configuration for the application's credential session. */
 export const authOptions: NextAuthOptions = {
@@ -21,6 +23,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        daycareId: { label: "Daycare", type: "text" },
       },
       /**
        * Authenticates an active person against the credential repository.
@@ -35,23 +38,23 @@ export const authOptions: NextAuthOptions = {
             : "";
         const password =
           typeof credentials?.password === "string" ? credentials.password : "";
+        const daycareId =
+          typeof credentials?.daycareId === "string"
+            ? credentials.daycareId.trim()
+            : "";
 
-        if (!email || !password) {
+        if (!email || !password || !UUID_PATTERN.test(daycareId)) {
           return null;
         }
 
         const credentialRepository = new CredentialRepository();
         const passwordHasher = new BcryptPasswordHasher();
-        const people = await new PersonRepository().findAll();
-        const person = people.find(
-          (candidate) =>
-            candidate.email.toLowerCase() === email && candidate.status === "active",
-        );
+        const person = await new PersonRepository().findByEmail(daycareId, email);
         const storedCredential = person
-           ? await credentialRepository.findByPersonId(person.id)
+          ? await credentialRepository.findByPersonId(daycareId, person.id)
           : null;
 
-        if (!person || !storedCredential) {
+        if (!person || person.status !== "active" || !storedCredential) {
           return null;
         }
 
@@ -68,6 +71,7 @@ export const authOptions: NextAuthOptions = {
           name: person.name,
           email: person.email,
           personId: person.id,
+          daycareId: person.daycareId,
           role: person.role,
         };
       },
@@ -95,17 +99,34 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.personId = user.personId;
+        token.daycareId = user.daycareId;
         token.role = user.role;
+      }
+
+      if (!token.personId || !token.daycareId || !token.role) {
+        return {};
+      }
+
+      const people = await new PersonRepository().findAll();
+      const person = people.find(
+        (candidate) =>
+          candidate.id === token.personId &&
+          candidate.daycareId === token.daycareId,
+      );
+
+      if (!person || person.status !== "active" || person.role !== token.role) {
+        return {};
       }
 
       return token;
     },
     session({ session, token }) {
-      if (session.user && token.personId && token.role) {
+      if (session.user && token.personId && token.daycareId && token.role) {
         session.user.personId = token.personId;
+        session.user.daycareId = token.daycareId;
         session.user.role = token.role;
       }
 
@@ -131,12 +152,16 @@ export function getAuthSession() {
 export async function requireActiveSession(): Promise<Session> {
   const session = await getAuthSession();
 
-  if (!session?.user?.personId) {
+  if (!session?.user?.personId || !session.user.daycareId) {
     redirect("/auth/login");
   }
 
   const people = await new PersonRepository().findAll();
-  const person = people.find((candidate) => candidate.id === session.user.personId);
+  const person = people.find(
+    (candidate) =>
+      candidate.id === session.user.personId &&
+      candidate.daycareId === session.user.daycareId,
+  );
 
   if (!person || person.status !== "active" || person.role !== session.user.role) {
     redirect("/auth/login");

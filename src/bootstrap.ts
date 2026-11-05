@@ -24,7 +24,7 @@ async function initializeApplication(): Promise<void> {
     console.log("[image-storage] Client initialized");
 
     await createDatabaseComposition().checkConnection();
-    console.log("[database] Supabase Data API connection successful");
+    console.log("[database] PostgreSQL connection successful");
     console.log("[bootstrap] Application initialization completed");
   } catch {
     console.error("[bootstrap] Application initialization failed");

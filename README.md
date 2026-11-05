@@ -8,11 +8,11 @@ La aplicación se construye a partir de especificaciones versionadas, skills
 reutilizables y validaciones realizadas por agentes. La interfaz actual incluye
 un feed diferenciado para personal y familias, el listado de niños y sus
 perfiles, la vinculación de padres mediante invitaciones y datos persistidos en
-JSON tipados.
+JSON tipados, con adapters PostgreSQL preparados para la migración gradual.
 
 ## Stack
 
-- Next.js `16.3.5` con App Router.
+- Next.js `16.4.3` con App Router.
 - React `19.2.8`.
 - TypeScript estricto.
 - Tailwind CSS `4` y CSS Modules.
@@ -40,6 +40,22 @@ Comandos disponibles:
 | `npm run build` | Build de producción |
 | `npm run start` | Servidor con el build generado |
 | `npm run lint` | Ejecución de ESLint |
+| `npm run db:migrate:dry-run` | Comprueba migraciones pendientes en el proyecto Supabase remoto enlazado |
+| `npm run db:migrate` | Aplica migraciones al proyecto Supabase remoto enlazado |
+
+Los comandos de migración requieren autenticación con Supabase y un proyecto
+enlazado previamente:
+
+```bash
+npx supabase login
+npx supabase link --project-ref <PROJECT_REF>
+npm run db:migrate:dry-run
+npm run db:migrate
+```
+
+Las migraciones se encuentran en `supabase/migrations/`. Los scripts de seed
+versionados forman parte de la historia de migraciones y no son fixtures de
+runtime. Se recomienda validar primero en un proyecto Supabase de prueba.
 
 ## Configuración de correo
 
@@ -98,7 +114,7 @@ como `output: "standalone"`, debe incluir también la carpeta `templates/`.
 - `/posts/[postId]/comments/new` y `/posts/[postId]/comments/[commentId]/edit`: comentarios.
 - `/kids/[slug]` con un slug desconocido: página 404 propia.
 
-## Supabase y arranque server-side
+## PostgreSQL, Supabase y arranque server-side
 
 La configuración transversal se centraliza en `src/config/server/environment.ts`.
 Los consumidores reciben únicamente getters tipados por sección:
@@ -113,28 +129,29 @@ Configura estas variables en `.env.local` o en el gestor de secretos del entorno
 fuera de Git:
 
 ```dotenv
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+SUPABASE_DB_HOST=aws-0-us-east-1.pooler.supabase.com
+SUPABASE_DB_PORT=5432
+SUPABASE_DB_USERNAME=postgres.<PROJECT_REF>
 SUPABASE_DB_PASSWORD=your_database_password
+RUN_REMOTE_DB_TESTS=false
 ```
 
-La clave `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` es una clave publicable, no un
-secreto; aun así, esta integración usa el cliente únicamente desde server-side.
-`bootstrap.ts` valida todo el entorno y configura, en orden, `databaseClient`,
-`mailerClient` e `imageStorageClient`. Después comprueba únicamente el gateway del
-Data API con la sonda inexistente
-`GET /rest/v1/rpc/__opendaycare_readiness_probe__`, con un timeout de cinco
-segundos. Una respuesta `404` confirma que el gateway recibió la solicitud; no
-se crea la función, no se consultan tablas ni se descargan filas.
+La aplicación usa PostgreSQL mediante `postgres.js` y el Session Pooler IPv4.
+`SUPABASE_DB_PASSWORD` es server-only y nunca debe exponerse en variables
+`NEXT_PUBLIC_*`. `bootstrap.ts` valida todo el entorno y configura, en orden,
+`databaseClient`, `mailerClient` e `imageStorageClient`. Después ejecuta
+`SELECT 1` mediante el cliente PostgreSQL para comprobar el readiness de la base.
 
 `src/instrumentation.ts` es el adaptador mínimo del lifecycle de Next.js y carga
 dinámicamente `src/bootstrap.ts` solo en el runtime Node.js. El bootstrap es
 idempotente y detiene la preparación del servidor ante cualquier error de
 configuración o conexión.
 
-Esta entrega no implementa Supabase Auth, consultas de tablas, migraciones, seeds,
-RLS ni repositorios Supabase. Tampoco realiza conexiones SMTP ni operaciones de
-Cloudinary durante el arranque. La refactorización de NextAuth mantiene Credentials,
+Esta entrega no implementa Supabase Auth ni cambia bcrypt, cookies o la estrategia
+JWT. Las migraciones y seeds SQL se versionan en `supabase/migrations/`; los
+repositorios PostgreSQL de Auth e invitaciones permanecen separados y no están
+activados como persistencia general de las rutas productivas. Tampoco realiza
+conexiones SMTP ni operaciones de Cloudinary durante el arranque. La refactorización de NextAuth mantiene Credentials,
 sesiones JWT, cookies, redirects y permisos sin cambios; su API server-side se
 consume desde `@/composition/auth`.
 
@@ -156,6 +173,13 @@ recuperable. Un reintento de una invitación pendiente sin envío confirmado
 reutiliza el código vigente o rota código y vencimiento si ya expiró. Los
 envíos exitosos actualizan `sentAt` y redirigen al perfil con
 `?invitation=sent`. Los padres autenticados son redirigidos a `/home`.
+
+La aceptación JSON mantiene el comportamiento existente antes del cutover.
+Los adapters PostgreSQL equivalentes se prueban de forma aislada con
+`RUN_REMOTE_DB_TESTS=true`, dentro de transacciones con rollback. Mientras exista
+una única guardería operativa, `CurrentDaycareProvider` obtiene provisionalmente
+su `daycareId` desde PostgreSQL para completar el login; posteriormente se
+incorporará la selección explícita de guardería.
 
 La activación de una invitación se realiza posteriormente desde
 `/auth/parent-invitation/[token]`: crea o actualiza las credenciales, activa la persona,
@@ -236,6 +260,9 @@ open-daycare/
 │   └── ...                      Entrypoints y colaboradores de ruta
 ├── public/                    Recursos públicos
 ├── templates/                 Plantillas HTML requeridas en runtime
+├── supabase/
+│   ├── migrations/            Migraciones y seeds SQL versionados
+│   └── config.toml            Configuración de Supabase CLI
 ├── specs/                   Contratos funcionales versionados
 ├── .agents/skills/          Skills del flujo SDD
 ├── .opencode/               Agentes y comandos personalizados
@@ -267,6 +294,8 @@ flowchart TD
     APPLICATION --> DOMAIN["src/domain<br/>reglas y modelos"]
     COMPOSITION --> INFRA["src/infrastructure<br/>server-only"]
     INFRA --> JSON["persistence/json/data"]
+    INFRA --> POSTGRES["persistence/postgres<br/>adapters PostgreSQL"]
+    POSTGRES --> POOLER["Supabase Session Pooler<br/>postgres.js"]
     COMPOSITION --> AUTH["composition/auth"]
     AUTH --> NEXTAUTH["infrastructure/auth<br/>NextAuth"]
 
@@ -280,8 +309,8 @@ flowchart TD
     BOOT_COMPOSITION --> IMAGE["imageStorageClient"]
     DB_COMPOSITION --> CHECK["checkDatabaseConnection"]
     CHECK --> DB_PORT["DatabaseConnectionChecker"]
-    DB --> SUPABASE_PROVIDER["Supabase provider"]
-    SUPABASE_PROVIDER --> SUPABASE["Supabase Data API<br/>readiness RPC probe"]
+    DB --> POSTGRES
+    POSTGRES --> READINESS["SELECT 1<br/>readiness"]
     MAILER --> JMLQ["JMLQ/Nodemailer"]
     JMLQ --> TEMPLATE["templates/<br/>parent-invitation.html"]
     JMLQ -. no arranque SMTP .-> SMTP["Servidor SMTP"]
@@ -308,8 +337,9 @@ El diagrama se mantiene alineado con la arquitectura actual: las rutas no
 construyen adapters, Application solo conoce ports y Composition ensambla las
 implementaciones. El flujo de arranque es independiente del flujo de requests;
 `instrumentation.ts` carga el bootstrap únicamente en Node.js. Mailer y
-Cloudinary se configuran durante el arranque, pero solo el gateway Data API de
-Supabase se verifica remotamente.
+Cloudinary se configuran durante el arranque, pero el readiness de base se
+verifica mediante PostgreSQL con `SELECT 1`. Las migraciones se ejecutan de forma
+explícita mediante Supabase CLI y no forman parte del bootstrap.
 
 ## ¿Qué es una spec?
 

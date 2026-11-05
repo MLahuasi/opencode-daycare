@@ -7,15 +7,17 @@ import type { InvitationTokenResolution } from "../dto/invitation";
  *
  * @param dependencies - Invitation and person lookup ports.
  * @param code - Token received in the invitation URL.
+ * @param daycareId - Tenant received in the invitation URL.
  * @returns A safe token resolution with no invitation data for invalid states.
  */
 export async function validateInvitationToken(
   dependencies: FamilyDependencies,
   code: string,
+  daycareId: string,
 ): Promise<InvitationTokenResolution> {
   const invitation = await dependencies.invitations.findByCode(code);
 
-  if (!invitation) {
+  if (!invitation || invitation.daycareId !== daycareId) {
     return { status: "unknown", invitation: null, person: null };
   }
 
