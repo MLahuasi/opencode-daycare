@@ -62,9 +62,10 @@ dependency direction.
 - `src/config/server/environment.ts` is the only application module allowed to
   read runtime environment variables. Consumers use section-specific getters;
   adapters must not access `process.env` directly.
-- Runtime-specific lifecycle adapters such as `src/instrumentation.ts` may use
-  `src/config/runtime.ts` and dynamic imports, but must keep startup logic in
-  `src/bootstrap.ts`.
+- The Next.js lifecycle adapter may read only `process.env.NEXT_RUNTIME` directly,
+  because Next.js needs that condition statically visible to separate Edge and
+  Node.js bundles. It dynamically imports `src/instrumentation-node.ts`, which
+  loads `src/bootstrap.ts`; no other runtime variable may be read there.
 - Inversion of dependencies is mandatory: business logic depends on ports or
   interfaces, while concrete adapters depend on those contracts.
 
@@ -88,8 +89,8 @@ flowchart TB
     AUTH --> AUTH_INFRA[infrastructure/auth<br/>NextAuth implementation]
     COMPOSITION --> PERSISTENCE[infrastructure/persistence<br/>JSON repositories]
 
-    INSTRUMENTATION[src/instrumentation.ts<br/>Next.js lifecycle adapter] --> RUNTIME[src/config/runtime.ts]
-    INSTRUMENTATION -->|dynamic import: Node.js only| BOOTSTRAP[src/bootstrap.ts<br/>idempotent startup]
+    INSTRUMENTATION[src/instrumentation.ts<br/>Next.js lifecycle adapter] -->|NEXT_RUNTIME === nodejs| NODE_INSTRUMENTATION[src/instrumentation-node.ts<br/>Node.js bridge]
+    NODE_INSTRUMENTATION -->|dynamic import| BOOTSTRAP[src/bootstrap.ts<br/>idempotent startup]
     BOOTSTRAP --> ENV[src/config/server/environment.ts<br/>validation and typed getters]
     BOOTSTRAP --> BOOT_COMPOSITION[composition/bootstrap]
     BOOTSTRAP --> DB_COMPOSITION[composition/database]
