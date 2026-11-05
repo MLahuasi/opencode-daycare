@@ -122,7 +122,6 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 
 Plan de implementación
 
-6.  Crear tipos generados de la base remota.
 7.  Crear mappers de las tablas indicadas.
 8.  Crear CurrentDaycareProvider.
 9.  Crear contexto de pruebas con transacción y rollback.
