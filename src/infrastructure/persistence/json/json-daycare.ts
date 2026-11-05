@@ -12,8 +12,30 @@ import { readCollection } from "./json-collection";
 let daycareIdPromise: Promise<string> | undefined;
 const JSON_BUILD_DAYCARE_ID = "112b5f27-b108-4c96-912d-560abf06ae0d";
 
+function canUseJsonDaycareSnapshot(error: unknown): boolean {
+  if (getApplicationEnvironment().nodeEnvironment !== "development") {
+    return false;
+  }
+
+  if (typeof error !== "object" || error === null || !("code" in error)) {
+    return false;
+  }
+
+  const code = error.code;
+  return (
+    code === "EAI_AGAIN" ||
+    code === "ENETUNREACH" ||
+    code === "ENETDOWN" ||
+    code === "ENOTFOUND" ||
+    code === "ECONNREFUSED" ||
+    code === "ETIMEDOUT"
+  );
+}
+
 async function getJsonDaycareId(): Promise<string> {
-  if (getApplicationEnvironment().isBuild) {
+  const environment = getApplicationEnvironment();
+
+  if (environment.isBuild) {
     return JSON_BUILD_DAYCARE_ID;
   }
 
@@ -31,6 +53,11 @@ async function getJsonDaycareId(): Promise<string> {
     return await daycareIdPromise;
   } catch (error) {
     daycareIdPromise = undefined;
+
+    if (canUseJsonDaycareSnapshot(error)) {
+      return JSON_BUILD_DAYCARE_ID;
+    }
+
     throw error;
   }
 }
