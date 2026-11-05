@@ -122,7 +122,6 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 
 Plan de implementación
 
-5.  Crear proveedor PostgreSQL y derivar el host.
 6.  Crear tipos generados de la base remota.
 7.  Crear mappers de las tablas indicadas.
 8.  Crear CurrentDaycareProvider.
