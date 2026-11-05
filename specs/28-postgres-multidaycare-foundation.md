@@ -119,7 +119,3 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 - Eliminación de JSON o adapters JSON.
 
 ---
-
-Plan de implementación
-
-10. Verificar compilación y continuidad de adapters JSON.

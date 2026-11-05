@@ -181,6 +181,7 @@ export async function parsePostSubmission(
   const targetRoom = initialValidation.data.roomId
     ? targets.rooms.find((room) => room.id === initialValidation.data.roomId)
     : undefined;
+  const daycareId = targetKids[0]?.daycareId ?? targetRoom?.daycareId;
 
   const confirmation =
     typeof submittedConfirmation === "string" && submittedConfirmation
@@ -286,6 +287,7 @@ export async function parsePostSubmission(
       });
       uploadedMedia.push({
         ...asset,
+        daycareId: daycareId ?? "",
         id: randomUUID(),
         originalName: file.name,
         alt: altTexts.get(getFileId(file)) || null,

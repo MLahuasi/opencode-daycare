@@ -2,6 +2,8 @@ import type { Credential } from "@/domain/auth";
 
 /** Values required to create a stored credential. */
 export type CreateCredentialInput = {
+  /** Daycare tenant that owns the credential. */
+  daycareId: string;
   /** Stable person identifier receiving the credential. */
   personId: string;
   /** Plaintext password to validate and hash. */

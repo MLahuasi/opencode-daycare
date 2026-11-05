@@ -27,6 +27,7 @@ export async function createCredential(
   }
 
   const credential: Credential = {
+    daycareId: input.daycareId,
     id: dependencies.identifiers.create(),
     personId: input.personId,
     passwordHash: await dependencies.passwordHasher.hash(input.password),

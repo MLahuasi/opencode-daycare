@@ -5,6 +5,7 @@ import {
   InvitationRepository,
   ParentKidRepository,
   PersonRepository,
+  KidRepository,
 } from "@/infrastructure/persistence/repositories";
 import { JsonTransactionRunner } from "@/infrastructure/persistence";
 import { createAuthComposition } from "../auth";
@@ -29,6 +30,7 @@ export function createFamilyComposition(): FamilyComposition {
     invitations: new InvitationRepository(),
     people: new PersonRepository(),
     parentKids: new ParentKidRepository(),
+    kids: new KidRepository(),
     identifiers: {
       /**
        * Creates a random persisted identifier.

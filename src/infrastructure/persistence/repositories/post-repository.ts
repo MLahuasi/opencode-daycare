@@ -3,7 +3,8 @@ import "server-only";
 import type { PostRepository as PostRepositoryPort } from "@/application/post/ports";
 import type { Post, PersistedPost } from "@/domain/post";
 import {
-  readCollection,
+  readDaycareScopedCollection,
+  toJsonRecord,
   withWriteLock,
   writeCollection,
 } from "@/infrastructure/persistence";
@@ -22,7 +23,12 @@ export class PostRepository implements PostRepositoryPort {
    * @returns All Post records from JSON persistence.
    */
   findAll(): Promise<readonly PersistedPost[]> {
-    return readCollection<PersistedPost>("feed.json");
+    return readDaycareScopedCollection<PersistedPost>("feed.json").then((posts) =>
+      posts.map((post) => ({
+        ...post,
+        media: post.media.map((media) => ({ ...media, daycareId: post.daycareId })),
+      })),
+    );
   }
 
   /**
@@ -45,7 +51,10 @@ export class PostRepository implements PostRepositoryPort {
   create(post: PersistedPost): Promise<Post> {
     return withWriteLock(async () => {
       const posts = await this.findAll();
-      await writeCollection("feed.json", [...posts, post]);
+       await writeCollection("feed.json", [
+         ...posts.map(toJsonPostRecord),
+         toJsonPostRecord(post),
+       ]);
       return { ...post, engagement: { ...EMPTY_ENGAGEMENT } };
     });
   }
@@ -63,9 +72,16 @@ export class PostRepository implements PostRepositoryPort {
       if (index === -1) return null;
 
       const updated = [...posts];
-      updated[index] = post;
-      await writeCollection("feed.json", updated);
+       updated[index] = post;
+       await writeCollection("feed.json", updated.map(toJsonPostRecord));
       return { ...post, engagement: { ...EMPTY_ENGAGEMENT } };
     });
   }
+}
+
+function toJsonPostRecord(post: PersistedPost) {
+  return {
+    ...toJsonRecord(post),
+    media: post.media.map(toJsonRecord),
+  };
 }

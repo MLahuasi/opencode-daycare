@@ -6,6 +6,7 @@ import path from "node:path";
 export type ApplicationEnvironment = {
   appUrl: string;
   nodeEnvironment: "development" | "test" | "production";
+  isBuild: boolean;
 };
 
 export type AuthEnvironment = {
@@ -127,6 +128,7 @@ function readEnvironment(): Environment {
         "NODE_ENV",
         ["development", "test", "production"],
       ),
+      isBuild: process.env.NEXT_PHASE === "phase-production-build",
     },
     auth: {
       AUTH_SECRET: readRequiredString("AUTH_SECRET"),

@@ -4,7 +4,8 @@ import type { FamilyParentKidRepository } from "@/application/family/ports";
 import type { ParentKidRepository as ParentKidRepositoryPort } from "@/application/kid/ports";
 import type { ParentKid } from "@/domain/family";
 import {
-  readCollection,
+  readDaycareScopedCollection,
+  toJsonRecord,
   withWriteLock,
   writeCollection,
 } from "@/infrastructure/persistence";
@@ -17,7 +18,7 @@ export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParen
    * @returns All relationship records from JSON persistence.
    */
   findAll(): Promise<readonly ParentKid[]> {
-    return readCollection<ParentKid>("parent-kids.json");
+    return readDaycareScopedCollection<ParentKid>("parent-kids.json");
   }
 
   /**
@@ -70,7 +71,7 @@ export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParen
     return withWriteLock(async () => {
       const relationships = await this.findAll();
 
-      await writeCollection("parent-kids.json", [...relationships, relationship]);
+       await writeCollection("parent-kids.json", [...relationships.map(toJsonRecord), toJsonRecord(relationship)]);
     });
   }
 
@@ -92,8 +93,8 @@ export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParen
       }
 
       const updatedRelationships = [...relationships];
-      updatedRelationships[index] = relationship;
-      await writeCollection("parent-kids.json", updatedRelationships);
+       updatedRelationships[index] = relationship;
+       await writeCollection("parent-kids.json", updatedRelationships.map(toJsonRecord));
     });
   }
 }

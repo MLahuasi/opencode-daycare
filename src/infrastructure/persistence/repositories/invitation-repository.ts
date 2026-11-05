@@ -3,7 +3,8 @@ import "server-only";
 import type { InvitationRepository as InvitationRepositoryPort } from "@/application/family/ports";
 import type { Invitation } from "@/domain/family";
 import {
-  readCollection,
+  readDaycareScopedCollection,
+  toJsonRecord,
   withWriteLock,
   writeCollection,
 } from "@/infrastructure/persistence";
@@ -16,7 +17,7 @@ export class InvitationRepository implements InvitationRepositoryPort {
    * @returns All invitation records from JSON persistence.
    */
   findAll(): Promise<readonly Invitation[]> {
-    return readCollection<Invitation>("invitation.json");
+    return readDaycareScopedCollection<Invitation>("invitation.json");
   }
 
   /**
@@ -41,7 +42,7 @@ export class InvitationRepository implements InvitationRepositoryPort {
     return withWriteLock(async () => {
       const invitations = await this.findAll();
 
-      await writeCollection("invitation.json", [...invitations, invitation]);
+       await writeCollection("invitation.json", [...invitations.map(toJsonRecord), toJsonRecord(invitation)]);
     });
   }
 
@@ -72,7 +73,7 @@ export class InvitationRepository implements InvitationRepositoryPort {
       } satisfies Invitation;
       const updatedInvitations = [...invitations];
       updatedInvitations[index] = updatedInvitation;
-      await writeCollection("invitation.json", updatedInvitations);
+       await writeCollection("invitation.json", updatedInvitations.map(toJsonRecord));
 
       return updatedInvitation;
     });

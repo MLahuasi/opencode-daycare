@@ -13,8 +13,10 @@ export function createCommentRecord(
   input: CreateCommentInput,
   id: string,
   timestamp: string,
+  daycareId: string,
 ): PostComment {
   return {
+    daycareId,
     id,
     postId: input.postId,
     authorId: input.authorId,

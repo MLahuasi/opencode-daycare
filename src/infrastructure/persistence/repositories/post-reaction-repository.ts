@@ -3,7 +3,8 @@ import "server-only";
 import type { PostReactionRepository as PostReactionRepositoryPort } from "@/application/post/ports";
 import type { PostReaction } from "@/domain/post";
 import {
-  readCollection,
+  readDaycareScopedCollection,
+  toJsonRecord,
   withWriteLock,
   writeCollection,
 } from "@/infrastructure/persistence";
@@ -16,7 +17,7 @@ export class PostReactionRepository implements PostReactionRepositoryPort {
    * @returns All Post reactions from JSON persistence.
    */
   findAll(): Promise<readonly PostReaction[]> {
-    return readCollection<PostReaction>("feed-reactions.json");
+    return readDaycareScopedCollection<PostReaction>("feed-reactions.json");
   }
 
   /**
@@ -28,7 +29,7 @@ export class PostReactionRepository implements PostReactionRepositoryPort {
   create(reaction: PostReaction): Promise<void> {
     return withWriteLock(async () => {
       const reactions = await this.findAll();
-      await writeCollection("feed-reactions.json", [...reactions, reaction]);
+       await writeCollection("feed-reactions.json", [...reactions.map(toJsonRecord), toJsonRecord(reaction)]);
     });
   }
 
@@ -43,7 +44,7 @@ export class PostReactionRepository implements PostReactionRepositoryPort {
       const reactions = await this.findAll();
       const updated = reactions.filter((reaction) => reaction.id !== id);
       if (updated.length === reactions.length) return false;
-      await writeCollection("feed-reactions.json", updated);
+       await writeCollection("feed-reactions.json", updated.map(toJsonRecord));
       return true;
     });
   }

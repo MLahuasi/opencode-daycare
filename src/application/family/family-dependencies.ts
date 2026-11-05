@@ -13,6 +13,7 @@ import type {
   InvitationRepository,
   TransactionRunner,
 } from "./ports";
+import type { KidRepository } from "../kid/ports";
 
 /** Persistence and clock capabilities required by Family use cases. */
 export type FamilyDependencies = {
@@ -22,6 +23,8 @@ export type FamilyDependencies = {
   people: FamilyPersonRepository;
   /** Parent-kid relationship persistence port. */
   parentKids: FamilyParentKidRepository;
+  /** Kid lookup used to resolve the invitation tenant. */
+  kids: KidRepository;
   /** Stable identifier generation port. */
   identifiers: IdentifierGenerator;
   /** Invitation token generation port. */

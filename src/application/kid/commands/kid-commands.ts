@@ -47,7 +47,14 @@ export async function createKid(
 ): Promise<Kid> {
   const kids = await dependencies.kids.findAll();
   const editableValues = selectKidFormValues(values);
+  const room = await dependencies.rooms.findById(editableValues.roomId);
+
+  if (!room) {
+    throw new Error("Cannot create a kid without an existing room.");
+  }
+
   const kid: Kid = {
+    daycareId: room.daycareId,
     id: randomUUID(),
     slug: createUniqueSlug(editableValues.name, kids),
     ...editableValues,

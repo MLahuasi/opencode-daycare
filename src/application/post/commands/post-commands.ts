@@ -17,8 +17,10 @@ export function createPostRecord(
   input: CreatePostInput,
   id: string,
   timestamp: string,
+  daycareId: string,
 ): PostRecord {
   return {
+    daycareId,
     id,
     type: input.type,
     authorId: input.authorId,
