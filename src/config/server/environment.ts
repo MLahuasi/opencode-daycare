@@ -36,8 +36,9 @@ export type CloudinaryEnvironment = {
 };
 
 export type SupabaseEnvironment = {
-  url: string;
-  publishableKey: string;
+  dbHost: string;
+  dbPort: number;
+  dbUsername: string;
   dbPassword: string;
   runRemoteDbTests: boolean;
 };
@@ -161,8 +162,9 @@ function readEnvironment(): Environment {
       url: readUrl("CLOUDINARY_URL", ["cloudinary:"]),
     },
     supabase: {
-      url: readUrl("NEXT_PUBLIC_SUPABASE_URL", ["http:", "https:"]),
-      publishableKey: readRequiredString("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
+      dbHost: readRequiredString("SUPABASE_DB_HOST"),
+      dbPort: readPositiveInteger("SUPABASE_DB_PORT"),
+      dbUsername: readRequiredString("SUPABASE_DB_USERNAME"),
       dbPassword: readRequiredString("SUPABASE_DB_PASSWORD"),
       runRemoteDbTests: readOptionalBoolean("RUN_REMOTE_DB_TESTS"),
     },

@@ -4,7 +4,6 @@ export type { PostgresClient, PostgresQueryClient } from "./client/postgres-clie
 export type { Database, Enums, Json, Tables } from "./types";
 export { createPostgresClient } from "./client/postgres-client";
 export {
-  derivePostgresHost,
   PostgresClientProvider,
 } from "./client/postgres-client-provider";
 export {
@@ -16,6 +15,7 @@ export {
   RemoteDbTestsDisabledError,
   withRemoteDbTestTransaction,
 } from "./transactions/remote-db-test-context";
+export { runRemoteAuthPersistenceTests } from "./transactions/remote-auth-tests";
 export { PostgresCredentialRepository } from "./repositories/credential-repository";
 export { PostgresInvitationRepository } from "./repositories/invitation-repository";
 export { PostgresAuthTransactionRunner } from "./transactions/auth-transaction-runner";

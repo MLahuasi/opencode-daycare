@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { ISql } from "postgres";
 import { getSupabaseEnvironment } from "@/config/server";
 import { PostgresClientProvider } from "../client/postgres-client-provider";
+import type { PostgresQueryClient } from "../client/postgres-client";
 
 /** Raised when remote PostgreSQL tests were not explicitly enabled. */
 export class RemoteDbTestsDisabledError extends Error {
@@ -27,7 +27,7 @@ class RollbackRemoteDbTest extends Error {}
  * @throws RemoteDbTestsDisabledError when remote tests are not explicitly enabled.
  */
 export async function withRemoteDbTestTransaction<T>(
-  operation: (client: ISql) => Promise<T>,
+  operation: (client: PostgresQueryClient) => Promise<T>,
 ): Promise<T> {
   if (!getSupabaseEnvironment().runRemoteDbTests) {
     throw new RemoteDbTestsDisabledError();
