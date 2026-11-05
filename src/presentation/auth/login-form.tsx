@@ -12,9 +12,16 @@ import styles from "./auth.module.css";
  *
  * @param props - Login state projected from the route.
  * @param props.activated - Whether the account was just activated.
+ * @param props.daycareId - Tenant selected by the login URL.
  * @returns The login form.
  */
-export function LoginForm({ activated = false }: { activated?: boolean }) {
+export function LoginForm({
+  activated = false,
+  daycareId,
+}: {
+  activated?: boolean;
+  daycareId?: string;
+}) {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -24,9 +31,18 @@ export function LoginForm({ activated = false }: { activated?: boolean }) {
     setErrorMessage("");
     setIsPending(true);
     const formData = new FormData(event.currentTarget);
+    const selectedDaycareId = formData.get("daycareId");
+
+    if (typeof selectedDaycareId !== "string" || !selectedDaycareId) {
+      setIsPending(false);
+      setErrorMessage("El enlace de acceso no contiene una guardería válida.");
+      return;
+    }
+
     const result = await signIn("credentials", {
       email: formData.get("email"),
       password: formData.get("password"),
+      daycareId: selectedDaycareId,
       redirect: false,
     });
 
@@ -48,6 +64,7 @@ export function LoginForm({ activated = false }: { activated?: boolean }) {
       {activated ? <p className={styles.activationSuccess} role="status">Tu cuenta fue activada. Ya puedes iniciar sesión.</p> : null}
       {errorMessage ? <p className={styles.invitationError} role="alert">{errorMessage}</p> : null}
       <form onSubmit={handleSubmit}>
+        <input name="daycareId" type="hidden" value={daycareId ?? ""} />
         <FormField className={styles.field} label="EMAIL">
           <input autoComplete="email" name="email" required type="email" />
         </FormField>

@@ -8,12 +8,18 @@ import { AuthShell, LoginForm } from "@/presentation/auth";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ activated?: string | string[] }>;
+  searchParams: Promise<{
+    activated?: string | string[];
+    daycareId?: string | string[];
+  }>;
 }) {
   const params = await searchParams;
   const activated = Array.isArray(params.activated)
     ? params.activated[0] === "1"
     : params.activated === "1";
+  const daycareId = Array.isArray(params.daycareId)
+    ? params.daycareId[0]
+    : params.daycareId;
 
   return (
     <AuthShell
@@ -21,7 +27,7 @@ export default async function LoginPage({
       eyebrow="Sala Soles"
       title={<>El día de cada niño,<br />compartido con su familia.</>}
     >
-      <LoginForm activated={activated} />
+      <LoginForm activated={activated} daycareId={daycareId} />
     </AuthShell>
   );
 }

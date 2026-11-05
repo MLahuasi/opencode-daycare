@@ -12,6 +12,8 @@ import {
 
 const authEnvironment = getAuthEnvironment();
 const applicationEnvironment = getApplicationEnvironment();
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /** Concrete NextAuth v4 configuration for the application's credential session. */
 export const authOptions: NextAuthOptions = {
@@ -21,6 +23,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        daycareId: { label: "Daycare", type: "text" },
       },
       /**
        * Authenticates an active person against the credential repository.
@@ -35,8 +38,12 @@ export const authOptions: NextAuthOptions = {
             : "";
         const password =
           typeof credentials?.password === "string" ? credentials.password : "";
+        const daycareId =
+          typeof credentials?.daycareId === "string"
+            ? credentials.daycareId.trim()
+            : "";
 
-        if (!email || !password) {
+        if (!email || !password || !UUID_PATTERN.test(daycareId)) {
           return null;
         }
 
@@ -45,7 +52,9 @@ export const authOptions: NextAuthOptions = {
         const people = await new PersonRepository().findAll();
         const person = people.find(
           (candidate) =>
-            candidate.email.toLowerCase() === email && candidate.status === "active",
+            candidate.daycareId === daycareId &&
+            candidate.email.toLowerCase() === email &&
+            candidate.status === "active",
         );
         const storedCredential = person
            ? await credentialRepository.findByPersonId(person.id)
