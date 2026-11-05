@@ -8,6 +8,8 @@ import styles from "@/presentation/auth/auth.module.css";
 type ParentInvitationPageProps = {
   /** Dynamic token route parameters. */
   params: Promise<{ token: string }>;
+  /** Tenant query parameter from the invitation URL. */
+  searchParams: Promise<{ daycareId?: string | string[] }>;
 };
 
 /**
@@ -19,11 +21,23 @@ type ParentInvitationPageProps = {
  */
 export default async function ParentInvitationTokenPage({
   params,
+  searchParams,
 }: ParentInvitationPageProps) {
   const { token } = await params;
-  const resolution = await validateInvitationToken(createFamilyComposition(), token);
+  const query = await searchParams;
+  const daycareId = Array.isArray(query.daycareId)
+    ? query.daycareId[0]
+    : query.daycareId;
+  const resolution = daycareId
+    ? await validateInvitationToken(createFamilyComposition(), token, daycareId)
+    : null;
 
-  if (resolution.status !== "valid" || !resolution.invitation || !resolution.person) {
+  if (
+    !resolution ||
+    resolution.status !== "valid" ||
+    !resolution.invitation ||
+    !resolution.person
+  ) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-background p-10 max-sm:p-6">
         <section className={styles.activationContent}>
@@ -53,6 +67,7 @@ export default async function ParentInvitationTokenPage({
     <main className="flex min-h-screen items-center justify-center bg-background p-10 max-sm:p-6">
       <ParentInvitationForm
         code={token}
+        daycareId={daycareId ?? ""}
         email={resolution.person.email}
         existingActiveParent={resolution.person.status === "active"}
         kidName={kid.name}

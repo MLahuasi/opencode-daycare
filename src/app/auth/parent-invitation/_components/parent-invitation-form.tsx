@@ -11,6 +11,8 @@ import styles from "@/presentation/auth/auth.module.css";
 type ParentInvitationFormProps = {
   /** Invitation token received in the email URL. */
   code: string;
+  /** Daycare tenant received in the invitation URL. */
+  daycareId: string;
   /** Email associated with the pending parent account. */
   email: string;
   /** Whether the parent already has an active account. */
@@ -36,6 +38,7 @@ const initialParentInvitationActionState: ParentInvitationActionState = {
  */
 export function ParentInvitationForm({
   code,
+  daycareId,
   email,
   existingActiveParent,
   kidName,
@@ -62,6 +65,7 @@ export function ParentInvitationForm({
 
       <form action={formAction}>
         <input name="code" type="hidden" value={code} />
+        <input name="daycareId" type="hidden" value={daycareId} />
         <FormField className={styles.field} label="EMAIL">
           <input autoComplete="email" defaultValue={email} name="email" required type="email" />
           <span className={styles.validationError} hidden={!actionState.errors.email} role="alert">

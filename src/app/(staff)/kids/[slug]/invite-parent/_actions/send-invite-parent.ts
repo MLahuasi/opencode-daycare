@@ -25,7 +25,7 @@ export async function sendInviteParentAction(
   _previousState: InviteParentActionState,
   formData: FormData,
 ): Promise<InviteParentActionState> {
-  await requireStaffSession();
+  const session = await requireStaffSession();
 
   const validation = validateInviteParentForm({
     name: formData.get("name"),
@@ -53,6 +53,13 @@ export async function sendInviteParentAction(
     return {
       errors: {},
       message: "No pudimos encontrar al niño.",
+    };
+  }
+
+  if (kid.daycareId !== session.user.daycareId) {
+    return {
+      errors: {},
+      message: "No puedes crear una invitación para otra guardería.",
     };
   }
 
@@ -90,11 +97,12 @@ export async function sendInviteParentAction(
   const invitationUrl = new URL(
     `/auth/parent-invitation/${createdInvitation.invitation.code}`,
     appUrl,
-  ).toString();
+  );
+  invitationUrl.searchParams.set("daycareId", createdInvitation.invitation.daycareId);
 
   try {
     await dependencies.mailer.send({
-      invitationUrl,
+      invitationUrl: invitationUrl.toString(),
       expiresAt: new Date(createdInvitation.invitation.expiresAt),
       kidName: kid.name,
       parentName: createdInvitation.person.name,
@@ -111,5 +119,5 @@ export async function sendInviteParentAction(
     };
   }
 
-  redirect(`/kids/${kid.slug}?invitation=sent`);
+  redirect(`/kids/${kid.slug}?invitation=sent&daycareId=${encodeURIComponent(kid.daycareId)}`);
 }

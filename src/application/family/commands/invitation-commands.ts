@@ -154,6 +154,7 @@ export async function acceptInvitation(
 
   if (
     !invitation ||
+    invitation.daycareId !== input.daycareId ||
     getInvitationStatus(invitation, dependencies.clock.now()) !== "pending"
   ) {
     throw new InvalidInvitationAcceptanceError("The invitation is not valid.");

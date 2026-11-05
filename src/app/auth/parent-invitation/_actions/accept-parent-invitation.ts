@@ -17,6 +17,7 @@ export async function acceptParentInvitationAction(
   formData: FormData,
 ): Promise<ParentInvitationActionState> {
   const code = String(formData.get("code") ?? "").trim();
+  const daycareId = String(formData.get("daycareId") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const passwordConfirmation = String(formData.get("passwordConfirmation") ?? "");
@@ -25,6 +26,10 @@ export async function acceptParentInvitationAction(
 
   if (!email) {
     errors.email = "Ingresa tu email.";
+  }
+
+  if (!daycareId) {
+    errors.email = "El enlace de invitación no contiene una guardería válida.";
   }
 
   if (password && password !== passwordConfirmation) {
@@ -42,6 +47,7 @@ export async function acceptParentInvitationAction(
   try {
     await acceptInvitation(createFamilyComposition(), {
       code,
+      daycareId,
       email,
       password: password || undefined,
       photoSharingConsent,
@@ -60,5 +66,5 @@ export async function acceptParentInvitationAction(
     };
   }
 
-  redirect("/auth/login?activated=1");
+  redirect(`/auth/login?activated=1&daycareId=${encodeURIComponent(daycareId)}`);
 }
