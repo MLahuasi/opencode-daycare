@@ -1,5 +1,6 @@
 import { Avatar, Badge, LinkButton } from "@/presentation/ui";
-import type { LinkedParent, ParentRelationship } from "@/application/kid";
+import type { LinkedParent } from "@/application/kid";
+import type { ParentRelationship } from "@/domain/family";
 import type { PersonStatus } from "@/domain/person";
 import styles from "./kid-profile.module.css";
 

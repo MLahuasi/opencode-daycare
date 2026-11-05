@@ -5,7 +5,8 @@ import {
   getRooms,
   parseCommaSeparatedTags,
 } from "@/application/kid";
-import type { KidListItem, ParentKidRecord } from "@/application/kid";
+import type { KidListItem } from "@/application/kid";
+import type { ParentKid } from "@/domain/family";
 import type { Kid } from "@/domain/kid";
 import type { Room } from "@/domain/room";
 import { KidsFilter, KidsHeader } from "./_components";
@@ -17,7 +18,7 @@ import { requireStaffSession } from "@/composition/auth";
 function toKidListItem(
   kid: Kid,
   asOfDate: string,
-  parentKids: readonly ParentKidRecord[],
+  parentKids: readonly ParentKid[],
   rooms: readonly Room[],
 ): KidListItem {
   return {

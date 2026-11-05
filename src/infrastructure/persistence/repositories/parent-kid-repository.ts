@@ -1,10 +1,8 @@
 import "server-only";
 
 import type { FamilyParentKidRepository } from "@/application/family/ports";
-import type {
-  ParentKidRecord,
-  ParentKidRepository as ParentKidRepositoryPort,
-} from "@/application/kid/ports";
+import type { ParentKidRepository as ParentKidRepositoryPort } from "@/application/kid/ports";
+import type { ParentKid } from "@/domain/family";
 import {
   readCollection,
   withWriteLock,
@@ -18,8 +16,8 @@ export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParen
    *
    * @returns All relationship records from JSON persistence.
    */
-  findAll(): Promise<readonly ParentKidRecord[]> {
-    return readCollection<ParentKidRecord>("parent-kids.json");
+  findAll(): Promise<readonly ParentKid[]> {
+    return readCollection<ParentKid>("parent-kids.json");
   }
 
   /**
@@ -28,7 +26,7 @@ export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParen
    * @param kidId - Stable kid identifier.
    * @returns Relationships associated with the kid.
    */
-  async findByKidId(kidId: string): Promise<readonly ParentKidRecord[]> {
+  async findByKidId(kidId: string): Promise<readonly ParentKid[]> {
     const relationships = await this.findAll();
 
     return relationships.filter((relationship) => relationship.kidId === kidId);
@@ -40,7 +38,7 @@ export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParen
    * @param id - Stable relationship identifier.
    * @returns The relationship or `null` when it does not exist.
    */
-  async findById(id: string): Promise<ParentKidRecord | null> {
+  async findById(id: string): Promise<ParentKid | null> {
     const relationships = await this.findAll();
 
     return relationships.find((relationship) => relationship.id === id) ?? null;
@@ -53,7 +51,7 @@ export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParen
    * @param kidId - Stable kid identifier.
    * @returns The relationship or `null` when it does not exist.
    */
-  async findByParentAndKid(parentId: string, kidId: string): Promise<ParentKidRecord | null> {
+  async findByParentAndKid(parentId: string, kidId: string): Promise<ParentKid | null> {
     const relationships = await this.findAll();
 
     return relationships.find(
@@ -68,7 +66,7 @@ export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParen
    * @param relationship - Relationship record to append.
    * @returns A promise that resolves after persistence completes.
    */
-  create(relationship: ParentKidRecord): Promise<void> {
+  create(relationship: ParentKid): Promise<void> {
     return withWriteLock(async () => {
       const relationships = await this.findAll();
 
@@ -82,7 +80,7 @@ export class ParentKidRepository implements ParentKidRepositoryPort, FamilyParen
    * @param relationship - Updated relationship record.
    * @returns A promise that resolves after persistence completes.
    */
-  update(relationship: ParentKidRecord): Promise<void> {
+  update(relationship: ParentKid): Promise<void> {
     return withWriteLock(async () => {
       const relationships = await this.findAll();
       const index = relationships.findIndex(
