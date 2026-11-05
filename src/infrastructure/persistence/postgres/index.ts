@@ -16,6 +16,7 @@ export {
   RemoteDbTestsDisabledError,
   withRemoteDbTestTransaction,
 } from "./remote-db-test-context";
+export { PostgresPersonRepository } from "./person-repository";
 export type { FeedRelations } from "./mappers";
 export {
   mapCredentialRow,
