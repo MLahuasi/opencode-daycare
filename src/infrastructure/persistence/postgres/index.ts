@@ -17,6 +17,7 @@ export {
   withRemoteDbTestTransaction,
 } from "./remote-db-test-context";
 export { PostgresCredentialRepository } from "./credential-repository";
+export { PostgresInvitationRepository } from "./invitation-repository";
 export { PostgresPersonRepository } from "./person-repository";
 export type { FeedRelations } from "./mappers";
 export {
