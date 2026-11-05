@@ -77,6 +77,7 @@ export const authOptions: NextAuthOptions = {
           name: person.name,
           email: person.email,
           personId: person.id,
+          daycareId: person.daycareId,
           role: person.role,
         };
       },
@@ -104,17 +105,34 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.personId = user.personId;
+        token.daycareId = user.daycareId;
         token.role = user.role;
+      }
+
+      if (!token.personId || !token.daycareId || !token.role) {
+        return {};
+      }
+
+      const people = await new PersonRepository().findAll();
+      const person = people.find(
+        (candidate) =>
+          candidate.id === token.personId &&
+          candidate.daycareId === token.daycareId,
+      );
+
+      if (!person || person.status !== "active" || person.role !== token.role) {
+        return {};
       }
 
       return token;
     },
     session({ session, token }) {
-      if (session.user && token.personId && token.role) {
+      if (session.user && token.personId && token.daycareId && token.role) {
         session.user.personId = token.personId;
+        session.user.daycareId = token.daycareId;
         session.user.role = token.role;
       }
 
@@ -140,12 +158,16 @@ export function getAuthSession() {
 export async function requireActiveSession(): Promise<Session> {
   const session = await getAuthSession();
 
-  if (!session?.user?.personId) {
+  if (!session?.user?.personId || !session.user.daycareId) {
     redirect("/auth/login");
   }
 
   const people = await new PersonRepository().findAll();
-  const person = people.find((candidate) => candidate.id === session.user.personId);
+  const person = people.find(
+    (candidate) =>
+      candidate.id === session.user.personId &&
+      candidate.daycareId === session.user.daycareId,
+  );
 
   if (!person || person.status !== "active" || person.role !== session.user.role) {
     redirect("/auth/login");
