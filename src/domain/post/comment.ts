@@ -1,5 +1,7 @@
+import type { DaycareScoped } from "@/domain/daycare";
+
 /** Persisted comment attached to a Post. */
-export type PostComment = {
+export type PostComment = DaycareScoped & {
   id: string;
   postId: string;
   authorId: string;

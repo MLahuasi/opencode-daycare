@@ -1,8 +1,10 @@
+import type { DaycareScoped } from "@/domain/daycare";
+
 /** Lifecycle status assigned to a kid. */
 export type KidStatus = "active" | "inactive";
 
 /** Canonical persisted information for a kid. */
-export type Kid = {
+export type Kid = DaycareScoped & {
   id: string;
   slug: string;
   name: string;

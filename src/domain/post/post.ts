@@ -1,4 +1,5 @@
 import type { PostMedia } from "./media";
+import type { DaycareScoped } from "@/domain/daycare";
 
 /** Allowed categories for a Post. */
 export type PostType =
@@ -17,7 +18,7 @@ export type PostEngagement = {
 };
 
 /** Persisted Post content without derived engagement values. */
-export type PersistedPost = {
+export type PersistedPost = DaycareScoped & {
   id: string;
   type: PostType;
   authorId: string;

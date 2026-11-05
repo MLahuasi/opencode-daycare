@@ -1,8 +1,10 @@
+import type { DaycareScoped } from "@/domain/daycare";
+
 /** Supported formats for authenticated Post media. */
 export type PostMediaFormat = "jpg" | "jpeg" | "png" | "webp";
 
 /** Cloudinary metadata persisted for a Post image. */
-export type PostMedia = {
+export type PostMedia = DaycareScoped & {
   id: string;
   publicId: string;
   assetId: string;

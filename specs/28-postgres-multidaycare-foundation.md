@@ -122,7 +122,6 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 
 Plan de implementación
 
-2.  Añadir daycareId a entidades y corregir barrels públicos.
 3.  Eliminar duplicaciones de ParentKid y ParentRelationship.
 4.  Añadir postgres.js y configurar el cliente server-only.
 5.  Crear proveedor PostgreSQL y derivar el host.

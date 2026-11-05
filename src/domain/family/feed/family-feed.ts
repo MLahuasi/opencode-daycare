@@ -1,3 +1,5 @@
+import type { DaycareScoped } from "@/domain/daycare";
+
 /** A filter available in the family feed. */
 export type FamilyFeedFilter =
   | { kind: "kid"; id: string }
@@ -5,7 +7,7 @@ export type FamilyFeedFilter =
   | { kind: "all" };
 
 /** Minimum post data required by family feed visibility rules. */
-export type FamilyFeedPost = {
+export type FamilyFeedPost = DaycareScoped & {
   id: string;
   kidIds: readonly string[];
   roomId: string | null;
