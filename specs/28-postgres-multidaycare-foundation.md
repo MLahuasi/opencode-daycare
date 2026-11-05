@@ -1,6 +1,6 @@
 # SPEC 28 — Fundación de persistencia PostgreSQL multi-daycare
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 26 (`specs/26-supabase-schema-source-of-truth.md`), SPEC 27
 > **Date:** 2026-11-05
 > **Objective:** Preparar los contratos de dominio y los adapters server-only de PostgreSQL para que los módulos puedan leer y escribir Supabase sin modificar todavía el runtime activo de la aplicación.
@@ -103,12 +103,12 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El endpoint directo requiere IPv6. | Verificar conectividad IPv6 antes de implementar las specs dependientes. |
-| Se mezclan IDs JSON y PostgreSQL. | Mantener adapters separados y runtime JSON hasta el cutover final. |
-| Se filtran tipos de Infrastructure al dominio. | Revisar imports y exigir mappers en los límites. |
-| Las pruebas remotas dejan datos. | Ejecutar cada suite dentro de una transacción con rollback. |
+| Risk                                           | Mitigation                                                               |
+| ---------------------------------------------- | ------------------------------------------------------------------------ |
+| El endpoint directo requiere IPv6.             | Verificar conectividad IPv6 antes de implementar las specs dependientes. |
+| Se mezclan IDs JSON y PostgreSQL.              | Mantener adapters separados y runtime JSON hasta el cutover final.       |
+| Se filtran tipos de Infrastructure al dominio. | Revisar imports y exigir mappers en los límites.                         |
+| Las pruebas remotas dejan datos.               | Ejecutar cada suite dentro de una transacción con rollback.              |
 
 ## What is **not** in this spec
 
@@ -117,3 +117,18 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 - CRUD funcional completo de ningún módulo.
 - Selección de guardería en login.
 - Eliminación de JSON o adapters JSON.
+
+---
+
+Plan de implementación
+
+1.  Crear DaycareScoped y reglas puras para comparar tenants.
+2.  Añadir daycareId a entidades y corregir barrels públicos.
+3.  Eliminar duplicaciones de ParentKid y ParentRelationship.
+4.  Añadir postgres.js y configurar el cliente server-only.
+5.  Crear proveedor PostgreSQL y derivar el host.
+6.  Crear tipos generados de la base remota.
+7.  Crear mappers de las tablas indicadas.
+8.  Crear CurrentDaycareProvider.
+9.  Crear contexto de pruebas con transacción y rollback.
+10. Verificar compilación y continuidad de adapters JSON.
