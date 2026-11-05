@@ -38,6 +38,7 @@ export type SupabaseEnvironment = {
   url: string;
   publishableKey: string;
   dbPassword: string;
+  runRemoteDbTests: boolean;
 };
 
 export type Environment = {
@@ -96,6 +97,10 @@ function readBoolean(name: string): boolean {
   }
 
   return value === "true";
+}
+
+function readOptionalBoolean(name: string): boolean {
+  return process.env[name]?.trim() === "true";
 }
 
 function readEnum<T extends string>(name: string, values: readonly T[]): T {
@@ -157,6 +162,7 @@ function readEnvironment(): Environment {
       url: readUrl("NEXT_PUBLIC_SUPABASE_URL", ["http:", "https:"]),
       publishableKey: readRequiredString("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
       dbPassword: readRequiredString("SUPABASE_DB_PASSWORD"),
+      runRemoteDbTests: readOptionalBoolean("RUN_REMOTE_DB_TESTS"),
     },
   };
 }

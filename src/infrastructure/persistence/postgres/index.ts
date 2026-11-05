@@ -10,6 +10,10 @@ export {
   CurrentDaycareProvider,
   MultipleCurrentDaycaresError,
 } from "./current-daycare-provider";
+export {
+  RemoteDbTestsDisabledError,
+  withRemoteDbTestTransaction,
+} from "./remote-db-test-context";
 export type { FeedRelations } from "./mappers";
 export {
   mapCredentialRow,
