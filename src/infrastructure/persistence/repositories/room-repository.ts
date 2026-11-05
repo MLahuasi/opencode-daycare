@@ -3,7 +3,8 @@ import "server-only";
 import type { RoomRepository as RoomRepositoryPort } from "@/application/kid/ports";
 import type { Room } from "@/domain/room";
 import {
-  readCollection,
+  readDaycareScopedCollection,
+  toJsonRecord,
   withWriteLock,
   writeCollection,
 } from "@/infrastructure/persistence";
@@ -16,7 +17,7 @@ export class RoomRepository implements RoomRepositoryPort {
    * @returns All room records from JSON persistence.
    */
   findAll(): Promise<readonly Room[]> {
-    return readCollection<Room>("rooms.json");
+    return readDaycareScopedCollection<Room>("rooms.json");
   }
 
   /**
@@ -41,7 +42,7 @@ export class RoomRepository implements RoomRepositoryPort {
     return withWriteLock(async () => {
       const rooms = await this.findAll();
 
-      await writeCollection("rooms.json", [...rooms, room]);
+       await writeCollection("rooms.json", [...rooms.map(toJsonRecord), toJsonRecord(room)]);
     });
   }
 
@@ -62,7 +63,7 @@ export class RoomRepository implements RoomRepositoryPort {
 
       const updatedRooms = [...rooms];
       updatedRooms[index] = room;
-      await writeCollection("rooms.json", updatedRooms);
+       await writeCollection("rooms.json", updatedRooms.map(toJsonRecord));
     });
   }
 }

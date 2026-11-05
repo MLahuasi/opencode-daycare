@@ -3,7 +3,8 @@ import "server-only";
 import type { PostCommentRepository as PostCommentRepositoryPort } from "@/application/post/ports";
 import type { PostComment } from "@/domain/post";
 import {
-  readCollection,
+  readDaycareScopedCollection,
+  toJsonRecord,
   withWriteLock,
   writeCollection,
 } from "@/infrastructure/persistence";
@@ -16,7 +17,7 @@ export class PostCommentRepository implements PostCommentRepositoryPort {
    * @returns All Post comments from JSON persistence.
    */
   findAll(): Promise<readonly PostComment[]> {
-    return readCollection<PostComment>("feed-comments.json");
+    return readDaycareScopedCollection<PostComment>("feed-comments.json");
   }
 
   /**
@@ -39,7 +40,7 @@ export class PostCommentRepository implements PostCommentRepositoryPort {
   create(comment: PostComment): Promise<void> {
     return withWriteLock(async () => {
       const comments = await this.findAll();
-      await writeCollection("feed-comments.json", [...comments, comment]);
+       await writeCollection("feed-comments.json", [...comments.map(toJsonRecord), toJsonRecord(comment)]);
     });
   }
 
@@ -56,8 +57,8 @@ export class PostCommentRepository implements PostCommentRepositoryPort {
       if (index === -1) return null;
 
       const updated = [...comments];
-      updated[index] = comment;
-      await writeCollection("feed-comments.json", updated);
+       updated[index] = comment;
+       await writeCollection("feed-comments.json", updated.map(toJsonRecord));
       return comment;
     });
   }

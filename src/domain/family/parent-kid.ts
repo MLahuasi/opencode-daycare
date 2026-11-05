@@ -1,7 +1,8 @@
 import type { ParentRelationship } from "./parent-relationship";
+import type { DaycareScoped } from "@/domain/daycare";
 
 /** Persisted relationship between a parent and a kid. */
-export type ParentKid = {
+export type ParentKid = DaycareScoped & {
   /** Stable relationship identifier. */
   id: string;
   /** Stable parent person identifier. */

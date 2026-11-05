@@ -1,7 +1,8 @@
 import type { ParentRelationship } from "./parent-relationship";
+import type { DaycareScoped } from "@/domain/daycare";
 
 /** Invitation sent to a person to establish a parent-kid relationship. */
-export type Invitation = {
+export type Invitation = DaycareScoped & {
   /** Stable invitation identifier. */
   id: string;
   /** Stable invited person identifier. */

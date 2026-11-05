@@ -3,7 +3,7 @@ import type { Person } from "@/domain/person";
 import type { Room } from "@/domain/room";
 import type { KidDependencies } from "../kid-dependencies";
 import type { LinkedParent } from "../dto";
-import type { ParentKidRecord } from "../ports";
+import type { ParentKid } from "@/domain/family";
 
 /** Reads all persisted Kids. */
 export function getKids(dependencies: KidDependencies): Promise<readonly Kid[]> {
@@ -27,7 +27,7 @@ export function getPeople(
 /** Reads all persisted parent-to-kid relationships. */
 export function getParentKids(
   dependencies: KidDependencies,
-): Promise<readonly ParentKidRecord[]> {
+): Promise<readonly ParentKid[]> {
   return dependencies.parentKids.findAll();
 }
 

@@ -17,6 +17,7 @@ export function toggleReactionRecord(
   personId: string,
   id: string,
   timestamp: string,
+  daycareId: string,
 ): ToggleReactionResult {
   const existing = reactions.find(
     (reaction) =>
@@ -33,6 +34,7 @@ export function toggleReactionRecord(
   }
 
   const reaction: PostReaction = {
+    daycareId,
     id,
     postId,
     personId,

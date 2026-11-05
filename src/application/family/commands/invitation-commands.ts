@@ -43,6 +43,12 @@ export async function createInvitation(
   input: CreateInvitationInput,
 ): Promise<CreatedInvitation> {
   const email = input.email.trim().toLowerCase();
+  const kid = await dependencies.kids.findById(input.kidId);
+
+  if (!kid) {
+    throw new Error("Cannot create an invitation for a missing kid.");
+  }
+
   const existingPerson = await dependencies.people.findByEmail(email);
 
   if (existingPerson && existingPerson.role !== "parent") {
@@ -52,6 +58,7 @@ export async function createInvitation(
   }
 
   const person: Person = existingPerson ?? {
+    daycareId: kid.daycareId,
     id: dependencies.identifiers.create(),
     name: input.name.trim(),
     email,
@@ -71,6 +78,7 @@ export async function createInvitation(
 
   const now = dependencies.clock.now();
   const invitation: Invitation = {
+    daycareId: person.daycareId,
     id: dependencies.identifiers.create(),
     personId: person.id,
     kidId: input.kidId,
@@ -118,6 +126,7 @@ export async function createParentKidFromInvitation(
 
   await dependencies.parentKids.create({
     id: `parent-kid-${person.id}-${invitation.kidId}`,
+    daycareId: invitation.daycareId,
     parentId: person.id,
     kidId: invitation.kidId,
     relationship: invitation.relationship,
@@ -183,6 +192,7 @@ export async function acceptInvitation(
 
     if (!existingActiveParent && input.password) {
       await dependencies.credentials.upsert({
+        daycareId: person.daycareId,
         id: `credential-${person.id}`,
         personId: person.id,
         passwordHash: await dependencies.passwordHasher.hash(input.password),

@@ -8,3 +8,4 @@ export {
   writeCollection,
 } from "./json";
 export type { JsonCollectionName } from "./json";
+export { readDaycareScopedCollection, toJsonRecord } from "./json";

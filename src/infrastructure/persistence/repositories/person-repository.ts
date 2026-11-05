@@ -4,7 +4,8 @@ import type { FamilyPersonRepository } from "@/application/family/ports";
 import type { PersonRepository as PersonRepositoryPort } from "@/application/kid/ports";
 import type { Person } from "@/domain/person";
 import {
-  readCollection,
+  readDaycareScopedCollection,
+  toJsonRecord,
   withWriteLock,
   writeCollection,
 } from "@/infrastructure/persistence";
@@ -17,7 +18,7 @@ export class PersonRepository implements PersonRepositoryPort, FamilyPersonRepos
    * @returns All person records from JSON persistence.
    */
   findAll(): Promise<readonly Person[]> {
-    return readCollection<Person>("people.json");
+    return readDaycareScopedCollection<Person>("people.json");
   }
 
   /**
@@ -54,7 +55,7 @@ export class PersonRepository implements PersonRepositoryPort, FamilyPersonRepos
     return withWriteLock(async () => {
       const people = await this.findAll();
 
-      await writeCollection("people.json", [...people, person]);
+       await writeCollection("people.json", [...people, toJsonRecord(person)]);
     });
   }
 
@@ -75,7 +76,7 @@ export class PersonRepository implements PersonRepositoryPort, FamilyPersonRepos
 
       const updatedPeople = [...people];
       updatedPeople[index] = person;
-      await writeCollection("people.json", updatedPeople);
+       await writeCollection("people.json", updatedPeople.map(toJsonRecord));
     });
   }
 }

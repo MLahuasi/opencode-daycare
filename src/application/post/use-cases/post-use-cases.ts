@@ -230,10 +230,17 @@ export async function createPost(
   }
 
   const timestamp = dependencies.clock.now().toISOString();
+  const author = await dependencies.people.findById(input.authorId);
+
+  if (!author) {
+    return null;
+  }
+
   const post = createPostRecord(
     input,
     dependencies.identifiers.create(),
     timestamp,
+    author.daycareId,
   );
   return dependencies.posts.create(post);
 }
@@ -291,6 +298,7 @@ export async function toggleReaction(
     viewer.personId,
     dependencies.identifiers.create(),
     dependencies.clock.now().toISOString(),
+    post.daycareId,
   );
   const existing = reactions.find(
     (reaction) =>
@@ -331,6 +339,7 @@ export async function createComment(
     input,
     dependencies.identifiers.create(),
     dependencies.clock.now().toISOString(),
+    post.daycareId,
   );
   await dependencies.comments.create(comment);
   return comment;

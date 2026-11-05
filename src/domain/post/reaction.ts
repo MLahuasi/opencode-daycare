@@ -1,8 +1,10 @@
+import type { DaycareScoped } from "@/domain/daycare";
+
 /** Supported reaction types for a Post. */
 export type PostReactionType = "love";
 
 /** Persisted reaction attached to a Post. */
-export type PostReaction = {
+export type PostReaction = DaycareScoped & {
   id: string;
   postId: string;
   personId: string;

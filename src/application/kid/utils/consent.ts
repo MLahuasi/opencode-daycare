@@ -1,4 +1,4 @@
-import type { ParentKidRecord } from "../ports";
+import type { ParentKid } from "@/domain/family";
 
 /**
  * Determines whether a kid has effective photo sharing authorization.
@@ -9,7 +9,7 @@ import type { ParentKidRecord } from "../ports";
  */
 export function hasKidPhotoSharingConsent(
   kidId: string,
-  parentKids: readonly ParentKidRecord[],
+  parentKids: readonly ParentKid[],
 ): boolean {
   const kidRelationships = parentKids.filter(
     (parentKid) => parentKid.kidId === kidId,

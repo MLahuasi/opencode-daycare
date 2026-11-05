@@ -12,9 +12,7 @@ export type {
 export type { KidDependencies } from "./kid-dependencies";
 export type {
   KidRepository,
-  ParentKidRecord,
   ParentKidRepository,
-  ParentRelationship,
   PersonRepository,
   RoomRepository,
 } from "./ports";

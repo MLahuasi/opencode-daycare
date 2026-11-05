@@ -3,7 +3,8 @@ import "server-only";
 import type { CredentialRepository as CredentialRepositoryPort } from "@/application/auth/ports";
 import type { Credential } from "@/domain/auth";
 import {
-  readCollection,
+  readDaycareScopedCollection,
+  toJsonRecord,
   withWriteLock,
   writeCollection,
 } from "@/infrastructure/persistence";
@@ -17,7 +18,7 @@ export class CredentialRepository implements CredentialRepositoryPort {
    * @returns The credential or `null` when it does not exist.
    */
   async findByPersonId(personId: string): Promise<Credential | null> {
-    const credentials = await readCollection<Credential>("credential.json");
+    const credentials = await readDaycareScopedCollection<Credential>("credential.json");
 
     return credentials.find((credential) => credential.personId === personId) ?? null;
   }
@@ -30,13 +31,13 @@ export class CredentialRepository implements CredentialRepositoryPort {
    */
   upsert(credential: Credential): Promise<void> {
     return withWriteLock(async () => {
-      const credentials = await readCollection<Credential>("credential.json");
+       const credentials = await readDaycareScopedCollection<Credential>("credential.json");
       const updatedCredentials = [
         ...credentials.filter((candidate) => candidate.personId !== credential.personId),
         credential,
       ];
 
-      await writeCollection("credential.json", updatedCredentials);
+       await writeCollection("credential.json", updatedCredentials.map(toJsonRecord));
     });
   }
 }

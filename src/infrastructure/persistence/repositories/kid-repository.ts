@@ -3,7 +3,8 @@ import "server-only";
 import type { KidRepository as KidRepositoryPort } from "@/application/kid/ports";
 import type { Kid } from "@/domain/kid";
 import {
-  readCollection,
+  readDaycareScopedCollection,
+  toJsonRecord,
   withWriteLock,
   writeCollection,
 } from "@/infrastructure/persistence";
@@ -16,7 +17,7 @@ export class KidRepository implements KidRepositoryPort {
    * @returns All kid records from JSON persistence.
    */
   findAll(): Promise<readonly Kid[]> {
-    return readCollection<Kid>("kids.json");
+    return readDaycareScopedCollection<Kid>("kids.json");
   }
 
   /**
@@ -53,7 +54,7 @@ export class KidRepository implements KidRepositoryPort {
     return withWriteLock(async () => {
       const kids = await this.findAll();
 
-      await writeCollection("kids.json", [...kids, kid]);
+       await writeCollection("kids.json", [...kids.map(toJsonRecord), toJsonRecord(kid)]);
     });
   }
 
@@ -74,7 +75,7 @@ export class KidRepository implements KidRepositoryPort {
 
       const updatedKids = [...kids];
       updatedKids[index] = kid;
-      await writeCollection("kids.json", updatedKids);
+       await writeCollection("kids.json", updatedKids.map(toJsonRecord));
     });
   }
 }

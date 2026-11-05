@@ -1,6 +1,6 @@
 # SPEC 28 — Fundación de persistencia PostgreSQL multi-daycare
 
-> **Status:** Draft
+> **Status:** Implemented
 > **Depends on:** SPEC 26 (`specs/26-supabase-schema-source-of-truth.md`), SPEC 27
 > **Date:** 2026-11-05
 > **Objective:** Preparar los contratos de dominio y los adapters server-only de PostgreSQL para que los módulos puedan leer y escribir Supabase sin modificar todavía el runtime activo de la aplicación.
@@ -75,21 +75,21 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 
 ## Acceptance criteria
 
-- [ ] Todas las entidades persistidas listadas tienen `daycareId` obligatorio.
-- [ ] Los tipos derivados no duplican manualmente `daycareId`.
-- [ ] Domain no importa PostgreSQL, Supabase, Next.js, filesystem ni configuración server-only.
-- [ ] Existe `src/infrastructure/persistence/postgres/` separado de `src/infrastructure/persistence/json/`.
-- [ ] La conexión PostgreSQL solo puede importarse desde código server-only.
-- [ ] No se registra ninguna contraseña, URL completa, query ni respuesta sensible.
-- [ ] El endpoint se deriva de `NEXT_PUBLIC_SUPABASE_URL` y la autenticación usa `SUPABASE_DB_PASSWORD`.
-- [ ] `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` no se usa como credencial PostgreSQL.
-- [ ] Los mappers conservan nombres, fechas, `NULL`, cadenas vacías y valores enum.
-- [ ] Los adapters JSON siguen funcionando y no modifican ningún archivo de `json/data`.
-- [ ] Las pruebas remotas solo se ejecutan con `RUN_REMOTE_DB_TESTS` explícito.
-- [ ] Las pruebas remotas revierten sus escrituras dentro de una transacción.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
+- [x] Todas las entidades persistidas listadas tienen `daycareId` obligatorio.
+- [x] Los tipos derivados no duplican manualmente `daycareId`.
+- [x] Domain no importa PostgreSQL, Supabase, Next.js, filesystem ni configuración server-only.
+- [x] Existe `src/infrastructure/persistence/postgres/` separado de `src/infrastructure/persistence/json/`.
+- [x] La conexión PostgreSQL solo puede importarse desde código server-only.
+- [x] No se registra ninguna contraseña, URL completa, query ni respuesta sensible.
+- [x] El endpoint se deriva de `NEXT_PUBLIC_SUPABASE_URL` y la autenticación usa `SUPABASE_DB_PASSWORD`.
+- [x] `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` no se usa como credencial PostgreSQL.
+- [x] Los mappers conservan nombres, fechas, `NULL`, cadenas vacías y valores enum.
+- [x] Los adapters JSON siguen funcionando y no modifican ningún archivo de `json/data`.
+- [x] Las pruebas remotas solo se ejecutan con `RUN_REMOTE_DB_TESTS` explícito.
+- [x] Las pruebas remotas revierten sus escrituras dentro de una transacción.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
 
 ## Decisions
 
@@ -103,12 +103,12 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El endpoint directo requiere IPv6. | Verificar conectividad IPv6 antes de implementar las specs dependientes. |
-| Se mezclan IDs JSON y PostgreSQL. | Mantener adapters separados y runtime JSON hasta el cutover final. |
-| Se filtran tipos de Infrastructure al dominio. | Revisar imports y exigir mappers en los límites. |
-| Las pruebas remotas dejan datos. | Ejecutar cada suite dentro de una transacción con rollback. |
+| Risk                                           | Mitigation                                                               |
+| ---------------------------------------------- | ------------------------------------------------------------------------ |
+| El endpoint directo requiere IPv6.             | Verificar conectividad IPv6 antes de implementar las specs dependientes. |
+| Se mezclan IDs JSON y PostgreSQL.              | Mantener adapters separados y runtime JSON hasta el cutover final.       |
+| Se filtran tipos de Infrastructure al dominio. | Revisar imports y exigir mappers en los límites.                         |
+| Las pruebas remotas dejan datos.               | Ejecutar cada suite dentro de una transacción con rollback.              |
 
 ## What is **not** in this spec
 
@@ -117,3 +117,5 @@ Los JSON continúan sin `daycareId`. Sus adapters temporales deben obtener la ú
 - CRUD funcional completo de ningún módulo.
 - Selección de guardería en login.
 - Eliminación de JSON o adapters JSON.
+
+---
