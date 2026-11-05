@@ -2,7 +2,7 @@ import "server-only";
 
 import type { ISql } from "postgres";
 import { getSupabaseEnvironment } from "@/config/server";
-import { PostgresClientProvider } from "./postgres-client-provider";
+import { PostgresClientProvider } from "../client/postgres-client-provider";
 
 /** Raised when remote PostgreSQL tests were not explicitly enabled. */
 export class RemoteDbTestsDisabledError extends Error {

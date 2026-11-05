@@ -172,8 +172,13 @@ export async function acceptInvitation(
     throw new InvalidInvitationAcceptanceError("The activation password is invalid.");
   }
 
-  await dependencies.transaction.run(async () => {
-    const currentInvitation = await dependencies.invitations.findByCode(input.code.trim());
+  await dependencies.transaction.run(async (transactionRepositories) => {
+    const currentInvitation = transactionRepositories
+      ? await transactionRepositories.invitations.findByCode(
+          invitation.daycareId,
+          input.code.trim(),
+        )
+      : await dependencies.invitations.findByCode(input.code.trim());
 
     if (
       !currentInvitation ||
@@ -183,28 +188,63 @@ export async function acceptInvitation(
       throw new InvalidInvitationAcceptanceError("The invitation is no longer valid.");
     }
 
-    await createParentKidFromInvitation(
-      dependencies,
-      currentInvitation,
-      person,
-      input.photoSharingConsent,
-    );
+    if (transactionRepositories) {
+      const transactionPerson = await transactionRepositories.people.findById(
+        invitation.daycareId,
+        person.id,
+      );
+      const existingParentKid = await transactionRepositories.parentKids.findByParentAndKid(
+        invitation.daycareId,
+        person.id,
+        currentInvitation.kidId,
+      );
+
+      if (!transactionPerson || existingParentKid) {
+        throw new ExistingParentKidError("The parent is already linked to this kid.");
+      }
+
+      await transactionRepositories.parentKids.create({
+        id: `parent-kid-${person.id}-${currentInvitation.kidId}`,
+        daycareId: currentInvitation.daycareId,
+        parentId: person.id,
+        kidId: currentInvitation.kidId,
+        relationship: currentInvitation.relationship,
+        photoSharingConsent: input.photoSharingConsent,
+      });
+    } else {
+      await createParentKidFromInvitation(
+        dependencies,
+        currentInvitation,
+        person,
+        input.photoSharingConsent,
+      );
+    }
 
     if (!existingActiveParent && input.password) {
-      await dependencies.credentials.upsert({
+      const credential = {
         daycareId: person.daycareId,
         id: `credential-${person.id}`,
         personId: person.id,
         passwordHash: await dependencies.passwordHasher.hash(input.password),
-      });
-      await dependencies.people.update({ ...person, status: "active" });
+      };
+
+      if (transactionRepositories) {
+        await transactionRepositories.credentials.upsert(credential);
+        await transactionRepositories.people.update({ ...person, status: "active" });
+      } else {
+        await dependencies.credentials.upsert(credential);
+        await dependencies.people.update({ ...person, status: "active" });
+      }
     }
 
     const acceptedAt = dependencies.clock.now().toISOString();
-    const acceptedInvitation = await dependencies.invitations.markAccepted(
-      currentInvitation.id,
-      acceptedAt,
-    );
+    const acceptedInvitation = transactionRepositories
+      ? await transactionRepositories.invitations.markAccepted(
+          invitation.daycareId,
+          currentInvitation.id,
+          acceptedAt,
+        )
+      : await dependencies.invitations.markAccepted(currentInvitation.id, acceptedAt);
 
     if (!acceptedInvitation) {
       throw new InvalidInvitationAcceptanceError("The invitation could not be accepted.");

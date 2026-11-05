@@ -4,7 +4,7 @@ import type { Kid } from "@/domain/kid";
 import type { Person } from "@/domain/person";
 import type { PostComment, PostMedia, PostReaction, PersistedPost } from "@/domain/post";
 import type { Room } from "@/domain/room";
-import type { Tables } from "./database.types";
+import type { Tables } from "../types/database.types";
 
 /** Maps a PostgreSQL people row to the Person domain entity. */
 export function mapPersonRow(row: Tables<"people">): Person {

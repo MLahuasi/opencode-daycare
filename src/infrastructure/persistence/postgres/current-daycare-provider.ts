@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { PostgresClient } from "./postgres-client";
+import type { PostgresClient } from "./client/postgres-client";
 
 type CurrentDaycareRow = {
   id: string;

@@ -1,9 +1,12 @@
 import "server-only";
 
-import postgres, { type Options, type Sql } from "postgres";
+import postgres, { type Options, type Sql, type TransactionSql } from "postgres";
 
 /** The server-only PostgreSQL client type used by persistence adapters. */
 export type PostgresClient = Sql;
+
+/** Query client shared by the root connection and a transaction. */
+export type PostgresQueryClient = Sql | TransactionSql;
 
 /**
  * Creates a PostgreSQL client with the connection safety defaults shared by

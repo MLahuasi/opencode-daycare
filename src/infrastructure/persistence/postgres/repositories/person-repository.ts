@@ -1,13 +1,13 @@
 import "server-only";
 
 import type { Person } from "@/domain/person";
-import { mapPersonRow } from "./mappers";
-import type { PostgresClient } from "./postgres-client";
-import type { Tables } from "./database.types";
+import { mapPersonRow } from "../mappers";
+import type { PostgresQueryClient } from "../client/postgres-client";
+import type { Tables } from "../types";
 
 /** PostgreSQL persistence adapter for daycare-scoped people. */
 export class PostgresPersonRepository {
-  public constructor(private readonly client: PostgresClient) {}
+  public constructor(private readonly client: PostgresQueryClient) {}
 
   /**
    * Lists the people belonging to one daycare.

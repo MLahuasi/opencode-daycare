@@ -4,6 +4,7 @@ export {
 } from "./commands";
 export type { AuthDependencies } from "./auth-dependencies";
 export type {
+  AuthTransactionRepositories,
   AuthTransactionRunner,
   AuthIdentifierGenerator,
   CredentialRepository,

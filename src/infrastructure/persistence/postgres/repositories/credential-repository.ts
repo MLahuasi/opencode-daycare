@@ -1,13 +1,13 @@
 import "server-only";
 
 import type { Credential } from "@/domain/auth";
-import { mapCredentialRow } from "./mappers";
-import type { PostgresClient } from "./postgres-client";
-import type { Tables } from "./database.types";
+import { mapCredentialRow } from "../mappers";
+import type { PostgresQueryClient } from "../client/postgres-client";
+import type { Tables } from "../types";
 
 /** PostgreSQL persistence adapter for daycare-scoped credentials. */
 export class PostgresCredentialRepository {
-  public constructor(private readonly client: PostgresClient) {}
+  public constructor(private readonly client: PostgresQueryClient) {}
 
   /**
    * Finds a credential using both tenant and person identifiers.

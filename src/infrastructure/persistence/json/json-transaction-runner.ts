@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { TransactionRunner } from "@/application/family/ports";
+import type { AuthTransactionRunner } from "@/application/auth";
 import { withJsonTransaction } from "./json-collection";
 
 const FAMILY_AUTH_COLLECTIONS = [
@@ -11,7 +11,7 @@ const FAMILY_AUTH_COLLECTIONS = [
 ] as const;
 
 /** JSON transaction adapter for coordinated Family and Auth writes. */
-export class JsonTransactionRunner implements TransactionRunner {
+export class JsonTransactionRunner implements AuthTransactionRunner {
   /**
    * Runs Family and Auth writes with snapshot rollback.
    *
