@@ -61,8 +61,8 @@ No se debe mantener un modo híbrido por módulo.
 - [x] Auth, Staff y General usan adapters PostgreSQL en runtime.
 - [x] Ninguna ruta productiva lee JSON para obtener datos de negocio.
 - [x] Ningún repositorio runtime combina una entidad JSON con una entidad PostgreSQL.
-- [ ] Las sesiones activas anteriores al cutover no permiten acceder con IDs JSON.
-- [ ] Login exige y conserva el `daycareId` seleccionado.
+- [x] Las sesiones activas anteriores al cutover no permiten acceder con IDs JSON.
+- [x] Login exige y conserva el `daycareId` seleccionado.
 - [x] Invitaciones usan `daycareId` para crear, consultar y aceptar relaciones.
 - [x] Kids, Rooms, People, ParentKids y StaffRooms se aíslan por tenant.
 - [x] Posts reconstruyen correctamente destinatarios y media desde tablas normalizadas.
@@ -70,10 +70,10 @@ No se debe mantener un modo híbrido por módulo.
 - [ ] Las reglas funcionales existentes permanecen sin cambios.
 - [x] Los archivos JSON de persistencia y adapters JSON fueron retirados.
 - [x] Los adapters JSON no forman parte del camino runtime productivo.
-- [ ] La aplicación inicia sin errores usando las credenciales existentes.
+- [x] La aplicación inicia sin errores usando las credenciales existentes.
 - [x] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y revierten sus escrituras.
 - [x] Cada módulo conserva evidencia de validación contra PostgreSQL antes del cutover.
-- [ ] Las rutas Auth, Staff y General pasan smoke tests con datos PostgreSQL.
+- [x] Las rutas Auth, Staff y General pasan smoke tests con datos PostgreSQL.
 - [x] `npx eslint src` termina correctamente.
 - [x] `npx tsc --noEmit --incremental false` termina correctamente.
 - [x] `npm run build` termina correctamente.
@@ -90,12 +90,12 @@ No se debe mantener un modo híbrido por módulo.
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Sesiones antiguas apuntan a IDs JSON. | Invalidarlas antes de activar el tráfico PostgreSQL. |
-| Un consumidor olvidado sigue leyendo JSON. | Buscar imports, ejecutar smoke tests y revisar el grafo de Composition. |
-| La app queda parcialmente migrada. | Cambiar las composiciones en una única operación coordinada. |
-| Se modifican accidentalmente los snapshots. | Verificar hashes antes y después del cutover. |
+| Risk                                        | Mitigation                                                              |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
+| Sesiones antiguas apuntan a IDs JSON.       | Invalidarlas antes de activar el tráfico PostgreSQL.                    |
+| Un consumidor olvidado sigue leyendo JSON.  | Buscar imports, ejecutar smoke tests y revisar el grafo de Composition. |
+| La app queda parcialmente migrada.          | Cambiar las composiciones en una única operación coordinada.            |
+| Se modifican accidentalmente los snapshots. | Verificar hashes antes y después del cutover.                           |
 
 ## What is **not** in this spec
 
@@ -104,3 +104,5 @@ No se debe mantener un modo híbrido por módulo.
 - Datos de migración históricos ya aplicados.
 - Administración de guarderías.
 - Supabase Auth.
+
+---

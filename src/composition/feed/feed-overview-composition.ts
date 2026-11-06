@@ -8,7 +8,7 @@ import type { FeedOverviewRecord } from "@/infrastructure/persistence/postgres";
 export type { FeedOverviewRecord } from "@/infrastructure/persistence/postgres";
 
 /**
- * Reads the configured staff feed header through the JSON adapter.
+ * Reads the configured staff feed header through the PostgreSQL adapter.
  *
  * @returns Persisted feed overview records.
  */

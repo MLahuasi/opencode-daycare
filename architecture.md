@@ -87,8 +87,7 @@ flowchart TB
     APPLICATION --> DOMAIN[src/domain<br/>policies and models]
     COMPOSITION --> AUTH[composition/auth<br/>server-side Auth API]
     AUTH --> AUTH_INFRA[infrastructure/auth<br/>NextAuth implementation]
-    COMPOSITION --> PERSISTENCE[infrastructure/persistence<br/>JSON repositories]
-    COMPOSITION --> POSTGRES[infrastructure/persistence/postgres<br/>PostgreSQL adapters]
+     COMPOSITION --> POSTGRES[infrastructure/persistence/postgres<br/>PostgreSQL adapters]
     POSTGRES --> POOLER[Supabase Session Pooler<br/>postgres.js]
 
     INSTRUMENTATION[src/instrumentation.ts<br/>Next.js lifecycle adapter] -->|NEXT_RUNTIME === nodejs| NODE_INSTRUMENTATION[src/instrumentation-node.ts<br/>Node.js bridge]
@@ -117,7 +116,7 @@ flowchart TB
     classDef server fill:#eef6ff,stroke:#377dbe,color:#123;
     classDef boundary fill:#fff4df,stroke:#c27b00,color:#432800;
     classDef external fill:#f2f2f2,stroke:#777,color:#222;
-    class ROUTES,PRESENTATION,COMPOSITION,APPLICATION,DOMAIN,AUTH,AUTH_INFRA,PERSISTENCE,INSTRUMENTATION,RUNTIME,BOOTSTRAP,ENV,BOOT_COMPOSITION,DB_COMPOSITION,DB_FACADE,MAIL_FACADE,IMAGE_FACADE,DB_PORT,CHECK_USE_CASE,SUPABASE_PROVIDER,JMLQ,CLOUDINARY server;
+     class ROUTES,PRESENTATION,COMPOSITION,APPLICATION,DOMAIN,AUTH,AUTH_INFRA,INSTRUMENTATION,RUNTIME,BOOTSTRAP,ENV,BOOT_COMPOSITION,DB_COMPOSITION,DB_FACADE,MAIL_FACADE,IMAGE_FACADE,DB_PORT,CHECK_USE_CASE,SUPABASE_PROVIDER,JMLQ,CLOUDINARY server;
     class BROWSER boundary;
     class SUPABASE,SMTP,CLOUDINARY_API external;
 ```
@@ -132,6 +131,10 @@ knows only ports; `Composition` is the place where those ports meet concrete
 Infrastructure adapters.
 
 ## Persistence
+
+**Runtime source: PostgreSQL/Supabase.** Todas las entidades persistidas por la
+aplicación pasan por adapters PostgreSQL tenant-scoped. Los JSON históricos son
+snapshots inmutables de migración y no forman parte del camino runtime.
 
 - Keep persistence details behind repositories or persistence adapters.
 - Keep filesystem paths, serialization formats, locks, transactions and
@@ -157,6 +160,17 @@ Infrastructure adapters.
 - `CurrentDaycareProvider` is a provisional PostgreSQL adapter used to obtain the
   single operational daycare for the login default. It must be replaced by an
   explicit daycare selector when multiple daycares are exposed to users.
+
+### Operational rollback
+
+- Stop authenticated traffic before rolling back a deployment.
+- Let PostgreSQL transactions roll back failed business operations; do not
+  restore JSON data or enable a hybrid persistence mode.
+- Roll back only to a PostgreSQL-compatible application version and keep the
+  linked database configuration unchanged.
+- Re-run readiness (`SELECT 1`) and route smoke checks before accepting traffic.
+- Require a new login after rollback. JWTs without the PostgreSQL session marker
+  are rejected and are not translated from legacy JSON IDs.
 
 ## Server and Client Boundaries
 

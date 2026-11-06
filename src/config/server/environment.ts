@@ -5,6 +5,8 @@ import path from "node:path";
 
 export type ApplicationEnvironment = {
   appUrl: string;
+  locale: string;
+  timeZone: string;
   nodeEnvironment: "development" | "test" | "production";
   isBuild: boolean;
 };
@@ -115,6 +117,30 @@ function readEnum<T extends string>(name: string, values: readonly T[]): T {
   return value as T;
 }
 
+function readTimeZone(name: string): string {
+  const value = readRequiredString(name);
+
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: value });
+  } catch {
+    throw new Error(`[environment] Invalid IANA time zone variable: ${name}`);
+  }
+
+  return value;
+}
+
+function readLocale(name: string): string {
+  const value = readRequiredString(name);
+
+  try {
+    new Intl.DateTimeFormat(value);
+  } catch {
+    throw new Error(`[environment] Invalid locale variable: ${name}`);
+  }
+
+  return value;
+}
+
 function readEnvironment(): Environment {
   const mailTemplatePath = path.join(process.cwd(), "templates");
 
@@ -125,6 +151,8 @@ function readEnvironment(): Environment {
   return {
     application: {
       appUrl: readUrl("APP_URL", ["http:", "https:"]),
+      locale: readLocale("APP_LOCALE"),
+      timeZone: readTimeZone("APP_TIME_ZONE"),
       nodeEnvironment: readEnum(
         "NODE_ENV",
         ["development", "test", "production"],

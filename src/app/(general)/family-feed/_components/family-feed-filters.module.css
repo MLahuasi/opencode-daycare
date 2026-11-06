@@ -28,8 +28,8 @@
   outline-offset: 2px;
 }
 
-.active,
-.active:hover {
+.filter.active,
+.filter.active:hover {
   border-color: var(--color-ink);
   background: var(--color-ink);
   color: var(--color-surface);

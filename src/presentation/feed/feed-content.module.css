@@ -104,6 +104,11 @@
   margin-bottom: 14px;
 }
 
+.previousDivider {
+  margin-top: 36px;
+  margin-bottom: 20px;
+}
+
 .divider span {
   color: var(--color-navigation);
 }

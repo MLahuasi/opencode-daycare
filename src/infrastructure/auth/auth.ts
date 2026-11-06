@@ -3,7 +3,14 @@ import "server-only";
 import { getServerSession, type NextAuthOptions, type Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
-import { UUID_PATTERN } from "@/config";
+import {
+  hasValidSessionIdentifiers,
+  isActiveSessionPerson,
+  isPostgresSessionIdentity,
+  isValidSessionIdentity,
+  POSTGRES_SESSION_SOURCE,
+  UUID_PATTERN,
+} from "@/config";
 import { getApplicationEnvironment, getAuthEnvironment } from "@/config/server";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
@@ -63,7 +70,12 @@ export const authOptions: NextAuthOptions = {
           ? await credentialRepository.findByPersonId(daycareId, person.id)
           : null;
 
-        if (!person || person.status !== "active" || !storedCredential) {
+        if (
+          !person ||
+          person.daycareId !== daycareId ||
+          person.status !== "active" ||
+          !storedCredential
+        ) {
           return null;
         }
 
@@ -82,6 +94,7 @@ export const authOptions: NextAuthOptions = {
           personId: person.id,
           daycareId: person.daycareId,
           role: person.role,
+          persistenceSource: POSTGRES_SESSION_SOURCE,
         };
       },
     }),
@@ -113,9 +126,13 @@ export const authOptions: NextAuthOptions = {
         token.personId = user.personId;
         token.daycareId = user.daycareId;
         token.role = user.role;
+        token.persistenceSource = POSTGRES_SESSION_SOURCE;
       }
 
-      if (!token.personId || !token.daycareId || !token.role) {
+      if (
+        token.persistenceSource !== POSTGRES_SESSION_SOURCE ||
+        !isValidSessionIdentity(token)
+      ) {
         return {};
       }
 
@@ -123,17 +140,18 @@ export const authOptions: NextAuthOptions = {
          getAuthPostgresClient(),
        ).findById(token.daycareId, token.personId);
 
-      if (!person || person.status !== "active" || person.role !== token.role) {
-        return {};
-      }
+       if (!isActiveSessionPerson(person, token)) {
+         return {};
+       }
 
       return token;
     },
     session({ session, token }) {
-      if (session.user && token.personId && token.daycareId && token.role) {
-        session.user.personId = token.personId;
-        session.user.daycareId = token.daycareId;
-        session.user.role = token.role;
+       if (session.user && isPostgresSessionIdentity(token)) {
+         session.user.personId = token.personId;
+         session.user.daycareId = token.daycareId;
+         session.user.role = token.role;
+         session.user.persistenceSource = token.persistenceSource;
       }
 
       return session;
@@ -158,7 +176,11 @@ export function getAuthSession() {
 export async function requireActiveSession(): Promise<Session> {
   const session = await getAuthSession();
 
-  if (!session?.user?.personId || !session.user.daycareId) {
+  if (
+    !session?.user ||
+    !hasValidSessionIdentifiers(session.user) ||
+    !isPostgresSessionIdentity(session.user)
+  ) {
     redirect("/auth/login");
   }
 
@@ -166,7 +188,7 @@ export async function requireActiveSession(): Promise<Session> {
     getAuthPostgresClient(),
   ).findById(session.user.daycareId, session.user.personId);
 
-  if (!person || person.status !== "active" || person.role !== session.user.role) {
+  if (!isActiveSessionPerson(person, session.user)) {
     redirect("/auth/login");
   }
 

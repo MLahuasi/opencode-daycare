@@ -30,7 +30,20 @@ npm install
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000).
+El servidor de desarrollo y el servidor de producción usan explícitamente el
+puerto `3000`. Abre [http://localhost:3000](http://localhost:3000).
+
+Si el puerto está ocupado, Next.js no debe iniciar otro servidor en un puerto
+aleatorio. Libera primero el proceso que lo usa en PowerShell:
+
+```powershell
+Get-NetTCPConnection -LocalPort 3000 -State Listen |
+  Select-Object -ExpandProperty OwningProcess -Unique |
+  Stop-Process -Force
+```
+
+Después vuelve a ejecutar `npm run dev`. Todas las rutas de App Router usan el
+mismo origen y puerto; no se configura un puerto diferente por ruta.
 
 Comandos disponibles:
 
@@ -68,6 +81,7 @@ Define la configuración SMTP en un archivo local ignorado por Git, por ejemplo
 
 ```dotenv
 APP_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3000
 
 MAILER_EMAIL=example@gmail.com
 MAILER_SECRET_KEY=app_password_here
@@ -136,6 +150,18 @@ SUPABASE_DB_PASSWORD=your_database_password
 RUN_REMOTE_DB_TESTS=false
 ```
 
+La configuración regional server-only requiere una zona horaria IANA. Para
+Ecuador continental usa:
+
+```dotenv
+APP_LOCALE=es-EC
+APP_TIME_ZONE=America/Guayaquil
+```
+
+Las fechas PostgreSQL recibidas como instantes se normalizan a `YYYY-MM-DD` en
+esta zona antes de mapearse al dominio. `APP_LOCALE` controla el idioma y
+formato regional de las fechas mostradas.
+
 La aplicación usa PostgreSQL mediante `postgres.js` y el Session Pooler IPv4.
 `SUPABASE_DB_PASSWORD` es server-only y nunca debe exponerse en variables
 `NEXT_PUBLIC_*`. `bootstrap.ts` valida todo el entorno y configura, en orden,
@@ -148,12 +174,13 @@ idempotente y detiene la preparación del servidor ante cualquier error de
 configuración o conexión.
 
 Esta entrega no implementa Supabase Auth ni cambia bcrypt, cookies o la estrategia
-JWT. Las migraciones y seeds SQL se versionan en `supabase/migrations/`; los
-repositorios PostgreSQL de Auth e invitaciones permanecen separados y no están
-activados como persistencia general de las rutas productivas. Tampoco realiza
-conexiones SMTP ni operaciones de Cloudinary durante el arranque. La refactorización de NextAuth mantiene Credentials,
-sesiones JWT, cookies, redirects y permisos sin cambios; su API server-side se
-consume desde `@/composition/auth`.
+JWT. Las migraciones y seeds SQL se versionan en `supabase/migrations/`. Auth,
+Staff y General usan PostgreSQL como persistencia runtime a través de sus
+composiciones server-only; no existe fallback JSON ni traducción de IDs legacy.
+Tampoco realiza conexiones SMTP ni operaciones de Cloudinary durante el
+arranque. La refactorización de NextAuth mantiene Credentials, sesiones JWT,
+cookies, redirects y permisos sin cambios; su API server-side se consume desde
+`@/composition/auth`.
 
 Las rutas legacy `/login`, `/kids/:id/edit`, `/auth/link-parent`, las rutas
 antiguas de Posts, `/activate-account` y `/auth/activate-account` responden 404.
@@ -179,6 +206,23 @@ ejecutan con `RUN_REMOTE_DB_TESTS=true`, dentro de transacciones con rollback.
 Mientras exista una única guardería operativa, `CurrentDaycareProvider` obtiene
 provisionalmente su `daycareId` desde PostgreSQL para completar el login;
 posteriormente se incorporará la selección explícita de guardería.
+
+**Runtime source: PostgreSQL/Supabase.** Los 11 JSON son snapshots inmutables
+de migración y no forman parte del runtime ni se escriben durante la ejecución.
+
+### Rollback operativo del cutover
+
+1. Detener el tráfico autenticado y conservar los logs de readiness sin incluir
+   credenciales, headers ni datos de respuestas.
+2. Si falla una operación de negocio, dejar que la transacción PostgreSQL la
+   revierta; no restaurar JSON ni activar un fallback híbrido.
+3. Si falla el despliegue, volver a la última versión compatible con PostgreSQL
+   y mantener la misma configuración de base de datos. No volver a una versión
+   que use IDs JSON como fuente runtime.
+4. Comprobar `SELECT 1`, ejecutar los smoke tests y exigir un nuevo login. Las
+   sesiones antiguas o sin `persistenceSource: "postgres"` permanecen inválidas.
+5. Reanudar tráfico solo después de confirmar aislamiento por `daycareId` y que
+   las escrituras remotas de prueba siguen usando rollback.
 
 La activación de una invitación se realiza posteriormente desde
 `/auth/parent-invitation/[token]`: crea o actualiza las credenciales, activa la persona,
@@ -206,6 +250,11 @@ AUTH_SESSION_COOKIE_SAME_SITE=lax
 AUTH_SESSION_COOKIE_PATH=/
 AUTH_SIGN_IN_PATH=/auth/login
 ```
+
+`NEXTAUTH_URL` debe coincidir con el origen usado por el servidor. En local es
+`http://localhost:3000`; en otros entornos debe usar el origen público HTTPS
+correspondiente. `PORT` no se configura en `.env` porque Next.js necesita
+resolver el puerto antes de cargar las variables de la aplicación.
 
 `AUTH_SECRET` debe reemplazarse por un secreto aleatorio real fuera del entorno
 local. `AUTH_SESSION_COOKIE_SECURE` debe ser `true` cuando la aplicación se sirve

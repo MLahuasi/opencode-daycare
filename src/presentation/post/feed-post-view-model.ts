@@ -1,4 +1,5 @@
 import type { Post } from "@/domain/post";
+import { createPostDateFormatters } from "@/config";
 
 /** Post data formatted for the family feed card. */
 export type FeedPostViewModel = Post & {
@@ -7,6 +8,7 @@ export type FeedPostViewModel = Post & {
   initial: string;
   mediaLabel?: string;
   recipient: string;
+  date: string;
   time: string;
 };
 
@@ -32,20 +34,20 @@ export function getKidAvatarPositions(
   return positions;
 }
 
-const feedTimeFormatter = new Intl.DateTimeFormat("es-ES", {
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: "UTC",
-});
-
 /**
  * Formats a neutral Post for the family feed card.
  *
  * @param post - Authorized neutral Post projection.
+ * @param timeZone - IANA time zone used to render the post time.
  * @returns The visual feed card model.
  */
-export function presentFeedPost(post: Post): FeedPostViewModel {
+export function presentFeedPost(
+  post: Post,
+  locale: string,
+  timeZone: string,
+): FeedPostViewModel {
   const subject = post.subject ?? (post.kidIds.length > 1 ? "Varios niños" : "Anuncio general");
+  const formatters = createPostDateFormatters(locale, timeZone);
 
   return {
     ...post,
@@ -55,6 +57,7 @@ export function presentFeedPost(post: Post): FeedPostViewModel {
     mediaLabel: post.media[0]?.alt ?? post.media[0]?.originalName,
     recipient: post.kidIds.length > 0 ? `familia de ${subject}` : "toda la sala",
     subject,
-    time: feedTimeFormatter.format(new Date(post.createdAt)),
+    date: formatters.date.format(new Date(post.createdAt)),
+    time: formatters.time.format(new Date(post.createdAt)),
   };
 }

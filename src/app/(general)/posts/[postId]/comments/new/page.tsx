@@ -5,6 +5,7 @@ import { getPostDetail } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 import { FamilyCommentForm } from "@/presentation/post";
 import { presentPostDetail } from "@/presentation/post";
+import { getApplicationEnvironment } from "@/config/server";
 
 /** Dynamic parameters accepted by the new Post comment route. */
 type NewPostCommentPageProps = {
@@ -33,7 +34,8 @@ export default async function NewPostCommentPage({
    if (!detail) {
      redirect("/family-feed");
    }
-   const viewModel = presentPostDetail(detail);
+   const environment = getApplicationEnvironment();
+   const viewModel = presentPostDetail(detail, environment.locale, environment.timeZone);
 
   return (
     <main className="flex min-h-screen items-start justify-center px-6 py-10 max-sm:px-4 max-sm:py-6">

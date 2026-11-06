@@ -15,7 +15,7 @@ import {
   PostgresRoomRepository,
 } from "@/infrastructure/persistence/postgres";
 
-/** PostgreSQL-only Family Feed composition for route verification. */
+/** PostgreSQL-only Family Feed composition for the General runtime routes. */
 export function createPostgresFamilyFeedComposition(
   client: PostgresQueryClient,
   currentDaycare: CurrentDaycareReader,

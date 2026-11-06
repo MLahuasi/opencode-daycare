@@ -97,19 +97,6 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 
 ---
 
-Plan de implementación
-
-1.  Crear mappers de PostComment y PostReaction, preservando fechas nullable.
-2.  Implementar lectores filtrados por daycare_id.
-3.  Implementar PostgresPostCommentRepository.
-4.  Implementar PostgresPostReactionRepository.
-5.  Añadir consultas por post y conjuntos de posts.
-6.  Reutilizar autorización Application y validar tenant.
-7.  Verificar consentimiento de fotos con relaciones PostgreSQL.
-8.  Crear pruebas de feed, detalle, visibilidad, comentarios, reacciones y aislamiento tenant.
-9.  Ejecutar pruebas PostgreSQL con RUN_REMOTE_DB_TESTS y rollback.
-10. Verificar las rutas (general) mediante composición PostgreSQL sin activar producción.
-
 ## Validation boundary
 
 Esta spec valida la persistencia PostgreSQL mediante adapters y composiciones

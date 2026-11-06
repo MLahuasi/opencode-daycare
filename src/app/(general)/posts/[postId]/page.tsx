@@ -9,6 +9,7 @@ import { staffNavigationConfig } from "@/presentation/navigation";
 import { createFamilyFeedComposition } from "@/composition/family";
 import { createPostComposition } from "@/composition/post";
 import { presentPostDetail } from "@/presentation/post";
+import { getApplicationEnvironment } from "@/config/server";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -37,7 +38,8 @@ export default async function PostDetailPage({
    if (!detail) {
      notFound();
    }
-   const viewModel = presentPostDetail(detail);
+   const environment = getApplicationEnvironment();
+   const viewModel = presentPostDetail(detail, environment.locale, environment.timeZone);
 
   if (session.user.role === "parent") {
     const familyContext = await getFamilyFeedContext(
