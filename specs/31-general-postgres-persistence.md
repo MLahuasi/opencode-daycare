@@ -1,6 +1,6 @@
 # SPEC 31 — Persistencia PostgreSQL del módulo General
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 28, SPEC 29, SPEC 30
 > **Date:** 2026-11-05
 > **Objective:** Implementar la lectura PostgreSQL del Family Feed y el CRUD de comentarios y reacciones para las rutas `src/app/(general)/` sin cambiar las reglas de autorización ni activar aún PostgreSQL en el runtime productivo.
@@ -15,10 +15,11 @@
 - Mantener `daycareId` en todas las entidades y validar la pertenencia del agregado completo.
 - Probar Family Feed, detalle, comentarios y reacciones contra PostgreSQL remoto con rollback.
 - Crear una composición de pruebas PostgreSQL para validar las rutas `(general)` contra la BDD sin activar PostgreSQL en el runtime productivo.
+- Ejecutar en esta spec las pruebas PostgreSQL pendientes de SPEC 30 que no llegaron a ejecutarse contra la BDD; la cobertura declarada en SPEC 30 no se considera evidencia suficiente por sí sola.
 
 **Out of scope (for future specs):**
 
-- Activar PostgreSQL en `(general)` antes de SPEC 32.
+- Activar PostgreSQL en el runtime productivo de `(general)` antes de SPEC 32. La composición exclusiva de pruebas PostgreSQL y la validación de rutas contra la BDD sí forman parte de esta spec.
 - Cambiar filtros, proyecciones, UX, rutas o reglas de consentimiento.
 - Implementar Realtime.
 - Cambiar Cloudinary o Storage.
@@ -44,8 +45,8 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 5. Implementar consultas por post y por conjunto de posts para evitar scans globales innecesarios.
 6. Reutilizar la autorización Application verificando que viewer, post, comentario, reacción y destinatarios compartan tenant.
 7. Verificar el consentimiento de fotos usando relaciones y personas PostgreSQL.
-8. Crear pruebas de Family Feed, detalle, visibilidad, comentarios, reacciones y aislamiento tenant.
-9. Ejecutar las pruebas exclusivamente contra PostgreSQL cuando `RUN_REMOTE_DB_TESTS` esté habilitado y revertir sus escrituras.
+8. Crear pruebas de Family Feed, detalle, visibilidad, comentarios, reacciones y aislamiento tenant, incluyendo los escenarios pendientes de SPEC 30: listado, alta, edición, autorización, relaciones y rollback.
+9. Ejecutar las pruebas propias de SPEC 31 y las pruebas pendientes de SPEC 30 exclusivamente contra PostgreSQL cuando `RUN_REMOTE_DB_TESTS` esté habilitado, y revertir todas sus escrituras.
 10. Ejecutar la app mediante la composición de pruebas PostgreSQL y verificar las rutas `(general)` contra la BDD, sin consumir los JSON del módulo y sin activar esa composición en producción.
 
 ## Acceptance criteria
@@ -61,6 +62,8 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 - [ ] Las URLs de media se resuelven fuera de PostgreSQL mediante el adapter existente.
 - [ ] Los tests del módulo no leen los JSON de Feed, comentarios ni reacciones.
 - [ ] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
+- [ ] Se ejecutan contra PostgreSQL las pruebas pendientes de SPEC 30: listado, alta, edición, autorización, relaciones y rollback.
+- [ ] La evidencia de las pruebas pendientes de SPEC 30 identifica cada escenario ejecutado y no usa los JSON del módulo.
 - [ ] Las rutas `(general)` pasan smoke tests usando la composición de pruebas PostgreSQL.
 - [ ] La composición productiva continúa sin activar PostgreSQL antes de SPEC 32.
 - [ ] No cambian filtros, proyecciones ni reglas funcionales.
@@ -76,15 +79,16 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 - **Sí:** mantener Cloudinary fuera de este cambio de origen de datos.
 - **Sí:** validar las rutas `(general)` con PostgreSQL mediante una composición exclusiva de pruebas.
 - **No:** cambiar las reglas de autorización para compensar diferencias de IDs.
-- **No:** activar el runtime PostgreSQL antes de SPEC 32.
+- **Sí:** activar PostgreSQL únicamente en la composición de pruebas para validar `(general)` contra la BDD.
+- **No:** activar PostgreSQL en el runtime productivo antes de SPEC 32.
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
+| Risk                                                 | Mitigation                                                                   |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------- |
 | Una consulta de Feed expone datos de otra guardería. | Aplicar `daycare_id` a cada consulta y validar las relaciones reconstruidas. |
-| El toggle crea reacciones duplicadas. | Leer y escribir dentro de una transacción y manejar la unicidad existente. |
-| La proyección pierde media o engagement. | Comparar proyecciones PostgreSQL con el comportamiento funcional actual. |
+| El toggle crea reacciones duplicadas.                | Leer y escribir dentro de una transacción y manejar la unicidad existente.   |
+| La proyección pierde media o engagement.             | Comparar proyecciones PostgreSQL con el comportamiento funcional actual.     |
 
 ## What is **not** in this spec
 
@@ -92,3 +96,18 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 - Cambios de autorización SQL.
 - Cutover productivo.
 - Migración a Supabase Auth.
+
+---
+
+Plan de implementación
+
+1.  Crear mappers de PostComment y PostReaction, preservando fechas nullable.
+2.  Implementar lectores filtrados por daycare_id.
+3.  Implementar PostgresPostCommentRepository.
+4.  Implementar PostgresPostReactionRepository.
+5.  Añadir consultas por post y conjuntos de posts.
+6.  Reutilizar autorización Application y validar tenant.
+7.  Verificar consentimiento de fotos con relaciones PostgreSQL.
+8.  Crear pruebas de feed, detalle, visibilidad, comentarios, reacciones y aislamiento tenant.
+9.  Ejecutar pruebas PostgreSQL con RUN_REMOTE_DB_TESTS y rollback.
+10. Verificar las rutas (general) mediante composición PostgreSQL sin activar producción.
