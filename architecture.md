@@ -87,8 +87,7 @@ flowchart TB
     APPLICATION --> DOMAIN[src/domain<br/>policies and models]
     COMPOSITION --> AUTH[composition/auth<br/>server-side Auth API]
     AUTH --> AUTH_INFRA[infrastructure/auth<br/>NextAuth implementation]
-    COMPOSITION --> PERSISTENCE[infrastructure/persistence<br/>JSON repositories]
-    COMPOSITION --> POSTGRES[infrastructure/persistence/postgres<br/>PostgreSQL adapters]
+     COMPOSITION --> POSTGRES[infrastructure/persistence/postgres<br/>PostgreSQL adapters]
     POSTGRES --> POOLER[Supabase Session Pooler<br/>postgres.js]
 
     INSTRUMENTATION[src/instrumentation.ts<br/>Next.js lifecycle adapter] -->|NEXT_RUNTIME === nodejs| NODE_INSTRUMENTATION[src/instrumentation-node.ts<br/>Node.js bridge]
@@ -117,7 +116,7 @@ flowchart TB
     classDef server fill:#eef6ff,stroke:#377dbe,color:#123;
     classDef boundary fill:#fff4df,stroke:#c27b00,color:#432800;
     classDef external fill:#f2f2f2,stroke:#777,color:#222;
-    class ROUTES,PRESENTATION,COMPOSITION,APPLICATION,DOMAIN,AUTH,AUTH_INFRA,PERSISTENCE,INSTRUMENTATION,RUNTIME,BOOTSTRAP,ENV,BOOT_COMPOSITION,DB_COMPOSITION,DB_FACADE,MAIL_FACADE,IMAGE_FACADE,DB_PORT,CHECK_USE_CASE,SUPABASE_PROVIDER,JMLQ,CLOUDINARY server;
+     class ROUTES,PRESENTATION,COMPOSITION,APPLICATION,DOMAIN,AUTH,AUTH_INFRA,INSTRUMENTATION,RUNTIME,BOOTSTRAP,ENV,BOOT_COMPOSITION,DB_COMPOSITION,DB_FACADE,MAIL_FACADE,IMAGE_FACADE,DB_PORT,CHECK_USE_CASE,SUPABASE_PROVIDER,JMLQ,CLOUDINARY server;
     class BROWSER boundary;
     class SUPABASE,SMTP,CLOUDINARY_API external;
 ```

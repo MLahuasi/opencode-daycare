@@ -109,8 +109,6 @@ No se debe mantener un modo híbrido por módulo.
 
 Plan de implementación
 
-3.  Cambiar composiciones de Auth, Staff y General a PostgreSQL.
-4.  Cambiar Auth para usar IDs PostgreSQL y daycareId.
 5.  Invalidar sesiones antiguas.
 6.  Verificar login, invitaciones, Kids, Rooms, ParentKids, Posts, Family Feed, comentarios y reacciones.
 7.  Eliminar imports runtime de adapters JSON.
