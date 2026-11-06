@@ -1,6 +1,6 @@
 # SPEC 30 — Persistencia PostgreSQL del módulo Staff
 
-> **Status:** Approved
+> **Status:** Implement
 > **Depends on:** SPEC 28, SPEC 29
 > **Date:** 2026-11-05
 > **Objective:** Implementar la lectura y escritura PostgreSQL de Kids, Rooms, People, ParentKids, StaffRooms y Posts usados por las rutas `src/app/(staff)/`, manteniendo el comportamiento funcional actual y el runtime JSON hasta el cutover.
@@ -54,22 +54,22 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 
 ## Acceptance criteria
 
-- [ ] Kids, Rooms, ParentKids y StaffRooms se leen por `daycare_id`.
-- [ ] Un kid de otra guardería no puede resolverse como destino válido.
-- [ ] Una sala de otra guardería no puede asignarse a un kid o post.
-- [ ] Un post se reconstruye correctamente desde `feed`, `feed_kids` y `feed_media`.
-- [ ] El orden de media se conserva mediante `position`.
-- [ ] Crear un post no deja filas parciales si falla una escritura relacionada.
-- [ ] Actualizar un post reemplaza destinatarios y media de forma coherente.
-- [ ] La autorización Staff conserva las reglas actuales.
-- [ ] La creación de Kid conserva slug, enrollment date, status y campos editables.
-- [ ] Los tests del módulo no leen `src/infrastructure/persistence/json/data`.
-- [ ] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
-- [ ] Las rutas Staff siguen funcionando con JSON antes del cutover.
-- [ ] No se modifican formularios, validaciones ni reglas de negocio.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
+- [x] Kids, Rooms, ParentKids y StaffRooms se leen por `daycare_id`.
+- [x] Un kid de otra guardería no puede resolverse como destino válido.
+- [x] Una sala de otra guardería no puede asignarse a un kid o post.
+- [x] Un post se reconstruye correctamente desde `feed`, `feed_kids` y `feed_media`.
+- [x] El orden de media se conserva mediante `position`.
+- [x] Crear un post no deja filas parciales si falla una escritura relacionada.
+- [x] Actualizar un post reemplaza destinatarios y media de forma coherente.
+- [x] La autorización Staff conserva las reglas actuales.
+- [x] La creación de Kid conserva slug, enrollment date, status y campos editables.
+- [x] Los tests del módulo no leen `src/infrastructure/persistence/json/data`.
+- [x] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
+- [x] Las rutas Staff siguen funcionando con JSON antes del cutover.
+- [x] No se modifican formularios, validaciones ni reglas de negocio.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
 
 ## Decisions
 
@@ -96,16 +96,3 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 - Cambios de esquema o autorización SQL.
 
 ---
-
-Plan de implementación
-
-1.  Crear mappers PostgreSQL de Room, Kid, ParentKid y StaffRoom.
-2.  Implementar repositorios PostgreSQL de Room, Kid y ParentKid con filtros tenant-scoped.
-3.  Implementar el adapter de acceso Staff sobre staff_rooms, parent_kids y kids.
-4.  Implementar el lector PostgreSQL de Posts con destinatarios y media normalizados.
-5.  Implementar creación y actualización del agregado Post con transacción y rollback.
-6.  Validar destino exclusivo de cada post.
-7.  Validar acceso del autor Staff a sala o niños destino.
-8.  Mantener IDs UUID y eliminar IDs derivados no válidos.
-9.  Crear pruebas remotas con RUN_REMOTE_DB_TESTS y rollback.
-10. Ejecutar la aplicación con runtime JSON y verificar las rutas Staff.
