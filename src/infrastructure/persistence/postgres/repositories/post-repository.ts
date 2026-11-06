@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { CurrentDaycareReader } from "@/application/daycare/ports";
+import type { PostAccessRepository } from "@/application/post/ports";
 import { hasSinglePostDestination, type PersistedPost, type Post } from "@/domain/post";
 import type {
   PostgresClient,
@@ -10,6 +11,7 @@ import {
   mapFeedMediaRow,
   mapFeedRow,
 } from "../mappers";
+import { PostgresPostAccessRepository } from "./post-access-repository";
 import type { Tables } from "../types";
 
 const EMPTY_ENGAGEMENT = {
@@ -25,7 +27,15 @@ export class PostgresPostRepository {
   public constructor(
     private readonly client: PostgresClient,
     private readonly currentDaycare: CurrentDaycareReader,
-  ) {}
+    access: PostAccessRepository = new PostgresPostAccessRepository(
+      client,
+      currentDaycare,
+    ),
+  ) {
+    this.access = access;
+  }
+
+  private readonly access: PostAccessRepository;
 
   /** Reads all valid Posts and rebuilds their normalized destinations and media. */
   async findAll(): Promise<readonly PersistedPost[]> {
@@ -125,6 +135,7 @@ export class PostgresPostRepository {
   async create(post: PersistedPost): Promise<Post> {
     this.assertExclusiveDestination(post);
     await this.assertCurrentDaycare(post.daycareId);
+    await this.assertAuthorStaffAccess(post);
 
     await this.client.begin(async (transaction) => {
       await this.insertRoot(transaction, post);
@@ -139,6 +150,7 @@ export class PostgresPostRepository {
   async update(post: PersistedPost): Promise<Post | null> {
     this.assertExclusiveDestination(post);
     await this.assertCurrentDaycare(post.daycareId);
+    await this.assertAuthorStaffAccess(post);
 
     const updated = await this.client.begin(async (transaction) => {
       const rows = await transaction<{ id: string }[]>`
@@ -189,6 +201,46 @@ export class PostgresPostRepository {
   ): void {
     if (!hasSinglePostDestination(post)) {
       throw new Error("Post must target either kids or a room, but not both");
+    }
+  }
+
+  private async assertAuthorStaffAccess(
+    post: Pick<PersistedPost, "authorId" | "kidIds" | "roomId">,
+  ): Promise<void> {
+    const daycareId = await this.currentDaycare.getCurrentDaycareId();
+    const authors = await this.client<Tables<"people">[]>`
+      SELECT daycare_id, id, name, email, role, status, created_at, updated_at
+      FROM people
+      WHERE daycare_id = ${daycareId}
+        AND id = ${post.authorId}
+        AND role = 'personal'
+      LIMIT 1
+    `;
+
+    if (!authors[0]) {
+      throw new Error("Post author is not a Staff person");
+    }
+
+    const assignedRoomIds = new Set(
+      await this.access.findStaffRoomIds(post.authorId),
+    );
+    if (post.roomId !== null) {
+      if (!assignedRoomIds.has(post.roomId)) {
+        throw new Error("Post author does not have access to the destination room");
+      }
+      return;
+    }
+
+    const targetKids = await Promise.all(
+      post.kidIds.map((kidId) => this.access.findKidById(kidId)),
+    );
+    if (
+      targetKids.length === 0 ||
+      targetKids.some(
+        (kid) => kid === null || !assignedRoomIds.has(kid.roomId),
+      )
+    ) {
+      throw new Error("Post author does not have access to every destination kid");
     }
   }
 
