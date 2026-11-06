@@ -100,10 +100,6 @@ export const authOptions: NextAuthOptions = {
           email: person.email,
           personId: person.id,
           daycareId: person.daycareId,
-          roles,
-          // The single-role session field is removed in Step 6. Keep the
-          // current callback contract valid during this intermediate step.
-          role: roles[0],
           persistenceSource: POSTGRES_SESSION_SOURCE,
         };
       },
@@ -135,9 +131,10 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.personId = user.personId;
         token.daycareId = user.daycareId;
-        token.role = user.role;
         token.persistenceSource = POSTGRES_SESSION_SOURCE;
       }
+
+      delete token.role;
 
       if (
         token.persistenceSource !== POSTGRES_SESSION_SOURCE ||
@@ -157,11 +154,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session({ session, token }) {
-       if (session.user && isPostgresSessionIdentity(token)) {
-         session.user.personId = token.personId;
-         session.user.daycareId = token.daycareId;
-         session.user.role = token.role;
-         session.user.persistenceSource = token.persistenceSource;
+        if (session.user && isPostgresSessionIdentity(token)) {
+          session.user.personId = token.personId;
+          session.user.daycareId = token.daycareId;
+          session.user.persistenceSource = token.persistenceSource;
       }
 
       return session;
@@ -198,7 +194,11 @@ export async function requireActiveSession(): Promise<Session> {
     getAuthPostgresClient(),
   ).findById(session.user.daycareId, session.user.personId);
 
-  if (!isActiveSessionPerson(person, session.user)) {
+  const roles = await new PostgresPersonRoleRepository(
+    getAuthPostgresClient(),
+  ).findRoles(session.user.personId, session.user.daycareId);
+
+  if (!isActiveSessionPerson(person, session.user) || roles.length === 0) {
     redirect("/auth/login");
   }
 
@@ -206,14 +206,18 @@ export async function requireActiveSession(): Promise<Session> {
 }
 
 /**
- * Requires an active staff session and revalidates its persisted role.
+ * Requires an active staff session and revalidates its persisted capabilities.
  *
  * @returns The active staff session.
  */
 export async function requireStaffSession(): Promise<Session> {
   const session = await requireActiveSession();
 
-  if (session.user.role !== "personal") {
+  const roles = await new PostgresPersonRoleRepository(
+    getAuthPostgresClient(),
+  ).findRoles(session.user.personId, session.user.daycareId);
+
+  if (!roles.includes("personal")) {
     redirect("/home");
   }
 
