@@ -109,7 +109,6 @@ No se debe mantener un modo híbrido por módulo.
 
 Plan de implementación
 
-5.  Invalidar sesiones antiguas.
 6.  Verificar login, invitaciones, Kids, Rooms, ParentKids, Posts, Family Feed, comentarios y reacciones.
 7.  Eliminar imports runtime de adapters JSON.
 8.  Verificar ausencia de persistencia/escrituras JSON.

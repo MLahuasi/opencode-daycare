@@ -7,6 +7,7 @@ declare module "next-auth" {
       personId: string;
       daycareId: string;
       role: PersonRole;
+      persistenceSource: "postgres";
     } & DefaultSession["user"];
   }
 
@@ -14,6 +15,7 @@ declare module "next-auth" {
     personId: string;
     daycareId: string;
     role: PersonRole;
+    persistenceSource: "postgres";
   }
 }
 
@@ -22,5 +24,6 @@ declare module "next-auth/jwt" {
     personId?: string;
     daycareId?: string;
     role?: PersonRole;
+    persistenceSource?: "postgres";
   }
 }

@@ -6,7 +6,9 @@ import { redirect } from "next/navigation";
 import {
   hasValidSessionIdentifiers,
   isActiveSessionPerson,
+  isPostgresSessionIdentity,
   isValidSessionIdentity,
+  POSTGRES_SESSION_SOURCE,
   UUID_PATTERN,
 } from "@/config";
 import { getApplicationEnvironment, getAuthEnvironment } from "@/config/server";
@@ -92,6 +94,7 @@ export const authOptions: NextAuthOptions = {
           personId: person.id,
           daycareId: person.daycareId,
           role: person.role,
+          persistenceSource: POSTGRES_SESSION_SOURCE,
         };
       },
     }),
@@ -123,11 +126,15 @@ export const authOptions: NextAuthOptions = {
         token.personId = user.personId;
         token.daycareId = user.daycareId;
         token.role = user.role;
+        token.persistenceSource = POSTGRES_SESSION_SOURCE;
       }
 
-       if (!isValidSessionIdentity(token)) {
-         return {};
-       }
+      if (
+        token.persistenceSource !== POSTGRES_SESSION_SOURCE ||
+        !isValidSessionIdentity(token)
+      ) {
+        return {};
+      }
 
        const person = await new PostgresPersonRepository(
          getAuthPostgresClient(),
@@ -140,10 +147,11 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session({ session, token }) {
-       if (session.user && isValidSessionIdentity(token)) {
-        session.user.personId = token.personId;
-        session.user.daycareId = token.daycareId;
-        session.user.role = token.role;
+       if (session.user && isPostgresSessionIdentity(token)) {
+         session.user.personId = token.personId;
+         session.user.daycareId = token.daycareId;
+         session.user.role = token.role;
+         session.user.persistenceSource = token.persistenceSource;
       }
 
       return session;
@@ -170,7 +178,8 @@ export async function requireActiveSession(): Promise<Session> {
 
   if (
     !session?.user ||
-    !hasValidSessionIdentifiers(session.user)
+    !hasValidSessionIdentifiers(session.user) ||
+    !isPostgresSessionIdentity(session.user)
   ) {
     redirect("/auth/login");
   }
