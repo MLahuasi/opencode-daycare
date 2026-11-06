@@ -109,7 +109,6 @@ No se debe mantener un modo híbrido por módulo.
 
 Plan de implementación
 
-2.  Confirmar pruebas PostgreSQL exitosas de SPEC 29, 30 y 31.
 3.  Cambiar composiciones de Auth, Staff y General a PostgreSQL.
 4.  Cambiar Auth para usar IDs PostgreSQL y daycareId.
 5.  Invalidar sesiones antiguas.
