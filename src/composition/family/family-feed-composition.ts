@@ -3,18 +3,11 @@ import "server-only";
 import type {
   FamilyFeedQueryDependencies,
 } from "@/application/family/feed";
-import { derivePostEngagement, hasSinglePostDestination } from "@/domain/post";
-import type { Post } from "@/domain/post";
-import { createCloudinaryImageStorage } from "@/infrastructure/adapters/cloudinary";
+import { createPostgresFamilyFeedComposition } from "./family-feed-composition-postgres";
 import {
-  KidRepository,
-  PostCommentRepository,
-  PostReactionRepository,
-  PostRepository,
-  ParentKidRepository,
-  PersonRepository,
-  RoomRepository,
-} from "@/infrastructure/persistence/repositories";
+  getPostgresRuntimeClient,
+} from "../postgres-runtime";
+import type { CurrentDaycareReader } from "@/application/daycare/ports";
 
 /** Concrete server-only dependencies required by Family Feed queries. */
 export type FamilyFeedComposition = FamilyFeedQueryDependencies;
@@ -24,83 +17,15 @@ export type FamilyFeedComposition = FamilyFeedQueryDependencies;
  *
  * @returns Concrete server-only adapters for Family Feed reads.
  */
-export function createFamilyFeedComposition(): FamilyFeedComposition {
-  const people = new PersonRepository();
-  const parentKids = new ParentKidRepository();
-  const kids = new KidRepository();
-  const rooms = new RoomRepository();
-  const posts = new PostRepository();
-  const comments = new PostCommentRepository();
-  const reactions = new PostReactionRepository();
-
-  return {
-    directory: {
-      findKids: () => kids.findAll(),
-      findRooms: () => rooms.findAll(),
-    },
-    media: {
-      resolve: async (feedPosts) => {
-        if (!feedPosts.some((post) => post.media.length > 0)) {
-          return feedPosts;
-        }
-
-        const imageStorage = createCloudinaryImageStorage();
-        return feedPosts.map((post) => ({
-          ...post,
-          media: post.media.map((media) => ({
-            ...media,
-            url: imageStorage.getUrl(media),
-          })),
-        }));
-      },
-    },
-    parentKids: {
-      findByParentId: async (parentId) =>
-        (await parentKids.findAll()).filter(
-          (parentKid) => parentKid.parentId === parentId,
-        ),
-    },
-    people,
-    posts: {
-      findForViewer: async (viewerId): Promise<readonly Post[]> => {
-        const [persistedPosts, persistedComments, persistedReactions] =
-          await Promise.all([
-            posts.findAll(),
-            comments.findAll(),
-            reactions.findAll(),
-          ]);
-
-        const [allKids, allRooms] = await Promise.all([
-          kids.findAll(),
-          rooms.findAll(),
-        ]);
-        const kidsById = new Map(allKids.map((kid) => [kid.id, kid]));
-        const roomsById = new Map(allRooms.map((room) => [room.id, room]));
-
-        return persistedPosts.map((post) => {
-          if (!hasSinglePostDestination(post)) {
-            throw new Error(
-              `Feed post ${post.id} must have exactly one destination: kidId or roomId.`,
-            );
-          }
-
-          return {
-            ...post,
-            subject:
-              post.kidIds.length > 1
-                ? "Varios niños"
-                : post.kidIds.length === 1
-                  ? (kidsById.get(post.kidIds[0])?.name ?? "Varios niños")
-                  : (roomsById.get(post.roomId ?? "")?.name ?? "Anuncio general"),
-            engagement: derivePostEngagement(
-              post.id,
-              persistedComments,
-              persistedReactions,
-              viewerId,
-            ),
-          };
-        });
-      },
-    },
-  };
+export function createFamilyFeedComposition(daycareId?: string): FamilyFeedComposition {
+  const currentDaycare: CurrentDaycareReader = daycareId
+    ? { getCurrentDaycareId: async () => daycareId }
+    : {
+        getCurrentDaycareId: async () =>
+          (await import("../postgres-runtime")).getPostgresRuntimeDaycare().getCurrentDaycareId(),
+      };
+  return createPostgresFamilyFeedComposition(
+    getPostgresRuntimeClient(),
+    currentDaycare,
+  );
 }

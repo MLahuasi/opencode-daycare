@@ -145,12 +145,14 @@ function haveSameIds(first: readonly string[], second: readonly string[]): boole
  *
  * @param formData - Raw values submitted by the post form.
  * @param personId - Authenticated staff member identifier.
+ * @param authenticatedDaycareId - Authenticated staff member tenant identifier.
  * @param existingMedia - Media already persisted for an edit operation.
  * @returns Authorized post values and uploaded media, or serializable errors.
  */
 export async function parsePostSubmission(
   formData: FormData,
   personId: string,
+  authenticatedDaycareId: string,
   existingMedia: readonly PostMedia[] = [],
 ): Promise<ParsedPostSubmission> {
   const files = getFiles(formData);
@@ -172,8 +174,8 @@ export async function parsePostSubmission(
   }
 
   const targets = await getPostTargets(
-    createPostComposition(),
-    { personId, role: "personal" },
+    createPostComposition(authenticatedDaycareId),
+    { daycareId: authenticatedDaycareId, personId, role: "personal" },
   );
   const targetKids = targets.kids.filter((kid) =>
     initialValidation.data.kidIds.includes(kid.id),
@@ -240,7 +242,10 @@ export async function parsePostSubmission(
   if (targetKids.length > 0 && (files.length > 0 || retainedMedia.length > 0)) {
     const consentResults = await Promise.all(
       targetKids.map(async (kid) => ({
-        hasConsent: await hasPhotoSharingConsent(createPostComposition(), kid.id),
+          hasConsent: await hasPhotoSharingConsent(
+            createPostComposition(authenticatedDaycareId),
+            kid.id,
+          ),
         kid,
       })),
     );

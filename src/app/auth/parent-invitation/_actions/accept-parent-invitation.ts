@@ -45,7 +45,7 @@ export async function acceptParentInvitationAction(
   }
 
   try {
-    await acceptInvitation(createFamilyComposition(), {
+    await acceptInvitation(createFamilyComposition(daycareId), {
       code,
       daycareId,
       email,

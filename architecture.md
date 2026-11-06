@@ -149,10 +149,8 @@ Infrastructure adapters.
   construction and remote readiness checks are separate operations. The current
   database facade checks PostgreSQL with `SELECT 1` through the configured
   Session Pooler.
-- Keep `src/infrastructure/persistence/json/` and
-  `src/infrastructure/persistence/postgres/` as separate persistence
-  implementations. Do not translate JSON IDs to PostgreSQL IDs inside a shared
-  repository.
+- PostgreSQL/Supabase is the only runtime persistence implementation. Do not
+  add JSON fallback repositories or translate legacy JSON IDs at runtime.
 - Store deployable schema migrations and data migrations in
   `supabase/migrations/`, not in the runtime `src/` tree. Execute them with the
   package scripts after linking the intended Supabase project.

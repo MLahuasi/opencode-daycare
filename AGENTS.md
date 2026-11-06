@@ -71,15 +71,13 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 
 ## Datos y configuración específicos
 
-- No hay fixtures estáticos runtime en este corte; los datos JSON editables viven exclusivamente en `src/infrastructure/persistence/json/data/`.
-- La aplicación y los tests consumen fixtures desde su barrel público; los servicios server-only consumen persistencia mediante `@/infrastructure/persistence`.
+- No existen fixtures JSON runtime en este corte; los servicios server-only consumen persistencia PostgreSQL mediante sus fachadas y composiciones.
 - Los contratos de dominio se importan desde `@/domain/<domain>` y no se duplican en fixtures.
 - Los fixtures son deterministas: IDs, fechas, códigos y relaciones permanecen estables entre ejecuciones.
 - Configuración compartida usa constantes; configuración de entorno usa variables de entorno.
 - Ningún módulo fuera de `src/config/server/environment.ts` lee directamente `process.env` o `env.get()`, salvo `src/instrumentation.ts` para `process.env.NEXT_RUNTIME` exclusivamente.
 - Las variables de entorno se configuran fuera de Git. Una variable `NEXT_PUBLIC_*` puede ser publicable, pero no elimina los límites server-only del SDK ni de su configuración.
-- Los servicios de dominio no construyen rutas físicas ni importan `node:fs`; usan el adapter JSON server-only.
-- `src/infrastructure/persistence/json/` y `src/infrastructure/persistence/postgres/` son implementaciones separadas; no traducir IDs JSON a IDs PostgreSQL dentro de un repositorio compartido.
+- Los servicios de dominio no construyen rutas físicas ni importan `node:fs`; usan puertos y adapters PostgreSQL server-only.
 - `CurrentDaycareProvider` es provisional y obtiene la única guardería operativa para el login. Debe reemplazarse por un selector explícito cuando se habiliten múltiples guarderías.
 
 ## Rutas específicas
@@ -99,8 +97,7 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 
 Antes de finalizar:
 
-- Confirmar que no se introduzcan fixtures fuera de la ubicación aprobada y que los JSON editables estén dentro de `src/infrastructure/persistence/json/data/`.
-- Confirmar que fixtures y componentes UI se consuman mediante sus barrels públicos.
+- Confirmar que no se introduzcan fixtures JSON ni adapters de persistencia local.
 - Revisar que los modelos de dominio estén definidos en `src/domain/<domain>/`.
 - Revisar que Composition sea el único punto que ensamble Application con proveedores concretos y que Auth se consuma mediante `@/composition/auth`.
 - Revisar que el bootstrap inicialice database, mailer e image storage sin conexiones SMTP ni operaciones Cloudinary, y que compruebe PostgreSQL mediante `SELECT 1`.

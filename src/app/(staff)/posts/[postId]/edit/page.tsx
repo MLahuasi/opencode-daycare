@@ -27,11 +27,12 @@ export default async function EditPostPage({
 }: EditPostPageProps) {
   const session = await requireStaffSession();
   const { postId } = await params;
-   const dependencies = createPostComposition();
+   const dependencies = createPostComposition(session.user.daycareId);
    const [post, targets] = await Promise.all([
      dependencies.posts.findById(postId),
      getPostTargets(dependencies, {
-       personId: session.user.personId,
+        daycareId: session.user.daycareId,
+        personId: session.user.personId,
        role: session.user.role,
      }),
    ]);

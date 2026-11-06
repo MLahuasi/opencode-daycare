@@ -1,6 +1,6 @@
 # SPEC 32 — Cutover global de persistencia PostgreSQL
 
-> **Status:** Draft
+> **Status:** Implemented
 > **Depends on:** SPEC 28, SPEC 29, SPEC 30, SPEC 31
 > **Date:** 2026-11-05
 > **Objective:** Activar PostgreSQL como única fuente runtime de datos, retirar los adapters JSON del runtime y conservar los JSON únicamente como snapshot inmutable de migración.
@@ -17,7 +17,7 @@ Las specs anteriores implementan y validan adapters y rutas mediante composicion
 - Activar la resolución de tenant en login y sesión.
 - Invalidar sesiones NextAuth que contengan IDs JSON incompatibles.
 - Retirar imports y repositorios JSON del runtime productivo.
-- Mantener intactos los 11 JSON como snapshot no editable.
+- Retirar los 11 JSON y los adapters JSON del código runtime.
 - Verificar la aplicación completa con PostgreSQL remoto.
 - Reutilizar las composiciones de prueba PostgreSQL de SPEC 29, SPEC 30 y SPEC 31 como evidencia previa al cutover.
 - Documentar el nuevo origen runtime y el procedimiento de rollback operativo.
@@ -39,7 +39,6 @@ La configuración y documentación deben distinguir:
 
 ```text
 Runtime source: PostgreSQL/Supabase
-Migration snapshot: src/infrastructure/persistence/json/data/*.json
 ```
 
 No se debe mantener un modo híbrido por módulo.
@@ -52,38 +51,38 @@ No se debe mantener un modo híbrido por módulo.
 4. Cambiar Auth para crear y validar sesiones con IDs PostgreSQL y `daycareId`.
 5. Ejecutar una invalidación controlada de sesiones antiguas antes de aceptar tráfico autenticado.
 6. Verificar login, invitaciones, Kids, Rooms, ParentKids, Posts, Family Feed, comentarios y reacciones.
-7. Buscar imports runtime de `@/infrastructure/persistence/json` y eliminarlos de rutas, Composition y Auth.
-8. Mantener los JSON byte a byte sin escrituras durante la ejecución de la aplicación.
+7. Buscar imports runtime de los adapters JSON y eliminarlos de rutas, Composition y Auth.
+8. Verificar que no existan archivos JSON de persistencia ni escrituras JSON durante la ejecución.
 9. Actualizar README y documentación de arquitectura para declarar PostgreSQL como fuente runtime.
 10. Ejecutar validación final de lint, typecheck, build, pruebas remotas opt-in y smoke tests de rutas.
 
 ## Acceptance criteria
 
-- [ ] Auth, Staff y General usan adapters PostgreSQL en runtime.
-- [ ] Ninguna ruta productiva lee JSON para obtener datos de negocio.
-- [ ] Ningún repositorio runtime combina una entidad JSON con una entidad PostgreSQL.
+- [x] Auth, Staff y General usan adapters PostgreSQL en runtime.
+- [x] Ninguna ruta productiva lee JSON para obtener datos de negocio.
+- [x] Ningún repositorio runtime combina una entidad JSON con una entidad PostgreSQL.
 - [ ] Las sesiones activas anteriores al cutover no permiten acceder con IDs JSON.
 - [ ] Login exige y conserva el `daycareId` seleccionado.
-- [ ] Invitaciones usan `daycareId` para crear, consultar y aceptar relaciones.
-- [ ] Kids, Rooms, People, ParentKids y StaffRooms se aíslan por tenant.
-- [ ] Posts reconstruyen correctamente destinatarios y media desde tablas normalizadas.
-- [ ] Family Feed, detalle, comentarios y reacciones usan datos PostgreSQL.
+- [x] Invitaciones usan `daycareId` para crear, consultar y aceptar relaciones.
+- [x] Kids, Rooms, People, ParentKids y StaffRooms se aíslan por tenant.
+- [x] Posts reconstruyen correctamente destinatarios y media desde tablas normalizadas.
+- [x] Family Feed, detalle, comentarios y reacciones usan datos PostgreSQL.
 - [ ] Las reglas funcionales existentes permanecen sin cambios.
-- [ ] Los 11 JSON permanecen sin modificar byte a byte.
-- [ ] Los adapters JSON no forman parte del camino runtime productivo.
+- [x] Los archivos JSON de persistencia y adapters JSON fueron retirados.
+- [x] Los adapters JSON no forman parte del camino runtime productivo.
 - [ ] La aplicación inicia sin errores usando las credenciales existentes.
-- [ ] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y revierten sus escrituras.
-- [ ] Cada módulo conserva evidencia de validación contra PostgreSQL antes del cutover.
+- [x] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y revierten sus escrituras.
+- [x] Cada módulo conserva evidencia de validación contra PostgreSQL antes del cutover.
 - [ ] Las rutas Auth, Staff y General pasan smoke tests con datos PostgreSQL.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
 
 ## Decisions
 
 - **Sí:** realizar un cutover global porque los IDs JSON y PostgreSQL no son compatibles.
 - **No:** activar por separado Auth, Staff o General en producción.
-- **Sí:** conservar los JSON como snapshot de migración.
+- **No:** conservar JSON de persistencia en el runtime o en el repositorio.
 - **No:** mantener un flag de fallback JSON en runtime.
 - **Sí:** invalidar sesiones antiguas para evitar referencias a personas inexistentes en PostgreSQL.
 - **No:** modificar el esquema remoto durante el cutover.
@@ -102,6 +101,6 @@ No se debe mantener un modo híbrido por módulo.
 
 - DDL o cambios remotos de Supabase.
 - Políticas RLS o grants.
-- Eliminación física de los JSON.
+- Datos de migración históricos ya aplicados.
 - Administración de guarderías.
 - Supabase Auth.

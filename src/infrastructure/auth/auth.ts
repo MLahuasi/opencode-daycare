@@ -7,9 +7,18 @@ import { UUID_PATTERN } from "@/config";
 import { getApplicationEnvironment, getAuthEnvironment } from "@/config/server";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
-  CredentialRepository,
-  PersonRepository,
-} from "@/infrastructure/persistence/repositories";
+  PostgresCredentialRepository,
+  PostgresPersonRepository,
+  PostgresClientProvider,
+  type PostgresClient,
+} from "@/infrastructure/persistence/postgres";
+
+let postgresClient: PostgresClient | undefined;
+
+function getAuthPostgresClient(): PostgresClient {
+  postgresClient ??= new PostgresClientProvider().createClient();
+  return postgresClient;
+}
 
 const authEnvironment = getAuthEnvironment();
 const applicationEnvironment = getApplicationEnvironment();
@@ -45,9 +54,11 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const credentialRepository = new CredentialRepository();
+        const client = getAuthPostgresClient();
+        const credentialRepository = new PostgresCredentialRepository(client);
         const passwordHasher = new BcryptPasswordHasher();
-        const person = await new PersonRepository().findByEmail(daycareId, email);
+        const peopleRepository = new PostgresPersonRepository(client);
+        const person = await peopleRepository.findByEmail(daycareId, email);
         const storedCredential = person
           ? await credentialRepository.findByPersonId(daycareId, person.id)
           : null;
@@ -108,12 +119,9 @@ export const authOptions: NextAuthOptions = {
         return {};
       }
 
-      const people = await new PersonRepository().findAll();
-      const person = people.find(
-        (candidate) =>
-          candidate.id === token.personId &&
-          candidate.daycareId === token.daycareId,
-      );
+       const person = await new PostgresPersonRepository(
+         getAuthPostgresClient(),
+       ).findById(token.daycareId, token.personId);
 
       if (!person || person.status !== "active" || person.role !== token.role) {
         return {};
@@ -154,12 +162,9 @@ export async function requireActiveSession(): Promise<Session> {
     redirect("/auth/login");
   }
 
-  const people = await new PersonRepository().findAll();
-  const person = people.find(
-    (candidate) =>
-      candidate.id === session.user.personId &&
-      candidate.daycareId === session.user.daycareId,
-  );
+  const person = await new PostgresPersonRepository(
+    getAuthPostgresClient(),
+  ).findById(session.user.daycareId, session.user.personId);
 
   if (!person || person.status !== "active" || person.role !== session.user.role) {
     redirect("/auth/login");

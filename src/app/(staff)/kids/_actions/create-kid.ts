@@ -23,8 +23,8 @@ export async function createKidAction(
   _previousState: KidFormActionState,
   formData: FormData,
 ): Promise<KidFormActionState> {
-  await requireStaffSession();
-  const dependencies = createKidComposition();
+  const session = await requireStaffSession();
+  const dependencies = createKidComposition(session.user.daycareId);
   const rooms = await getRooms(dependencies);
   const validation = validateKidForm(
     {

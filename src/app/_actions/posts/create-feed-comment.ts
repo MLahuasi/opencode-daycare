@@ -33,13 +33,13 @@ export async function createFeedCommentAction(
 
    try {
      const comment = await createComment(
-       createPostComposition(),
+       createPostComposition(session.user.daycareId),
        {
        authorId: session.user.personId,
        body: validation.data.body,
        postId,
        },
-       { personId: session.user.personId, role: session.user.role },
+       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
      );
 
      if (!comment) {

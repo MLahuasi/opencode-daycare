@@ -16,10 +16,10 @@ export default async function InviteParentPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  await requireStaffSession();
+  const session = await requireStaffSession();
 
   const { slug } = await params;
-  const kid = await getKidBySlug(createKidComposition(), slug);
+  const kid = await getKidBySlug(createKidComposition(session.user.daycareId), slug);
 
   if (!kid) {
     notFound();

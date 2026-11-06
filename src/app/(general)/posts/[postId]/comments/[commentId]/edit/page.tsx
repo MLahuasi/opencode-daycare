@@ -24,7 +24,7 @@ export default async function EditPostCommentPage({
 }: EditPostCommentPageProps) {
   const session = await requireActiveSession();
   const { commentId, postId } = await params;
-   const dependencies = createPostComposition();
+   const dependencies = createPostComposition(session.user.daycareId);
    const comment = await dependencies.comments.findById(commentId);
 
   if (
@@ -38,7 +38,7 @@ export default async function EditPostCommentPage({
    const detail = await getPostDetail(
      dependencies,
      postId,
-     { personId: session.user.personId, role: session.user.role },
+     { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
    );
    if (!detail) {
      redirect("/family-feed");

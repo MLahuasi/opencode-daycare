@@ -1,23 +1,12 @@
 import "server-only";
 
-import {
-  PostAuthorizationPolicy,
-  type PostDependencies,
-} from "@/application/post";
-import {
-  KidRepository,
-  ParentKidRepository,
-  PersonRepository,
-  RoomRepository,
-} from "@/infrastructure/persistence/repositories";
-import {
-  PostCommentRepository,
-  JsonPostAccessRepository,
-  PostReactionRepository,
-  PostRepository,
-} from "@/infrastructure/persistence/repositories";
+import type { PostDependencies } from "@/application/post";
 import { createCloudinaryImageStorage } from "@/infrastructure/adapters/cloudinary";
-import { randomUUID } from "node:crypto";
+import { createPostgresPostComposition } from "./postgres-composition";
+import {
+  getPostgresRuntimeClient,
+} from "../postgres-runtime";
+import type { CurrentDaycareReader } from "@/application/daycare/ports";
 
 /** Concrete server-only dependencies required by Post use cases. */
 export type PostComposition = PostDependencies;
@@ -36,27 +25,15 @@ export function createPostImageStorage() {
  *
  * @returns Persistence, authorization and media capabilities for Post.
  */
-export function createPostComposition(): PostComposition {
-  const access = new JsonPostAccessRepository();
-
-  return {
-    authorizationAccess: access,
-    people: new PersonRepository(),
-    parentKids: new ParentKidRepository(),
-    kids: new KidRepository(),
-    rooms: new RoomRepository(),
-    posts: new PostRepository(),
-    comments: new PostCommentRepository(),
-    reactions: new PostReactionRepository(),
-    imageStorage: createPostImageStorage(),
-    authorization: new PostAuthorizationPolicy(access),
-    identifiers: {
-      /** @returns A UUID identifier. */
-      create: () => randomUUID(),
-    },
-    clock: {
-      /** @returns The current instant. */
-      now: () => new Date(),
-    },
-  };
+export function createPostComposition(daycareId?: string): PostComposition {
+  const currentDaycare: CurrentDaycareReader = daycareId
+    ? { getCurrentDaycareId: async () => daycareId }
+    : {
+        getCurrentDaycareId: async () =>
+          (await import("../postgres-runtime")).getPostgresRuntimeDaycare().getCurrentDaycareId(),
+      };
+  return createPostgresPostComposition(
+    getPostgresRuntimeClient(),
+    currentDaycare,
+  );
 }

@@ -33,9 +33,9 @@ export async function deleteFeedCommentAction(
 
    try {
      const deleted = await deleteComment(
-       createPostComposition(),
+       createPostComposition(session.user.daycareId),
        commentId,
-       { personId: session.user.personId, role: session.user.role },
+       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
      );
 
     if (!deleted) {

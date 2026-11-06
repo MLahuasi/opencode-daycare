@@ -4,6 +4,7 @@ import type { Kid } from "@/domain/kid";
 
 /** Authenticated identity used by Post authorization. */
 export type PostViewer = {
+  daycareId: string;
   personId: string;
   role: PersonRole;
 };

@@ -29,7 +29,7 @@ export default async function FamilyFeedPage({
     redirect("/home");
   }
 
-  const dependencies = createFamilyFeedComposition();
+  const dependencies = createFamilyFeedComposition(session.user.daycareId);
   const familyContext = await getFamilyFeedContext(
     dependencies,
     session.user.personId,

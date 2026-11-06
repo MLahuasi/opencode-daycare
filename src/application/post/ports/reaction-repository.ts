@@ -8,6 +8,12 @@ export interface PostReactionRepository {
    * @returns All persisted Post reactions.
    */
   findAll(): Promise<readonly PostReaction[]>;
+  /** Finds reactions attached to one Post. */
+  findByPostId(postId: string): Promise<readonly PostReaction[]>;
+  /** Finds reactions attached to a set of Posts. */
+  findByPostIds(postIds: readonly string[]): Promise<readonly PostReaction[]>;
+  /** Atomically toggles a reaction identity inside its tenant. */
+  toggle(reaction: PostReaction): Promise<boolean>;
   /**
    * Appends a reaction.
    *

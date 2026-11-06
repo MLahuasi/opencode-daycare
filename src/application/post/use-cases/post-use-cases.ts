@@ -6,7 +6,6 @@ import type {
   CreateCommentInput,
   CreatePostInput,
   PostRecord,
-  ToggleReactionResult,
   UpdateCommentInput,
   UpdatePostInput,
 } from "../dto";
@@ -14,7 +13,6 @@ import {
   createCommentRecord,
   createPostRecord,
   deleteCommentRecord,
-  toggleReactionRecord,
   updateCommentRecord,
   updatePostRecord,
 } from "../commands";
@@ -49,23 +47,33 @@ function getPostSubject(
  * @returns Whether every linked active parent has given photo-sharing consent.
  */
 export async function hasPhotoSharingConsent(
-  dependencies: Pick<PostDependencies, "parentKids" | "people">,
+  dependencies: Pick<PostDependencies, "kids" | "parentKids" | "people">,
   kidId: string,
 ): Promise<boolean> {
-  const [parentKids, people] = await Promise.all([
+  const [kid, parentKids, people] = await Promise.all([
+    dependencies.kids.findById(kidId),
     dependencies.parentKids.findAll(),
     dependencies.people.findAll(),
   ]);
+  if (!kid) return false;
+
   const activeParentIds = new Set(
     people
-      .filter((person) => person.role === "parent" && person.status === "active")
+      .filter(
+        (person) =>
+          person.daycareId === kid.daycareId &&
+          person.role === "parent" &&
+          person.status === "active",
+      )
       .map((person) => person.id),
   );
 
   return parentKids
     .filter(
       (parentKid) =>
-        parentKid.kidId === kidId && activeParentIds.has(parentKid.parentId),
+        parentKid.daycareId === kid.daycareId &&
+        parentKid.kidId === kidId &&
+        activeParentIds.has(parentKid.parentId),
     )
     .every((parentKid) => parentKid.photoSharingConsent);
 }
@@ -101,10 +109,8 @@ export async function getAuthorizedPosts(
   dependencies: PostDependencies,
   viewer: PostViewer,
 ): Promise<readonly Post[]> {
-  const [posts, comments, reactions, kids, rooms] = await Promise.all([
+  const [posts, kids, rooms] = await Promise.all([
     dependencies.posts.findAll(),
-    dependencies.comments.findAll(),
-    dependencies.reactions.findAll(),
     dependencies.kids.findAll(),
     dependencies.rooms.findAll(),
   ]);
@@ -119,6 +125,11 @@ export async function getAuthorizedPosts(
   const visiblePosts = visibility
     .filter(({ visible }) => visible)
     .map(({ post }) => post);
+  const visiblePostIds = visiblePosts.map((post) => post.id);
+  const [comments, reactions] = await Promise.all([
+    dependencies.comments.findByPostIds(visiblePostIds),
+    dependencies.reactions.findByPostIds(visiblePostIds),
+  ]);
 
   const imageStorage = visiblePosts.some((post) => post.media.length > 0)
     ? dependencies.imageStorage
@@ -163,17 +174,29 @@ export async function getPostDetail(
   const [people, comments, reactions, recipientKid, recipientRoom] =
     await Promise.all([
       dependencies.people.findAll(),
-      dependencies.comments.findAll(),
-      dependencies.reactions.findAll(),
+       dependencies.comments.findByPostId(post.id),
+       dependencies.reactions.findByPostId(post.id),
       post.kidIds[0] ? dependencies.kids.findById(post.kidIds[0]) : Promise.resolve(null),
       post.roomId ? dependencies.rooms.findById(post.roomId) : Promise.resolve(null),
     ]);
-  const author = people.find((person) => person.id === post.authorId);
+  const author = people.find(
+    (person) => person.id === post.authorId && person.daycareId === post.daycareId,
+  );
   if (!author) return null;
 
-  const engagement = await getPostEngagement(
-    dependencies,
+  if (
+    (recipientKid && recipientKid.daycareId !== post.daycareId) ||
+    (recipientRoom && recipientRoom.daycareId !== post.daycareId) ||
+    comments.some((comment) => comment.daycareId !== post.daycareId) ||
+    reactions.some((reaction) => reaction.daycareId !== post.daycareId)
+  ) {
+    return null;
+  }
+
+  const engagement = derivePostEngagement(
     post.id,
+    comments,
+    reactions,
     viewer.personId,
   );
   const imageStorage = post.media.length > 0 ? dependencies.imageStorage : null;
@@ -200,18 +223,6 @@ export async function getPostDetail(
   });
 }
 
-async function getPostEngagement(
-  dependencies: PostDependencies,
-  postId: string,
-  viewerId: string,
-) {
-  const [comments, reactions] = await Promise.all([
-    dependencies.comments.findAll(),
-    dependencies.reactions.findAll(),
-  ]);
-  return derivePostEngagement(postId, comments, reactions, viewerId);
-}
-
 /**
  * Authorizes and persists a new Post.
  *
@@ -232,7 +243,7 @@ export async function createPost(
   const timestamp = dependencies.clock.now().toISOString();
   const author = await dependencies.people.findById(input.authorId);
 
-  if (!author) {
+  if (!author || author.daycareId !== viewer.daycareId) {
     return null;
   }
 
@@ -291,30 +302,16 @@ export async function toggleReaction(
     return null;
   }
 
-  const reactions = await dependencies.reactions.findAll();
-  const result: ToggleReactionResult = toggleReactionRecord(
-    reactions,
+  const active = await dependencies.reactions.toggle({
+    daycareId: post.daycareId,
+    id: dependencies.identifiers.create(),
     postId,
-    viewer.personId,
-    dependencies.identifiers.create(),
-    dependencies.clock.now().toISOString(),
-    post.daycareId,
-  );
-  const existing = reactions.find(
-    (reaction) =>
-      reaction.postId === postId &&
-      reaction.personId === viewer.personId &&
-      reaction.type === "love",
-  );
+    personId: viewer.personId,
+    type: "love",
+    createdAt: dependencies.clock.now().toISOString(),
+  });
 
-  if (result.active) {
-    const created = result.reactions[result.reactions.length - 1];
-    if (created) await dependencies.reactions.create(created);
-  } else if (existing) {
-    await dependencies.reactions.delete(existing.id);
-  }
-
-  return { active: result.active };
+  return { active };
 }
 
 /**
@@ -359,10 +356,18 @@ export async function updateComment(
   viewer: PostViewer,
 ) {
   const comment = await dependencies.comments.findById(input.commentId);
-  if (!comment || comment.authorId !== viewer.personId) return null;
+  if (
+    !comment ||
+    comment.authorId !== viewer.personId ||
+    comment.daycareId !== viewer.daycareId
+  ) return null;
 
   const post = await dependencies.posts.findById(comment.postId);
-  if (!post || !(await dependencies.authorization.canView(viewer, post))) {
+  if (
+    !post ||
+    comment.daycareId !== post.daycareId ||
+    !(await dependencies.authorization.canView(viewer, post))
+  ) {
     return null;
   }
 
@@ -390,14 +395,22 @@ export async function deleteComment(
   viewer: PostViewer,
 ): Promise<boolean> {
   const comment = await dependencies.comments.findById(commentId);
-  if (!comment || comment.authorId !== viewer.personId) return false;
+  if (
+    !comment ||
+    comment.authorId !== viewer.personId ||
+    comment.daycareId !== viewer.daycareId
+  ) return false;
 
   const post = await dependencies.posts.findById(comment.postId);
-  if (!post || !(await dependencies.authorization.canView(viewer, post))) {
+  if (
+    !post ||
+    comment.daycareId !== post.daycareId ||
+    !(await dependencies.authorization.canView(viewer, post))
+  ) {
     return false;
   }
 
-  const comments = await dependencies.comments.findAll();
+  const comments = await dependencies.comments.findByPostId(comment.postId);
   const result = deleteCommentRecord(comments, commentId, viewer.personId);
   if (!result.deleted) return false;
   return dependencies.comments.delete(commentId);

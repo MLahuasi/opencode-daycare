@@ -21,13 +21,17 @@ export async function createPostAction(
   formData: FormData,
 ): Promise<PostFormActionState> {
   const session = await requireStaffSession();
-  const parsed = await parsePostSubmission(formData, session.user.personId);
+  const parsed = await parsePostSubmission(
+    formData,
+    session.user.personId,
+    session.user.daycareId,
+  );
 
   if (!parsed.success) return parsed.state;
 
   try {
      const createdPost = await createPost(
-       createPostComposition(),
+       createPostComposition(session.user.daycareId),
        {
        authorId: session.user.personId,
        body: parsed.values.body,
@@ -36,7 +40,7 @@ export async function createPostAction(
        roomId: parsed.values.roomId,
        type: parsed.values.type,
        },
-       { personId: session.user.personId, role: session.user.role },
+       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
      );
 
      if (!createdPost) {

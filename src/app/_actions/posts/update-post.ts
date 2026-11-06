@@ -28,14 +28,19 @@ export async function updatePostAction(
     return { errors: { postId: "Indica la publicación que deseas editar." }, message: "Revisa los campos marcados." };
   }
 
-  const dependencies = createPostComposition();
+   const dependencies = createPostComposition(session.user.daycareId);
   const currentPost = await dependencies.posts.findById(postId);
 
   if (!currentPost || currentPost.authorId !== session.user.personId) {
     return { errors: {}, message: "No tienes permiso para editar esta publicación." };
   }
 
-  const parsed = await parsePostSubmission(formData, session.user.personId, currentPost.media);
+  const parsed = await parsePostSubmission(
+    formData,
+    session.user.personId,
+    session.user.daycareId,
+    currentPost.media,
+  );
   if (!parsed.success) return parsed.state;
 
   try {
@@ -50,7 +55,7 @@ export async function updatePostAction(
         roomId: parsed.values.roomId,
         type: parsed.values.type,
       },
-      { personId: session.user.personId, role: session.user.role },
+      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
     );
 
     if (!updatedPost) {
@@ -115,7 +120,7 @@ export async function updatePostAction(
           roomId: parsed.values.roomId,
           type: parsed.values.type,
         },
-        { personId: session.user.personId, role: session.user.role },
+        { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
       );
       return {
         errors: { media: "No pudimos retirar todas las imágenes. Inténtalo nuevamente." },
