@@ -1,6 +1,6 @@
 # SPEC 32 — Cutover global de persistencia PostgreSQL
 
-> **Status:** Implemented
+> **Status:** Approved
 > **Depends on:** SPEC 28, SPEC 29, SPEC 30, SPEC 31
 > **Date:** 2026-11-05
 > **Objective:** Activar PostgreSQL como única fuente runtime de datos, retirar los adapters JSON del runtime y conservar los JSON únicamente como snapshot inmutable de migración.
@@ -90,12 +90,12 @@ No se debe mantener un modo híbrido por módulo.
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Sesiones antiguas apuntan a IDs JSON. | Invalidarlas antes de activar el tráfico PostgreSQL. |
-| Un consumidor olvidado sigue leyendo JSON. | Buscar imports, ejecutar smoke tests y revisar el grafo de Composition. |
-| La app queda parcialmente migrada. | Cambiar las composiciones en una única operación coordinada. |
-| Se modifican accidentalmente los snapshots. | Verificar hashes antes y después del cutover. |
+| Risk                                        | Mitigation                                                              |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
+| Sesiones antiguas apuntan a IDs JSON.       | Invalidarlas antes de activar el tráfico PostgreSQL.                    |
+| Un consumidor olvidado sigue leyendo JSON.  | Buscar imports, ejecutar smoke tests y revisar el grafo de Composition. |
+| La app queda parcialmente migrada.          | Cambiar las composiciones en una única operación coordinada.            |
+| Se modifican accidentalmente los snapshots. | Verificar hashes antes y después del cutover.                           |
 
 ## What is **not** in this spec
 
@@ -104,3 +104,18 @@ No se debe mantener un modo híbrido por módulo.
 - Datos de migración históricos ya aplicados.
 - Administración de guarderías.
 - Supabase Auth.
+
+---
+
+Plan de implementación
+
+1.  Crear matriz de consumidores de repositorios JSON.
+2.  Confirmar pruebas PostgreSQL exitosas de SPEC 29, 30 y 31.
+3.  Cambiar composiciones de Auth, Staff y General a PostgreSQL.
+4.  Cambiar Auth para usar IDs PostgreSQL y daycareId.
+5.  Invalidar sesiones antiguas.
+6.  Verificar login, invitaciones, Kids, Rooms, ParentKids, Posts, Family Feed, comentarios y reacciones.
+7.  Eliminar imports runtime de adapters JSON.
+8.  Verificar ausencia de persistencia/escrituras JSON.
+9.  Actualizar README y documentación de arquitectura.
+10. Ejecutar lint, typecheck, build, pruebas remotas opt-in y smoke tests.
