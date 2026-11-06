@@ -12,6 +12,7 @@ import {
   UUID_PATTERN,
 } from "@/config";
 import { getApplicationEnvironment, getAuthEnvironment } from "@/config/server";
+import { hasCapability } from "@/domain/person";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
   PostgresCredentialRepository,
@@ -217,7 +218,7 @@ export async function requireStaffSession(): Promise<Session> {
     getAuthPostgresClient(),
   ).findRoles(session.user.personId, session.user.daycareId);
 
-  if (!roles.includes("personal")) {
+  if (!hasCapability(roles, "staff-shell")) {
     redirect("/home");
   }
 

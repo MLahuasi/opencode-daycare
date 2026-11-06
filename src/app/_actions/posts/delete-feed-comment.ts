@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/composition/auth";
 import { deleteComment } from "@/application/post";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 import type { FeedCommentActionState } from "./comment-types";
 
 /**
@@ -35,7 +35,7 @@ export async function deleteFeedCommentAction(
      const deleted = await deleteComment(
        createPostComposition(session.user.daycareId),
        commentId,
-       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+       await getPostViewer(session.user.daycareId, session.user.personId),
      );
 
     if (!deleted) {

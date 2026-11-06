@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/composition/auth";
 import { updateFeedCommentAction } from "@/app/_actions/posts";
 import { getPostDetail } from "@/application/post";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 import { FamilyCommentForm } from "@/presentation/post";
 import { presentPostDetail } from "@/presentation/post";
 import { getApplicationEnvironment } from "@/config/server";
@@ -39,7 +39,7 @@ export default async function EditPostCommentPage({
    const detail = await getPostDetail(
      dependencies,
      postId,
-     { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+      await getPostViewer(session.user.daycareId, session.user.personId),
    );
    if (!detail) {
      redirect("/family-feed");

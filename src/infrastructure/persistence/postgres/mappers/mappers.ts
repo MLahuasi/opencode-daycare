@@ -1,7 +1,7 @@
 import type { Credential } from "@/domain/auth";
 import type { Invitation, ParentKid } from "@/domain/family";
 import type { Kid } from "@/domain/kid";
-import type { Person } from "@/domain/person";
+import type { Person, PersonRoleCode } from "@/domain/person";
 import type { PostComment, PostMedia, PostReaction, PersistedPost } from "@/domain/post";
 import type { Room } from "@/domain/room";
 import { getApplicationEnvironment } from "@/config/server";
@@ -33,13 +33,15 @@ function toIsoDateOnly(value: unknown): string {
 }
 
 /** Maps a PostgreSQL people row to the Person domain entity. */
-export function mapPersonRow(row: Tables<"people">): Person {
+export function mapPersonRow(
+  row: Tables<"people"> & { roles?: readonly PersonRoleCode[] },
+): Person {
   return {
     daycareId: row.daycare_id,
     id: row.id,
     name: row.name,
     email: row.email,
-    roles: [],
+    roles: row.roles ?? [],
     status: row.status,
   };
 }

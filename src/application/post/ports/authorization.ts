@@ -6,7 +6,7 @@ import type { Kid } from "@/domain/kid";
 export type PostViewer = {
   daycareId: string;
   personId: string;
-  role: PersonRoleCode;
+  roles: readonly PersonRoleCode[];
 };
 
 /** Persistence capabilities required to evaluate Post access. */

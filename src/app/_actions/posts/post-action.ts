@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { createPostImageStorage } from "@/composition/post";
+import { createPostImageStorage, getPostViewer } from "@/composition/post";
 import { getPostTargets, hasPhotoSharingConsent } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 import {
@@ -175,7 +175,7 @@ export async function parsePostSubmission(
 
   const targets = await getPostTargets(
     createPostComposition(authenticatedDaycareId),
-    { daycareId: authenticatedDaycareId, personId, role: "personal" },
+    await getPostViewer(authenticatedDaycareId, personId),
   );
   const targetKids = targets.kids.filter((kid) =>
     initialValidation.data.kidIds.includes(kid.id),

@@ -7,9 +7,10 @@ import { PostDetailView } from "@/presentation/post";
 import { FamilySidebar, StaffSidebar } from "@/presentation/layout";
 import { staffNavigationConfig } from "@/presentation/navigation";
 import { createFamilyFeedComposition } from "@/composition/family";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 import { presentPostDetail } from "@/presentation/post";
 import { getApplicationEnvironment } from "@/config/server";
+import { hasRole } from "@/domain/person";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -29,10 +30,11 @@ export default async function PostDetailPage({
 }: PostDetailPageProps) {
   const session = await requireActiveSession();
   const { postId } = await params;
+  const viewer = await getPostViewer(session.user.daycareId, session.user.personId);
    const detail = await getPostDetail(
      createPostComposition(session.user.daycareId),
      postId,
-      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+       viewer,
    );
 
    if (!detail) {
@@ -41,7 +43,7 @@ export default async function PostDetailPage({
    const environment = getApplicationEnvironment();
    const viewModel = presentPostDetail(detail, environment.locale, environment.timeZone);
 
-  if (session.user.role === "parent") {
+   if (hasRole(viewer.roles, "parent")) {
     const familyContext = await getFamilyFeedContext(
        createFamilyFeedComposition(session.user.daycareId),
       session.user.personId,

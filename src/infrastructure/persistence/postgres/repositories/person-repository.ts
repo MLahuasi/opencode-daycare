@@ -1,9 +1,27 @@
 import "server-only";
 
-import type { Person } from "@/domain/person";
+import type { Person, PersonRoleCode } from "@/domain/person";
 import { mapPersonRow } from "../mappers";
 import type { PostgresQueryClient } from "../client/postgres-client";
 import type { Tables } from "../types";
+
+type PersonRow = Tables<"people"> & { roles: PersonRoleCode[] };
+
+function personSelect(sql: PostgresQueryClient) {
+  return sql`
+  SELECT p.daycare_id, p.id, p.name, p.email, p.status,
+         p.created_at, p.updated_at,
+         COALESCE(
+           array_agg(r.code::text ORDER BY r.code)
+             FILTER (WHERE r.code IS NOT NULL),
+           ARRAY[]::text[]
+         ) AS roles
+  FROM people AS p
+  LEFT JOIN people_roles AS pr
+    ON pr.person_id = p.id AND pr.daycare_id = p.daycare_id
+  LEFT JOIN roles AS r ON r.id = pr.role_id
+  `;
+}
 
 /** PostgreSQL persistence adapter for daycare-scoped people. */
 export class PostgresPersonRepository {
@@ -16,11 +34,11 @@ export class PostgresPersonRepository {
    * @returns People persisted for the daycare.
    */
   async findAll(daycareId: string): Promise<readonly Person[]> {
-    const rows = await this.client<Tables<"people">[]>`
-      SELECT daycare_id, id, name, email, status, created_at, updated_at
-      FROM people
-      WHERE daycare_id = ${daycareId}
-      ORDER BY id
+    const rows = await this.client<PersonRow[]>`
+      ${personSelect(this.client)}
+      WHERE p.daycare_id = ${daycareId}
+      GROUP BY p.daycare_id, p.id, p.name, p.email, p.status, p.created_at, p.updated_at
+      ORDER BY p.id
     `;
 
     return rows.map(mapPersonRow);
@@ -34,11 +52,11 @@ export class PostgresPersonRepository {
    * @returns The person or `null` when it does not exist in the daycare.
    */
   async findById(daycareId: string, id: string): Promise<Person | null> {
-    const rows = await this.client<Tables<"people">[]>`
-      SELECT daycare_id, id, name, email, status, created_at, updated_at
-      FROM people
-      WHERE daycare_id = ${daycareId}
-        AND id = ${id}
+    const rows = await this.client<PersonRow[]>`
+      ${personSelect(this.client)}
+      WHERE p.daycare_id = ${daycareId}
+        AND p.id = ${id}
+      GROUP BY p.daycare_id, p.id, p.name, p.email, p.status, p.created_at, p.updated_at
       LIMIT 1
     `;
 
@@ -53,11 +71,11 @@ export class PostgresPersonRepository {
    * @returns The person or `null` when it does not exist in the daycare.
    */
   async findByEmail(daycareId: string, email: string): Promise<Person | null> {
-    const rows = await this.client<Tables<"people">[]>`
-      SELECT daycare_id, id, name, email, status, created_at, updated_at
-      FROM people
-      WHERE daycare_id = ${daycareId}
-        AND lower(email) = lower(${email})
+    const rows = await this.client<PersonRow[]>`
+      ${personSelect(this.client)}
+      WHERE p.daycare_id = ${daycareId}
+        AND lower(p.email) = lower(${email})
+      GROUP BY p.daycare_id, p.id, p.name, p.email, p.status, p.created_at, p.updated_at
       LIMIT 1
     `;
 

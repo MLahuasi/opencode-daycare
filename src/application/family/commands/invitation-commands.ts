@@ -51,7 +51,7 @@ export async function createInvitation(
 
   const existingPerson = await dependencies.people.findByEmail(kid.daycareId, email);
 
-  if (existingPerson && existingPerson.role !== "parent") {
+  if (existingPerson && !existingPerson.roles.includes("parent")) {
     throw new ExistingInvitationPersonError(
       "The invitation email belongs to a non-parent person.",
     );
@@ -62,7 +62,7 @@ export async function createInvitation(
     id: dependencies.identifiers.create(),
     name: input.name.trim(),
     email,
-    role: "parent",
+    roles: ["parent"],
     status: "pending",
   };
   const existingParentKid = await dependencies.parentKids.findByParentAndKid(
@@ -167,7 +167,7 @@ export async function acceptInvitation(
     throw new InvalidInvitationAcceptanceError("The invitation email does not match.");
   }
 
-  const existingActiveParent = person.role === "parent" && person.status === "active";
+  const existingActiveParent = person.roles.includes("parent") && person.status === "active";
 
   if (!existingActiveParent && (!input.password || !isValidActivationPassword(input.password))) {
     throw new InvalidInvitationAcceptanceError("The activation password is invalid.");

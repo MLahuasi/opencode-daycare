@@ -8,6 +8,7 @@ import type {
   FamilyFeedProjection,
 } from "../dto";
 import type { FamilyFeedQueryDependencies } from "../ports";
+import { hasCapability } from "@/domain/person";
 
 /**
  * Loads the records authorized for a parent Family Feed context.
@@ -29,7 +30,7 @@ export async function getFamilyFeedContext(
   ]);
 
   if (!person) throw new Error("Authenticated person was not found in persistence.");
-  if (person.role !== "parent") {
+  if (!hasCapability(person.roles, "family-feed")) {
     throw new Error("Family context is only available to parent accounts.");
   }
 

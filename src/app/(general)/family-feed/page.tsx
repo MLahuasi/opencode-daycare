@@ -13,6 +13,8 @@ import { presentFamilyFeedOptions } from "@/presentation/family";
 import { createFamilyFeedComposition } from "@/composition/family";
 import styles from "./family-feed.module.css";
 import { getApplicationEnvironment } from "@/config/server";
+import { getPostViewer } from "@/composition/post";
+import { hasRole } from "@/domain/person";
 
 /**
  * Renders the authenticated family feed outside the staff home route.
@@ -25,8 +27,9 @@ export default async function FamilyFeedPage({
   searchParams?: Promise<{ filter?: string | string[]; id?: string | string[] }>;
 }) {
   const session = await requireActiveSession();
+  const viewer = await getPostViewer(session.user.daycareId, session.user.personId);
 
-  if (session.user.role !== "parent") {
+  if (!hasRole(viewer.roles, "parent")) {
     redirect("/home");
   }
 

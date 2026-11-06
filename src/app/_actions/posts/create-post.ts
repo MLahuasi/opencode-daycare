@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/composition/auth";
 import { createPostImageStorage } from "@/composition/post";
 import { createPost } from "@/application/post";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "@/presentation/post/contracts";
@@ -40,7 +40,7 @@ export async function createPostAction(
        roomId: parsed.values.roomId,
        type: parsed.values.type,
        },
-       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+        await getPostViewer(session.user.daycareId, session.user.personId),
      );
 
      if (!createdPost) {

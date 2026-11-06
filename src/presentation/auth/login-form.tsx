@@ -1,6 +1,6 @@
 "use client";
 
-import { getSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { SubmitEvent } from "react";
 import { useState } from "react";
@@ -49,8 +49,7 @@ export function LoginForm({
     setIsPending(false);
 
     if (result?.ok) {
-      const session = await getSession();
-      router.push(session?.user.role === "parent" ? "/family-feed" : "/home");
+      router.push("/home");
       return;
     }
 
