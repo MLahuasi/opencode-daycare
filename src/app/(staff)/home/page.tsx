@@ -4,7 +4,7 @@ import { toggleFeedReactionAction } from "@/app/_actions/posts";
 import { getFeedOverview } from "@/composition/feed";
 import { getAuthorizedPosts } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
-import { staffNavigationConfig } from "@/presentation/navigation";
+import { getStaffNavigation } from "@/composition/staff-shell";
 import { requireActiveSession } from "@/composition/auth";
 import { getPostViewer } from "@/composition/post";
 import { hasRole } from "@/domain/person";
@@ -19,6 +19,12 @@ import { getApplicationEnvironment } from "@/config/server";
 export default async function Home() {
   const session = await requireActiveSession();
   const viewer = await getPostViewer(session.user.daycareId, session.user.personId);
+  const navigation = await getStaffNavigation(
+    session.user.daycareId,
+    session.user.personId,
+  );
+
+  if (!navigation) redirect("/auth/login");
 
   if (hasRole(viewer.roles, "parent")) {
     redirect("/family-feed");
@@ -31,7 +37,7 @@ export default async function Home() {
    );
   return (
     <div className="flex min-h-screen bg-background">
-      <StaffSidebar navigation={staffNavigationConfig} />
+      <StaffSidebar navigation={navigation} />
       <FeedContent
         canReact
         commentHref={(postId) => `/posts/${encodeURIComponent(postId)}/comments/new`}
