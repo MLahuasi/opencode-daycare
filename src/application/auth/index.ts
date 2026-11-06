@@ -14,3 +14,4 @@ export type {
   CreateCredentialInput,
   CreatedCredential,
 } from "./dto";
+export { isCredentialLoginEligible } from "./auth-login-policy";

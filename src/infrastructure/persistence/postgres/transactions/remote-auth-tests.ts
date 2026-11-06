@@ -2,6 +2,7 @@ import "server-only";
 
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
+import { isCredentialLoginEligible } from "@/application/auth";
 import { PostgresClientProvider } from "../client/postgres-client-provider";
 import { PostgresCredentialRepository } from "../repositories/credential-repository";
 import { PostgresInvitationRepository } from "../repositories/invitation-repository";
@@ -86,6 +87,48 @@ export async function runRemoteAuthPersistenceTests(): Promise<void> {
     assert.deepEqual(await personRoles.findRoles(ids.secondPersonId, ids.secondDaycareId), ["teacher"]);
     assert.deepEqual(await personRoles.findRoles(ids.firstPersonId, ids.secondDaycareId), []);
     assert.deepEqual(await personRoles.findRoles(ids.secondPersonId, ids.firstDaycareId), []);
+    assert.equal(
+      isCredentialLoginEligible(
+        firstPerson,
+        {
+          daycareId: ids.firstDaycareId,
+          id: ids.firstCredentialId,
+          personId: ids.firstPersonId,
+          passwordHash: "remote-test-hash-a",
+        },
+        ["parent"],
+        ids.firstDaycareId,
+      ),
+      true,
+    );
+    assert.equal(
+      isCredentialLoginEligible(
+        firstPerson,
+        {
+          daycareId: ids.firstDaycareId,
+          id: ids.firstCredentialId,
+          personId: ids.firstPersonId,
+          passwordHash: "remote-test-hash-a",
+        },
+        [],
+        ids.firstDaycareId,
+      ),
+      false,
+    );
+    assert.equal(
+      isCredentialLoginEligible(
+        firstPerson,
+        {
+          daycareId: ids.secondDaycareId,
+          id: ids.secondCredentialId,
+          personId: ids.firstPersonId,
+          passwordHash: "remote-test-hash-b",
+        },
+        ["parent"],
+        ids.firstDaycareId,
+      ),
+      false,
+    );
 
     await credentials.upsert({
       daycareId: ids.firstDaycareId,

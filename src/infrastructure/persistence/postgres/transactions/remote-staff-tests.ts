@@ -11,6 +11,7 @@ import { PostgresRoomRepository } from "../repositories/room-repository";
 import { PostgresPersonRoleRepository } from "../repositories/person-role-repository";
 import { PostgresStaffShellRepository } from "../repositories/staff-shell-repository";
 import { withRemoteDbTestTransaction } from "./remote-db-test-context";
+import { projectStaffNavigation } from "@/composition/staff-shell";
 
 function createIds() {
   return {
@@ -178,6 +179,32 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
         roomNames: ["Remote Room", "Remote Second Room"],
       },
     );
+    const projectedNavigation = projectStaffNavigation({
+      brandName: "OpenDayCare",
+      personName: "Caro Giménez",
+      jobTitle: "Maestra",
+      roomNames: ["Soles", "Girasoles", "Patitos"],
+    });
+    assert.deepEqual(projectedNavigation.brand, {
+      name: "OpenDayCare",
+      room: "Salas Soles, Girasoles, Patitos",
+    });
+    assert.deepEqual(projectedNavigation.profile, {
+      initial: "C",
+      name: "Caro Giménez",
+      role: "Maestra · Soles, Girasoles, Patitos",
+    });
+    const emptyProjection = projectStaffNavigation({
+      brandName: "OpenDayCare",
+      personName: "Ana",
+      jobTitle: null,
+      roomNames: [],
+    });
+    assert.deepEqual(emptyProjection.brand, {
+      name: "OpenDayCare",
+      room: "Sin salas",
+    });
+    assert.equal(emptyProjection.profile.role, "Personal · Sin salas");
     await parentKids.create({
       daycareId: ids.daycareId,
       id: ids.parentKidId,

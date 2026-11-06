@@ -1,4 +1,7 @@
-export { getStaffNavigation } from "./staff-shell-composition";
+export {
+  getStaffNavigation,
+  projectStaffNavigation,
+} from "./staff-shell-composition";
 export {
   buildStaffFeedOverview,
   type StaffFeedOverview,

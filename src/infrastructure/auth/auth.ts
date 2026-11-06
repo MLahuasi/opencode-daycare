@@ -13,6 +13,7 @@ import {
 } from "@/config";
 import { getApplicationEnvironment, getAuthEnvironment } from "@/config/server";
 import { hasCapability } from "@/domain/person";
+import { isCredentialLoginEligible } from "@/application/auth";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
   PostgresCredentialRepository,
@@ -73,17 +74,10 @@ export const authOptions: NextAuthOptions = {
           ? await credentialRepository.findByPersonId(daycareId, person.id)
           : null;
 
-        if (
-          !person ||
-          person.daycareId !== daycareId ||
-          person.status !== "active" ||
-          !storedCredential
-        ) {
-          return null;
-        }
+        if (!person || !storedCredential) return null;
 
         const roles = await personRoleRepository.findRoles(person.id, daycareId);
-        if (roles.length === 0) {
+        if (!isCredentialLoginEligible(person, storedCredential, roles, daycareId)) {
           return null;
         }
 

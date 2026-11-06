@@ -27,7 +27,10 @@ export { PostgresParentKidRepository } from "./repositories/parent-kid-repositor
 export { PostgresKidRepository } from "./repositories/kid-repository";
 export { PostgresPersonRepository } from "./repositories/person-repository";
 export { PostgresPersonRoleRepository } from "./repositories/person-role-repository";
-export { PostgresStaffShellRepository } from "./repositories/staff-shell-repository";
+export {
+  PostgresStaffShellRepository,
+  type StaffShellRow,
+} from "./repositories/staff-shell-repository";
 export { PostgresPostRepository } from "./repositories/post-repository";
 export {
   PostgresPostAccessRepository,
