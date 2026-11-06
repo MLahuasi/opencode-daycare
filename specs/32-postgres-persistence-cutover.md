@@ -109,7 +109,5 @@ No se debe mantener un modo híbrido por módulo.
 
 Plan de implementación
 
-7.  Eliminar imports runtime de adapters JSON.
-8.  Verificar ausencia de persistencia/escrituras JSON.
 9.  Actualizar README y documentación de arquitectura.
 10. Ejecutar lint, typecheck, build, pruebas remotas opt-in y smoke tests.
