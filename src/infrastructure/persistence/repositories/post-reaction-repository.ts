@@ -20,6 +20,18 @@ export class PostReactionRepository implements PostReactionRepositoryPort {
     return readDaycareScopedCollection<PostReaction>("feed-reactions.json");
   }
 
+  async findByPostId(postId: string): Promise<readonly PostReaction[]> {
+    const reactions = await this.findAll();
+    return reactions.filter((reaction) => reaction.postId === postId);
+  }
+
+  async findByPostIds(postIds: readonly string[]): Promise<readonly PostReaction[]> {
+    if (postIds.length === 0) return [];
+    const postIdSet = new Set(postIds);
+    const reactions = await this.findAll();
+    return reactions.filter((reaction) => postIdSet.has(reaction.postId));
+  }
+
   /**
    * Appends a reaction.
    *

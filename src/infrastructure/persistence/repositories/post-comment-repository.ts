@@ -20,6 +20,18 @@ export class PostCommentRepository implements PostCommentRepositoryPort {
     return readDaycareScopedCollection<PostComment>("feed-comments.json");
   }
 
+  async findByPostId(postId: string): Promise<readonly PostComment[]> {
+    const comments = await this.findAll();
+    return comments.filter((comment) => comment.postId === postId);
+  }
+
+  async findByPostIds(postIds: readonly string[]): Promise<readonly PostComment[]> {
+    if (postIds.length === 0) return [];
+    const postIdSet = new Set(postIds);
+    const comments = await this.findAll();
+    return comments.filter((comment) => postIdSet.has(comment.postId));
+  }
+
   /**
    * Finds one comment by stable identifier.
    *

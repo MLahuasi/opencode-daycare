@@ -30,6 +30,28 @@ export class PostgresPostReactionRepository
     return rows.map(mapFeedReactionRow);
   }
 
+  /** Lists reactions for one Post within the current daycare. */
+  async findByPostId(postId: string): Promise<readonly PostReaction[]> {
+    return this.findByPostIds([postId]);
+  }
+
+  /** Lists reactions for a set of Posts within the current daycare. */
+  async findByPostIds(postIds: readonly string[]): Promise<readonly PostReaction[]> {
+    if (postIds.length === 0) return [];
+
+    const daycareId = await this.currentDaycare.getCurrentDaycareId();
+    const rows = await this.client<Tables<"feed_reactions">[]>`
+      SELECT daycare_id, id, feed_id, person_id, type,
+             created_at, updated_at
+      FROM feed_reactions
+      WHERE daycare_id = ${daycareId}
+        AND feed_id IN ${this.client(postIds)}
+      ORDER BY feed_id, created_at, id
+    `;
+
+    return rows.map(mapFeedReactionRow);
+  }
+
   /** Inserts a reaction after confirming its tenant is the current daycare. */
   async create(reaction: PostReaction): Promise<void> {
     await this.assertCurrentDaycare(reaction.daycareId);

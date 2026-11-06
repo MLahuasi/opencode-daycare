@@ -101,10 +101,8 @@ export async function getAuthorizedPosts(
   dependencies: PostDependencies,
   viewer: PostViewer,
 ): Promise<readonly Post[]> {
-  const [posts, comments, reactions, kids, rooms] = await Promise.all([
+  const [posts, kids, rooms] = await Promise.all([
     dependencies.posts.findAll(),
-    dependencies.comments.findAll(),
-    dependencies.reactions.findAll(),
     dependencies.kids.findAll(),
     dependencies.rooms.findAll(),
   ]);
@@ -119,6 +117,11 @@ export async function getAuthorizedPosts(
   const visiblePosts = visibility
     .filter(({ visible }) => visible)
     .map(({ post }) => post);
+  const visiblePostIds = visiblePosts.map((post) => post.id);
+  const [comments, reactions] = await Promise.all([
+    dependencies.comments.findByPostIds(visiblePostIds),
+    dependencies.reactions.findByPostIds(visiblePostIds),
+  ]);
 
   const imageStorage = visiblePosts.some((post) => post.media.length > 0)
     ? dependencies.imageStorage
@@ -163,17 +166,18 @@ export async function getPostDetail(
   const [people, comments, reactions, recipientKid, recipientRoom] =
     await Promise.all([
       dependencies.people.findAll(),
-      dependencies.comments.findAll(),
-      dependencies.reactions.findAll(),
+       dependencies.comments.findByPostId(post.id),
+       dependencies.reactions.findByPostId(post.id),
       post.kidIds[0] ? dependencies.kids.findById(post.kidIds[0]) : Promise.resolve(null),
       post.roomId ? dependencies.rooms.findById(post.roomId) : Promise.resolve(null),
     ]);
   const author = people.find((person) => person.id === post.authorId);
   if (!author) return null;
 
-  const engagement = await getPostEngagement(
-    dependencies,
+  const engagement = derivePostEngagement(
     post.id,
+    comments,
+    reactions,
     viewer.personId,
   );
   const imageStorage = post.media.length > 0 ? dependencies.imageStorage : null;
@@ -198,18 +202,6 @@ export async function getPostDetail(
     recipientRoom,
     viewerRole: viewer.role,
   });
-}
-
-async function getPostEngagement(
-  dependencies: PostDependencies,
-  postId: string,
-  viewerId: string,
-) {
-  const [comments, reactions] = await Promise.all([
-    dependencies.comments.findAll(),
-    dependencies.reactions.findAll(),
-  ]);
-  return derivePostEngagement(postId, comments, reactions, viewerId);
 }
 
 /**
@@ -291,7 +283,7 @@ export async function toggleReaction(
     return null;
   }
 
-  const reactions = await dependencies.reactions.findAll();
+  const reactions = await dependencies.reactions.findByPostId(postId);
   const result: ToggleReactionResult = toggleReactionRecord(
     reactions,
     postId,
@@ -397,7 +389,7 @@ export async function deleteComment(
     return false;
   }
 
-  const comments = await dependencies.comments.findAll();
+  const comments = await dependencies.comments.findByPostId(comment.postId);
   const result = deleteCommentRecord(comments, commentId, viewer.personId);
   if (!result.deleted) return false;
   return dependencies.comments.delete(commentId);

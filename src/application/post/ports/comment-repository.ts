@@ -8,6 +8,10 @@ export interface PostCommentRepository {
    * @returns All persisted Post comments.
    */
   findAll(): Promise<readonly PostComment[]>;
+  /** Finds comments attached to one Post. */
+  findByPostId(postId: string): Promise<readonly PostComment[]>;
+  /** Finds comments attached to a set of Posts. */
+  findByPostIds(postIds: readonly string[]): Promise<readonly PostComment[]>;
   /**
    * Finds one comment by stable identifier.
    *

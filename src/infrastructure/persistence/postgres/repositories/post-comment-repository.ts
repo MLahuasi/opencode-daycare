@@ -30,6 +30,28 @@ export class PostgresPostCommentRepository
     return rows.map(mapFeedCommentRow);
   }
 
+  /** Lists comments for one Post within the current daycare. */
+  async findByPostId(postId: string): Promise<readonly PostComment[]> {
+    return this.findByPostIds([postId]);
+  }
+
+  /** Lists comments for a set of Posts within the current daycare. */
+  async findByPostIds(postIds: readonly string[]): Promise<readonly PostComment[]> {
+    if (postIds.length === 0) return [];
+
+    const daycareId = await this.currentDaycare.getCurrentDaycareId();
+    const rows = await this.client<Tables<"feed_comments">[]>`
+      SELECT daycare_id, id, feed_id, author_id, body,
+             created_at, updated_at
+      FROM feed_comments
+      WHERE daycare_id = ${daycareId}
+        AND feed_id IN ${this.client(postIds)}
+      ORDER BY feed_id, created_at, id
+    `;
+
+    return rows.map(mapFeedCommentRow);
+  }
+
   /** Finds a comment only when it belongs to the current daycare. */
   async findById(id: string): Promise<PostComment | null> {
     const daycareId = await this.currentDaycare.getCurrentDaycareId();
