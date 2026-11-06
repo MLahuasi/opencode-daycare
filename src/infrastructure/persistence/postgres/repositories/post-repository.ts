@@ -1,0 +1,114 @@
+import "server-only";
+
+import type { CurrentDaycareReader } from "@/application/daycare/ports";
+import type { PersistedPost } from "@/domain/post";
+import type { PostgresQueryClient } from "../client/postgres-client";
+import {
+  mapFeedMediaRow,
+  mapFeedRow,
+} from "../mappers";
+import type { Tables } from "../types";
+
+type FeedKidRow = Pick<Tables<"feed_kids">, "feed_id" | "kid_id">;
+
+/** PostgreSQL reader for the normalized Post aggregate. */
+export class PostgresPostRepository {
+  public constructor(
+    private readonly client: PostgresQueryClient,
+    private readonly currentDaycare: CurrentDaycareReader,
+  ) {}
+
+  /** Reads all valid Posts and rebuilds their normalized destinations and media. */
+  async findAll(): Promise<readonly PersistedPost[]> {
+    const daycareId = await this.currentDaycare.getCurrentDaycareId();
+    const feedRows = await this.client<Tables<"feed">[]>`
+      SELECT f.author_id, f.body, f.created_at, f.daycare_id, f.id,
+             f.room_id, f.type, f.updated_at
+      FROM feed AS f
+      WHERE f.daycare_id = ${daycareId}
+        AND EXISTS (
+          SELECT 1
+          FROM people AS author
+          WHERE author.daycare_id = f.daycare_id
+            AND author.id = f.author_id
+        )
+        AND (
+          f.room_id IS NULL
+          OR EXISTS (
+            SELECT 1
+            FROM rooms AS room
+            WHERE room.daycare_id = f.daycare_id
+              AND room.id = f.room_id
+          )
+        )
+        AND NOT EXISTS (
+          SELECT 1
+          FROM feed_kids AS destination
+          LEFT JOIN kids AS kid
+            ON kid.daycare_id = destination.daycare_id
+           AND kid.id = destination.kid_id
+          WHERE destination.feed_id = f.id
+            AND (
+              destination.daycare_id <> f.daycare_id
+              OR kid.id IS NULL
+            )
+        )
+        AND NOT EXISTS (
+          SELECT 1
+          FROM feed_media AS media
+          WHERE media.feed_id = f.id
+            AND media.daycare_id <> f.daycare_id
+        )
+      ORDER BY f.created_at, f.id
+    `;
+
+    if (feedRows.length === 0) {
+      return [];
+    }
+
+    const feedIds = feedRows.map((row) => row.id);
+    const feedKidRows = await this.client<FeedKidRow[]>`
+      SELECT feed_id, kid_id
+      FROM feed_kids
+      WHERE daycare_id = ${daycareId}
+        AND feed_id IN ${this.client(feedIds)}
+      ORDER BY feed_id, kid_id
+    `;
+    const mediaRows = await this.client<Tables<"feed_media">[]>`
+      SELECT alt, asset_id, bytes, created_at, daycare_id, delivery_type,
+             feed_id, format, height, id, original_name, position,
+             public_id, resource_type, updated_at, width
+      FROM feed_media
+      WHERE daycare_id = ${daycareId}
+        AND feed_id IN ${this.client(feedIds)}
+      ORDER BY feed_id, position, id
+    `;
+
+    const kidIdsByFeed = new Map<string, string[]>();
+    for (const row of feedKidRows) {
+      const kidIds = kidIdsByFeed.get(row.feed_id) ?? [];
+      kidIds.push(row.kid_id);
+      kidIdsByFeed.set(row.feed_id, kidIds);
+    }
+
+    const mediaByFeed = new Map<string, ReturnType<typeof mapFeedMediaRow>[]>();
+    for (const row of mediaRows) {
+      const media = mediaByFeed.get(row.feed_id) ?? [];
+      media.push(mapFeedMediaRow(row));
+      mediaByFeed.set(row.feed_id, media);
+    }
+
+    return feedRows.map((row) =>
+      mapFeedRow(row, {
+        kidIds: kidIdsByFeed.get(row.id) ?? [],
+        media: mediaByFeed.get(row.id) ?? [],
+      }),
+    );
+  }
+
+  /** Finds one valid Post in the current daycare. */
+  async findById(id: string): Promise<PersistedPost | null> {
+    const posts = await this.findAll();
+    return posts.find((post) => post.id === id) ?? null;
+  }
+}
