@@ -94,7 +94,7 @@ begin
   limit 1;
 
   update public.credential
-  set password_hash = '$2b$12$XU0dIsFwQ4L8zUWUJWMizeynioWBpLtOyWVT/8ZWGkxX4P0r8lZSi',
+  set password_hash = '$2a$12$GTGfRJDLblFg92TYxw0Ka.YHV6u8pJdo0BtLQ1TF9Pa9TawSUeSUS',
       updated_at = now()
   where id = (
     select c.id
@@ -115,7 +115,7 @@ begin
     values (
       v_daycare_id,
       v_caro_id,
-      '$2b$12$XU0dIsFwQ4L8zUWUJWMizeynioWBpLtOyWVT/8ZWGkxX4P0r8lZSi'
+       '$2a$12$GTGfRJDLblFg92TYxw0Ka.YHV6u8pJdo0BtLQ1TF9Pa9TawSUeSUS'
     );
   end if;
 end;
