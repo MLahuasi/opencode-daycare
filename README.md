@@ -84,6 +84,46 @@ ejecuta implícitamente durante una migración: `db:seed` es la única operació
 ejecuta `supabase/seed.sql`, dentro de su propia transacción. No se debe ejecutar
 `db:seed` hasta comprobar que el enlace apunta al proyecto nuevo correcto.
 
+### Evidencia del baseline SPEC 33
+
+La estructura y el seed se validaron el 2026-11-06 contra el PostgreSQL local de
+Supabase. La migración `20261106215827_database_baseline.sql` se aplicó sobre una
+base vacía y `supabase/seed.sql` se ejecutó dos veces.
+
+Conteos observados después del segundo ciclo:
+
+| Entidad | Filas |
+| --- | ---: |
+| `daycares` | 1 |
+| `roles` | 4 |
+| `people` | 1 |
+| `credential` | 1 |
+| `people_roles` | 3 |
+| `rooms` | 3 |
+| `staff_rooms` | 3 |
+| **Total** | **16** |
+
+Relaciones verificadas:
+
+- Caro Giménez (`caro@opendaycare.com`) está activa y tiene el cargo `Maestra`.
+- Sus roles en el daycare son `admin`, `personal` y `teacher`.
+- Está asignada a `Soles`, `Girasoles` y `Patitos` mediante `staff_rooms`.
+- `person_role` contiene exactamente `admin`, `personal`, `teacher` y `parent`.
+- `feed_overview` no existe.
+- La segunda ejecución no añadió filas en `people_roles` ni `staff_rooms`.
+
+Credencial de bootstrap para el primer acceso en el proyecto nuevo:
+
+```text
+Email:    caro@opendaycare.com
+Password: OpenDayCare1!
+```
+
+El seed guarda el hash bcrypt existente para esa contraseña. Esta credencial es
+solo de bootstrap y debe rotarse antes de usar el proyecto en un entorno real.
+La validación no creó niños, padres, invitaciones, publicaciones, comentarios,
+reacciones, media ni históricos.
+
 ## Configuración de correo
 
 La integración con `@jmlq/mailer` es exclusivamente server-only y se controla
