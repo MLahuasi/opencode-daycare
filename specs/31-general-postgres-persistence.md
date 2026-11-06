@@ -1,6 +1,6 @@
 # SPEC 31 — Persistencia PostgreSQL del módulo General
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 28, SPEC 29, SPEC 30
 > **Date:** 2026-11-05
 > **Objective:** Implementar la lectura PostgreSQL del Family Feed y el CRUD de comentarios y reacciones para las rutas `src/app/(general)/` sin cambiar las reglas de autorización y usando PostgreSQL en el runtime.
@@ -50,25 +50,25 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 
 ## Acceptance criteria
 
-- [ ] El Family Feed no combina personas, kids, rooms o posts de distintos tenants.
-- [ ] Un padre solo recibe posts autorizados por sus ParentKids activos.
-- [ ] Staff conserva la autorización basada en StaffRooms.
-- [ ] Los comentarios mantienen `updatedAt: null` cuando la fila es nullable.
-- [ ] Un usuario solo puede editar o eliminar sus propios comentarios.
-- [ ] Una reacción se identifica por post, persona, tipo y tenant.
-- [ ] El engagement coincide con el número real de comentarios y reacciones PostgreSQL.
-- [ ] El toggle de reacción no crea duplicados en ejecuciones concurrentes controladas.
-- [ ] Las URLs de media se resuelven fuera de PostgreSQL mediante el adapter existente.
+- [x] El Family Feed no combina personas, kids, rooms o posts de distintos tenants.
+- [x] Un padre solo recibe posts autorizados por sus ParentKids activos.
+- [x] Staff conserva la autorización basada en StaffRooms.
+- [x] Los comentarios mantienen `updatedAt: null` cuando la fila es nullable.
+- [x] Un usuario solo puede editar o eliminar sus propios comentarios.
+- [x] Una reacción se identifica por post, persona, tipo y tenant.
+- [x] El engagement coincide con el número real de comentarios y reacciones PostgreSQL.
+- [x] El toggle de reacción no crea duplicados en ejecuciones concurrentes controladas.
+- [x] Las URLs de media se resuelven fuera de PostgreSQL mediante el adapter existente.
 - [x] Los tests del módulo no leen los JSON de Feed, comentarios ni reacciones.
-- [ ] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
-- [ ] Se ejecutan contra PostgreSQL las pruebas pendientes de SPEC 30: listado, alta, edición, autorización, relaciones y rollback.
+- [x] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
+- [x] Se ejecutan contra PostgreSQL las pruebas pendientes de SPEC 30: listado, alta, edición, autorización, relaciones y rollback.
 - [x] La evidencia de las pruebas pendientes de SPEC 30 identifica cada escenario ejecutado y no usa los JSON del módulo.
-- [x] Las rutas `(general)` pasan smoke tests usando la composición PostgreSQL productiva.
+- [ ] Las rutas `(general)` pasan smoke tests usando la composición PostgreSQL productiva.
 - [x] La composición productiva usa PostgreSQL después del cutover global.
-- [ ] No cambian filtros, proyecciones ni reglas funcionales.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
+- [x] No cambian filtros, proyecciones ni reglas funcionales.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
 
 ## Decisions
 

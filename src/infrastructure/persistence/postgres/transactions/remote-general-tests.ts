@@ -3,7 +3,7 @@ import "server-only";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { PostAuthorizationPolicy } from "@/application/post";
-import { getPostDetail } from "@/application/post";
+import { deleteComment, getPostDetail, updateComment } from "@/application/post";
 import { getFamilyFeedProjection } from "@/application/family/feed";
 import { createPostgresFamilyFeedComposition } from "@/composition/family/family-feed-composition-postgres";
 import { createPostgresPostComposition } from "@/composition/post/postgres-composition";
@@ -22,6 +22,7 @@ function createIds() {
     otherDaycareId: randomUUID(),
     staffId: randomUUID(),
     parentId: randomUUID(),
+    otherParentId: randomUUID(),
     otherStaffId: randomUUID(),
     roomId: randomUUID(),
     kidId: randomUUID(),
@@ -66,6 +67,7 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
       VALUES
         (${ids.staffId}, ${ids.daycareId}, 'General Staff', 'general-staff@example.test', 'personal', 'active'),
         (${ids.parentId}, ${ids.daycareId}, 'General Parent', 'general-parent@example.test', 'parent', 'active'),
+        (${ids.otherParentId}, ${ids.daycareId}, 'Other General Parent', 'other-general-parent@example.test', 'parent', 'active'),
         (${ids.otherStaffId}, ${ids.otherDaycareId}, 'Other Staff', 'other-staff@example.test', 'personal', 'active')
     `;
     await rooms.create({ daycareId: ids.daycareId, id: ids.roomId, name: 'General Room' });
@@ -89,6 +91,14 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
       daycareId: ids.daycareId,
       id: randomUUID(),
       parentId: ids.parentId,
+      kidId: ids.kidId,
+      relationship: 'guardian',
+      photoSharingConsent: true,
+    });
+    await parentKids.create({
+      daycareId: ids.daycareId,
+      id: randomUUID(),
+      parentId: ids.otherParentId,
       kidId: ids.kidId,
       relationship: 'guardian',
       photoSharingConsent: true,
@@ -128,6 +138,18 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
       type: 'love',
       createdAt: '2026-11-06T10:02:00.000Z',
     });
+    await assert.rejects(
+      () =>
+        reactions.create({
+          daycareId: ids.daycareId,
+          id: randomUUID(),
+          postId: ids.postId,
+          personId: ids.parentId,
+          type: 'love',
+          createdAt: '2026-11-06T10:02:01.000Z',
+        }),
+      /Reaction identity already exists/,
+    );
 
     assert.deepEqual((await posts.findAll()).map((item) => item.id), [ids.postId]);
     assert.equal(await authorization.canView(
@@ -149,6 +171,37 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
     assert.equal((await reactions.findByPostId(ids.postId)).length, 1);
     assert.equal((await reactions.findByPostIds([ids.postId, ids.otherPostId])).length, 1);
 
+    const dependencies = createPostgresPostComposition(client, currentDaycare);
+    const otherParentViewer = {
+      daycareId: ids.daycareId,
+      personId: ids.otherParentId,
+      role: 'parent' as const,
+    };
+    assert.equal(
+      await updateComment(
+        dependencies,
+        {
+          authorId: ids.otherParentId,
+          body: 'Unauthorized update',
+          commentId: ids.commentId,
+        },
+        otherParentViewer,
+      ),
+      null,
+    );
+    assert.equal(
+      await deleteComment(dependencies, ids.commentId, otherParentViewer),
+      false,
+    );
+
+    const detailWithEngagement = await getPostDetail(
+      dependencies,
+      ids.postId,
+      { daycareId: ids.daycareId, personId: ids.parentId, role: 'parent' },
+    );
+    assert.equal(detailWithEngagement?.post.engagement.commentCount, 1);
+    assert.equal(detailWithEngagement?.post.engagement.reactionCount, 1);
+
     await reactions.delete(ids.reactionId);
     const toggleReaction = {
       daycareId: ids.daycareId,
@@ -158,8 +211,11 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
       type: 'love' as const,
       createdAt: '2026-11-06T10:02:30.000Z',
     };
-    assert.equal(await reactions.toggle(toggleReaction), true);
-    assert.equal(await reactions.toggle({ ...toggleReaction, id: randomUUID() }), false);
+    const toggleResults = await Promise.all([
+      reactions.toggle(toggleReaction),
+      reactions.toggle({ ...toggleReaction, id: randomUUID() }),
+    ]);
+    assert.equal(toggleResults.filter(Boolean).length, 1);
     assert.equal((await reactions.findByPostId(ids.postId)).length, 0);
 
     const familyFeed = await getFamilyFeedProjection(
@@ -169,7 +225,7 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
     assert.deepEqual(familyFeed.posts.map((item) => item.id), [ids.postId]);
 
     const detail = await getPostDetail(
-      createPostgresPostComposition(client, currentDaycare),
+      dependencies,
       ids.postId,
       { daycareId: ids.daycareId, personId: ids.parentId, role: 'parent' },
     );

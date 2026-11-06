@@ -11,6 +11,8 @@ import type { Tables } from "../types";
 export class PostgresPostReactionRepository
   implements PostReactionRepositoryPort
 {
+  private static readonly toggleQueues = new Map<string, Promise<void>>();
+
   public constructor(
     private readonly client: PostgresQueryClient,
     private readonly currentDaycare: CurrentDaycareReader,
@@ -61,15 +63,14 @@ export class PostgresPostReactionRepository
       reaction.personId,
     );
 
-    await this.client`
-      INSERT INTO feed_reactions (
-        daycare_id, id, feed_id, person_id, type, created_at
-      )
-      VALUES (
-        ${reaction.daycareId}, ${reaction.id}, ${reaction.postId},
-        ${reaction.personId}, ${reaction.type}, ${reaction.createdAt}
-      )
-    `;
+    await this.client.begin(async (transaction) => {
+      await this.lockReactionIdentity(transaction, reaction);
+      const existing = await this.findReactionIdentity(transaction, reaction);
+      if (existing) {
+        throw new Error("Reaction identity already exists in the current daycare");
+      }
+      await this.insertReaction(transaction, reaction);
+    });
   }
 
   /** Atomically toggles the tenant-scoped reaction identity. */
@@ -80,43 +81,22 @@ export class PostgresPostReactionRepository
       reaction.postId,
       reaction.personId,
     );
-    return this.client.begin(async (transaction) => {
-      await transaction`LOCK TABLE feed_reactions IN SHARE ROW EXCLUSIVE MODE`;
-      await transaction`
-        SELECT pg_advisory_xact_lock(hashtextextended(
-          ${`${reaction.daycareId}:${reaction.postId}:${reaction.personId}:${reaction.type}`},
-          0
-        ))
-      `;
-      const existing = await transaction<{ id: string }[]>`
-        SELECT id
-        FROM feed_reactions
-        WHERE daycare_id = ${reaction.daycareId}
-          AND feed_id = ${reaction.postId}
-          AND person_id = ${reaction.personId}
-          AND type = ${reaction.type}
-        LIMIT 1
-        FOR UPDATE
-      `;
-      if (existing[0]) {
-        await transaction`
-          DELETE FROM feed_reactions
-          WHERE daycare_id = ${reaction.daycareId}
-            AND id = ${existing[0].id}
-        `;
-        return false;
-      }
-      await transaction`
-        INSERT INTO feed_reactions (
-          daycare_id, id, feed_id, person_id, type, created_at
-        )
-        VALUES (
-          ${reaction.daycareId}, ${reaction.id}, ${reaction.postId},
-          ${reaction.personId}, ${reaction.type}, ${reaction.createdAt}
-        )
-      `;
-      return true;
-    });
+    return this.serializeToggle(reaction, () =>
+      this.client.begin(async (transaction) => {
+        await this.lockReactionIdentity(transaction, reaction);
+        const existing = await this.findReactionIdentity(transaction, reaction);
+        if (existing) {
+          await transaction`
+            DELETE FROM feed_reactions
+            WHERE daycare_id = ${reaction.daycareId}
+              AND id = ${existing.id}
+          `;
+          return false;
+        }
+        await this.insertReaction(transaction, reaction);
+        return true;
+      }),
+    );
   }
 
   /** Deletes a reaction only inside the current daycare. */
@@ -157,5 +137,72 @@ export class PostgresPostReactionRepository
     if (!rows[0]) {
       throw new Error("Reaction aggregate does not belong to the current daycare");
     }
+  }
+
+  private async lockReactionIdentity(
+    transaction: PostgresQueryClient,
+    reaction: PostReaction,
+  ): Promise<void> {
+    await transaction`
+      SELECT pg_advisory_xact_lock(hashtextextended(
+        ${`${reaction.daycareId}:${reaction.postId}:${reaction.personId}:${reaction.type}`},
+        0
+      ))
+    `;
+  }
+
+  private async serializeToggle<T>(
+    reaction: PostReaction,
+    operation: () => Promise<T>,
+  ): Promise<T> {
+    const key = `${reaction.daycareId}:${reaction.postId}:${reaction.personId}:${reaction.type}`;
+    const previous = PostgresPostReactionRepository.toggleQueues.get(key);
+    let release!: () => void;
+    const current = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    PostgresPostReactionRepository.toggleQueues.set(key, current);
+
+    await previous;
+    try {
+      return await operation();
+    } finally {
+      release();
+      if (PostgresPostReactionRepository.toggleQueues.get(key) === current) {
+        PostgresPostReactionRepository.toggleQueues.delete(key);
+      }
+    }
+  }
+
+  private async findReactionIdentity(
+    transaction: PostgresQueryClient,
+    reaction: PostReaction,
+  ): Promise<{ id: string } | null> {
+    const existing = await transaction<{ id: string }[]>`
+      SELECT id
+      FROM feed_reactions
+      WHERE daycare_id = ${reaction.daycareId}
+        AND feed_id = ${reaction.postId}
+        AND person_id = ${reaction.personId}
+        AND type = ${reaction.type}
+      LIMIT 1
+      FOR UPDATE
+    `;
+    return existing[0] ?? null;
+  }
+
+  private insertReaction(
+    transaction: PostgresQueryClient,
+    reaction: PostReaction,
+  ): Promise<unknown> {
+    return transaction`
+      INSERT INTO feed_reactions (
+        daycare_id, id, feed_id, person_id, type, created_at
+      )
+      VALUES (
+        ${reaction.daycareId}, ${reaction.id}, ${reaction.postId},
+        ${reaction.personId}, ${reaction.type}, ${reaction.createdAt}
+      )
+    `;
   }
 }
