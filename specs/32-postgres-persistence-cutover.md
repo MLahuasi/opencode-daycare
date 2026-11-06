@@ -106,7 +106,3 @@ No se debe mantener un modo híbrido por módulo.
 - Supabase Auth.
 
 ---
-
-Plan de implementación
-
-10. Ejecutar lint, typecheck, build, pruebas remotas opt-in y smoke tests.
