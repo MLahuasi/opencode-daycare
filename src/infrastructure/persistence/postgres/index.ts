@@ -20,7 +20,9 @@ export { PostgresCredentialRepository } from "./repositories/credential-reposito
 export { PostgresInvitationRepository } from "./repositories/invitation-repository";
 export { PostgresAuthTransactionRunner } from "./transactions/auth-transaction-runner";
 export { PostgresParentKidRepository } from "./repositories/parent-kid-repository";
+export { PostgresKidRepository } from "./repositories/kid-repository";
 export { PostgresPersonRepository } from "./repositories/person-repository";
+export { PostgresRoomRepository } from "./repositories/room-repository";
 export type { FeedRelations, StaffRoom } from "./mappers";
 export {
   mapCredentialRow,
