@@ -30,7 +30,7 @@ export async function toggleFeedReactionAction(
      const result = await toggleReaction(
        createPostComposition(),
        normalizedPostId,
-       { personId: session.user.personId, role: session.user.role },
+       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
      );
 
      if (!result) {

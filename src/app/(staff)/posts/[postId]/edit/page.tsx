@@ -31,7 +31,8 @@ export default async function EditPostPage({
    const [post, targets] = await Promise.all([
      dependencies.posts.findById(postId),
      getPostTargets(dependencies, {
-       personId: session.user.personId,
+        daycareId: session.user.daycareId,
+        personId: session.user.personId,
        role: session.user.role,
      }),
    ]);

@@ -39,7 +39,7 @@ export async function createFeedCommentAction(
        body: validation.data.body,
        postId,
        },
-       { personId: session.user.personId, role: session.user.role },
+       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
      );
 
      if (!comment) {

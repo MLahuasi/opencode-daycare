@@ -171,8 +171,19 @@ export async function getPostDetail(
       post.kidIds[0] ? dependencies.kids.findById(post.kidIds[0]) : Promise.resolve(null),
       post.roomId ? dependencies.rooms.findById(post.roomId) : Promise.resolve(null),
     ]);
-  const author = people.find((person) => person.id === post.authorId);
+  const author = people.find(
+    (person) => person.id === post.authorId && person.daycareId === post.daycareId,
+  );
   if (!author) return null;
+
+  if (
+    (recipientKid && recipientKid.daycareId !== post.daycareId) ||
+    (recipientRoom && recipientRoom.daycareId !== post.daycareId) ||
+    comments.some((comment) => comment.daycareId !== post.daycareId) ||
+    reactions.some((reaction) => reaction.daycareId !== post.daycareId)
+  ) {
+    return null;
+  }
 
   const engagement = derivePostEngagement(
     post.id,
@@ -224,7 +235,7 @@ export async function createPost(
   const timestamp = dependencies.clock.now().toISOString();
   const author = await dependencies.people.findById(input.authorId);
 
-  if (!author) {
+  if (!author || author.daycareId !== viewer.daycareId) {
     return null;
   }
 
@@ -351,10 +362,18 @@ export async function updateComment(
   viewer: PostViewer,
 ) {
   const comment = await dependencies.comments.findById(input.commentId);
-  if (!comment || comment.authorId !== viewer.personId) return null;
+  if (
+    !comment ||
+    comment.authorId !== viewer.personId ||
+    comment.daycareId !== viewer.daycareId
+  ) return null;
 
   const post = await dependencies.posts.findById(comment.postId);
-  if (!post || !(await dependencies.authorization.canView(viewer, post))) {
+  if (
+    !post ||
+    comment.daycareId !== post.daycareId ||
+    !(await dependencies.authorization.canView(viewer, post))
+  ) {
     return null;
   }
 
@@ -382,10 +401,18 @@ export async function deleteComment(
   viewer: PostViewer,
 ): Promise<boolean> {
   const comment = await dependencies.comments.findById(commentId);
-  if (!comment || comment.authorId !== viewer.personId) return false;
+  if (
+    !comment ||
+    comment.authorId !== viewer.personId ||
+    comment.daycareId !== viewer.daycareId
+  ) return false;
 
   const post = await dependencies.posts.findById(comment.postId);
-  if (!post || !(await dependencies.authorization.canView(viewer, post))) {
+  if (
+    !post ||
+    comment.daycareId !== post.daycareId ||
+    !(await dependencies.authorization.canView(viewer, post))
+  ) {
     return false;
   }
 

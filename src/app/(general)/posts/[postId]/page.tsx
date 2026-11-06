@@ -31,7 +31,7 @@ export default async function PostDetailPage({
    const detail = await getPostDetail(
      createPostComposition(),
      postId,
-     { personId: session.user.personId, role: session.user.role },
+      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
    );
 
    if (!detail) {

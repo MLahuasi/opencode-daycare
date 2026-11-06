@@ -25,6 +25,8 @@ export class PostAuthorizationPolicy implements PostAuthorization {
     viewer: PostViewer,
     post: PersistedPost,
   ): Promise<boolean> {
+    if (viewer.daycareId !== post.daycareId) return false;
+
     if (viewer.role === "personal") {
       const roomIds = new Set(
         await this.access.findStaffRoomIds(viewer.personId),
@@ -83,6 +85,10 @@ export class PostAuthorizationPolicy implements PostAuthorization {
    * @returns Whether the viewer can edit the Post.
    */
   public canEdit(viewer: PostViewer, post: PersistedPost): boolean {
-    return viewer.role === "personal" && post.authorId === viewer.personId;
+    return (
+      viewer.daycareId === post.daycareId &&
+      viewer.role === "personal" &&
+      post.authorId === viewer.personId
+    );
   }
 }

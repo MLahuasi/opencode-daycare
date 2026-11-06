@@ -45,7 +45,7 @@ export async function updateFeedCommentAction(
        body: validation.data.body,
        commentId,
        },
-       { personId: session.user.personId, role: session.user.role },
+       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
      );
 
     if (!updatedComment) {

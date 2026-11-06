@@ -23,7 +23,7 @@ export default async function Home() {
   const feedOverview = await getFeedOverview();
    const feedPosts = await getAuthorizedPosts(
      createPostComposition(),
-     { personId: session.user.personId, role: session.user.role },
+      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
    );
   return (
     <div className="flex min-h-screen bg-background">

@@ -38,7 +38,7 @@ export default async function EditPostCommentPage({
    const detail = await getPostDetail(
      dependencies,
      postId,
-     { personId: session.user.personId, role: session.user.role },
+     { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
    );
    if (!detail) {
      redirect("/family-feed");
