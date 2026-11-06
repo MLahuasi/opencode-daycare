@@ -6,6 +6,13 @@ import type { PostComment, PostMedia, PostReaction, PersistedPost } from "@/doma
 import type { Room } from "@/domain/room";
 import type { Tables } from "../types/database.types";
 
+/** Staff-to-room assignment used by staff authorization adapters. */
+export type StaffRoom = {
+  daycareId: string;
+  personId: string;
+  roomId: string;
+};
+
 /** Maps a PostgreSQL people row to the Person domain entity. */
 export function mapPersonRow(row: Tables<"people">): Person {
   return {
@@ -77,6 +84,15 @@ export function mapParentKidRow(row: Tables<"parent_kids">): ParentKid {
     kidId: row.kid_id,
     relationship: row.relationship,
     photoSharingConsent: row.photo_sharing_consent,
+  };
+}
+
+/** Maps a PostgreSQL staff_rooms row to a staff room assignment. */
+export function mapStaffRoomRow(row: Tables<"staff_rooms">): StaffRoom {
+  return {
+    daycareId: row.daycare_id,
+    personId: row.person_id,
+    roomId: row.room_id,
   };
 }
 

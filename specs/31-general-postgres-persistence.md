@@ -14,6 +14,7 @@
 - Mantener la autorización de padres y Staff existente.
 - Mantener `daycareId` en todas las entidades y validar la pertenencia del agregado completo.
 - Probar Family Feed, detalle, comentarios y reacciones contra PostgreSQL remoto con rollback.
+- Crear una composición de pruebas PostgreSQL para validar las rutas `(general)` contra la BDD sin activar PostgreSQL en el runtime productivo.
 
 **Out of scope (for future specs):**
 
@@ -45,7 +46,7 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 7. Verificar el consentimiento de fotos usando relaciones y personas PostgreSQL.
 8. Crear pruebas de Family Feed, detalle, visibilidad, comentarios, reacciones y aislamiento tenant.
 9. Ejecutar las pruebas exclusivamente contra PostgreSQL cuando `RUN_REMOTE_DB_TESTS` esté habilitado y revertir sus escrituras.
-10. Ejecutar la app normal con JSON para confirmar que las rutas `(general)` no se rompen antes del cutover.
+10. Ejecutar la app mediante la composición de pruebas PostgreSQL y verificar las rutas `(general)` contra la BDD, sin consumir los JSON del módulo y sin activar esa composición en producción.
 
 ## Acceptance criteria
 
@@ -60,7 +61,8 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 - [ ] Las URLs de media se resuelven fuera de PostgreSQL mediante el adapter existente.
 - [ ] Los tests del módulo no leen los JSON de Feed, comentarios ni reacciones.
 - [ ] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
-- [ ] Las rutas `(general)` siguen funcionando con JSON antes del cutover.
+- [ ] Las rutas `(general)` pasan smoke tests usando la composición de pruebas PostgreSQL.
+- [ ] La composición productiva continúa sin activar PostgreSQL antes de SPEC 32.
 - [ ] No cambian filtros, proyecciones ni reglas funcionales.
 - [ ] `npx eslint src` termina correctamente.
 - [ ] `npx tsc --noEmit --incremental false` termina correctamente.
@@ -72,6 +74,7 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 - **Sí:** usar consultas por tenant y por relaciones explícitas.
 - **No:** duplicar contadores en `feed` o en `Post` persistido.
 - **Sí:** mantener Cloudinary fuera de este cambio de origen de datos.
+- **Sí:** validar las rutas `(general)` con PostgreSQL mediante una composición exclusiva de pruebas.
 - **No:** cambiar las reglas de autorización para compensar diferencias de IDs.
 - **No:** activar el runtime PostgreSQL antes de SPEC 32.
 

@@ -7,7 +7,7 @@
 
 ## Why this spec exists
 
-Las specs anteriores implementan y prueban adapters por módulo sin mezclar IDs. Esta spec coordina el cambio final para que Auth, Staff y General usen el mismo `daycareId`, las mismas identidades PostgreSQL y las mismas relaciones.
+Las specs anteriores implementan y validan adapters y rutas mediante composiciones de prueba PostgreSQL sin mezclar IDs. Esta spec coordina el cambio final para que Auth, Staff y General usen el mismo `daycareId`, las mismas identidades PostgreSQL y las mismas relaciones en el runtime productivo.
 
 ## Scope
 
@@ -19,6 +19,7 @@ Las specs anteriores implementan y prueban adapters por módulo sin mezclar IDs.
 - Retirar imports y repositorios JSON del runtime productivo.
 - Mantener intactos los 11 JSON como snapshot no editable.
 - Verificar la aplicación completa con PostgreSQL remoto.
+- Reutilizar las composiciones de prueba PostgreSQL de SPEC 29, SPEC 30 y SPEC 31 como evidencia previa al cutover.
 - Documentar el nuevo origen runtime y el procedimiento de rollback operativo.
 
 **Out of scope (for future specs):**
@@ -46,7 +47,7 @@ No se debe mantener un modo híbrido por módulo.
 ## Implementation plan
 
 1. Crear una matriz de verificación de todos los consumidores de repositorios JSON.
-2. Confirmar que SPEC 29, 30 y 31 tienen pruebas PostgreSQL exitosas y rollback validado.
+2. Confirmar que SPEC 29, 30 y 31 tienen pruebas de rutas y operaciones contra PostgreSQL exitosas, sin consumo de JSON y con rollback validado.
 3. Cambiar las composiciones de Auth, Staff y General para usar adapters PostgreSQL.
 4. Cambiar Auth para crear y validar sesiones con IDs PostgreSQL y `daycareId`.
 5. Ejecutar una invalidación controlada de sesiones antiguas antes de aceptar tráfico autenticado.
@@ -72,6 +73,7 @@ No se debe mantener un modo híbrido por módulo.
 - [ ] Los adapters JSON no forman parte del camino runtime productivo.
 - [ ] La aplicación inicia sin errores usando las credenciales existentes.
 - [ ] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y revierten sus escrituras.
+- [ ] Cada módulo conserva evidencia de validación contra PostgreSQL antes del cutover.
 - [ ] Las rutas Auth, Staff y General pasan smoke tests con datos PostgreSQL.
 - [ ] `npx eslint src` termina correctamente.
 - [ ] `npx tsc --noEmit --incremental false` termina correctamente.

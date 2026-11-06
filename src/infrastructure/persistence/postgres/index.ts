@@ -16,12 +16,20 @@ export {
   withRemoteDbTestTransaction,
 } from "./transactions/remote-db-test-context";
 export { runRemoteAuthPersistenceTests } from "./transactions/remote-auth-tests";
+export { runRemoteStaffPersistenceTests } from "./transactions/remote-staff-tests";
 export { PostgresCredentialRepository } from "./repositories/credential-repository";
 export { PostgresInvitationRepository } from "./repositories/invitation-repository";
 export { PostgresAuthTransactionRunner } from "./transactions/auth-transaction-runner";
 export { PostgresParentKidRepository } from "./repositories/parent-kid-repository";
+export { PostgresKidRepository } from "./repositories/kid-repository";
 export { PostgresPersonRepository } from "./repositories/person-repository";
-export type { FeedRelations } from "./mappers";
+export { PostgresPostRepository } from "./repositories/post-repository";
+export {
+  PostgresPostAccessRepository,
+  PostgresStaffAccessRepository,
+} from "./repositories/post-access-repository";
+export { PostgresRoomRepository } from "./repositories/room-repository";
+export type { FeedRelations, StaffRoom } from "./mappers";
 export {
   mapCredentialRow,
   mapFeedCommentRow,
@@ -33,4 +41,5 @@ export {
   mapParentKidRow,
   mapPersonRow,
   mapRoomRow,
+  mapStaffRoomRow,
 } from "./mappers";

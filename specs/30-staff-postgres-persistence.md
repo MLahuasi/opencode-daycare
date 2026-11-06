@@ -1,6 +1,6 @@
 # SPEC 30 — Persistencia PostgreSQL del módulo Staff
 
-> **Status:** Draft
+> **Status:** Implement
 > **Depends on:** SPEC 28, SPEC 29
 > **Date:** 2026-11-05
 > **Objective:** Implementar la lectura y escritura PostgreSQL de Kids, Rooms, People, ParentKids, StaffRooms y Posts usados por las rutas `src/app/(staff)/`, manteniendo el comportamiento funcional actual y el runtime JSON hasta el cutover.
@@ -54,22 +54,22 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 
 ## Acceptance criteria
 
-- [ ] Kids, Rooms, ParentKids y StaffRooms se leen por `daycare_id`.
-- [ ] Un kid de otra guardería no puede resolverse como destino válido.
-- [ ] Una sala de otra guardería no puede asignarse a un kid o post.
-- [ ] Un post se reconstruye correctamente desde `feed`, `feed_kids` y `feed_media`.
-- [ ] El orden de media se conserva mediante `position`.
-- [ ] Crear un post no deja filas parciales si falla una escritura relacionada.
-- [ ] Actualizar un post reemplaza destinatarios y media de forma coherente.
-- [ ] La autorización Staff conserva las reglas actuales.
-- [ ] La creación de Kid conserva slug, enrollment date, status y campos editables.
-- [ ] Los tests del módulo no leen `src/infrastructure/persistence/json/data`.
-- [ ] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
-- [ ] Las rutas Staff siguen funcionando con JSON antes del cutover.
-- [ ] No se modifican formularios, validaciones ni reglas de negocio.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
+- [x] Kids, Rooms, ParentKids y StaffRooms se leen por `daycare_id`.
+- [x] Un kid de otra guardería no puede resolverse como destino válido.
+- [x] Una sala de otra guardería no puede asignarse a un kid o post.
+- [x] Un post se reconstruye correctamente desde `feed`, `feed_kids` y `feed_media`.
+- [x] El orden de media se conserva mediante `position`.
+- [x] Crear un post no deja filas parciales si falla una escritura relacionada.
+- [x] Actualizar un post reemplaza destinatarios y media de forma coherente.
+- [x] La autorización Staff conserva las reglas actuales.
+- [x] La creación de Kid conserva slug, enrollment date, status y campos editables.
+- [x] Los tests del módulo no leen `src/infrastructure/persistence/json/data`.
+- [x] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
+- [x] Las rutas Staff siguen funcionando con JSON antes del cutover.
+- [x] No se modifican formularios, validaciones ni reglas de negocio.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
 
 ## Decisions
 
@@ -82,11 +82,11 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El agregado Post queda inconsistente. | Una sola transacción para raíz, destinatarios y media. |
-| Se pierde el orden de imágenes. | Mapear y verificar `position` cero-based. |
-| Staff ve datos de otro tenant. | Filtrar cada tabla por `daycare_id` y validar relaciones cruzadas. |
+| Risk                                  | Mitigation                                                         |
+| ------------------------------------- | ------------------------------------------------------------------ |
+| El agregado Post queda inconsistente. | Una sola transacción para raíz, destinatarios y media.             |
+| Se pierde el orden de imágenes.       | Mapear y verificar `position` cero-based.                          |
+| Staff ve datos de otro tenant.        | Filtrar cada tabla por `daycare_id` y validar relaciones cruzadas. |
 
 ## What is **not** in this spec
 
@@ -94,3 +94,5 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 - Family Feed.
 - Cutover productivo.
 - Cambios de esquema o autorización SQL.
+
+---
