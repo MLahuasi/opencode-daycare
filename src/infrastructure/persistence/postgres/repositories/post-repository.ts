@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { CurrentDaycareReader } from "@/application/daycare/ports";
-import type { PersistedPost, Post } from "@/domain/post";
+import { hasSinglePostDestination, type PersistedPost, type Post } from "@/domain/post";
 import type {
   PostgresClient,
   PostgresQueryClient,
@@ -123,6 +123,7 @@ export class PostgresPostRepository {
 
   /** Creates the Post aggregate and all normalized child rows atomically. */
   async create(post: PersistedPost): Promise<Post> {
+    this.assertExclusiveDestination(post);
     await this.assertCurrentDaycare(post.daycareId);
 
     await this.client.begin(async (transaction) => {
@@ -136,6 +137,7 @@ export class PostgresPostRepository {
 
   /** Replaces the Post aggregate and its destinations and media atomically. */
   async update(post: PersistedPost): Promise<Post | null> {
+    this.assertExclusiveDestination(post);
     await this.assertCurrentDaycare(post.daycareId);
 
     const updated = await this.client.begin(async (transaction) => {
@@ -179,6 +181,14 @@ export class PostgresPostRepository {
     const currentDaycareId = await this.currentDaycare.getCurrentDaycareId();
     if (currentDaycareId !== daycareId) {
       throw new Error("Post daycare does not match the current daycare");
+    }
+  }
+
+  private assertExclusiveDestination(
+    post: Pick<PersistedPost, "kidIds" | "roomId">,
+  ): void {
+    if (!hasSinglePostDestination(post)) {
+      throw new Error("Post must target either kids or a room, but not both");
     }
   }
 
