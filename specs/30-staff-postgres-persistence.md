@@ -1,6 +1,6 @@
 # SPEC 30 — Persistencia PostgreSQL del módulo Staff
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 28, SPEC 29
 > **Date:** 2026-11-05
 > **Objective:** Implementar la lectura y escritura PostgreSQL de Kids, Rooms, People, ParentKids, StaffRooms y Posts usados por las rutas `src/app/(staff)/`, manteniendo el comportamiento funcional actual y el runtime JSON hasta el cutover.
@@ -82,11 +82,11 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El agregado Post queda inconsistente. | Una sola transacción para raíz, destinatarios y media. |
-| Se pierde el orden de imágenes. | Mapear y verificar `position` cero-based. |
-| Staff ve datos de otro tenant. | Filtrar cada tabla por `daycare_id` y validar relaciones cruzadas. |
+| Risk                                  | Mitigation                                                         |
+| ------------------------------------- | ------------------------------------------------------------------ |
+| El agregado Post queda inconsistente. | Una sola transacción para raíz, destinatarios y media.             |
+| Se pierde el orden de imágenes.       | Mapear y verificar `position` cero-based.                          |
+| Staff ve datos de otro tenant.        | Filtrar cada tabla por `daycare_id` y validar relaciones cruzadas. |
 
 ## What is **not** in this spec
 
@@ -94,3 +94,18 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 - Family Feed.
 - Cutover productivo.
 - Cambios de esquema o autorización SQL.
+
+---
+
+Plan de implementación
+
+1.  Crear mappers PostgreSQL de Room, Kid, ParentKid y StaffRoom.
+2.  Implementar repositorios PostgreSQL de Room, Kid y ParentKid con filtros tenant-scoped.
+3.  Implementar el adapter de acceso Staff sobre staff_rooms, parent_kids y kids.
+4.  Implementar el lector PostgreSQL de Posts con destinatarios y media normalizados.
+5.  Implementar creación y actualización del agregado Post con transacción y rollback.
+6.  Validar destino exclusivo de cada post.
+7.  Validar acceso del autor Staff a sala o niños destino.
+8.  Mantener IDs UUID y eliminar IDs derivados no válidos.
+9.  Crear pruebas remotas con RUN_REMOTE_DB_TESTS y rollback.
+10. Ejecutar la aplicación con runtime JSON y verificar las rutas Staff.
