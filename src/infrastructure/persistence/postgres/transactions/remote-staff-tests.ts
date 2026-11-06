@@ -9,6 +9,7 @@ import { PostgresPostAccessRepository } from "../repositories/post-access-reposi
 import { PostgresPostRepository } from "../repositories/post-repository";
 import { PostgresRoomRepository } from "../repositories/room-repository";
 import { PostgresPersonRoleRepository } from "../repositories/person-role-repository";
+import { PostgresStaffShellRepository } from "../repositories/staff-shell-repository";
 import { withRemoteDbTestTransaction } from "./remote-db-test-context";
 
 function createIds() {
@@ -18,6 +19,7 @@ function createIds() {
     staffId: randomUUID(),
     parentId: randomUUID(),
     roomId: randomUUID(),
+    secondRoomId: randomUUID(),
     otherRoomId: randomUUID(),
     kidId: randomUUID(),
     otherKidId: randomUUID(),
@@ -95,6 +97,7 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
     const kids = new PostgresKidRepository(client);
     const parentKids = new PostgresParentKidRepository(client);
     const personRoles = new PostgresPersonRoleRepository(client);
+    const staffShell = new PostgresStaffShellRepository(client);
     const access = new PostgresPostAccessRepository(client, currentDaycare);
     const posts = new PostgresPostRepository(client, currentDaycare, access);
 
@@ -123,6 +126,11 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
       WHERE code = 'parent'
     `;
     await rooms.create({ daycareId: ids.daycareId, id: ids.roomId, name: "Remote Room" });
+    await rooms.create({
+      daycareId: ids.daycareId,
+      id: ids.secondRoomId,
+      name: "Remote Second Room",
+    });
     await rooms.create({
       daycareId: ids.otherDaycareId,
       id: ids.otherRoomId,
@@ -154,8 +162,22 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
     });
     await client`
       INSERT INTO staff_rooms (daycare_id, person_id, room_id)
-      VALUES (${ids.daycareId}, ${ids.staffId}, ${ids.roomId})
+      VALUES
+        (${ids.daycareId}, ${ids.staffId}, ${ids.roomId}),
+        (${ids.daycareId}, ${ids.staffId}, ${ids.secondRoomId})
     `;
+
+    assert.deepEqual(await kids.findAll(ids.daycareId), []);
+    assert.deepEqual(await posts.findAll(), []);
+    assert.deepEqual(
+      await staffShell.findByPerson(ids.daycareId, ids.staffId),
+      {
+        brandName: "Staff Brand",
+        personName: "Remote Staff",
+        jobTitle: "Teacher",
+        roomNames: ["Remote Room", "Remote Second Room"],
+      },
+    );
     await parentKids.create({
       daycareId: ids.daycareId,
       id: ids.parentKidId,
@@ -165,7 +187,7 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
       photoSharingConsent: true,
     });
 
-    assert.deepEqual(await access.findStaffRoomIds(ids.staffId), [ids.roomId]);
+    assert.deepEqual(await access.findStaffRoomIds(ids.staffId), [ids.roomId, ids.secondRoomId]);
     assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.daycareId), ["personal", "teacher"]);
     assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.otherDaycareId), []);
     assert.deepEqual(await personRoles.findRoles(ids.parentId, ids.daycareId), ["parent"]);

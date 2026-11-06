@@ -4,36 +4,12 @@ import { toggleFeedReactionAction } from "@/app/_actions/posts";
 import { getAuthorizedPosts } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 import { getStaffNavigation } from "@/composition/staff-shell";
+import { buildStaffFeedOverview } from "@/composition/staff-shell";
 import { requireActiveSession } from "@/composition/auth";
 import { getPostViewer } from "@/composition/post";
 import { hasRole } from "@/domain/person";
 import { redirect } from "next/navigation";
 import { getApplicationEnvironment } from "@/config/server";
-
-function createFeedOverview(
-  name: string,
-  roomLabel: string,
-  activeKidCount: number,
-  locale: string,
-  timeZone: string,
-) {
-  const firstName = name.trim().split(/\s+/)[0] || name;
-  const date = new Intl.DateTimeFormat(locale, {
-    day: "numeric",
-    month: "long",
-    timeZone,
-    weekday: "long",
-  }).format(new Date());
-
-  return {
-    roomLabel,
-    greeting: `Hola, ${firstName}!`,
-    attendance: `${activeKidCount} ${activeKidCount === 1 ? "niño" : "niños"}`,
-    date,
-    composerPrompt: "Comparte algo con tu equipo...",
-    publishedTodayLabel: "PUBLICADO HOY",
-  };
-}
 
 /**
  * Renders the staff feed home page.
@@ -60,7 +36,7 @@ export default async function Home() {
     getAuthorizedPosts(postComposition, viewer),
   ]);
   const environment = getApplicationEnvironment();
-  const feedOverview = createFeedOverview(
+  const feedOverview = buildStaffFeedOverview(
     navigation.profile.name,
     navigation.brand.room,
     kids.filter((kid) => kid.status === "active").length,
