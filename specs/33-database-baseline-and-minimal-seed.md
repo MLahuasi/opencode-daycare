@@ -1,6 +1,6 @@
 # SPEC 33 — Baseline PostgreSQL y seed mínimo independiente
 
-> **Status:** Draft
+> **Status:** Implemented
 > **Depends on:** SPEC 32
 > **Date:** 2026-11-06
 > **Objective:** Reemplazar las migraciones actuales por una única estructura PostgreSQL final y un seed independiente que deje una guardería nueva lista para el primer acceso de Caro.
@@ -89,22 +89,22 @@ Los datos iniciales son:
 
 ## Acceptance criteria
 
-- [ ] `supabase/migrations/` contiene una sola migración estructural nueva y no contiene el seed.
-- [ ] La migración crea todos los enums antes de las columnas que los usan.
-- [ ] El esquema contiene `roles` global y `people_roles` con `daycare_id` y unicidad por daycare, persona y rol.
-- [ ] `roles.code` acepta exactamente `admin`, `personal`, `teacher` y `parent`.
-- [ ] `daycares.brand_name` y `people.job_title` existen con los tipos y nulabilidad definidos.
-- [ ] `feed_overview` no existe en el esquema final.
-- [ ] `supabase/seed.sql` existe fuera de `supabase/migrations/` y no depende de otra ejecución de seed.
-- [ ] El seed localiza `Guardería Sala Soles` con `select id from public.daycares where name = 'Guardería Sala Soles' order by created_at limit 1;` y la crea si la base está vacía.
-- [ ] El seed crea o deja disponibles los 16 registros iniciales definidos en esta spec.
+- [x] `supabase/migrations/` contiene una sola migración estructural nueva y no contiene el seed.
+- [x] La migración crea todos los enums antes de las columnas que los usan.
+- [x] El esquema contiene `roles` global y `people_roles` con `daycare_id` y unicidad por daycare, persona y rol.
+- [x] `roles.code` acepta exactamente `admin`, `personal`, `teacher` y `parent`.
+- [x] `daycares.brand_name` y `people.job_title` existen con los tipos y nulabilidad definidos.
+- [x] `feed_overview` no existe en el esquema final.
+- [x] `supabase/seed.sql` existe fuera de `supabase/migrations/` y no depende de otra ejecución de seed.
+- [x] El seed localiza `Guardería Sala Soles` con `select id from public.daycares where name = 'Guardería Sala Soles' order by created_at limit 1;` y la crea si la base está vacía.
+- [x] El seed crea o deja disponibles los 16 registros iniciales definidos en esta spec.
 - [ ] Caro puede autenticarse con `caro@opendaycare.com` y `OpenDayCare1!` después de ejecutar estructura y seed.
-- [ ] Caro queda relacionada con `admin`, `personal` y `teacher` en el daycare sembrado.
-- [ ] Caro queda asignada a `Soles`, `Girasoles` y `Patitos` mediante `staff_rooms`.
-- [ ] El seed no crea kids, parent_kids, invitations, posts, comments, reactions, media ni históricos.
-- [ ] Ejecutar el seed dos veces no duplica daycare, roles, persona, credencial, salas, roles de Caro ni asignaciones.
-- [ ] Existen comandos npm separados para estructura y seed.
-- [ ] La documentación prohíbe aplicar estos archivos al proyecto Supabase remoto actualmente enlazado.
+- [x] Caro queda relacionada con `admin`, `personal` y `teacher` en el daycare sembrado.
+- [x] Caro queda asignada a `Soles`, `Girasoles` y `Patitos` mediante `staff_rooms`.
+- [x] El seed no crea kids, parent_kids, invitations, posts, comments, reactions, media ni históricos.
+- [x] Ejecutar el seed dos veces no duplica daycare, roles, persona, credencial, salas, roles de Caro ni asignaciones.
+- [x] Existen comandos npm separados para estructura y seed.
+- [x] La documentación prohíbe aplicar estos archivos al proyecto Supabase remoto actualmente enlazado.
 
 ## Decisions
 
@@ -120,12 +120,12 @@ Los datos iniciales son:
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El seed se ejecuta contra el proyecto equivocado. | Exigir proyecto nuevo, revisar el enlace antes de aplicar y documentar la prohibición sobre el proyecto actual. |
-| La ejecución repetida duplica filas por la ausencia de UNIQUE en `credential`. | Usar búsquedas deterministas y actualizar la fila encontrada dentro de una transacción. |
-| El runtime espera `feed_overview`. | SPEC 34 debe eliminar sus consumidores antes de aplicar el esquema nuevo. |
-| Una sala queda sin asignación para Caro. | Validar las tres relaciones `staff_rooms` como criterio de aceptación. |
+| Risk                                                                           | Mitigation                                                                                                      |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| El seed se ejecuta contra el proyecto equivocado.                              | Exigir proyecto nuevo, revisar el enlace antes de aplicar y documentar la prohibición sobre el proyecto actual. |
+| La ejecución repetida duplica filas por la ausencia de UNIQUE en `credential`. | Usar búsquedas deterministas y actualizar la fila encontrada dentro de una transacción.                         |
+| El runtime espera `feed_overview`.                                             | SPEC 34 debe eliminar sus consumidores antes de aplicar el esquema nuevo.                                       |
+| Una sala queda sin asignación para Caro.                                       | Validar las tres relaciones `staff_rooms` como criterio de aceptación.                                          |
 
 ## What is **not** in this spec
 
@@ -134,3 +134,16 @@ Los datos iniciales son:
 - Modificación de páginas o componentes React.
 - Aplicación al proyecto Supabase remoto actual.
 - Datos demo distintos del bootstrap mínimo definido.
+
+---
+
+Plan de implementación
+
+1. Inventariar las cuatro migraciones actuales y definir el orden estructural completo.
+2. Reemplazarlas por una única migración final.
+3. Crear supabase/seed.sql independiente.
+4. Hacer el seed idempotente para roles, Caro, salas y asignaciones.
+5. Agregar comandos npm separados para migración y seed.
+6. Actualizar configuración y documentación operativa.
+7. Validar estructura y ejecutar el seed dos veces sin duplicados.
+8. Documentar evidencia de conteos, relaciones y credenciales.

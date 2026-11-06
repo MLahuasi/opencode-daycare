@@ -55,20 +55,74 @@ Comandos disponibles:
 | `npm run lint` | Ejecución de ESLint |
 | `npm run db:migrate:dry-run` | Comprueba migraciones pendientes en el proyecto Supabase remoto enlazado |
 | `npm run db:migrate` | Aplica migraciones al proyecto Supabase remoto enlazado |
+| `npm run db:seed` | Ejecuta explícitamente `supabase/seed.sql` en el proyecto Supabase remoto enlazado |
+
+### Baseline y seed de un proyecto nuevo
+
+La migración actual y `supabase/seed.sql` pertenecen exclusivamente al baseline
+de un proyecto Supabase nuevo, después de que SPEC 34 adapte el runtime. Está
+terminantemente prohibido ejecutar `npm run db:migrate` o `npm run db:seed` contra
+el proyecto Supabase remoto actualmente enlazado o contra cualquier proyecto que
+contenga datos históricos.
+
+Antes de ejecutar cualquiera de los dos comandos, verifica el proyecto enlazado
+y enlaza explícitamente el proyecto nuevo:
 
 Los comandos de migración requieren autenticación con Supabase y un proyecto
 enlazado previamente:
 
 ```bash
 npx supabase login
-npx supabase link --project-ref <PROJECT_REF>
+npx supabase link --project-ref <NEW_PROJECT_REF>
 npm run db:migrate:dry-run
 npm run db:migrate
+npm run db:seed
 ```
 
-Las migraciones se encuentran en `supabase/migrations/`. Los scripts de seed
-versionados forman parte de la historia de migraciones y no son fixtures de
-runtime. Se recomienda validar primero en un proyecto Supabase de prueba.
+`db:migrate` solo aplica los archivos de `supabase/migrations/`. El seed no se
+ejecuta implícitamente durante una migración: `db:seed` es la única operación que
+ejecuta `supabase/seed.sql`, dentro de su propia transacción. No se debe ejecutar
+`db:seed` hasta comprobar que el enlace apunta al proyecto nuevo correcto.
+
+### Evidencia del baseline SPEC 33
+
+La estructura y el seed se validaron el 2026-11-06 contra el PostgreSQL local de
+Supabase. La migración `20261106215827_database_baseline.sql` se aplicó sobre una
+base vacía y `supabase/seed.sql` se ejecutó dos veces.
+
+Conteos observados después del segundo ciclo:
+
+| Entidad | Filas |
+| --- | ---: |
+| `daycares` | 1 |
+| `roles` | 4 |
+| `people` | 1 |
+| `credential` | 1 |
+| `people_roles` | 3 |
+| `rooms` | 3 |
+| `staff_rooms` | 3 |
+| **Total** | **16** |
+
+Relaciones verificadas:
+
+- Caro Giménez (`caro@opendaycare.com`) está activa y tiene el cargo `Maestra`.
+- Sus roles en el daycare son `admin`, `personal` y `teacher`.
+- Está asignada a `Soles`, `Girasoles` y `Patitos` mediante `staff_rooms`.
+- `person_role` contiene exactamente `admin`, `personal`, `teacher` y `parent`.
+- `feed_overview` no existe.
+- La segunda ejecución no añadió filas en `people_roles` ni `staff_rooms`.
+
+Credencial de bootstrap para el primer acceso en el proyecto nuevo:
+
+```text
+Email:    caro@opendaycare.com
+Password: OpenDayCare1!
+```
+
+El seed guarda el hash bcrypt existente para esa contraseña. Esta credencial es
+solo de bootstrap y debe rotarse antes de usar el proyecto en un entorno real.
+La validación no creó niños, padres, invitaciones, publicaciones, comentarios,
+reacciones, media ni históricos.
 
 ## Configuración de correo
 
@@ -174,7 +228,8 @@ idempotente y detiene la preparación del servidor ante cualquier error de
 configuración o conexión.
 
 Esta entrega no implementa Supabase Auth ni cambia bcrypt, cookies o la estrategia
-JWT. Las migraciones y seeds SQL se versionan en `supabase/migrations/`. Auth,
+JWT. La migración estructural se versiona en `supabase/migrations/` y el seed
+independiente en `supabase/seed.sql`. Auth,
 Staff y General usan PostgreSQL como persistencia runtime a través de sus
 composiciones server-only; no existe fallback JSON ni traducción de IDs legacy.
 Tampoco realiza conexiones SMTP ni operaciones de Cloudinary durante el
@@ -309,7 +364,8 @@ open-daycare/
 ├── public/                    Recursos públicos
 ├── templates/                 Plantillas HTML requeridas en runtime
 ├── supabase/
-│   ├── migrations/            Migraciones y seeds SQL versionados
+│   ├── migrations/            Única migración estructural versionada
+│   ├── seed.sql               Seed bootstrap independiente y explícito
 │   └── config.toml            Configuración de Supabase CLI
 ├── specs/                   Contratos funcionales versionados
 ├── .agents/skills/          Skills del flujo SDD

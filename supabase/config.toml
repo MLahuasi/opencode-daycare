@@ -65,8 +65,8 @@ enabled = true
 schema_paths = []
 
 [db.seed]
-# Seed data is versioned as SQL migrations in supabase/migrations so it is
-# applied once and tracked in the remote migration history.
+# The bootstrap seed lives in supabase/seed.sql and is executed explicitly by
+# npm run db:seed; it must not run as part of db push or db reset.
 enabled = false
 
 [db.network_restrictions]
