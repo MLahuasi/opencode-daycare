@@ -49,23 +49,33 @@ function getPostSubject(
  * @returns Whether every linked active parent has given photo-sharing consent.
  */
 export async function hasPhotoSharingConsent(
-  dependencies: Pick<PostDependencies, "parentKids" | "people">,
+  dependencies: Pick<PostDependencies, "kids" | "parentKids" | "people">,
   kidId: string,
 ): Promise<boolean> {
-  const [parentKids, people] = await Promise.all([
+  const [kid, parentKids, people] = await Promise.all([
+    dependencies.kids.findById(kidId),
     dependencies.parentKids.findAll(),
     dependencies.people.findAll(),
   ]);
+  if (!kid) return false;
+
   const activeParentIds = new Set(
     people
-      .filter((person) => person.role === "parent" && person.status === "active")
+      .filter(
+        (person) =>
+          person.daycareId === kid.daycareId &&
+          person.role === "parent" &&
+          person.status === "active",
+      )
       .map((person) => person.id),
   );
 
   return parentKids
     .filter(
       (parentKid) =>
-        parentKid.kidId === kidId && activeParentIds.has(parentKid.parentId),
+        parentKid.daycareId === kid.daycareId &&
+        parentKid.kidId === kidId &&
+        activeParentIds.has(parentKid.parentId),
     )
     .every((parentKid) => parentKid.photoSharingConsent);
 }
