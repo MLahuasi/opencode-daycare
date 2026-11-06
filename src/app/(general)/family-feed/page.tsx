@@ -12,6 +12,7 @@ import { FamilySidebar } from "@/presentation/layout";
 import { presentFamilyFeedOptions } from "@/presentation/family";
 import { createFamilyFeedComposition } from "@/composition/family";
 import styles from "./family-feed.module.css";
+import { getApplicationEnvironment } from "@/config/server";
 
 /**
  * Renders the authenticated family feed outside the staff home route.
@@ -65,9 +66,11 @@ export default async function FamilyFeedPage({
         <FamilyFeedContent
           options={options}
           person={familyFeed.context.person}
-          posts={familyFeed.posts}
-          selectedFilter={selectedFilter}
-        />
+           posts={familyFeed.posts}
+           selectedFilter={selectedFilter}
+           locale={getApplicationEnvironment().locale}
+           timeZone={getApplicationEnvironment().timeZone}
+         />
       </div>
     </div>
   );

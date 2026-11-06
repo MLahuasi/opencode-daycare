@@ -16,15 +16,28 @@ import styles from "./family-feed-content.module.css";
  *
  * @returns The localized uppercase date label.
  */
-function formatToday(): string {
-  const parts = new Intl.DateTimeFormat("es-ES", {
+function formatToday(locale: string, timeZone: string): string {
+  const parts = new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "long",
     weekday: "long",
+    timeZone,
   }).formatToParts(new Date());
   const values = new Map(parts.map((part) => [part.type, part.value]));
 
   return `${values.get("weekday")} ${values.get("day")} ${values.get("month")}`.toUpperCase();
+}
+
+function getLocalDateKey(value: Date, timeZone: string): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    day: "2-digit",
+    month: "2-digit",
+    timeZone,
+    year: "numeric",
+  }).formatToParts(value);
+  const values = new Map(parts.map((part) => [part.type, part.value]));
+
+  return `${values.get("year")}-${values.get("month")}-${values.get("day")}`;
 }
 
 /**
@@ -49,6 +62,10 @@ type FamilyFeedContentProps = {
   posts: readonly Post[];
   /** Filter currently applied to the feed. */
   selectedFilter: FamilyFeedFilter;
+  /** IANA time zone used to render dates and post timestamps. */
+  timeZone: string;
+  /** Locale used to render dates and post timestamps. */
+  locale: string;
 };
 
 /**
@@ -68,8 +85,35 @@ export function FamilyFeedContent({
   person,
   posts,
   selectedFilter,
+  timeZone,
+  locale,
 }: FamilyFeedContentProps) {
   const kidAvatarPositions = getKidAvatarPositions(posts);
+  const todayKey = getLocalDateKey(new Date(), timeZone);
+  const todayPosts = posts.filter(
+    (post) => getLocalDateKey(new Date(post.createdAt), timeZone) === todayKey,
+  );
+  const previousPosts = posts.filter(
+    (post) => getLocalDateKey(new Date(post.createdAt), timeZone) !== todayKey,
+  );
+
+  function renderPosts(group: readonly Post[]) {
+    return (
+      <div className={styles.posts}>
+        {group.map((post) => (
+          <FeedPostCard
+            canEdit={false}
+            canReact
+            commentHref={`/posts/${encodeURIComponent(post.id)}/comments/new`}
+            kidAvatarPosition={kidAvatarPositions.get(post.id)}
+            key={post.id}
+            onToggleReaction={toggleFeedReactionAction}
+            post={presentFeedPost(post, locale, timeZone)}
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <main className={`${styles.feed} ${className}`}>
@@ -85,26 +129,27 @@ export function FamilyFeedContent({
           selectedFilter={selectedFilter}
         />
 
-        <div className={styles.dateDivider}>
-          <span>HOY - {formatToday()}</span>
-          <i aria-hidden="true" />
-        </div>
+        {todayPosts.length > 0 ? (
+          <>
+            <div className={styles.dateDivider}>
+              <span>HOY - {formatToday(locale, timeZone)}</span>
+              <i aria-hidden="true" />
+            </div>
+            {renderPosts(todayPosts)}
+          </>
+        ) : null}
 
-        {posts.length > 0 ? (
-          <div className={styles.posts}>
-            {posts.map((post) => (
-              <FeedPostCard
-                canEdit={false}
-              canReact
-              commentHref={`/posts/${encodeURIComponent(post.id)}/comments/new`}
-              kidAvatarPosition={kidAvatarPositions.get(post.id)}
-                key={post.id}
-                onToggleReaction={toggleFeedReactionAction}
-                post={presentFeedPost(post)}
-              />
-            ))}
-          </div>
-        ) : (
+        {previousPosts.length > 0 ? (
+          <>
+            <div className={`${styles.dateDivider} ${styles.previousDivider}`}>
+              <span>ANTERIORES</span>
+              <i aria-hidden="true" />
+            </div>
+            {renderPosts(previousPosts)}
+          </>
+        ) : null}
+
+        {posts.length === 0 ? (
           <div className={styles.emptyState} role="status">
             <h2>Aún no hay novedades para mostrar</h2>
             <p>
@@ -112,7 +157,7 @@ export function FamilyFeedContent({
               autorizadas aparecerán aquí.
             </p>
           </div>
-        )}
+        ) : null}
       </div>
     </main>
   );

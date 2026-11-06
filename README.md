@@ -30,7 +30,20 @@ npm install
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000).
+El servidor de desarrollo y el servidor de producción usan explícitamente el
+puerto `3000`. Abre [http://localhost:3000](http://localhost:3000).
+
+Si el puerto está ocupado, Next.js no debe iniciar otro servidor en un puerto
+aleatorio. Libera primero el proceso que lo usa en PowerShell:
+
+```powershell
+Get-NetTCPConnection -LocalPort 3000 -State Listen |
+  Select-Object -ExpandProperty OwningProcess -Unique |
+  Stop-Process -Force
+```
+
+Después vuelve a ejecutar `npm run dev`. Todas las rutas de App Router usan el
+mismo origen y puerto; no se configura un puerto diferente por ruta.
 
 Comandos disponibles:
 
@@ -68,6 +81,7 @@ Define la configuración SMTP en un archivo local ignorado por Git, por ejemplo
 
 ```dotenv
 APP_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3000
 
 MAILER_EMAIL=example@gmail.com
 MAILER_SECRET_KEY=app_password_here
@@ -135,6 +149,18 @@ SUPABASE_DB_USERNAME=postgres.<PROJECT_REF>
 SUPABASE_DB_PASSWORD=your_database_password
 RUN_REMOTE_DB_TESTS=false
 ```
+
+La configuración regional server-only requiere una zona horaria IANA. Para
+Ecuador continental usa:
+
+```dotenv
+APP_LOCALE=es-EC
+APP_TIME_ZONE=America/Guayaquil
+```
+
+Las fechas PostgreSQL recibidas como instantes se normalizan a `YYYY-MM-DD` en
+esta zona antes de mapearse al dominio. `APP_LOCALE` controla el idioma y
+formato regional de las fechas mostradas.
 
 La aplicación usa PostgreSQL mediante `postgres.js` y el Session Pooler IPv4.
 `SUPABASE_DB_PASSWORD` es server-only y nunca debe exponerse en variables
@@ -224,6 +250,11 @@ AUTH_SESSION_COOKIE_SAME_SITE=lax
 AUTH_SESSION_COOKIE_PATH=/
 AUTH_SIGN_IN_PATH=/auth/login
 ```
+
+`NEXTAUTH_URL` debe coincidir con el origen usado por el servidor. En local es
+`http://localhost:3000`; en otros entornos debe usar el origen público HTTPS
+correspondiente. `PORT` no se configura en `.env` porque Next.js necesita
+resolver el puerto antes de cargar las variables de la aplicación.
 
 `AUTH_SECRET` debe reemplazarse por un secreto aleatorio real fuera del entorno
 local. `AUTH_SESSION_COOKIE_SECURE` debe ser `true` cuando la aplicación se sirve

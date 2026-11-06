@@ -4,6 +4,7 @@ import type { Kid } from "@/domain/kid";
 import type { Person } from "@/domain/person";
 import type { PostComment, PostMedia, PostReaction, PersistedPost } from "@/domain/post";
 import type { Room } from "@/domain/room";
+import { getApplicationEnvironment } from "@/config/server";
 import type { Tables } from "../types/database.types";
 
 /** Staff-to-room assignment used by staff authorization adapters. */
@@ -12,6 +13,24 @@ export type StaffRoom = {
   personId: string;
   roomId: string;
 };
+
+function toIsoDateOnly(value: unknown): string {
+  if (!(value instanceof Date)) return String(value);
+
+  const dateParts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: getApplicationEnvironment().timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(value);
+  const parts = Object.fromEntries(
+    dateParts
+      .filter((part) => part.type !== "literal")
+      .map((part) => [part.type, part.value]),
+  );
+
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
 
 /** Maps a PostgreSQL people row to the Person domain entity. */
 export function mapPersonRow(row: Tables<"people">): Person {
@@ -66,9 +85,9 @@ export function mapKidRow(row: Tables<"kids">): Kid {
     id: row.id,
     slug: row.slug,
     name: row.name,
-    birthDate: row.birth_date,
+    birthDate: toIsoDateOnly(row.birth_date),
     roomId: row.room_id,
-    enrollmentDate: row.enrollment_date,
+    enrollmentDate: toIsoDateOnly(row.enrollment_date),
     medicalNotes: row.medical_notes,
     allergies: row.allergies,
     status: row.status,

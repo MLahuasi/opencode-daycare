@@ -33,7 +33,23 @@ type FeedContentProps = {
   overview: FeedOverviewViewModel;
   /** Published Posts to render as cards. */
   posts: readonly Post[];
+  /** IANA time zone used to render post timestamps. */
+  timeZone: string;
+  /** Locale used to render post timestamps. */
+  locale: string;
 };
+
+function getLocalDateKey(value: Date, timeZone: string): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    day: "2-digit",
+    month: "2-digit",
+    timeZone,
+    year: "numeric",
+  }).formatToParts(value);
+  const values = new Map(parts.map((part) => [part.type, part.value]));
+
+  return `${values.get("year")}-${values.get("month")}-${values.get("day")}`;
+}
 
 /**
  * Renders the static Sala Soles staff feed.
@@ -54,8 +70,34 @@ export function FeedContent({
   onToggleReaction,
   overview,
   posts,
+  timeZone,
+  locale,
 }: FeedContentProps) {
   const kidAvatarPositions = getKidAvatarPositions(posts);
+  const todayKey = getLocalDateKey(new Date(), timeZone);
+  const todayPosts = posts.filter(
+    (post) => getLocalDateKey(new Date(post.createdAt), timeZone) === todayKey,
+  );
+  const previousPosts = posts.filter(
+    (post) => getLocalDateKey(new Date(post.createdAt), timeZone) !== todayKey,
+  );
+
+  function renderPosts(group: readonly Post[]) {
+    return (
+      <div className={styles.posts}>
+        {group.map((post) => (
+          <FeedPostCard
+            canReact={canReact}
+            commentHref={commentHref?.(post.id)}
+            kidAvatarPosition={kidAvatarPositions.get(post.id)}
+            key={post.id}
+            onToggleReaction={onToggleReaction}
+            post={presentFeedPost(post, locale, timeZone)}
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <main className={`${styles.feed} ${className}`}>
@@ -74,23 +116,25 @@ export function FeedContent({
           </span>
         </LinkButton>
 
-        <div className={styles.divider}>
-          <span>{overview.publishedTodayLabel}</span>
-          <i aria-hidden="true" />
-        </div>
+        {todayPosts.length > 0 ? (
+          <>
+            <div className={styles.divider}>
+              <span>{overview.publishedTodayLabel}</span>
+              <i aria-hidden="true" />
+            </div>
+            {renderPosts(todayPosts)}
+          </>
+        ) : null}
 
-        <div className={styles.posts}>
-          {posts.map((post) => (
-            <FeedPostCard
-              canReact={canReact}
-              commentHref={commentHref?.(post.id)}
-              kidAvatarPosition={kidAvatarPositions.get(post.id)}
-              key={post.id}
-              onToggleReaction={onToggleReaction}
-              post={presentFeedPost(post)}
-            />
-          ))}
-        </div>
+        {previousPosts.length > 0 ? (
+          <>
+            <div className={`${styles.divider} ${styles.previousDivider}`}>
+              <span>ANTERIORES</span>
+              <i aria-hidden="true" />
+            </div>
+            {renderPosts(previousPosts)}
+          </>
+        ) : null}
       </div>
     </main>
   );

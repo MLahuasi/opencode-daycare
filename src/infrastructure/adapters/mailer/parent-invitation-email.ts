@@ -1,7 +1,7 @@
 import "server-only";
 
 import { EmailAddress } from "@jmlq/mailer";
-import { APP_LOCALE } from "@/config";
+import { getApplicationEnvironment } from "@/config/server";
 import { getMailer } from "./mailer.singleton";
 
 const PARENT_INVITATION_SUBJECT = "Activa tu acceso a OpenDayCare";
@@ -40,10 +40,13 @@ type PreparedParentInvitationEmail = {
   textBody: string;
 };
 
-const EXPIRATION_DATE_FORMATTER = new Intl.DateTimeFormat(APP_LOCALE, {
+const EXPIRATION_DATE_FORMATTER = new Intl.DateTimeFormat(
+  getApplicationEnvironment().locale,
+  {
   dateStyle: "long",
   timeZone: "UTC",
-});
+  },
+);
 
 const HTML_ENTITIES: Readonly<Record<string, string>> = {
   "&": "&amp;",

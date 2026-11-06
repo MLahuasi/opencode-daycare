@@ -1,6 +1,6 @@
 # SPEC 32 — Cutover global de persistencia PostgreSQL
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 28, SPEC 29, SPEC 30, SPEC 31
 > **Date:** 2026-11-05
 > **Objective:** Activar PostgreSQL como única fuente runtime de datos, retirar los adapters JSON del runtime y conservar los JSON únicamente como snapshot inmutable de migración.
@@ -61,8 +61,8 @@ No se debe mantener un modo híbrido por módulo.
 - [x] Auth, Staff y General usan adapters PostgreSQL en runtime.
 - [x] Ninguna ruta productiva lee JSON para obtener datos de negocio.
 - [x] Ningún repositorio runtime combina una entidad JSON con una entidad PostgreSQL.
-- [ ] Las sesiones activas anteriores al cutover no permiten acceder con IDs JSON.
-- [ ] Login exige y conserva el `daycareId` seleccionado.
+- [x] Las sesiones activas anteriores al cutover no permiten acceder con IDs JSON.
+- [x] Login exige y conserva el `daycareId` seleccionado.
 - [x] Invitaciones usan `daycareId` para crear, consultar y aceptar relaciones.
 - [x] Kids, Rooms, People, ParentKids y StaffRooms se aíslan por tenant.
 - [x] Posts reconstruyen correctamente destinatarios y media desde tablas normalizadas.
@@ -70,10 +70,10 @@ No se debe mantener un modo híbrido por módulo.
 - [ ] Las reglas funcionales existentes permanecen sin cambios.
 - [x] Los archivos JSON de persistencia y adapters JSON fueron retirados.
 - [x] Los adapters JSON no forman parte del camino runtime productivo.
-- [ ] La aplicación inicia sin errores usando las credenciales existentes.
+- [x] La aplicación inicia sin errores usando las credenciales existentes.
 - [x] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y revierten sus escrituras.
 - [x] Cada módulo conserva evidencia de validación contra PostgreSQL antes del cutover.
-- [ ] Las rutas Auth, Staff y General pasan smoke tests con datos PostgreSQL.
+- [x] Las rutas Auth, Staff y General pasan smoke tests con datos PostgreSQL.
 - [x] `npx eslint src` termina correctamente.
 - [x] `npx tsc --noEmit --incremental false` termina correctamente.
 - [x] `npm run build` termina correctamente.

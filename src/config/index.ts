@@ -1,4 +1,4 @@
-export { APP_LOCALE } from "./locale";
+export { createPostDateFormatters } from "./datetime";
 export { UUID_PATTERN } from "./identifiers";
 export {
   isActiveSessionPerson,

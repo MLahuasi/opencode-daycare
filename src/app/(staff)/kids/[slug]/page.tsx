@@ -18,14 +18,7 @@ import { requireStaffSession } from "@/composition/auth";
 import { createKidComposition } from "@/composition/kid";
 import { notFound } from "next/navigation";
 
-/**
- * Returns the canonical kid slugs generated at build time.
- *
- * @returns The canonical profile route parameters.
- */
-export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  return [];
-}
+export const dynamic = "force-dynamic";
 
 /**
  * Renders a kid profile resolved from the canonical slug.

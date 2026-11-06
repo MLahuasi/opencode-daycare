@@ -1,4 +1,5 @@
 import type { PostDetail } from "@/application/post";
+import { createPostDateFormatters } from "@/config";
 
 /** Comment formatted for the Post detail view. */
 export type PostDetailCommentViewModel = PostDetail["comments"][number] & {
@@ -20,33 +21,29 @@ export type PostDetailViewModel = Omit<
   };
 };
 
-const guayaquilDateTime = new Intl.DateTimeFormat("es-EC", {
-  dateStyle: "long",
-  timeStyle: "short",
-  timeZone: "America/Guayaquil",
-});
-
-const guayaquilTime = new Intl.DateTimeFormat("es-EC", {
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: "America/Guayaquil",
-});
-
 /**
  * Formats neutral Post detail data for the visual detail component.
  *
  * @param detail - Authorized neutral Post detail projection.
+ * @param timeZone - IANA time zone used to render post and comment times.
  * @returns A localized Post detail view model.
  */
-export function presentPostDetail(detail: PostDetail): PostDetailViewModel {
+export function presentPostDetail(
+  detail: PostDetail,
+  locale: string,
+  timeZone: string,
+): PostDetailViewModel {
+  const { dateTime: dateTimeFormatter, time: timeFormatter } =
+    createPostDateFormatters(locale, timeZone);
+
   return {
     ...detail,
     authorRoleLabel: detail.author.role === "personal" ? "maestra" : "familia",
     comments: detail.comments.map((comment) => ({
       ...comment,
-      timeLabel: guayaquilTime.format(new Date(comment.createdAt)),
+       timeLabel: timeFormatter.format(new Date(comment.createdAt)),
     })),
-    createdAtLabel: guayaquilDateTime.format(new Date(detail.post.createdAt)),
+    createdAtLabel: dateTimeFormatter.format(new Date(detail.post.createdAt)),
     recipient: {
       id: detail.recipient.id,
       kind: detail.recipient.kind,

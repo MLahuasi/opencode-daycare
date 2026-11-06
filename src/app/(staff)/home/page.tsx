@@ -7,6 +7,7 @@ import { createPostComposition } from "@/composition/post";
 import { staffNavigationConfig } from "@/presentation/navigation";
 import { requireActiveSession } from "@/composition/auth";
 import { redirect } from "next/navigation";
+import { getApplicationEnvironment } from "@/config/server";
 
 /**
  * Renders the staff feed home page.
@@ -32,9 +33,11 @@ export default async function Home() {
         canReact
         commentHref={(postId) => `/posts/${encodeURIComponent(postId)}/comments/new`}
         onToggleReaction={toggleFeedReactionAction}
-        overview={feedOverview[0]}
-        posts={feedPosts}
-      />
+         overview={feedOverview[0]}
+         posts={feedPosts}
+         locale={getApplicationEnvironment().locale}
+         timeZone={getApplicationEnvironment().timeZone}
+       />
     </div>
   );
 }

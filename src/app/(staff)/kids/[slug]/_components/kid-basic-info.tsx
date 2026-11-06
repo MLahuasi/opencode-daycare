@@ -1,9 +1,9 @@
 import type { Kid } from "@/domain/kid";
-import { APP_LOCALE } from "@/config";
+import { getApplicationEnvironment } from "@/config/server";
 import styles from "./kid-profile.module.css";
 
 function formatDate(value: string): string {
-  return new Intl.DateTimeFormat(APP_LOCALE, {
+  return new Intl.DateTimeFormat(getApplicationEnvironment().locale, {
     day: "numeric",
     month: "short",
     timeZone: "UTC",
@@ -12,7 +12,7 @@ function formatDate(value: string): string {
 }
 
 function formatMonth(value: string): string {
-  return new Intl.DateTimeFormat(APP_LOCALE, {
+  return new Intl.DateTimeFormat(getApplicationEnvironment().locale, {
     month: "short",
     timeZone: "UTC",
     year: "numeric",
