@@ -21,7 +21,7 @@ export { PostgresInvitationRepository } from "./repositories/invitation-reposito
 export { PostgresAuthTransactionRunner } from "./transactions/auth-transaction-runner";
 export { PostgresParentKidRepository } from "./repositories/parent-kid-repository";
 export { PostgresPersonRepository } from "./repositories/person-repository";
-export type { FeedRelations } from "./mappers";
+export type { FeedRelations, StaffRoom } from "./mappers";
 export {
   mapCredentialRow,
   mapFeedCommentRow,
@@ -33,4 +33,5 @@ export {
   mapParentKidRow,
   mapPersonRow,
   mapRoomRow,
+  mapStaffRoomRow,
 } from "./mappers";
