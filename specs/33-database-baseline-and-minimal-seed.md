@@ -1,6 +1,6 @@
 # SPEC 33 — Baseline PostgreSQL y seed mínimo independiente
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 32
 > **Date:** 2026-11-06
 > **Objective:** Reemplazar las migraciones actuales por una única estructura PostgreSQL final y un seed independiente que deje una guardería nueva lista para el primer acceso de Caro.
@@ -120,12 +120,12 @@ Los datos iniciales son:
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El seed se ejecuta contra el proyecto equivocado. | Exigir proyecto nuevo, revisar el enlace antes de aplicar y documentar la prohibición sobre el proyecto actual. |
-| La ejecución repetida duplica filas por la ausencia de UNIQUE en `credential`. | Usar búsquedas deterministas y actualizar la fila encontrada dentro de una transacción. |
-| El runtime espera `feed_overview`. | SPEC 34 debe eliminar sus consumidores antes de aplicar el esquema nuevo. |
-| Una sala queda sin asignación para Caro. | Validar las tres relaciones `staff_rooms` como criterio de aceptación. |
+| Risk                                                                           | Mitigation                                                                                                      |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| El seed se ejecuta contra el proyecto equivocado.                              | Exigir proyecto nuevo, revisar el enlace antes de aplicar y documentar la prohibición sobre el proyecto actual. |
+| La ejecución repetida duplica filas por la ausencia de UNIQUE en `credential`. | Usar búsquedas deterministas y actualizar la fila encontrada dentro de una transacción.                         |
+| El runtime espera `feed_overview`.                                             | SPEC 34 debe eliminar sus consumidores antes de aplicar el esquema nuevo.                                       |
+| Una sala queda sin asignación para Caro.                                       | Validar las tres relaciones `staff_rooms` como criterio de aceptación.                                          |
 
 ## What is **not** in this spec
 
@@ -134,3 +134,16 @@ Los datos iniciales son:
 - Modificación de páginas o componentes React.
 - Aplicación al proyecto Supabase remoto actual.
 - Datos demo distintos del bootstrap mínimo definido.
+
+---
+
+Plan de implementación
+
+1. Inventariar las cuatro migraciones actuales y definir el orden estructural completo.
+2. Reemplazarlas por una única migración final.
+3. Crear supabase/seed.sql independiente.
+4. Hacer el seed idempotente para roles, Caro, salas y asignaciones.
+5. Agregar comandos npm separados para migración y seed.
+6. Actualizar configuración y documentación operativa.
+7. Validar estructura y ejecutar el seed dos veces sin duplicados.
+8. Documentar evidencia de conteos, relaciones y credenciales.
