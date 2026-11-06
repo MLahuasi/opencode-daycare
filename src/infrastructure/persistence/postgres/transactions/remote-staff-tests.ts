@@ -187,21 +187,23 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
       kidIds: [ids.otherKidId],
       roomId: null,
     });
+    const invalidTargetPostId = randomUUID();
     await assert.rejects(
-      () => posts.create({ ...invalidTarget, id: randomUUID() }),
+      () => posts.create({ ...invalidTarget, id: invalidTargetPostId }),
       /does not have access to every destination kid/,
     );
 
     const duplicateMedia = createPostRecord(ids, {
       media: [createPostRecord(ids).media[0], createPostRecord(ids).media[0]],
     });
+    const duplicateMediaPostId = randomUUID();
     await assert.rejects(
-      () => posts.create({ ...duplicateMedia, id: randomUUID() }),
+      () => posts.create({ ...duplicateMedia, id: duplicateMediaPostId }),
     );
     const remainingRows = await client<{ count: string }[]>`
       SELECT count(*)::text AS count
       FROM feed
-      WHERE id <> ${ids.postId}
+      WHERE id IN (${invalidTargetPostId}, ${duplicateMediaPostId})
     `;
     assert.equal(remainingRows[0]?.count, "0");
   });
