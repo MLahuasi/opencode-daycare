@@ -8,6 +8,7 @@ import { PostgresParentKidRepository } from "../repositories/parent-kid-reposito
 import { PostgresPostAccessRepository } from "../repositories/post-access-repository";
 import { PostgresPostRepository } from "../repositories/post-repository";
 import { PostgresRoomRepository } from "../repositories/room-repository";
+import { PostgresPersonRoleRepository } from "../repositories/person-role-repository";
 import { withRemoteDbTestTransaction } from "./remote-db-test-context";
 
 function createIds() {
@@ -93,20 +94,33 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
     const rooms = new PostgresRoomRepository(client);
     const kids = new PostgresKidRepository(client);
     const parentKids = new PostgresParentKidRepository(client);
+    const personRoles = new PostgresPersonRoleRepository(client);
     const access = new PostgresPostAccessRepository(client, currentDaycare);
     const posts = new PostgresPostRepository(client, currentDaycare, access);
 
     await client`
-      INSERT INTO daycares (id, name)
+      INSERT INTO daycares (id, name, brand_name)
       VALUES
-        (${ids.daycareId}, 'Remote Staff Test'),
-        (${ids.otherDaycareId}, 'Remote Staff Other Tenant')
+        (${ids.daycareId}, 'Remote Staff Test', 'Staff Brand'),
+        (${ids.otherDaycareId}, 'Remote Staff Other Tenant', 'Other Brand')
     `;
     await client`
-      INSERT INTO people (id, daycare_id, name, email, role, status)
+      INSERT INTO people (id, daycare_id, name, email, job_title, status)
       VALUES
-        (${ids.staffId}, ${ids.daycareId}, 'Remote Staff', 'staff-remote@example.test', 'personal', 'active'),
-        (${ids.parentId}, ${ids.daycareId}, 'Remote Parent', 'parent-remote@example.test', 'parent', 'active')
+        (${ids.staffId}, ${ids.daycareId}, 'Remote Staff', 'staff-remote@example.test', 'Teacher', 'active'),
+        (${ids.parentId}, ${ids.daycareId}, 'Remote Parent', 'parent-remote@example.test', null, 'active')
+    `;
+    await client`
+      INSERT INTO people_roles (daycare_id, person_id, role_id)
+      SELECT ${ids.daycareId}, ${ids.staffId}, id
+      FROM roles
+      WHERE code IN ('personal', 'teacher')
+    `;
+    await client`
+      INSERT INTO people_roles (daycare_id, person_id, role_id)
+      SELECT ${ids.daycareId}, ${ids.parentId}, id
+      FROM roles
+      WHERE code = 'parent'
     `;
     await rooms.create({ daycareId: ids.daycareId, id: ids.roomId, name: "Remote Room" });
     await rooms.create({
@@ -152,6 +166,9 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
     });
 
     assert.deepEqual(await access.findStaffRoomIds(ids.staffId), [ids.roomId]);
+    assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.daycareId), ["personal", "teacher"]);
+    assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.otherDaycareId), []);
+    assert.deepEqual(await personRoles.findRoles(ids.parentId, ids.daycareId), ["parent"]);
     assert.deepEqual(await parentKids.findByKidId(ids.daycareId, ids.kidId).then((rows) => rows.map((row) => row.id)), [ids.parentKidId]);
     assert.equal(await kids.findById(ids.daycareId, ids.otherKidId), null);
     assert.equal(await rooms.findById(ids.daycareId, ids.otherRoomId), null);
