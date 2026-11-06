@@ -20,6 +20,7 @@ export { runRemoteStaffPersistenceTests } from "./transactions/remote-staff-test
 export { PostgresCredentialRepository } from "./repositories/credential-repository";
 export { PostgresInvitationRepository } from "./repositories/invitation-repository";
 export { PostgresPostCommentRepository } from "./repositories/post-comment-repository";
+export { PostgresPostReactionRepository } from "./repositories/post-reaction-repository";
 export { PostgresAuthTransactionRunner } from "./transactions/auth-transaction-runner";
 export { PostgresParentKidRepository } from "./repositories/parent-kid-repository";
 export { PostgresKidRepository } from "./repositories/kid-repository";
