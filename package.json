@@ -9,7 +9,7 @@
     "lint": "eslint",
     "db:migrate:dry-run": "npx --yes supabase@3.0.0 db push --remote --dry-run --skip-vault",
     "db:migrate": "npx --yes supabase@3.0.0 db push --remote --yes --skip-vault",
-    "db:seed": "npx --yes supabase@3.0.0 db query --file supabase/seed.sql"
+    "db:seed": "npx --yes supabase@3.0.0 db query --remote --file supabase/seed.sql --yes"
   },
   "dependencies": {
     "@jmlq/mailer": "^0.0.1-beta.2",
