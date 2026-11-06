@@ -30,6 +30,7 @@ export { PostgresAuthTransactionRunner } from "./transactions/auth-transaction-r
 export { PostgresParentKidRepository } from "./repositories/parent-kid-repository";
 export { PostgresKidRepository } from "./repositories/kid-repository";
 export { PostgresPersonRepository } from "./repositories/person-repository";
+export { PostgresPersonRoleRepository } from "./repositories/person-role-repository";
 export { PostgresPostRepository } from "./repositories/post-repository";
 export {
   PostgresPostAccessRepository,
