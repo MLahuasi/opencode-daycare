@@ -5,7 +5,6 @@ import type { PostAccessRepository } from "@/application/post/ports";
 import { UUID_PATTERN } from "@/config";
 import { hasSinglePostDestination, type PersistedPost, type Post } from "@/domain/post";
 import type {
-  PostgresClient,
   PostgresQueryClient,
 } from "../client/postgres-client";
 import {
@@ -26,7 +25,7 @@ type FeedKidRow = Pick<Tables<"feed_kids">, "feed_id" | "kid_id">;
 /** PostgreSQL reader for the normalized Post aggregate. */
 export class PostgresPostRepository {
   public constructor(
-    private readonly client: PostgresClient,
+    private readonly client: PostgresQueryClient,
     private readonly currentDaycare: CurrentDaycareReader,
     access: PostAccessRepository = new PostgresPostAccessRepository(
       client,
@@ -139,7 +138,7 @@ export class PostgresPostRepository {
     await this.assertCurrentDaycare(post.daycareId);
     await this.assertAuthorStaffAccess(post);
 
-    await this.client.begin(async (transaction) => {
+    await this.runInTransaction(async (transaction) => {
       await this.insertRoot(transaction, post);
       await this.insertDestinations(transaction, post);
       await this.insertMedia(transaction, post);
@@ -155,7 +154,7 @@ export class PostgresPostRepository {
     await this.assertCurrentDaycare(post.daycareId);
     await this.assertAuthorStaffAccess(post);
 
-    const updated = await this.client.begin(async (transaction) => {
+    const updated = await this.runInTransaction(async (transaction) => {
       const rows = await transaction<{ id: string }[]>`
         UPDATE feed
         SET type = ${post.type},
@@ -284,6 +283,16 @@ export class PostgresPostRepository {
         ${post.createdAt}, ${post.updatedAt}, ${post.body}, ${post.roomId}
       )
     `;
+  }
+
+  private runInTransaction<T>(
+    operation: (transaction: PostgresQueryClient) => Promise<T>,
+  ): Promise<T> {
+    if ("begin" in this.client) {
+      return this.client.begin(operation);
+    }
+
+    return operation(this.client);
   }
 
   private async insertDestinations(
