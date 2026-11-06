@@ -25,7 +25,7 @@ export default async function NewPostCommentPage({
   const { postId } = await params;
   const session = await requireActiveSession();
   const detail = await getPostDetail(
-    createPostComposition(),
+    createPostComposition(session.user.daycareId),
     postId,
     { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
   );

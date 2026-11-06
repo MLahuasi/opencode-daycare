@@ -2,15 +2,17 @@ import "server-only";
 
 import type { FamilyAcceptanceDependencies } from "@/application/family";
 import {
-  InvitationRepository,
-  ParentKidRepository,
-  PersonRepository,
-  KidRepository,
-} from "@/infrastructure/persistence/repositories";
-import { JsonTransactionRunner } from "@/infrastructure/persistence";
+  PostgresInvitationRepository,
+  PostgresParentKidRepository,
+  PostgresPersonRepository,
+  PostgresKidRepository,
+  PostgresAuthTransactionRunner,
+} from "@/infrastructure/persistence/postgres";
 import { createAuthComposition } from "../auth";
 import { JmlqInvitationMailer } from "@/infrastructure/adapters/mailer";
 import { randomInt, randomUUID } from "node:crypto";
+import { getPostgresRuntimeClient, getPostgresRuntimeDaycare } from "../postgres-runtime";
+import type { CurrentDaycareReader } from "@/application/daycare/ports";
 
 const INVITATION_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const INVITATION_CODE_LENGTH = 8;
@@ -24,13 +26,42 @@ export type FamilyComposition = FamilyAcceptanceDependencies;
  *
  * @returns The persistence, provider and policy dependencies for invitations.
  */
-export function createFamilyComposition(): FamilyComposition {
+export function createFamilyComposition(daycareId?: string): FamilyComposition {
+  const currentDaycare: CurrentDaycareReader = daycareId
+    ? { getCurrentDaycareId: async () => daycareId }
+    : getPostgresRuntimeDaycare();
+  const client = getPostgresRuntimeClient();
+  const invitations = new PostgresInvitationRepository(client);
+  const people = new PostgresPersonRepository(client);
+  const parentKids = new PostgresParentKidRepository(client);
+  const kids = new PostgresKidRepository(client);
+
   return {
     ...createAuthComposition(),
-    invitations: new InvitationRepository(),
-    people: new PersonRepository(),
-    parentKids: new ParentKidRepository(),
-    kids: new KidRepository(),
+    invitations: {
+      findAll: async () => invitations.findAll(await currentDaycare.getCurrentDaycareId()),
+      findByCode: async (code) => invitations.findByCode(await currentDaycare.getCurrentDaycareId(), code),
+      create: (invitation) => invitations.create(invitation),
+      markAccepted: async (id, acceptedAt) => invitations.markAccepted(await currentDaycare.getCurrentDaycareId(), id, acceptedAt),
+      markSent: async (id, sentAt) => invitations.markSent(await currentDaycare.getCurrentDaycareId(), id, sentAt),
+    },
+    people: {
+      findById: async (id) => people.findById(await currentDaycare.getCurrentDaycareId(), id),
+      findByEmail: (tenant, email) => people.findByEmail(tenant, email),
+      create: (person) => people.create(person),
+      update: (person) => people.update(person),
+    },
+    parentKids: {
+      findByParentAndKid: async (parentId, kidId) => parentKids.findByParentAndKid(await currentDaycare.getCurrentDaycareId(), parentId, kidId),
+      create: (relationship) => parentKids.create(relationship),
+    },
+    kids: {
+      findAll: async () => kids.findAll(await currentDaycare.getCurrentDaycareId()),
+      findById: async (id) => kids.findById(await currentDaycare.getCurrentDaycareId(), id),
+      findBySlug: async (slug) => kids.findBySlug(await currentDaycare.getCurrentDaycareId(), slug),
+      create: (kid) => kids.create(kid),
+      update: (kid) => kids.update(kid),
+    },
     identifiers: {
       /**
        * Creates a random persisted identifier.
@@ -81,7 +112,7 @@ export function createFamilyComposition(): FamilyComposition {
        */
       now: () => new Date(),
     },
-    transaction: new JsonTransactionRunner(),
+    transaction: new PostgresAuthTransactionRunner(client),
     mailer: new JmlqInvitationMailer(),
   };
 }

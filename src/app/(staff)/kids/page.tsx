@@ -39,8 +39,8 @@ function toKidListItem(
  * @returns The Kids list page with a safe DTO payload for the client filter.
  */
 export default async function KidsPage() {
-  await requireStaffSession();
-  const dependencies = createKidComposition();
+  const session = await requireStaffSession();
+  const dependencies = createKidComposition(session.user.daycareId);
 
   const [kids, parentKids, rooms] = await Promise.all([
     getKids(dependencies),

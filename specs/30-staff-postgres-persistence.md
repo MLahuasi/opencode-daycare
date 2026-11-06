@@ -3,7 +3,7 @@
 > **Status:** Implement
 > **Depends on:** SPEC 28, SPEC 29
 > **Date:** 2026-11-05
-> **Objective:** Implementar la lectura y escritura PostgreSQL de Kids, Rooms, People, ParentKids, StaffRooms y Posts usados por las rutas `src/app/(staff)/`, manteniendo el comportamiento funcional actual y el runtime JSON hasta el cutover.
+> **Objective:** Implementar la lectura y escritura PostgreSQL de Kids, Rooms, People, ParentKids, StaffRooms y Posts usados por las rutas `src/app/(staff)/`, manteniendo el comportamiento funcional actual y usando PostgreSQL en el runtime.
 
 ## Scope
 
@@ -17,7 +17,7 @@
 
 **Out of scope (for future specs):**
 
-- Activar PostgreSQL en las rutas Staff productivas antes de SPEC 32.
+- Realtime, si no está definido por el módulo.
 - Cambiar formularios, validaciones, navegación o reglas de negocio.
 - Implementar comentarios, reacciones o Family Feed.
 - Cambiar Cloudinary.
@@ -50,7 +50,7 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 7. Validar que el autor Staff tenga acceso a la sala o a todos los niños destino.
 8. Mantener los IDs generados como UUID y eliminar IDs derivados no válidos.
 9. Crear pruebas remotas de listado, alta, edición, autorización, relaciones y rollback con `RUN_REMOTE_DB_TESTS`.
-10. Ejecutar la aplicación con runtime JSON y verificar que las rutas Staff existentes no se rompen.
+10. Ejecutar la aplicación con runtime PostgreSQL y verificar las rutas Staff contra la BDD.
 
 ## Acceptance criteria
 
@@ -63,9 +63,9 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 - [x] Actualizar un post reemplaza destinatarios y media de forma coherente.
 - [x] La autorización Staff conserva las reglas actuales.
 - [x] La creación de Kid conserva slug, enrollment date, status y campos editables.
-- [x] Los tests del módulo no leen `src/infrastructure/persistence/json/data`.
+- [x] Los tests del módulo no leen persistencia JSON; los adapters y datos JSON fueron retirados.
 - [x] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
-- [x] Las rutas Staff siguen funcionando con JSON antes del cutover.
+- [x] Las rutas Staff funcionan leyendo y escribiendo PostgreSQL.
 - [x] No se modifican formularios, validaciones ni reglas de negocio.
 - [x] `npx eslint src` termina correctamente.
 - [x] `npx tsc --noEmit --incremental false` termina correctamente.
@@ -78,7 +78,7 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 - **No:** guardar `kidIds` o `media` como JSONB, porque el esquema actual los normaliza.
 - **Sí:** ejecutar pruebas contra PostgreSQL remoto con rollback.
 - **No:** cambiar la UI o las reglas de autorización.
-- **No:** activar este adapter en Composition productivo antes del cutover final.
+- **Sí:** activar estos adapters en las composiciones productivas del módulo Staff.
 
 ## Risks
 
@@ -92,7 +92,6 @@ Toda fila se consulta con `daycare_id`. Un post solo puede mapearse si su autor,
 
 - Comentarios y reacciones.
 - Family Feed.
-- Cutover productivo.
 - Cambios de esquema o autorización SQL.
 
 ---

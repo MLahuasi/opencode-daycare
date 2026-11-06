@@ -18,10 +18,10 @@ export default async function EditKidPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireStaffSession();
+  const session = await requireStaffSession();
 
   const { id } = await params;
-  const dependencies = createKidComposition();
+  const dependencies = createKidComposition(session.user.daycareId);
   const [kid, rooms] = await Promise.all([
     getKidById(dependencies, id),
     getRooms(dependencies),

@@ -70,6 +70,7 @@ export class PostgresPostCommentRepository
   /** Inserts a comment after confirming its tenant is the current daycare. */
   async create(comment: PostComment): Promise<void> {
     await this.assertCurrentDaycare(comment.daycareId);
+    await this.assertAggregateOwnership(comment.daycareId, comment.postId, comment.authorId);
 
     await this.client`
       INSERT INTO feed_comments (
@@ -117,6 +118,26 @@ export class PostgresPostCommentRepository
     const currentDaycareId = await this.currentDaycare.getCurrentDaycareId();
     if (currentDaycareId !== daycareId) {
       throw new Error("Comment daycare does not match the current daycare");
+    }
+  }
+
+  private async assertAggregateOwnership(
+    daycareId: string,
+    postId: string,
+    authorId: string,
+  ): Promise<void> {
+    const rows = await this.client<{ id: string }[]>`
+      SELECT feed.id
+      FROM feed
+      INNER JOIN people
+        ON people.daycare_id = feed.daycare_id
+       AND people.id = ${authorId}
+      WHERE feed.daycare_id = ${daycareId}
+        AND feed.id = ${postId}
+      LIMIT 1
+    `;
+    if (!rows[0]) {
+      throw new Error("Comment aggregate does not belong to the current daycare");
     }
   }
 }

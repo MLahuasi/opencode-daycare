@@ -7,8 +7,8 @@ asistido por agentes, MCPs y **Spec Driven Development (SDD)**.
 La aplicación se construye a partir de especificaciones versionadas, skills
 reutilizables y validaciones realizadas por agentes. La interfaz actual incluye
 un feed diferenciado para personal y familias, el listado de niños y sus
-perfiles, la vinculación de padres mediante invitaciones y datos persistidos en
-JSON tipados, con adapters PostgreSQL preparados para la migración gradual.
+perfiles, la vinculación de padres mediante invitaciones y persistencia
+PostgreSQL tenant-scoped.
 
 ## Stack
 
@@ -165,7 +165,7 @@ El personal con rol `personal` puede crear invitaciones desde “Vincular otro
 padre” en `/kids/[slug]`. El servidor valida nombre, email y parentesco, genera
 un código criptográficamente aleatorio de ocho caracteres sin símbolos ambiguos
 y fija un vencimiento de siete días. La persona se crea como `parent/pending` y
-la invitación se persiste bajo transacción JSON antes de contactar al mailer;
+la invitación se persiste bajo transacción PostgreSQL antes de contactar al mailer;
 no se crea `ParentKid` durante este flujo.
 
 Los fallos SMTP conservan los registros pendientes y muestran un error
@@ -174,17 +174,16 @@ reutiliza el código vigente o rota código y vencimiento si ya expiró. Los
 envíos exitosos actualizan `sentAt` y redirigen al perfil con
 `?invitation=sent`. Los padres autenticados son redirigidos a `/home`.
 
-La aceptación JSON mantiene el comportamiento existente antes del cutover.
-Los adapters PostgreSQL equivalentes se prueban de forma aislada con
-`RUN_REMOTE_DB_TESTS=true`, dentro de transacciones con rollback. Mientras exista
-una única guardería operativa, `CurrentDaycareProvider` obtiene provisionalmente
-su `daycareId` desde PostgreSQL para completar el login; posteriormente se
-incorporará la selección explícita de guardería.
+La aplicación usa PostgreSQL como única fuente runtime. Las pruebas remotas se
+ejecutan con `RUN_REMOTE_DB_TESTS=true`, dentro de transacciones con rollback.
+Mientras exista una única guardería operativa, `CurrentDaycareProvider` obtiene
+provisionalmente su `daycareId` desde PostgreSQL para completar el login;
+posteriormente se incorporará la selección explícita de guardería.
 
 La activación de una invitación se realiza posteriormente desde
 `/auth/parent-invitation/[token]`: crea o actualiza las credenciales, activa la persona,
 crea la relación `ParentKid` y marca `acceptedAt` de forma coordinada. Un fallo
-restaura las colecciones modificadas y conserva la invitación pendiente.
+revierte la transacción PostgreSQL y conserva la invitación pendiente.
 
 ## Autenticación
 
@@ -270,9 +269,8 @@ open-daycare/
 └── .playwright-mcp/         Evidencia de validaciones visuales
 ```
 
-Los modelos de dominio viven en `src/domain/`. Los JSON editables viven en
-`src/infrastructure/persistence/json/data/` y solo se acceden mediante el
-adapter server-only. `src/presentation/` no depende de Infrastructure ni
+Los modelos de dominio viven en `src/domain/`. PostgreSQL es la única fuente de
+datos runtime y solo se accede mediante adapters server-only. `src/presentation/` no depende de Infrastructure ni
 Composition; `src/application/` no depende de Infrastructure, Next.js ni React;
 `src/domain/` no depende de otras capas ni de proveedores externos. Las páginas
 y Server Actions de `src/app/` delegan en casos de uso ensamblados por
@@ -293,7 +291,6 @@ flowchart TD
     COMPOSITION --> APPLICATION["src/application<br/>casos de uso y ports"]
     APPLICATION --> DOMAIN["src/domain<br/>reglas y modelos"]
     COMPOSITION --> INFRA["src/infrastructure<br/>server-only"]
-    INFRA --> JSON["persistence/json/data"]
     INFRA --> POSTGRES["persistence/postgres<br/>adapters PostgreSQL"]
     POSTGRES --> POOLER["Supabase Session Pooler<br/>postgres.js"]
     COMPOSITION --> AUTH["composition/auth"]

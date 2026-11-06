@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { PostgresClient } from "./client/postgres-client";
+import type { PostgresQueryClient } from "./client/postgres-client";
 
 type CurrentDaycareRow = {
   id: string;
@@ -24,7 +24,7 @@ export class MultipleCurrentDaycaresError extends Error {
 
 /** Reads the single operational daycare used by the migration foundation. */
 export class CurrentDaycareProvider {
-  public constructor(private readonly client: PostgresClient) {}
+  public constructor(private readonly client: PostgresQueryClient) {}
 
   /**
    * Reads the only operational daycare identifier.

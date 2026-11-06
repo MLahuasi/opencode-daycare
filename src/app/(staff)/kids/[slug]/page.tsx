@@ -24,9 +24,7 @@ import { notFound } from "next/navigation";
  * @returns The canonical profile route parameters.
  */
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  const kids = await getKids(createKidComposition());
-
-  return kids.map((kid) => ({ slug: kid.slug }));
+  return [];
 }
 
 /**
@@ -43,7 +41,7 @@ export default async function KidProfilePage({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ invitation?: string | string[] }>;
 }) {
-  await requireStaffSession();
+  const session = await requireStaffSession();
 
   const { slug } = await params;
   const resolvedSearchParams = await searchParams;
@@ -51,7 +49,7 @@ export default async function KidProfilePage({
   const invitationStatus = Array.isArray(rawInvitation)
     ? rawInvitation[0]
     : rawInvitation;
-  const dependencies = createKidComposition();
+  const dependencies = createKidComposition(session.user.daycareId);
   const kids = await getKids(dependencies);
   const kid = kids.find((candidate) => candidate.slug === slug);
 

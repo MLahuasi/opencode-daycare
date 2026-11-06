@@ -3,6 +3,10 @@ import "server-only";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { PostAuthorizationPolicy } from "@/application/post";
+import { getPostDetail } from "@/application/post";
+import { getFamilyFeedProjection } from "@/application/family/feed";
+import { createPostgresFamilyFeedComposition } from "@/composition/family/family-feed-composition-postgres";
+import { createPostgresPostComposition } from "@/composition/post/postgres-composition";
 import { PostgresKidRepository } from "../repositories/kid-repository";
 import { PostgresParentKidRepository } from "../repositories/parent-kid-repository";
 import { PostgresPostCommentRepository } from "../repositories/post-comment-repository";
@@ -145,6 +149,34 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
     assert.equal((await reactions.findByPostId(ids.postId)).length, 1);
     assert.equal((await reactions.findByPostIds([ids.postId, ids.otherPostId])).length, 1);
 
+    await reactions.delete(ids.reactionId);
+    const toggleReaction = {
+      daycareId: ids.daycareId,
+      id: randomUUID(),
+      postId: ids.postId,
+      personId: ids.parentId,
+      type: 'love' as const,
+      createdAt: '2026-11-06T10:02:30.000Z',
+    };
+    assert.equal(await reactions.toggle(toggleReaction), true);
+    assert.equal(await reactions.toggle({ ...toggleReaction, id: randomUUID() }), false);
+    assert.equal((await reactions.findByPostId(ids.postId)).length, 0);
+
+    const familyFeed = await getFamilyFeedProjection(
+      createPostgresFamilyFeedComposition(client, currentDaycare),
+      ids.parentId,
+    );
+    assert.deepEqual(familyFeed.posts.map((item) => item.id), [ids.postId]);
+
+    const detail = await getPostDetail(
+      createPostgresPostComposition(client, currentDaycare),
+      ids.postId,
+      { daycareId: ids.daycareId, personId: ids.parentId, role: 'parent' },
+    );
+    assert.equal(detail?.post.id, ids.postId);
+    assert.equal(detail?.comments.length, 1);
+    assert.equal(detail?.reactions.length, 0);
+
     const updated = await comments.update({
       daycareId: ids.daycareId,
       id: ids.commentId,
@@ -156,6 +188,6 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
     });
     assert.equal(updated?.body, 'Updated remote comment');
     assert.equal(await comments.delete(ids.commentId), true);
-    assert.equal(await reactions.delete(ids.reactionId), true);
+    assert.equal((await reactions.findByPostId(ids.postId)).length, 0);
   });
 }

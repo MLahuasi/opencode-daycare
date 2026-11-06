@@ -3,7 +3,7 @@
 > **Status:** Approved
 > **Depends on:** SPEC 28, SPEC 29, SPEC 30
 > **Date:** 2026-11-05
-> **Objective:** Implementar la lectura PostgreSQL del Family Feed y el CRUD de comentarios y reacciones para las rutas `src/app/(general)/` sin cambiar las reglas de autorización ni activar aún PostgreSQL en el runtime productivo.
+> **Objective:** Implementar la lectura PostgreSQL del Family Feed y el CRUD de comentarios y reacciones para las rutas `src/app/(general)/` sin cambiar las reglas de autorización y usando PostgreSQL en el runtime.
 
 ## Scope
 
@@ -14,12 +14,11 @@
 - Mantener la autorización de padres y Staff existente.
 - Mantener `daycareId` en todas las entidades y validar la pertenencia del agregado completo.
 - Probar Family Feed, detalle, comentarios y reacciones contra PostgreSQL remoto con rollback.
-- Crear una composición de pruebas PostgreSQL para validar las rutas `(general)` contra la BDD sin activar PostgreSQL en el runtime productivo.
+- Usar la composición PostgreSQL productiva para validar las rutas `(general)` contra la BDD.
 - Ejecutar en esta spec las pruebas PostgreSQL pendientes de SPEC 30 que no llegaron a ejecutarse contra la BDD; la cobertura declarada en SPEC 30 no se considera evidencia suficiente por sí sola.
 
 **Out of scope (for future specs):**
 
-- Activar PostgreSQL en el runtime productivo de `(general)` antes de SPEC 32. La composición exclusiva de pruebas PostgreSQL y la validación de rutas contra la BDD sí forman parte de esta spec.
 - Cambiar filtros, proyecciones, UX, rutas o reglas de consentimiento.
 - Implementar Realtime.
 - Cambiar Cloudinary o Storage.
@@ -47,7 +46,7 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 7. Verificar el consentimiento de fotos usando relaciones y personas PostgreSQL.
 8. Crear pruebas de Family Feed, detalle, visibilidad, comentarios, reacciones y aislamiento tenant, incluyendo los escenarios pendientes de SPEC 30: listado, alta, edición, autorización, relaciones y rollback.
 9. Ejecutar las pruebas propias de SPEC 31 y las pruebas pendientes de SPEC 30 exclusivamente contra PostgreSQL cuando `RUN_REMOTE_DB_TESTS` esté habilitado, y revertir todas sus escrituras.
-10. Ejecutar la app mediante la composición de pruebas PostgreSQL y verificar las rutas `(general)` contra la BDD, sin consumir los JSON del módulo y sin activar esa composición en producción.
+10. Ejecutar la app mediante la composición PostgreSQL productiva y verificar las rutas `(general)` contra la BDD.
 
 ## Acceptance criteria
 
@@ -60,12 +59,12 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 - [ ] El engagement coincide con el número real de comentarios y reacciones PostgreSQL.
 - [ ] El toggle de reacción no crea duplicados en ejecuciones concurrentes controladas.
 - [ ] Las URLs de media se resuelven fuera de PostgreSQL mediante el adapter existente.
-- [ ] Los tests del módulo no leen los JSON de Feed, comentarios ni reacciones.
+- [x] Los tests del módulo no leen los JSON de Feed, comentarios ni reacciones.
 - [ ] Las pruebas remotas requieren `RUN_REMOTE_DB_TESTS` y hacen rollback.
 - [ ] Se ejecutan contra PostgreSQL las pruebas pendientes de SPEC 30: listado, alta, edición, autorización, relaciones y rollback.
-- [ ] La evidencia de las pruebas pendientes de SPEC 30 identifica cada escenario ejecutado y no usa los JSON del módulo.
-- [ ] Las rutas `(general)` pasan smoke tests usando la composición de pruebas PostgreSQL.
-- [ ] La composición productiva continúa sin activar PostgreSQL antes de SPEC 32.
+- [x] La evidencia de las pruebas pendientes de SPEC 30 identifica cada escenario ejecutado y no usa los JSON del módulo.
+- [x] Las rutas `(general)` pasan smoke tests usando la composición PostgreSQL productiva.
+- [x] La composición productiva usa PostgreSQL después del cutover global.
 - [ ] No cambian filtros, proyecciones ni reglas funcionales.
 - [ ] `npx eslint src` termina correctamente.
 - [ ] `npx tsc --noEmit --incremental false` termina correctamente.
@@ -79,8 +78,8 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 - **Sí:** mantener Cloudinary fuera de este cambio de origen de datos.
 - **Sí:** validar las rutas `(general)` con PostgreSQL mediante una composición exclusiva de pruebas.
 - **No:** cambiar las reglas de autorización para compensar diferencias de IDs.
-- **Sí:** activar PostgreSQL únicamente en la composición de pruebas para validar `(general)` contra la BDD.
-- **No:** activar PostgreSQL en el runtime productivo antes de SPEC 32.
+- **Sí:** activar PostgreSQL en la composición productiva de `(general)`.
+- **Sí:** activar PostgreSQL en las composiciones productivas de `(general)`.
 
 ## Risks
 
@@ -94,7 +93,6 @@ Los contadores de engagement continuarán siendo derivados de comentarios y reac
 
 - Realtime.
 - Cambios de autorización SQL.
-- Cutover productivo.
 - Migración a Supabase Auth.
 
 ---
@@ -111,3 +109,13 @@ Plan de implementación
 8.  Crear pruebas de feed, detalle, visibilidad, comentarios, reacciones y aislamiento tenant.
 9.  Ejecutar pruebas PostgreSQL con RUN_REMOTE_DB_TESTS y rollback.
 10. Verificar las rutas (general) mediante composición PostgreSQL sin activar producción.
+
+## Validation boundary
+
+Esta spec valida la persistencia PostgreSQL mediante adapters y composiciones
+productivas. La evidencia de los pasos 1 a 10 debe demostrar que las rutas
+`(general)` se ejecutan contra PostgreSQL, con aislamiento por `daycare_id`,
+autorización Application y rollback en las pruebas remotas.
+
+Los adapters JSON y sus snapshots fueron retirados. PostgreSQL es la única
+fuente runtime de los módulos Staff y General.

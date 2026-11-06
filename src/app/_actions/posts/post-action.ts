@@ -174,7 +174,7 @@ export async function parsePostSubmission(
   }
 
   const targets = await getPostTargets(
-    createPostComposition(),
+    createPostComposition(authenticatedDaycareId),
     { daycareId: authenticatedDaycareId, personId, role: "personal" },
   );
   const targetKids = targets.kids.filter((kid) =>
@@ -242,7 +242,10 @@ export async function parsePostSubmission(
   if (targetKids.length > 0 && (files.length > 0 || retainedMedia.length > 0)) {
     const consentResults = await Promise.all(
       targetKids.map(async (kid) => ({
-        hasConsent: await hasPhotoSharingConsent(createPostComposition(), kid.id),
+          hasConsent: await hasPhotoSharingConsent(
+            createPostComposition(authenticatedDaycareId),
+            kid.id,
+          ),
         kid,
       })),
     );

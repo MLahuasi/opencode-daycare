@@ -46,8 +46,8 @@ export async function sendInviteParentAction(
     };
   }
 
-  const dependencies = createFamilyComposition();
-  const kid = await getKidBySlug(createKidComposition(), rawSlug);
+  const dependencies = createFamilyComposition(session.user.daycareId);
+  const kid = await getKidBySlug(createKidComposition(session.user.daycareId), rawSlug);
 
   if (!kid) {
     return {

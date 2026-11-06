@@ -28,7 +28,7 @@ export async function updatePostAction(
     return { errors: { postId: "Indica la publicación que deseas editar." }, message: "Revisa los campos marcados." };
   }
 
-  const dependencies = createPostComposition();
+   const dependencies = createPostComposition(session.user.daycareId);
   const currentPost = await dependencies.posts.findById(postId);
 
   if (!currentPost || currentPost.authorId !== session.user.personId) {

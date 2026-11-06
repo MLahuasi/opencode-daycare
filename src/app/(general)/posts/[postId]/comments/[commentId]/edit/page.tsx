@@ -24,7 +24,7 @@ export default async function EditPostCommentPage({
 }: EditPostCommentPageProps) {
   const session = await requireActiveSession();
   const { commentId, postId } = await params;
-   const dependencies = createPostComposition();
+   const dependencies = createPostComposition(session.user.daycareId);
    const comment = await dependencies.comments.findById(commentId);
 
   if (

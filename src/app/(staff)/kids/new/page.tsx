@@ -19,9 +19,9 @@ const EMPTY_KID_FORM_VALUES: KidFormValues = {
  * @returns The new kid form configured to cancel back to the Kids list.
  */
 export default async function NewKidPage() {
-  await requireStaffSession();
+  const session = await requireStaffSession();
 
-  const rooms = await getRooms(createKidComposition());
+  const rooms = await getRooms(createKidComposition(session.user.daycareId));
 
   return (
     <main className="flex min-h-screen items-start justify-center px-6 py-10 max-sm:px-4 max-sm:py-6">

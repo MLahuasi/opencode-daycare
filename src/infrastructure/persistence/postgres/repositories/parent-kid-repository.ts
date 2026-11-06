@@ -50,6 +50,23 @@ export class PostgresParentKidRepository {
     return rows.map(mapParentKidRow);
   }
 
+  /** Lists relationships for a parent inside one daycare. */
+  async findByParentId(
+    daycareId: string,
+    parentId: string,
+  ): Promise<readonly ParentKid[]> {
+    const rows = await this.client<Tables<"parent_kids">[]>`
+      SELECT daycare_id, id, parent_id, kid_id, relationship,
+             photo_sharing_consent, created_at, updated_at
+      FROM parent_kids
+      WHERE daycare_id = ${daycareId}
+        AND parent_id = ${parentId}
+      ORDER BY kid_id, id
+    `;
+
+    return rows.map(mapParentKidRow);
+  }
+
   async findByParentAndKid(
     daycareId: string,
     parentId: string,

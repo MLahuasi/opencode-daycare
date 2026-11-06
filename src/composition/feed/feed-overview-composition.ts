@@ -1,22 +1,17 @@
 import "server-only";
 
-import { readCollection } from "@/infrastructure/persistence";
+import { PostgresFeedOverviewRepository } from "@/infrastructure/persistence/postgres";
+import { getPostgresRuntimeClient } from "../postgres-runtime";
+import type { FeedOverviewRecord } from "@/infrastructure/persistence/postgres";
 
 /** Visual copy persisted for the staff feed header. */
-export type FeedOverviewRecord = {
-  roomLabel: string;
-  greeting: string;
-  attendance: string;
-  date: string;
-  composerPrompt: string;
-  publishedTodayLabel: string;
-};
+export type { FeedOverviewRecord } from "@/infrastructure/persistence/postgres";
 
 /**
  * Reads the configured staff feed header through the JSON adapter.
  *
  * @returns Persisted feed overview records.
  */
-export function getFeedOverview(): Promise<readonly FeedOverviewRecord[]> {
-  return readCollection<FeedOverviewRecord>("feed-overview.json");
+export function getFeedOverview(daycareId: string): Promise<readonly FeedOverviewRecord[]> {
+  return new PostgresFeedOverviewRepository(getPostgresRuntimeClient()).findAll(daycareId);
 }

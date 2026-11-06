@@ -6,7 +6,6 @@ import type {
   CreateCommentInput,
   CreatePostInput,
   PostRecord,
-  ToggleReactionResult,
   UpdateCommentInput,
   UpdatePostInput,
 } from "../dto";
@@ -14,7 +13,6 @@ import {
   createCommentRecord,
   createPostRecord,
   deleteCommentRecord,
-  toggleReactionRecord,
   updateCommentRecord,
   updatePostRecord,
 } from "../commands";
@@ -304,30 +302,16 @@ export async function toggleReaction(
     return null;
   }
 
-  const reactions = await dependencies.reactions.findByPostId(postId);
-  const result: ToggleReactionResult = toggleReactionRecord(
-    reactions,
+  const active = await dependencies.reactions.toggle({
+    daycareId: post.daycareId,
+    id: dependencies.identifiers.create(),
     postId,
-    viewer.personId,
-    dependencies.identifiers.create(),
-    dependencies.clock.now().toISOString(),
-    post.daycareId,
-  );
-  const existing = reactions.find(
-    (reaction) =>
-      reaction.postId === postId &&
-      reaction.personId === viewer.personId &&
-      reaction.type === "love",
-  );
+    personId: viewer.personId,
+    type: "love",
+    createdAt: dependencies.clock.now().toISOString(),
+  });
 
-  if (result.active) {
-    const created = result.reactions[result.reactions.length - 1];
-    if (created) await dependencies.reactions.create(created);
-  } else if (existing) {
-    await dependencies.reactions.delete(existing.id);
-  }
-
-  return { active: result.active };
+  return { active };
 }
 
 /**

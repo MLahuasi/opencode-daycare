@@ -28,7 +28,7 @@ export async function toggleFeedReactionAction(
 
    try {
      const result = await toggleReaction(
-       createPostComposition(),
+       createPostComposition(session.user.daycareId),
        normalizedPostId,
        { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
      );

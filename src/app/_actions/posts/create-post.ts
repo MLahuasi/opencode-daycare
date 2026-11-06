@@ -31,7 +31,7 @@ export async function createPostAction(
 
   try {
      const createdPost = await createPost(
-       createPostComposition(),
+       createPostComposition(session.user.daycareId),
        {
        authorId: session.user.personId,
        body: parsed.values.body,

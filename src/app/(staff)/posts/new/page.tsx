@@ -16,7 +16,7 @@ import {
 export default async function NewPostPage() {
   const session = await requireStaffSession();
    const targets = await getPostTargets(
-     createPostComposition(),
+     createPostComposition(session.user.daycareId),
       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
    );
   const roomId = null;

@@ -39,7 +39,7 @@ export async function updateFeedCommentAction(
 
   try {
      const updatedComment = await updateComment(
-       createPostComposition(),
+       createPostComposition(session.user.daycareId),
        {
        authorId: session.user.personId,
        body: validation.data.body,

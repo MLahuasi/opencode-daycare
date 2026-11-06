@@ -29,7 +29,7 @@ export default async function PostDetailPage({
   const session = await requireActiveSession();
   const { postId } = await params;
    const detail = await getPostDetail(
-     createPostComposition(),
+     createPostComposition(session.user.daycareId),
      postId,
       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
    );
@@ -41,7 +41,7 @@ export default async function PostDetailPage({
 
   if (session.user.role === "parent") {
     const familyContext = await getFamilyFeedContext(
-      createFamilyFeedComposition(),
+       createFamilyFeedComposition(session.user.daycareId),
       session.user.personId,
     );
 

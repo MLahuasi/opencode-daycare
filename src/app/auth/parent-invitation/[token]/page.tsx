@@ -29,7 +29,7 @@ export default async function ParentInvitationTokenPage({
     ? query.daycareId[0]
     : query.daycareId;
   const resolution = daycareId
-    ? await validateInvitationToken(createFamilyComposition(), token, daycareId)
+    ? await validateInvitationToken(createFamilyComposition(daycareId), token, daycareId)
     : null;
 
   if (
@@ -50,7 +50,10 @@ export default async function ParentInvitationTokenPage({
     );
   }
 
-  const kid = await getKidById(createKidComposition(), resolution.invitation.kidId);
+  const kid = await getKidById(
+    createKidComposition(resolution.invitation.daycareId),
+    resolution.invitation.kidId,
+  );
 
   if (!kid) {
     return (
