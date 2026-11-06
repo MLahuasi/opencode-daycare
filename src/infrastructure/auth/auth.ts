@@ -3,6 +3,7 @@ import "server-only";
 import { getServerSession, type NextAuthOptions, type Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
+import { UUID_PATTERN } from "@/config";
 import { getApplicationEnvironment, getAuthEnvironment } from "@/config/server";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
@@ -12,9 +13,6 @@ import {
 
 const authEnvironment = getAuthEnvironment();
 const applicationEnvironment = getApplicationEnvironment();
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
 /** Concrete NextAuth v4 configuration for the application's credential session. */
 export const authOptions: NextAuthOptions = {
   providers: [

@@ -2,6 +2,7 @@ import "server-only";
 
 import type { CurrentDaycareReader } from "@/application/daycare/ports";
 import type { PostAccessRepository } from "@/application/post/ports";
+import { UUID_PATTERN } from "@/config";
 import { hasSinglePostDestination, type PersistedPost, type Post } from "@/domain/post";
 import type {
   PostgresClient,
@@ -133,6 +134,7 @@ export class PostgresPostRepository {
 
   /** Creates the Post aggregate and all normalized child rows atomically. */
   async create(post: PersistedPost): Promise<Post> {
+    this.assertPostIdentifiers(post);
     this.assertExclusiveDestination(post);
     await this.assertCurrentDaycare(post.daycareId);
     await this.assertAuthorStaffAccess(post);
@@ -148,6 +150,7 @@ export class PostgresPostRepository {
 
   /** Replaces the Post aggregate and its destinations and media atomically. */
   async update(post: PersistedPost): Promise<Post | null> {
+    this.assertPostIdentifiers(post);
     this.assertExclusiveDestination(post);
     await this.assertCurrentDaycare(post.daycareId);
     await this.assertAuthorStaffAccess(post);
@@ -201,6 +204,30 @@ export class PostgresPostRepository {
   ): void {
     if (!hasSinglePostDestination(post)) {
       throw new Error("Post must target either kids or a room, but not both");
+    }
+  }
+
+  private assertPostIdentifiers(post: PersistedPost): void {
+    this.assertUuid(post.daycareId, "daycareId");
+    this.assertUuid(post.id, "post id");
+    this.assertUuid(post.authorId, "authorId");
+
+    if (post.roomId !== null) {
+      this.assertUuid(post.roomId, "roomId");
+    }
+
+    for (const kidId of post.kidIds) {
+      this.assertUuid(kidId, "kidId");
+    }
+
+    for (const media of post.media) {
+      this.assertUuid(media.id, "media id");
+    }
+  }
+
+  private assertUuid(value: string, name: string): void {
+    if (!UUID_PATTERN.test(value)) {
+      throw new Error(`Invalid UUID for ${name}`);
     }
   }
 
