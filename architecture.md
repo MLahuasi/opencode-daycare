@@ -132,6 +132,10 @@ Infrastructure adapters.
 
 ## Persistence
 
+**Runtime source: PostgreSQL/Supabase.** Todas las entidades persistidas por la
+aplicación pasan por adapters PostgreSQL tenant-scoped. Los JSON históricos son
+snapshots inmutables de migración y no forman parte del camino runtime.
+
 - Keep persistence details behind repositories or persistence adapters.
 - Keep filesystem paths, serialization formats, locks, transactions and
   provider-specific errors inside infrastructure.
@@ -156,6 +160,17 @@ Infrastructure adapters.
 - `CurrentDaycareProvider` is a provisional PostgreSQL adapter used to obtain the
   single operational daycare for the login default. It must be replaced by an
   explicit daycare selector when multiple daycares are exposed to users.
+
+### Operational rollback
+
+- Stop authenticated traffic before rolling back a deployment.
+- Let PostgreSQL transactions roll back failed business operations; do not
+  restore JSON data or enable a hybrid persistence mode.
+- Roll back only to a PostgreSQL-compatible application version and keep the
+  linked database configuration unchanged.
+- Re-run readiness (`SELECT 1`) and route smoke checks before accepting traffic.
+- Require a new login after rollback. JWTs without the PostgreSQL session marker
+  are rejected and are not translated from legacy JSON IDs.
 
 ## Server and Client Boundaries
 

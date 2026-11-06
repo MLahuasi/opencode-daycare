@@ -109,5 +109,4 @@ No se debe mantener un modo híbrido por módulo.
 
 Plan de implementación
 
-9.  Actualizar README y documentación de arquitectura.
 10. Ejecutar lint, typecheck, build, pruebas remotas opt-in y smoke tests.

@@ -148,12 +148,13 @@ idempotente y detiene la preparación del servidor ante cualquier error de
 configuración o conexión.
 
 Esta entrega no implementa Supabase Auth ni cambia bcrypt, cookies o la estrategia
-JWT. Las migraciones y seeds SQL se versionan en `supabase/migrations/`; los
-repositorios PostgreSQL de Auth e invitaciones permanecen separados y no están
-activados como persistencia general de las rutas productivas. Tampoco realiza
-conexiones SMTP ni operaciones de Cloudinary durante el arranque. La refactorización de NextAuth mantiene Credentials,
-sesiones JWT, cookies, redirects y permisos sin cambios; su API server-side se
-consume desde `@/composition/auth`.
+JWT. Las migraciones y seeds SQL se versionan en `supabase/migrations/`. Auth,
+Staff y General usan PostgreSQL como persistencia runtime a través de sus
+composiciones server-only; no existe fallback JSON ni traducción de IDs legacy.
+Tampoco realiza conexiones SMTP ni operaciones de Cloudinary durante el
+arranque. La refactorización de NextAuth mantiene Credentials, sesiones JWT,
+cookies, redirects y permisos sin cambios; su API server-side se consume desde
+`@/composition/auth`.
 
 Las rutas legacy `/login`, `/kids/:id/edit`, `/auth/link-parent`, las rutas
 antiguas de Posts, `/activate-account` y `/auth/activate-account` responden 404.
@@ -179,6 +180,23 @@ ejecutan con `RUN_REMOTE_DB_TESTS=true`, dentro de transacciones con rollback.
 Mientras exista una única guardería operativa, `CurrentDaycareProvider` obtiene
 provisionalmente su `daycareId` desde PostgreSQL para completar el login;
 posteriormente se incorporará la selección explícita de guardería.
+
+**Runtime source: PostgreSQL/Supabase.** Los 11 JSON son snapshots inmutables
+de migración y no forman parte del runtime ni se escriben durante la ejecución.
+
+### Rollback operativo del cutover
+
+1. Detener el tráfico autenticado y conservar los logs de readiness sin incluir
+   credenciales, headers ni datos de respuestas.
+2. Si falla una operación de negocio, dejar que la transacción PostgreSQL la
+   revierta; no restaurar JSON ni activar un fallback híbrido.
+3. Si falla el despliegue, volver a la última versión compatible con PostgreSQL
+   y mantener la misma configuración de base de datos. No volver a una versión
+   que use IDs JSON como fuente runtime.
+4. Comprobar `SELECT 1`, ejecutar los smoke tests y exigir un nuevo login. Las
+   sesiones antiguas o sin `persistenceSource: "postgres"` permanecen inválidas.
+5. Reanudar tráfico solo después de confirmar aislamiento por `daycareId` y que
+   las escrituras remotas de prueba siguen usando rollback.
 
 La activación de una invitación se realiza posteriormente desde
 `/auth/parent-invitation/[token]`: crea o actualiza las credenciales, activa la persona,
