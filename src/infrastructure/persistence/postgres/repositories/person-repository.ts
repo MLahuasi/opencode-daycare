@@ -17,7 +17,7 @@ export class PostgresPersonRepository {
    */
   async findAll(daycareId: string): Promise<readonly Person[]> {
     const rows = await this.client<Tables<"people">[]>`
-      SELECT daycare_id, id, name, email, role, status, created_at, updated_at
+      SELECT daycare_id, id, name, email, status, created_at, updated_at
       FROM people
       WHERE daycare_id = ${daycareId}
       ORDER BY id
@@ -35,7 +35,7 @@ export class PostgresPersonRepository {
    */
   async findById(daycareId: string, id: string): Promise<Person | null> {
     const rows = await this.client<Tables<"people">[]>`
-      SELECT daycare_id, id, name, email, role, status, created_at, updated_at
+      SELECT daycare_id, id, name, email, status, created_at, updated_at
       FROM people
       WHERE daycare_id = ${daycareId}
         AND id = ${id}
@@ -54,7 +54,7 @@ export class PostgresPersonRepository {
    */
   async findByEmail(daycareId: string, email: string): Promise<Person | null> {
     const rows = await this.client<Tables<"people">[]>`
-      SELECT daycare_id, id, name, email, role, status, created_at, updated_at
+      SELECT daycare_id, id, name, email, status, created_at, updated_at
       FROM people
       WHERE daycare_id = ${daycareId}
         AND lower(email) = lower(${email})
@@ -72,13 +72,12 @@ export class PostgresPersonRepository {
    */
   async create(person: Person): Promise<void> {
     await this.client`
-      INSERT INTO people (daycare_id, id, name, email, role, status)
+      INSERT INTO people (daycare_id, id, name, email, status)
       VALUES (
         ${person.daycareId},
         ${person.id},
         ${person.name},
         ${person.email},
-        ${person.role},
         ${person.status}
       )
     `;
@@ -95,7 +94,6 @@ export class PostgresPersonRepository {
       UPDATE people
       SET name = ${person.name},
           email = ${person.email},
-          role = ${person.role},
           status = ${person.status},
           updated_at = now()
       WHERE daycare_id = ${person.daycareId}

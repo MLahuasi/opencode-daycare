@@ -39,7 +39,7 @@ export function mapPersonRow(row: Tables<"people">): Person {
     id: row.id,
     name: row.name,
     email: row.email,
-    role: row.role,
+    roles: [],
     status: row.status,
   };
 }
