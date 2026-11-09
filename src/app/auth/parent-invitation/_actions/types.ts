@@ -13,4 +13,6 @@ export type ParentInvitationActionState = {
   };
   /** General action feedback message. */
   message: string;
+  /** Client destination after successful activation. */
+  redirectTo?: string;
 };

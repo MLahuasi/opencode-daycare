@@ -1,5 +1,6 @@
 import type { PostDetail } from "@/application/post";
 import { createPostDateFormatters } from "@/config";
+import { hasRole } from "@/domain/person";
 
 /** Comment formatted for the Post detail view. */
 export type PostDetailCommentViewModel = PostDetail["comments"][number] & {
@@ -38,7 +39,7 @@ export function presentPostDetail(
 
   return {
     ...detail,
-    authorRoleLabel: detail.author.role === "personal" ? "maestra" : "familia",
+    authorRoleLabel: hasRole(detail.author.roles, "personal") ? "maestra" : "familia",
     comments: detail.comments.map((comment) => ({
       ...comment,
        timeLabel: timeFormatter.format(new Date(comment.createdAt)),

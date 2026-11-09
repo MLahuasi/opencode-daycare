@@ -46,7 +46,16 @@ export async function createPostAction(
      if (!createdPost) {
        throw new Error("Post creation is not authorized.");
      }
-  } catch {
+  } catch (error) {
+    const persistenceError = error as {
+      code?: unknown;
+      name?: unknown;
+    };
+    console.error("[posts] create failed", {
+      stage: "persist",
+      code: typeof persistenceError.code === "string" ? persistenceError.code : undefined,
+      name: typeof persistenceError.name === "string" ? persistenceError.name : "UnknownError",
+    });
     const imageStorage = parsed.uploadedMedia.length
       ? createPostImageStorage()
       : null;

@@ -74,18 +74,37 @@ export async function sendInviteParentAction(
     });
   } catch (error) {
     if (error instanceof ExistingInvitationPersonError) {
+      console.warn("[invite-parent] invitation rejected", {
+        reason: "existing-person-is-not-parent",
+      });
       return {
-        errors: { email: "Ya existe una persona registrada con este email." },
-        message: "Revisa los campos marcados.",
+        errors: {
+          email:
+            "Este correo tiene un perfil pendiente de activación y no puede recibir otra invitación. Completa la activación o solicita limpiar el perfil pendiente.",
+        },
+        message:
+          "El correo tiene un perfil pendiente de activación y no puede recibir otra invitación.",
       };
     }
 
     if (error instanceof ExistingInvitationParentKidError) {
+      console.warn("[invite-parent] invitation rejected", {
+        reason: "parent-kid-link-already-exists",
+      });
       return {
         errors: { email: "Esta persona ya está vinculada con este niño." },
         message: "Revisa los campos marcados.",
       };
     }
+
+    const persistenceError = error as {
+      code?: unknown;
+      name?: unknown;
+    };
+    console.error("[invite-parent] invitation creation failed", {
+      code: typeof persistenceError.code === "string" ? persistenceError.code : undefined,
+      name: typeof persistenceError.name === "string" ? persistenceError.name : "UnknownError",
+    });
 
     return {
       errors: {},
@@ -112,7 +131,15 @@ export async function sendInviteParentAction(
       createdInvitation.invitation.id,
       dependencies.clock.now().toISOString(),
     );
-  } catch {
+  } catch (error) {
+    const mailerError = error as {
+      code?: unknown;
+      name?: unknown;
+    };
+    console.error("[invite-parent] invitation delivery failed", {
+      code: typeof mailerError.code === "string" ? mailerError.code : undefined,
+      name: typeof mailerError.name === "string" ? mailerError.name : "UnknownError",
+    });
     return {
       errors: {},
       message: "No pudimos enviar la invitación. Puedes intentarlo nuevamente.",

@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { acceptInvitation, InvalidInvitationAcceptanceError } from "@/application/family";
 import { createFamilyComposition } from "@/composition/family";
 import type { ParentInvitationActionState } from "./types";
@@ -60,11 +59,24 @@ export async function acceptParentInvitationAction(
       };
     }
 
+    const persistenceError = error as {
+      code?: unknown;
+      name?: unknown;
+    };
+    console.error("[parent-invitation] activation failed", {
+      code: typeof persistenceError.code === "string" ? persistenceError.code : undefined,
+      name: typeof persistenceError.name === "string" ? persistenceError.name : "UnknownError",
+    });
+
     return {
       errors: {},
       message: "No pudimos activar la cuenta. Inténtalo nuevamente.",
     };
   }
 
-  redirect(`/auth/login?activated=1&daycareId=${encodeURIComponent(daycareId)}`);
+  return {
+    errors: {},
+    message: "",
+    redirectTo: `/auth/login?activated=1&daycareId=${encodeURIComponent(daycareId)}`,
+  };
 }

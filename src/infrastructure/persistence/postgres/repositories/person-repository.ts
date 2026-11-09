@@ -99,6 +99,25 @@ export class PostgresPersonRepository {
         ${person.status}
       )
     `;
+
+    for (const role of person.roles) {
+      await this.ensureRole(person.daycareId, person.id, role);
+    }
+  }
+
+  /** Ensures one tenant-scoped role assignment exists for a person. */
+  async ensureRole(
+    daycareId: string,
+    personId: string,
+    role: PersonRoleCode,
+  ): Promise<void> {
+    await this.client`
+      INSERT INTO people_roles (daycare_id, person_id, role_id)
+      SELECT ${daycareId}, ${personId}, id
+      FROM roles
+      WHERE code = ${role}
+      ON CONFLICT (daycare_id, person_id, role_id) DO NOTHING
+    `;
   }
 
   /**

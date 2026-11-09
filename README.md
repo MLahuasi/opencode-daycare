@@ -57,6 +57,99 @@ Comandos disponibles:
 | `npm run db:migrate` | Aplica migraciones al proyecto Supabase remoto enlazado |
 | `npm run db:seed` | Ejecuta explícitamente `supabase/seed.sql` en el proyecto Supabase remoto enlazado |
 
+## Configuración del Debugger de Next.js en VS Code
+
+### 1. Crear el archivo de configuración
+
+En la raíz del proyecto Next.js, crea el archivo `.vscode/launch.json`:
+
+```text
+open-daycare/
+├── .vscode/
+│   └── launch.json
+├── src/
+│   └── app/
+├── package.json
+├── next.config.ts
+└── tsconfig.json
+```
+
+### 2. Configurar `launch.json`
+
+Agrega la siguiente configuración:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: Server",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev"
+    },
+    {
+      "name": "Next.js: Client",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Next.js: Full Stack",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}"
+      }
+    }
+  ]
+}
+```
+
+### 3. Modos de depuración
+
+| Modo | Descripción |
+| --- | --- |
+| **Server** | Depura Server Components, Server Actions y API Routes ejecutados en Node.js. |
+| **Client** | Depura componentes React, hooks y eventos ejecutados en Chrome. |
+| **Full Stack** | Depura simultáneamente código del servidor y del navegador. |
+
+Se recomienda utilizar **Next.js: Full Stack** para el desarrollo habitual.
+
+### 4. Iniciar la depuración
+
+1. Abre el proyecto en VS Code.
+2. Presiona `Ctrl + Shift + D`.
+3. Selecciona **Next.js: Full Stack**.
+4. Presiona `F5`.
+5. Coloca breakpoints en archivos `.ts` o `.tsx`.
+6. Ejecuta la funcionalidad que deseas depurar.
+
+Para utilizar **Next.js: Client** de forma independiente, inicia primero el
+servidor con `npm run dev`.
+
+### 5. Atajos de depuración
+
+| Atajo | Acción |
+| --- | --- |
+| `F5` | Iniciar o continuar |
+| `F9` | Activar o desactivar breakpoint |
+| `F10` | Step Over |
+| `F11` | Step Into |
+| `Shift + F11` | Step Out |
+| `Shift + F5` | Detener depuración |
+| `Ctrl + Shift + D` | Abrir el panel de depuración |
+
 ### Baseline y seed de un proyecto nuevo
 
 La migración actual y `supabase/seed.sql` pertenecen exclusivamente al baseline

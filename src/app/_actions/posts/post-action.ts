@@ -298,7 +298,16 @@ export async function parsePostSubmission(
         alt: altTexts.get(getFileId(file)) || null,
       });
     }
-  } catch {
+  } catch (error) {
+    const uploadError = error as {
+      code?: unknown;
+      name?: unknown;
+    };
+    console.error("[posts] media upload failed", {
+      stage: "upload",
+      code: typeof uploadError.code === "string" ? uploadError.code : undefined,
+      name: typeof uploadError.name === "string" ? uploadError.name : "UnknownError",
+    });
     let cleanupSucceeded = true;
 
     if (imageStorage) {
