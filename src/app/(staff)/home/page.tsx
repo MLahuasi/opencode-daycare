@@ -5,9 +5,8 @@ import { getAuthorizedPosts } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 import { getStaffNavigation } from "@/composition/staff-shell";
 import { buildStaffFeedOverview } from "@/composition/staff-shell";
-import { requireActiveSession } from "@/composition/auth";
+import { requireStaffSession } from "@/composition/auth";
 import { getPostViewer } from "@/composition/post";
-import { hasRole } from "@/domain/person";
 import { redirect } from "next/navigation";
 import { getApplicationEnvironment } from "@/config/server";
 
@@ -17,7 +16,7 @@ import { getApplicationEnvironment } from "@/config/server";
  * @returns The responsive staff feed layout.
  */
 export default async function Home() {
-  const session = await requireActiveSession();
+  const session = await requireStaffSession();
   const viewer = await getPostViewer(session.user.daycareId, session.user.personId);
   const navigation = await getStaffNavigation(
     session.user.daycareId,
@@ -25,10 +24,6 @@ export default async function Home() {
   );
 
   if (!navigation) redirect("/auth/login");
-
-  if (hasRole(viewer.roles, "parent")) {
-    redirect("/family-feed");
-  }
 
   const postComposition = createPostComposition(session.user.daycareId);
   const [kids, feedPosts] = await Promise.all([

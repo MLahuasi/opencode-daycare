@@ -10,7 +10,7 @@ import { createPostComposition, getPostViewer } from "@/composition/post";
 import { getStaffNavigation } from "@/composition/staff-shell";
 import { presentPostDetail } from "@/presentation/post";
 import { getApplicationEnvironment } from "@/config/server";
-import { hasRole } from "@/domain/person";
+import { hasCapability } from "@/domain/person";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -43,7 +43,7 @@ export default async function PostDetailPage({
    const environment = getApplicationEnvironment();
    const viewModel = presentPostDetail(detail, environment.locale, environment.timeZone);
 
-  if (hasRole(viewer.roles, "parent")) {
+  if (!hasCapability(viewer.roles, "staff-shell")) {
     const familyContext = await getFamilyFeedContext(
        createFamilyFeedComposition(session.user.daycareId),
       session.user.personId,

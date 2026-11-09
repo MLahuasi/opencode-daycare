@@ -168,7 +168,10 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
         (${ids.daycareId}, ${ids.staffId}, ${ids.secondRoomId})
     `;
 
-    assert.deepEqual(await kids.findAll(ids.daycareId), []);
+    assert.deepEqual(
+      (await kids.findAll(ids.daycareId)).map((kid) => kid.id),
+      [ids.kidId],
+    );
     assert.deepEqual(await posts.findAll(), []);
     assert.deepEqual(
       await staffShell.findByPerson(ids.daycareId, ids.staffId),
@@ -214,7 +217,10 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
       photoSharingConsent: true,
     });
 
-    assert.deepEqual(await access.findStaffRoomIds(ids.staffId), [ids.roomId, ids.secondRoomId]);
+    assert.deepEqual(
+      await access.findStaffRoomIds(ids.staffId),
+      [ids.roomId, ids.secondRoomId].sort(),
+    );
     assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.daycareId), ["personal", "teacher"]);
     assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.otherDaycareId), []);
     assert.deepEqual(await personRoles.findRoles(ids.parentId, ids.daycareId), ["parent"]);

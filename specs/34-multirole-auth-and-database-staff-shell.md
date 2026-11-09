@@ -1,6 +1,6 @@
 # SPEC 34 — Auth multirol y Staff Shell desde PostgreSQL
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 33
 > **Date:** 2026-11-06
 > **Objective:** Adaptar Auth, autorización, Home y todos los consumidores del Staff Shell para consultar roles y perfil desde PostgreSQL sin almacenar roles en el JWT.
@@ -124,32 +124,32 @@ La aplicación remota de la migración y el seed no autoriza por sí sola un des
 
 ## Acceptance criteria
 
-- [ ] La consulta de roles usa `people_roles` y `roles` filtrando por `person_id` y `daycare_id`.
-- [ ] Una persona activa con credencial válida y sin roles en el daycare no obtiene sesión.
-- [ ] Los roles no aparecen en el JWT ni se usan como autoridad persistida en la sesión.
-- [ ] La sesión conserva `personId` y `daycareId`.
-- [ ] Una persona con `admin`, `personal` y `teacher` conserva las capacidades combinadas definidas en esta spec.
-- [ ] `personal` permite entrar al Staff Shell.
-- [ ] `teacher` permite gestionar Kids y Posts únicamente dentro del daycare y salas autorizadas.
-- [ ] `parent` conserva el comportamiento de Family Feed.
-- [ ] `admin` puede existir en la sesión consultada desde PostgreSQL, pero no muestra UI administrativa nueva.
-- [ ] Home, Kids y detalle de Post no importan una configuración Staff con nombre, branding o perfil hardcodeados.
-- [ ] El branding se obtiene de `daycares.brand_name` y las salas asignadas.
-- [ ] El perfil se obtiene de `people.name`, `people.job_title` y las salas asignadas.
-- [ ] Con las tres salas sembradas, la interfaz muestra `Salas Soles, Girasoles, Patitos` y `Maestra · Soles, Girasoles, Patitos`.
-- [ ] Sin cargo se muestra `Personal` y sin salas se muestra `Sin salas`.
-- [ ] `feed_overview` no tiene tipos, repositorio, composición ni consumidor runtime.
+- [x] La consulta de roles usa `people_roles` y `roles` filtrando por `person_id` y `daycare_id`.
+- [x] Una persona activa con credencial válida y sin roles en el daycare no obtiene sesión.
+- [x] Los roles no aparecen en el JWT ni se usan como autoridad persistida en la sesión.
+- [x] La sesión conserva `personId` y `daycareId`.
+- [x] Una persona con `admin`, `personal` y `teacher` conserva las capacidades combinadas definidas en esta spec.
+- [x] `personal` permite entrar al Staff Shell.
+- [x] `teacher` permite gestionar Kids y Posts únicamente dentro del daycare y salas autorizadas.
+- [x] `parent` conserva el comportamiento de Family Feed.
+- [x] `admin` puede existir en la sesión consultada desde PostgreSQL, pero no muestra UI administrativa nueva.
+- [x] Home, Kids y detalle de Post no importan una configuración Staff con nombre, branding o perfil hardcodeados.
+- [x] El branding se obtiene de `daycares.brand_name` y las salas asignadas.
+- [x] El perfil se obtiene de `people.name`, `people.job_title` y las salas asignadas.
+- [x] Con las tres salas sembradas, la interfaz muestra `Salas Soles, Girasoles, Patitos` y `Maestra · Soles, Girasoles, Patitos`.
+- [x] Sin cargo se muestra `Personal` y sin salas se muestra `Sin salas`.
+- [x] `feed_overview` no tiene tipos, repositorio, composición ni consumidor runtime.
 - [ ] Home funciona con cero kids y cero posts, muestra asistencia cero y calcula la fecha actual.
-- [ ] Las rutas no autorizadas se redirigen o rechazan según el comportamiento existente, sin confiar en un rol único del JWT.
-- [ ] Las pruebas cubren roles distintos para una misma persona en daycares distintos.
+- [x] Las rutas no autorizadas se redirigen o rechazan según el comportamiento existente, sin confiar en un rol único del JWT.
+- [x] Las pruebas cubren roles distintos para una misma persona en daycares distintos.
 - [ ] Antes de adaptar el runtime se confirma que el proyecto enlazado es nuevo, está vacío y no es el proyecto remoto anterior.
 - [ ] La baseline de SPEC 33 se aplica al proyecto nuevo después de revisar el dry-run y el seed se ejecuta mediante el comando separado.
 - [ ] Ejecutar el seed dos veces deja exactamente los 16 registros iniciales, sin duplicar roles, Caro, salas ni asignaciones.
 - [ ] El runtime no se despliega durante la ventana temporal de incompatibilidad con el esquema nuevo.
 - [ ] La adaptación y los smoke tests se validan contra el proyecto nuevo ya estructurado y sembrado.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
 - [ ] Los smoke tests de login, Home, Kids y Posts pasan contra el proyecto nuevo sembrado.
 
 ## Decisions

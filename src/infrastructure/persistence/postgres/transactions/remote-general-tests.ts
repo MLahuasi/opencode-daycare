@@ -79,7 +79,7 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
     await client`
       INSERT INTO people_roles (daycare_id, person_id, role_id)
       SELECT ${ids.daycareId}, person_id, id
-      FROM (VALUES (${ids.parentId}), (${ids.otherParentId})) AS parents(person_id)
+      FROM (VALUES (${ids.parentId}::uuid), (${ids.otherParentId}::uuid)) AS parents(person_id)
       CROSS JOIN roles
       WHERE roles.code = 'parent'
     `;
