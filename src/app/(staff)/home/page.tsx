@@ -1,11 +1,12 @@
 import { StaffSidebar } from "@/presentation/layout";
 import { FeedContent } from "@/presentation/feed";
 import { toggleFeedReactionAction } from "@/app/_actions/posts";
-import { getFeedOverview } from "@/composition/feed";
 import { getAuthorizedPosts } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
-import { staffNavigationConfig } from "@/presentation/navigation";
-import { requireActiveSession } from "@/composition/auth";
+import { getStaffNavigation } from "@/composition/staff-shell";
+import { buildStaffFeedOverview } from "@/composition/staff-shell";
+import { requireStaffSession } from "@/composition/auth";
+import { getPostViewer } from "@/composition/post";
 import { redirect } from "next/navigation";
 import { getApplicationEnvironment } from "@/config/server";
 
@@ -15,28 +16,39 @@ import { getApplicationEnvironment } from "@/config/server";
  * @returns The responsive staff feed layout.
  */
 export default async function Home() {
-  const session = await requireActiveSession();
+  const session = await requireStaffSession();
+  const viewer = await getPostViewer(session.user.daycareId, session.user.personId);
+  const navigation = await getStaffNavigation(
+    session.user.daycareId,
+    session.user.personId,
+  );
 
-  if (session.user.role === "parent") {
-    redirect("/family-feed");
-  }
+  if (!navigation) redirect("/auth/login");
 
-  const feedOverview = await getFeedOverview(session.user.daycareId);
-   const feedPosts = await getAuthorizedPosts(
-      createPostComposition(session.user.daycareId),
-      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
-   );
+  const postComposition = createPostComposition(session.user.daycareId);
+  const [kids, feedPosts] = await Promise.all([
+    postComposition.kids.findAll(),
+    getAuthorizedPosts(postComposition, viewer),
+  ]);
+  const environment = getApplicationEnvironment();
+  const feedOverview = buildStaffFeedOverview(
+    navigation.profile.name,
+    navigation.brand.room,
+    kids.filter((kid) => kid.status === "active").length,
+    environment.locale,
+    environment.timeZone,
+  );
   return (
     <div className="flex min-h-screen bg-background">
-      <StaffSidebar navigation={staffNavigationConfig} />
+      <StaffSidebar navigation={navigation} />
       <FeedContent
         canReact
         commentHref={(postId) => `/posts/${encodeURIComponent(postId)}/comments/new`}
         onToggleReaction={toggleFeedReactionAction}
-         overview={feedOverview[0]}
+         overview={feedOverview}
          posts={feedPosts}
-         locale={getApplicationEnvironment().locale}
-         timeZone={getApplicationEnvironment().timeZone}
+         locale={environment.locale}
+         timeZone={environment.timeZone}
        />
     </div>
   );

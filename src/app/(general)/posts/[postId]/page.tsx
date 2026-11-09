@@ -5,11 +5,12 @@ import { getFamilyFeedContext } from "@/application/family/feed";
 import { getPostDetail } from "@/application/post";
 import { PostDetailView } from "@/presentation/post";
 import { FamilySidebar, StaffSidebar } from "@/presentation/layout";
-import { staffNavigationConfig } from "@/presentation/navigation";
 import { createFamilyFeedComposition } from "@/composition/family";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
+import { getStaffNavigation } from "@/composition/staff-shell";
 import { presentPostDetail } from "@/presentation/post";
 import { getApplicationEnvironment } from "@/config/server";
+import { hasCapability } from "@/domain/person";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -29,10 +30,11 @@ export default async function PostDetailPage({
 }: PostDetailPageProps) {
   const session = await requireActiveSession();
   const { postId } = await params;
+  const viewer = await getPostViewer(session.user.daycareId, session.user.personId);
    const detail = await getPostDetail(
      createPostComposition(session.user.daycareId),
      postId,
-      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+       viewer,
    );
 
    if (!detail) {
@@ -41,7 +43,7 @@ export default async function PostDetailPage({
    const environment = getApplicationEnvironment();
    const viewModel = presentPostDetail(detail, environment.locale, environment.timeZone);
 
-  if (session.user.role === "parent") {
+  if (!hasCapability(viewer.roles, "staff-shell")) {
     const familyContext = await getFamilyFeedContext(
        createFamilyFeedComposition(session.user.daycareId),
       session.user.personId,
@@ -61,9 +63,15 @@ export default async function PostDetailPage({
     );
   }
 
+  const navigation = await getStaffNavigation(
+    session.user.daycareId,
+    session.user.personId,
+  );
+  if (!navigation) notFound();
+
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <StaffSidebar navigation={staffNavigationConfig} />
+      <StaffSidebar navigation={navigation} />
       <PostDetailView
         backHref="/home"
         className="min-w-0 flex-1"

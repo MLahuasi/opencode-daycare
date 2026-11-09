@@ -7,7 +7,7 @@ import type {
   PersistedPost,
   PostType,
 } from "@/domain/post";
-import type { Person, PersonRole } from "@/domain/person";
+import type { Person, PersonRoleCode } from "@/domain/person";
 import type { Room } from "@/domain/room";
 
 /** Values required to create a Post. */
@@ -48,7 +48,7 @@ export type PostDetailProjectionInput = {
   reactions: readonly PostReaction[];
   recipientKid: Kid | null;
   recipientRoom: Room | null;
-  viewerRole: PersonRole;
+  viewerRole: PersonRoleCode;
 };
 
 /** Comment enriched with its persisted author for neutral Post projections. */
@@ -72,7 +72,7 @@ export type PostDetail = {
     kind: "kid" | "room";
     name: string;
   };
-  viewerRole: PersonRole;
+  viewerRole: PersonRoleCode;
 };
 
 /** Result returned when toggling a reaction in memory. */

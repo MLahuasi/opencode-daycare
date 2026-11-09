@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/composition/auth";
 import { createPostImageStorage } from "@/composition/post";
 import { createPost } from "@/application/post";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
 import type { PostFormActionState } from "@/presentation/post/contracts";
@@ -40,13 +40,22 @@ export async function createPostAction(
        roomId: parsed.values.roomId,
        type: parsed.values.type,
        },
-       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+        await getPostViewer(session.user.daycareId, session.user.personId),
      );
 
      if (!createdPost) {
        throw new Error("Post creation is not authorized.");
      }
-  } catch {
+  } catch (error) {
+    const persistenceError = error as {
+      code?: unknown;
+      name?: unknown;
+    };
+    console.error("[posts] create failed", {
+      stage: "persist",
+      code: typeof persistenceError.code === "string" ? persistenceError.code : undefined,
+      name: typeof persistenceError.name === "string" ? persistenceError.name : "UnknownError",
+    });
     const imageStorage = parsed.uploadedMedia.length
       ? createPostImageStorage()
       : null;

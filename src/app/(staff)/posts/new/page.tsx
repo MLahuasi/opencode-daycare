@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/composition/auth";
 import { createPostAction } from "@/app/_actions/posts";
 import { getPostTargets } from "@/application/post";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 import {
   PostForm,
   type PostFormInitialValues,
@@ -17,7 +17,7 @@ export default async function NewPostPage() {
   const session = await requireStaffSession();
    const targets = await getPostTargets(
      createPostComposition(session.user.daycareId),
-      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+       await getPostViewer(session.user.daycareId, session.user.personId),
    );
   const roomId = null;
 

@@ -234,12 +234,17 @@ export class PostgresPostRepository {
     post: Pick<PersistedPost, "authorId" | "kidIds" | "roomId">,
   ): Promise<void> {
     const daycareId = await this.currentDaycare.getCurrentDaycareId();
-    const authors = await this.client<Tables<"people">[]>`
-      SELECT daycare_id, id, name, email, role, status, created_at, updated_at
-      FROM people
-      WHERE daycare_id = ${daycareId}
-        AND id = ${post.authorId}
-        AND role = 'personal'
+    const authors = await this.client<{ id: string }[]>`
+      SELECT p.id
+      FROM people AS p
+      INNER JOIN people_roles AS pr
+        ON pr.daycare_id = p.daycare_id
+       AND pr.person_id = p.id
+      INNER JOIN roles AS r
+        ON r.id = pr.role_id
+      WHERE p.daycare_id = ${daycareId}
+        AND p.id = ${post.authorId}
+        AND r.code = 'personal'
       LIMIT 1
     `;
 

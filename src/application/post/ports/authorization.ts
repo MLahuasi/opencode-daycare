@@ -1,4 +1,4 @@
-import type { PersonRole } from "@/domain/person";
+import type { PersonRoleCode } from "@/domain/person";
 import type { PersistedPost } from "@/domain/post";
 import type { Kid } from "@/domain/kid";
 
@@ -6,7 +6,7 @@ import type { Kid } from "@/domain/kid";
 export type PostViewer = {
   daycareId: string;
   personId: string;
-  role: PersonRole;
+  roles: readonly PersonRoleCode[];
 };
 
 /** Persistence capabilities required to evaluate Post access. */

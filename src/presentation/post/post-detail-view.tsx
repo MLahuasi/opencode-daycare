@@ -176,7 +176,7 @@ export function PostDetailView({
                   <div className={styles.commentBody}>
                     <header className={styles.commentHeader}>
                       <strong>{comment.author.name}</strong>
-                      <span>{comment.author.role === "personal" ? "· maestra" : "· familia"}</span>
+                       <span>{comment.author.roles.includes("personal") ? "· maestra" : "· familia"}</span>
                       <time dateTime={comment.createdAt}>
                         {comment.timeLabel}
                         {comment.updatedAt ? " · editado" : ""}

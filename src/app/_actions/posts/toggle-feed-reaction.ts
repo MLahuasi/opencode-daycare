@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireActiveSession } from "@/composition/auth";
 import { toggleReaction } from "@/application/post";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 
 /** Serializable result returned by the family feed reaction action. */
 export type ToggleFeedReactionResult =
@@ -30,7 +30,7 @@ export async function toggleFeedReactionAction(
      const result = await toggleReaction(
        createPostComposition(session.user.daycareId),
        normalizedPostId,
-       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+       await getPostViewer(session.user.daycareId, session.user.personId),
      );
 
      if (!result) {

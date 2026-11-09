@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { requireStaffSession } from "@/composition/auth";
 import { updatePostAction } from "@/app/_actions/posts";
 import { getPostTargets } from "@/application/post";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 import { createPostImageStorage } from "@/composition/post";
 import {
   PostForm,
@@ -30,11 +30,10 @@ export default async function EditPostPage({
    const dependencies = createPostComposition(session.user.daycareId);
    const [post, targets] = await Promise.all([
      dependencies.posts.findById(postId),
-     getPostTargets(dependencies, {
-        daycareId: session.user.daycareId,
-        personId: session.user.personId,
-       role: session.user.role,
-     }),
+      getPostTargets(
+        dependencies,
+        await getPostViewer(session.user.daycareId, session.user.personId),
+      ),
    ]);
 
   if (!post || post.authorId !== session.user.personId) {

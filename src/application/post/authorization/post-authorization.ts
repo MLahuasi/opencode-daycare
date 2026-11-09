@@ -1,4 +1,5 @@
 import type { PersistedPost } from "@/domain/post";
+import { hasCapability, hasRole } from "@/domain/person";
 import type {
   PostAccessRepository,
   PostAuthorization,
@@ -27,7 +28,7 @@ export class PostAuthorizationPolicy implements PostAuthorization {
   ): Promise<boolean> {
     if (viewer.daycareId !== post.daycareId) return false;
 
-    if (viewer.role === "personal") {
+    if (hasCapability(viewer.roles, "manage-posts")) {
       const roomIds = new Set(
         await this.access.findStaffRoomIds(viewer.personId),
       );
@@ -40,6 +41,8 @@ export class PostAuthorizationPolicy implements PostAuthorization {
         (kid) => kid !== null && roomIds.has(kid.roomId),
       );
     }
+
+    if (!hasRole(viewer.roles, "parent")) return false;
 
     const parentKidIds = await this.access.findParentKidIds(viewer.personId);
     const activeKids = await this.access.findActiveKidsByIds(parentKidIds);
@@ -62,7 +65,7 @@ export class PostAuthorizationPolicy implements PostAuthorization {
     viewer: PostViewer,
     post: Pick<PersistedPost, "kidIds" | "roomId">,
   ): Promise<boolean> {
-    if (viewer.role !== "personal") return false;
+    if (!hasCapability(viewer.roles, "manage-posts")) return false;
 
     const roomIds = new Set(
       await this.access.findStaffRoomIds(viewer.personId),
@@ -87,7 +90,7 @@ export class PostAuthorizationPolicy implements PostAuthorization {
   public canEdit(viewer: PostViewer, post: PersistedPost): boolean {
     return (
       viewer.daycareId === post.daycareId &&
-      viewer.role === "personal" &&
+      hasCapability(viewer.roles, "manage-posts") &&
       post.authorId === viewer.personId
     );
   }

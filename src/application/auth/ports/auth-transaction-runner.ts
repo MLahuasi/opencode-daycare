@@ -1,12 +1,17 @@
 import type { Credential } from "@/domain/auth";
 import type { Invitation, ParentKid } from "@/domain/family";
-import type { Person } from "@/domain/person";
+import type { Person, PersonRoleCode } from "@/domain/person";
 
 /** Repository views bound to one transaction-scoped database client. */
 export type AuthTransactionRepositories = {
   people: {
     findById(daycareId: string, id: string): Promise<Person | null>;
     update(person: Person): Promise<void>;
+    ensureRole(
+      daycareId: string,
+      personId: string,
+      role: PersonRoleCode,
+    ): Promise<void>;
   };
   credentials: {
     upsert(credential: Credential): Promise<void>;

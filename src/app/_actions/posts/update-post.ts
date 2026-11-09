@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireStaffSession } from "@/composition/auth";
 import { createPostImageStorage } from "@/composition/post";
 import { updatePost } from "@/application/post";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 import type { PostMedia } from "@/domain/post";
 import { parsePostSubmission } from "./post-action";
 import { deleteMediaWithRetry } from "./media-cleanup";
@@ -55,7 +55,7 @@ export async function updatePostAction(
         roomId: parsed.values.roomId,
         type: parsed.values.type,
       },
-      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+      await getPostViewer(session.user.daycareId, session.user.personId),
     );
 
     if (!updatedPost) {
@@ -120,7 +120,7 @@ export async function updatePostAction(
           roomId: parsed.values.roomId,
           type: parsed.values.type,
         },
-        { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+        await getPostViewer(session.user.daycareId, session.user.personId),
       );
       return {
         errors: { media: "No pudimos retirar todas las imágenes. Inténtalo nuevamente." },

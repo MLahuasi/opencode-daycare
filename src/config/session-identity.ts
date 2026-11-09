@@ -7,7 +7,6 @@ export const POSTGRES_SESSION_SOURCE = "postgres" as const;
 export type SessionIdentityCandidate = {
   personId?: unknown;
   daycareId?: unknown;
-  role?: unknown;
   persistenceSource?: unknown;
 };
 
@@ -15,7 +14,6 @@ export type SessionIdentityCandidate = {
 export type SessionIdentity = {
   personId: string;
   daycareId: string;
-  role: string;
 };
 
 /** Identity issued by the PostgreSQL runtime after the cutover. */
@@ -26,7 +24,6 @@ export type PostgresSessionIdentity = SessionIdentity & {
 /** Minimal persisted person projection required for session validation. */
 export type SessionPerson = {
   daycareId: string;
-  role: string;
   status: string;
 };
 
@@ -46,9 +43,7 @@ export function hasValidSessionIdentifiers(
 export function isValidSessionIdentity(
   identity: SessionIdentityCandidate,
 ): identity is SessionIdentity {
-  return (
-    typeof identity.role === "string" && hasValidSessionIdentifiers(identity)
-  );
+  return hasValidSessionIdentifiers(identity);
 }
 
 /** Checks that a session was issued by the PostgreSQL runtime. */
@@ -64,12 +59,11 @@ export function isPostgresSessionIdentity(
 /** Checks that the persisted person is active and belongs to the session tenant. */
 export function isActiveSessionPerson(
   person: SessionPerson | null | undefined,
-  identity: Pick<SessionIdentity, "daycareId" | "role">,
+  identity: Pick<SessionIdentity, "daycareId">,
 ): person is SessionPerson {
   return Boolean(
     person &&
       person.daycareId === identity.daycareId &&
-      person.status === "active" &&
-      person.role === identity.role,
+      person.status === "active",
   );
 }

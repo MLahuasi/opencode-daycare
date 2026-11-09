@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireActiveSession } from "@/composition/auth";
 import { createComment } from "@/application/post";
-import { createPostComposition } from "@/composition/post";
+import { createPostComposition, getPostViewer } from "@/composition/post";
 import { validateFeedCommentForm } from "@/presentation/post/schemas";
 import type { FeedCommentActionState } from "./comment-types";
 
@@ -39,7 +39,7 @@ export async function createFeedCommentAction(
        body: validation.data.body,
        postId,
        },
-       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+        await getPostViewer(session.user.daycareId, session.user.personId),
      );
 
      if (!comment) {

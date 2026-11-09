@@ -8,7 +8,10 @@ import { PostgresParentKidRepository } from "../repositories/parent-kid-reposito
 import { PostgresPostAccessRepository } from "../repositories/post-access-repository";
 import { PostgresPostRepository } from "../repositories/post-repository";
 import { PostgresRoomRepository } from "../repositories/room-repository";
+import { PostgresPersonRoleRepository } from "../repositories/person-role-repository";
+import { PostgresStaffShellRepository } from "../repositories/staff-shell-repository";
 import { withRemoteDbTestTransaction } from "./remote-db-test-context";
+import { projectStaffNavigation } from "@/composition/staff-shell";
 
 function createIds() {
   return {
@@ -17,6 +20,7 @@ function createIds() {
     staffId: randomUUID(),
     parentId: randomUUID(),
     roomId: randomUUID(),
+    secondRoomId: randomUUID(),
     otherRoomId: randomUUID(),
     kidId: randomUUID(),
     otherKidId: randomUUID(),
@@ -93,22 +97,41 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
     const rooms = new PostgresRoomRepository(client);
     const kids = new PostgresKidRepository(client);
     const parentKids = new PostgresParentKidRepository(client);
+    const personRoles = new PostgresPersonRoleRepository(client);
+    const staffShell = new PostgresStaffShellRepository(client);
     const access = new PostgresPostAccessRepository(client, currentDaycare);
     const posts = new PostgresPostRepository(client, currentDaycare, access);
 
     await client`
-      INSERT INTO daycares (id, name)
+      INSERT INTO daycares (id, name, brand_name)
       VALUES
-        (${ids.daycareId}, 'Remote Staff Test'),
-        (${ids.otherDaycareId}, 'Remote Staff Other Tenant')
+        (${ids.daycareId}, 'Remote Staff Test', 'Staff Brand'),
+        (${ids.otherDaycareId}, 'Remote Staff Other Tenant', 'Other Brand')
     `;
     await client`
-      INSERT INTO people (id, daycare_id, name, email, role, status)
+      INSERT INTO people (id, daycare_id, name, email, job_title, status)
       VALUES
-        (${ids.staffId}, ${ids.daycareId}, 'Remote Staff', 'staff-remote@example.test', 'personal', 'active'),
-        (${ids.parentId}, ${ids.daycareId}, 'Remote Parent', 'parent-remote@example.test', 'parent', 'active')
+        (${ids.staffId}, ${ids.daycareId}, 'Remote Staff', 'staff-remote@example.test', 'Teacher', 'active'),
+        (${ids.parentId}, ${ids.daycareId}, 'Remote Parent', 'parent-remote@example.test', null, 'active')
+    `;
+    await client`
+      INSERT INTO people_roles (daycare_id, person_id, role_id)
+      SELECT ${ids.daycareId}, ${ids.staffId}, id
+      FROM roles
+      WHERE code IN ('personal', 'teacher')
+    `;
+    await client`
+      INSERT INTO people_roles (daycare_id, person_id, role_id)
+      SELECT ${ids.daycareId}, ${ids.parentId}, id
+      FROM roles
+      WHERE code = 'parent'
     `;
     await rooms.create({ daycareId: ids.daycareId, id: ids.roomId, name: "Remote Room" });
+    await rooms.create({
+      daycareId: ids.daycareId,
+      id: ids.secondRoomId,
+      name: "Remote Second Room",
+    });
     await rooms.create({
       daycareId: ids.otherDaycareId,
       id: ids.otherRoomId,
@@ -140,8 +163,51 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
     });
     await client`
       INSERT INTO staff_rooms (daycare_id, person_id, room_id)
-      VALUES (${ids.daycareId}, ${ids.staffId}, ${ids.roomId})
+      VALUES
+        (${ids.daycareId}, ${ids.staffId}, ${ids.roomId}),
+        (${ids.daycareId}, ${ids.staffId}, ${ids.secondRoomId})
     `;
+
+    assert.deepEqual(
+      (await kids.findAll(ids.daycareId)).map((kid) => kid.id),
+      [ids.kidId],
+    );
+    assert.deepEqual(await posts.findAll(), []);
+    assert.deepEqual(
+      await staffShell.findByPerson(ids.daycareId, ids.staffId),
+      {
+        brandName: "Staff Brand",
+        personName: "Remote Staff",
+        jobTitle: "Teacher",
+        roomNames: ["Remote Room", "Remote Second Room"],
+      },
+    );
+    const projectedNavigation = projectStaffNavigation({
+      brandName: "OpenDayCare",
+      personName: "Caro Giménez",
+      jobTitle: "Maestra",
+      roomNames: ["Soles", "Girasoles", "Patitos"],
+    });
+    assert.deepEqual(projectedNavigation.brand, {
+      name: "OpenDayCare",
+      room: "Salas Soles, Girasoles, Patitos",
+    });
+    assert.deepEqual(projectedNavigation.profile, {
+      initial: "C",
+      name: "Caro Giménez",
+      role: "Maestra · Soles, Girasoles, Patitos",
+    });
+    const emptyProjection = projectStaffNavigation({
+      brandName: "OpenDayCare",
+      personName: "Ana",
+      jobTitle: null,
+      roomNames: [],
+    });
+    assert.deepEqual(emptyProjection.brand, {
+      name: "OpenDayCare",
+      room: "Sin salas",
+    });
+    assert.equal(emptyProjection.profile.role, "Personal · Sin salas");
     await parentKids.create({
       daycareId: ids.daycareId,
       id: ids.parentKidId,
@@ -151,7 +217,13 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
       photoSharingConsent: true,
     });
 
-    assert.deepEqual(await access.findStaffRoomIds(ids.staffId), [ids.roomId]);
+    assert.deepEqual(
+      await access.findStaffRoomIds(ids.staffId),
+      [ids.roomId, ids.secondRoomId].sort(),
+    );
+    assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.daycareId), ["personal", "teacher"]);
+    assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.otherDaycareId), []);
+    assert.deepEqual(await personRoles.findRoles(ids.parentId, ids.daycareId), ["parent"]);
     assert.deepEqual(await parentKids.findByKidId(ids.daycareId, ids.kidId).then((rows) => rows.map((row) => row.id)), [ids.parentKidId]);
     assert.equal(await kids.findById(ids.daycareId, ids.otherKidId), null);
     assert.equal(await rooms.findById(ids.daycareId, ids.otherRoomId), null);

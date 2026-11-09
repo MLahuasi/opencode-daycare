@@ -7,6 +7,8 @@ import {
   getPostgresRuntimeClient,
 } from "../postgres-runtime";
 import type { CurrentDaycareReader } from "@/application/daycare/ports";
+import type { PostViewer } from "@/application/post";
+import { PostgresPersonRoleRepository } from "@/infrastructure/persistence/postgres";
 
 /** Concrete server-only dependencies required by Post use cases. */
 export type PostComposition = PostDependencies;
@@ -18,6 +20,18 @@ export type PostComposition = PostDependencies;
  */
 export function createPostImageStorage() {
   return createCloudinaryImageStorage();
+}
+
+/** Resolves the current tenant-scoped roles for Post authorization. */
+export async function getPostViewer(
+  daycareId: string,
+  personId: string,
+): Promise<PostViewer> {
+  const roles = await new PostgresPersonRoleRepository(
+    getPostgresRuntimeClient(),
+  ).findRoles(personId, daycareId);
+
+  return { daycareId, personId, roles };
 }
 
 /**

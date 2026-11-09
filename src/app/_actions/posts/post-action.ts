@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { createPostImageStorage } from "@/composition/post";
+import { createPostImageStorage, getPostViewer } from "@/composition/post";
 import { getPostTargets, hasPhotoSharingConsent } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 import {
@@ -175,7 +175,7 @@ export async function parsePostSubmission(
 
   const targets = await getPostTargets(
     createPostComposition(authenticatedDaycareId),
-    { daycareId: authenticatedDaycareId, personId, role: "personal" },
+    await getPostViewer(authenticatedDaycareId, personId),
   );
   const targetKids = targets.kids.filter((kid) =>
     initialValidation.data.kidIds.includes(kid.id),
@@ -298,7 +298,16 @@ export async function parsePostSubmission(
         alt: altTexts.get(getFileId(file)) || null,
       });
     }
-  } catch {
+  } catch (error) {
+    const uploadError = error as {
+      code?: unknown;
+      name?: unknown;
+    };
+    console.error("[posts] media upload failed", {
+      stage: "upload",
+      code: typeof uploadError.code === "string" ? uploadError.code : undefined,
+      name: typeof uploadError.name === "string" ? uploadError.name : "UnknownError",
+    });
     let cleanupSucceeded = true;
 
     if (imageStorage) {

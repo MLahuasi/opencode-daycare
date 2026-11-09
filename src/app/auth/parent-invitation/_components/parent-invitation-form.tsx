@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button, CheckboxField, FormField } from "@/presentation/ui";
 import {
   acceptParentInvitationAction,
@@ -43,10 +44,15 @@ export function ParentInvitationForm({
   existingActiveParent,
   kidName,
 }: ParentInvitationFormProps) {
+  const router = useRouter();
   const [actionState, formAction, isPending] = useActionState<
     ParentInvitationActionState,
     FormData
   >(acceptParentInvitationAction, initialParentInvitationActionState);
+
+  useEffect(() => {
+    if (actionState.redirectTo) router.push(actionState.redirectTo);
+  }, [actionState.redirectTo, router]);
 
   return (
     <div className={styles.activationContent}>
