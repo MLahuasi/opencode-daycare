@@ -12,7 +12,11 @@ import {
 } from "./post-image-picker";
 import type { PostFormMode } from "@/presentation/post/schemas";
 import type { PostType } from "@/domain/post";
-import type { PostFormAction, PostFormActionState } from "@/presentation/post/contracts";
+import type {
+  PostFormAction,
+  PostFormActionState,
+  PostFormLimits,
+} from "@/presentation/post/contracts";
 import {
   PostFormExistingMedia,
   type PostFormExistingMedia as PostFormExistingMediaValue,
@@ -56,6 +60,8 @@ type PostFormProps = {
   className?: string;
   /** Values used by create or edit mode. */
   initialValues: PostFormInitialValues;
+  /** Server-validated transport and upload limits. */
+  limits: PostFormLimits;
   /** Kids authorized for the current staff member. */
   kids: readonly Kid[];
   /** Rooms authorized for the current staff member. */
@@ -95,6 +101,7 @@ export function PostForm({
   className = "",
   initialValues,
   kids,
+  limits,
   rooms,
 }: PostFormProps) {
   const [actionState, formAction, pending] = useActionState(
@@ -363,7 +370,12 @@ export function PostForm({
               }
             />
             <PostImagePicker
-              maxImages={Math.max(0, 4 - existingMedia.length)}
+              maxImageBytes={limits.maxImageBytes}
+              maxImages={Math.max(
+                0,
+                limits.maxImagesPerOperation - existingMedia.length,
+              )}
+              maxAltLength={limits.maxAltLength}
               onChange={setImages}
             />
           </fieldset>

@@ -22,6 +22,13 @@ export type PostFormAction = (
   formData: FormData,
 ) => Promise<PostFormActionState>;
 
+/** Non-secret HTTP limits supplied by the server to the post form. */
+export type PostFormLimits = {
+  maxImageBytes: number;
+  maxImagesPerOperation: number;
+  maxAltLength: number;
+};
+
 /** Serializable feedback returned by comment actions. */
 export type FeedCommentActionState = {
   errors: FeedCommentFormErrors;

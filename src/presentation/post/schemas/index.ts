@@ -9,15 +9,12 @@ export type {
   FeedCommentFormValues,
 } from "./feed-comment-form";
 export { validatePostForm } from "./post-form";
-export {
-  MAX_MEDIA_BYTES,
-  MAX_POST_BODY_LENGTH,
-  MAX_POST_MEDIA,
-} from "./post-form";
+export { MAX_POST_BODY_LENGTH } from "./post-form";
 export type {
   PostFormErrors,
   PostFormInput,
   PostFormMode,
   PostFormValidationResult,
   PostFormValues,
+  PostFormValidationLimits,
 } from "./post-form";

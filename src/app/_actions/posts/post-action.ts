@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { getHttpSecurityEnvironment } from "@/config/server";
 import { createPostImageStorage, getPostViewer } from "@/composition/post";
 import { getPostTargets, hasPhotoSharingConsent } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 import {
-  MAX_MEDIA_BYTES,
   validatePostForm,
   type PostFormValues,
 } from "@/presentation/post/schemas";
@@ -155,6 +155,7 @@ export async function parsePostSubmission(
   authenticatedDaycareId: string,
   existingMedia: readonly PostMedia[] = [],
 ): Promise<ParsedPostSubmission> {
+  const limits = getHttpSecurityEnvironment();
   const files = getFiles(formData);
   const retainedMedia = getExistingMedia(formData, existingMedia);
   const submittedConfirmation = formData.get("restrictionConfirmation");
@@ -167,7 +168,7 @@ export async function parsePostSubmission(
     postId: formData.get("postId"),
     roomId: formData.get("roomId"),
     type: formData.get("type"),
-  });
+  }, limits);
 
   if (!initialValidation.success) {
     return { success: false, state: { errors: initialValidation.errors, message: "Revisa los campos marcados." } };
@@ -233,7 +234,7 @@ export async function parsePostSubmission(
 
   for (const file of files) {
     if (
-      file.size > MAX_MEDIA_BYTES || !(await isSupportedImageFile(file))
+      file.size > limits.maxImageBytes || !(await isSupportedImageFile(file))
     ) {
       return { success: false, state: errorState("media", "Revisa el formato y tamaño de las imágenes.") };
     }
@@ -276,8 +277,14 @@ export async function parsePostSubmission(
     }
   }
 
-  if (files.length + retainedMedia.length > 4) {
-    return { success: false, state: errorState("media", "Puedes adjuntar hasta 4 imágenes.") };
+  if (files.length + retainedMedia.length > limits.maxImagesPerOperation) {
+    return {
+      success: false,
+      state: errorState(
+        "media",
+        `Puedes adjuntar hasta ${limits.maxImagesPerOperation} imágenes.`,
+      ),
+    };
   }
 
   const imageStorage = files.length > 0 ? createPostImageStorage() : null;
@@ -333,7 +340,10 @@ export async function parsePostSubmission(
   }
 
   const finalMedia = [...retainedMedia, ...uploadedMedia];
-  const finalValidation = validatePostForm({ ...initialValidation.data, media: finalMedia, hasImages: finalMedia.length > 0 });
+  const finalValidation = validatePostForm(
+    { ...initialValidation.data, media: finalMedia, hasImages: finalMedia.length > 0 },
+    limits,
+  );
 
   if (!finalValidation.success) {
     let cleanupSucceeded = true;

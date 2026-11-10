@@ -6,7 +6,13 @@ export {
 } from "./feed-post-view-model";
 export type { FeedPostViewModel } from "./feed-post-view-model";
 export { DeleteCommentButton } from "./delete-comment-button";
-export type { FeedCommentAction, FeedCommentActionState, PostFormAction, PostFormActionState } from "./contracts";
+export type {
+  FeedCommentAction,
+  FeedCommentActionState,
+  PostFormAction,
+  PostFormActionState,
+  PostFormLimits,
+} from "./contracts";
 export { PostDetailView } from "./post-detail-view";
 export {
   presentPostDetail,
