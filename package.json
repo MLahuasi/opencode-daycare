@@ -6,6 +6,7 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start --port 3000",
+    "test:e2e": "playwright test",
     "lint": "eslint",
     "db:migrate:dry-run": "npx --yes supabase@3.0.0 db push --remote --dry-run --skip-vault",
     "db:migrate": "npx --yes supabase@3.0.0 db push --remote --yes --skip-vault",
@@ -31,6 +32,7 @@
     }
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

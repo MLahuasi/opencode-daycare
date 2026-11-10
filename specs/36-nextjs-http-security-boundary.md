@@ -89,6 +89,4 @@ value: IP validada por Vercel, nunca un header enviado directamente por el clien
 
 Plan de implementación
 
-5. Verificar que las rutas con nonce no se publiquen como estáticas.
-6. Añadir pruebas Playwright de headers, cargas y navegación.
 7. Ejecutar lint, typecheck y build; documentar variables y configuración sin secretos.
