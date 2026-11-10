@@ -89,7 +89,6 @@ value: IP validada por Vercel, nunca un header enviado directamente por el clien
 
 Plan de implementación
 
-1. Resolver la IP de Vercel y eliminar confianza directa en x-forwarded-for.
 2. Implementar nonce por petición en proxy.ts y conectarlo al renderizado.
 3. Configurar CSP y cabeceras defensivas.
 4. Configurar serverActions.bodySizeLimit a 22mb y validar imágenes.
