@@ -1,7 +1,7 @@
 "use server";
 
 import { requireStaffSession } from "@/composition/auth";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { validateInviteParentForm } from "../_schemas";
 import {
   createInvitation,
@@ -27,6 +27,10 @@ export async function sendInviteParentAction(
 ): Promise<InviteParentActionState> {
   const session = await requireStaffSession();
   const authorization = await getKidAuthorization(session.user.daycareId, session.user.personId);
+
+  if (!authorization.roles.includes("teacher") || authorization.assignedRoomIds.length === 0) {
+    notFound();
+  }
 
   const validation = validateInviteParentForm({
     name: formData.get("name"),
@@ -55,17 +59,11 @@ export async function sendInviteParentAction(
   );
 
   if (!kid) {
-    return {
-      errors: {},
-      message: "No pudimos encontrar al niño.",
-    };
+    notFound();
   }
 
   if (kid.daycareId !== session.user.daycareId) {
-    return {
-      errors: {},
-      message: "No puedes crear una invitación para otra guardería.",
-    };
+    notFound();
   }
 
   let createdInvitation;
