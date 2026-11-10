@@ -12,6 +12,8 @@ import { PostgresPersonRoleRepository } from "../repositories/person-role-reposi
 import { PostgresStaffShellRepository } from "../repositories/staff-shell-repository";
 import { withRemoteDbTestTransaction } from "./remote-db-test-context";
 import { projectStaffNavigation } from "@/composition/staff-shell";
+import { canManageKids } from "@/domain/person";
+import { hasKidPhotoSharingConsent } from "@/application/kid";
 
 function createIds() {
   return {
@@ -197,6 +199,23 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
       name: "Caro Giménez",
       role: "Maestra · Soles, Girasoles, Patitos",
     });
+    assert.equal(
+      projectedNavigation.navigationItems.some((item) => item.icon === "children"),
+      true,
+    );
+    const personalNavigation = projectStaffNavigation(
+      {
+        brandName: "OpenDayCare",
+        personName: "Ana",
+        jobTitle: "Personal",
+        roomNames: ["Soles"],
+      },
+      false,
+    );
+    assert.equal(
+      personalNavigation.navigationItems.some((item) => item.icon === "children"),
+      false,
+    );
     const emptyProjection = projectStaffNavigation({
       brandName: "OpenDayCare",
       personName: "Ana",
@@ -221,10 +240,64 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
       await access.findStaffRoomIds(ids.staffId),
       [ids.roomId, ids.secondRoomId].sort(),
     );
+    assert.equal(
+      canManageKids(["teacher"], [ids.roomId], ids.roomId),
+      true,
+    );
+    assert.equal(
+      canManageKids(["teacher"], [ids.roomId], ids.secondRoomId),
+      false,
+    );
+    assert.equal(
+      canManageKids(["personal"], [ids.roomId], ids.roomId),
+      false,
+    );
+    assert.equal(
+      canManageKids(["teacher"], [], ids.roomId),
+      false,
+    );
+    assert.deepEqual(
+      (await kids.findAllInRooms(ids.daycareId, [ids.roomId])).map((kid) => kid.id),
+      [ids.kidId],
+    );
+    assert.equal(
+      await kids.findByIdInRooms(ids.daycareId, ids.kidId, [ids.secondRoomId]),
+      null,
+    );
     assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.daycareId), ["personal", "teacher"]);
     assert.deepEqual(await personRoles.findRoles(ids.staffId, ids.otherDaycareId), []);
     assert.deepEqual(await personRoles.findRoles(ids.parentId, ids.daycareId), ["parent"]);
     assert.deepEqual(await parentKids.findByKidId(ids.daycareId, ids.kidId).then((rows) => rows.map((row) => row.id)), [ids.parentKidId]);
+    assert.equal(
+      hasKidPhotoSharingConsent(ids.kidId, []),
+      false,
+    );
+    assert.equal(
+      hasKidPhotoSharingConsent(ids.kidId, [
+        {
+          daycareId: ids.daycareId,
+          id: ids.parentKidId,
+          parentId: ids.parentId,
+          kidId: ids.kidId,
+          relationship: "guardian",
+          photoSharingConsent: false,
+        },
+      ]),
+      false,
+    );
+    assert.equal(
+      hasKidPhotoSharingConsent(ids.kidId, [
+        {
+          daycareId: ids.daycareId,
+          id: ids.parentKidId,
+          parentId: ids.parentId,
+          kidId: ids.kidId,
+          relationship: "guardian",
+          photoSharingConsent: true,
+        },
+      ]),
+      true,
+    );
     assert.equal(await kids.findById(ids.daycareId, ids.otherKidId), null);
     assert.equal(await rooms.findById(ids.daycareId, ids.otherRoomId), null);
 
