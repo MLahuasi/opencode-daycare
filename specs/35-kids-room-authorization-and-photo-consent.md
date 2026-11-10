@@ -80,6 +80,4 @@ activeParents.length > 0 && activeParents.every(parent => parent.photoConsent ==
 
 Plan de implementación
 
-5. Añadir pruebas para docentes asignados/no asignados, personal sin teacher, cero progenitores y consentimiento parcial.
-6. Ejecutar Supabase local con Docker Desktop y verificar recorridos con Playwright.
 7. Actualizar la documentación indicada sin secretos ni URLs de proveedores.

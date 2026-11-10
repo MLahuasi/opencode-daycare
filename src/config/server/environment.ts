@@ -42,6 +42,7 @@ export type SupabaseEnvironment = {
   dbPort: number;
   dbUsername: string;
   dbPassword: string;
+  dbSslMode: "disable" | "require";
   runRemoteDbTests: boolean;
 };
 
@@ -105,6 +106,21 @@ function readBoolean(name: string): boolean {
 
 function readOptionalBoolean(name: string): boolean {
   return process.env[name]?.trim() === "true";
+}
+
+function readOptionalEnum<T extends string>(
+  name: string,
+  values: readonly T[],
+  fallback: T,
+): T {
+  const value = process.env[name]?.trim();
+  if (!value) return fallback;
+
+  if (!values.includes(value as T)) {
+    throw new Error(`[environment] Invalid enum variable: ${name}`);
+  }
+
+  return value as T;
 }
 
 function readEnum<T extends string>(name: string, values: readonly T[]): T {
@@ -194,6 +210,11 @@ function readEnvironment(): Environment {
       dbPort: readPositiveInteger("SUPABASE_DB_PORT"),
       dbUsername: readRequiredString("SUPABASE_DB_USERNAME"),
       dbPassword: readRequiredString("SUPABASE_DB_PASSWORD"),
+      dbSslMode: readOptionalEnum(
+        "SUPABASE_DB_SSL_MODE",
+        ["disable", "require"],
+        "require",
+      ),
       runRemoteDbTests: readOptionalBoolean("RUN_REMOTE_DB_TESTS"),
     },
   };
