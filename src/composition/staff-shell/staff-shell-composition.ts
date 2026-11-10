@@ -3,6 +3,7 @@ import "server-only";
 import type { StaffNavigationConfig } from "@/presentation/layout";
 import { PostgresStaffShellRepository } from "@/infrastructure/persistence/postgres";
 import { staffNavigationConfig } from "@/presentation/navigation";
+import { getKidAuthorization } from "@/composition/kid";
 import { getPostgresRuntimeClient } from "../postgres-runtime";
 import type { StaffShellRow } from "@/infrastructure/persistence/postgres";
 
@@ -15,11 +16,19 @@ function getInitial(name: string): string {
 }
 
 /** Projects PostgreSQL Staff Shell data into the presentation navigation contract. */
-export function projectStaffNavigation(row: StaffShellRow): StaffNavigationConfig {
+export function projectStaffNavigation(
+  row: StaffShellRow,
+  canManageKids = true,
+): StaffNavigationConfig {
   const rooms = formatRooms(row.roomNames);
 
   return {
     ...staffNavigationConfig,
+    navigationItems: canManageKids
+      ? staffNavigationConfig.navigationItems
+      : staffNavigationConfig.navigationItems.filter(
+          (item) => item.icon !== "children",
+        ),
     brand: {
       name: row.brandName,
       room: rooms,
@@ -37,11 +46,19 @@ export async function getStaffNavigation(
   daycareId: string,
   personId: string,
 ): Promise<StaffNavigationConfig | null> {
-  const row = await new PostgresStaffShellRepository(
-    getPostgresRuntimeClient(),
-  ).findByPerson(daycareId, personId);
+  const [row, kidAuthorization] = await Promise.all([
+    new PostgresStaffShellRepository(getPostgresRuntimeClient()).findByPerson(
+      daycareId,
+      personId,
+    ),
+    getKidAuthorization(daycareId, personId),
+  ]);
 
   if (!row) return null;
 
-  return projectStaffNavigation(row);
+  return projectStaffNavigation(
+    row,
+    kidAuthorization.roles.includes("teacher") &&
+      kidAuthorization.assignedRoomIds.length > 0,
+  );
 }

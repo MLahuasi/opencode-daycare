@@ -10,6 +10,14 @@ export function getKids(dependencies: KidDependencies): Promise<readonly Kid[]> 
   return dependencies.kids.findAll();
 }
 
+/** Reads only Kids whose rooms are in the supplied authorization scope. */
+export function getKidsInRooms(
+  dependencies: KidDependencies,
+  roomIds: readonly string[],
+): Promise<readonly Kid[]> {
+  return dependencies.kids.findAllInRooms(roomIds);
+}
+
 /** Reads all persisted Rooms. */
 export function getRooms(
   dependencies: KidDependencies,
@@ -39,12 +47,30 @@ export function getKidById(
   return dependencies.kids.findById(id);
 }
 
+/** Finds a Kid only when its room is in the supplied authorization scope. */
+export function getKidByIdInRooms(
+  dependencies: KidDependencies,
+  id: string,
+  roomIds: readonly string[],
+): Promise<Kid | null> {
+  return dependencies.kids.findByIdInRooms(id, roomIds);
+}
+
 /** Finds a Kid by its public profile slug. */
 export function getKidBySlug(
   dependencies: KidDependencies,
   slug: string,
 ): Promise<Kid | null> {
   return dependencies.kids.findBySlug(slug);
+}
+
+/** Finds a slug only when its room is in the supplied authorization scope. */
+export function getKidBySlugInRooms(
+  dependencies: KidDependencies,
+  slug: string,
+  roomIds: readonly string[],
+): Promise<Kid | null> {
+  return dependencies.kids.findBySlugInRooms(slug, roomIds);
 }
 
 /** Resolves the Room assigned to a Kid. */

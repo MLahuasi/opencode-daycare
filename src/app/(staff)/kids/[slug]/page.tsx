@@ -2,7 +2,7 @@ import { getAvatarToneByPosition, LinkButton } from "@/presentation/ui";
 import {
   calculateAge,
   getKidRoom,
-  getKids,
+  getKidBySlugInRooms,
   getLinkedParentsByKidId,
 } from "@/application/kid";
 import {
@@ -15,7 +15,7 @@ import {
 import styles from "./_components/kid-profile.module.css";
 import { getTodayIsoDate } from "@/utils";
 import { requireStaffSession } from "@/composition/auth";
-import { createKidComposition } from "@/composition/kid";
+import { createKidComposition, getKidAuthorization } from "@/composition/kid";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +35,7 @@ export default async function KidProfilePage({
   searchParams: Promise<{ invitation?: string | string[] }>;
 }) {
   const session = await requireStaffSession();
+  const authorization = await getKidAuthorization(session.user.daycareId, session.user.personId);
 
   const { slug } = await params;
   const resolvedSearchParams = await searchParams;
@@ -43,8 +44,7 @@ export default async function KidProfilePage({
     ? rawInvitation[0]
     : rawInvitation;
   const dependencies = createKidComposition(session.user.daycareId);
-  const kids = await getKids(dependencies);
-  const kid = kids.find((candidate) => candidate.slug === slug);
+  const kid = await getKidBySlugInRooms(dependencies, slug, authorization.assignedRoomIds);
 
   if (!kid) {
     notFound();

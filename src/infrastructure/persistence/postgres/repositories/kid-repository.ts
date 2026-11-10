@@ -53,6 +53,70 @@ export class PostgresKidRepository {
     return rows[0] ? mapKidRow(rows[0]) : null;
   }
 
+  /** Lists only kids whose rooms are included in the supplied authorization scope. */
+  async findAllInRooms(
+    daycareId: string,
+    roomIds: readonly string[],
+  ): Promise<readonly Kid[]> {
+    if (roomIds.length === 0) return [];
+
+    const rows = await this.client<Tables<"kids">[]>`
+      SELECT daycare_id, id, slug, name, birth_date, room_id,
+             enrollment_date, medical_notes, allergies, status,
+             created_at, updated_at
+      FROM kids
+      WHERE daycare_id = ${daycareId}
+        AND room_id IN ${this.client(roomIds)}
+      ORDER BY id
+    `;
+
+    return rows.map(mapKidRow);
+  }
+
+  /** Finds a kid only when its room is included in the authorization scope. */
+  async findByIdInRooms(
+    daycareId: string,
+    id: string,
+    roomIds: readonly string[],
+  ): Promise<Kid | null> {
+    if (roomIds.length === 0) return null;
+
+    const rows = await this.client<Tables<"kids">[]>`
+      SELECT daycare_id, id, slug, name, birth_date, room_id,
+             enrollment_date, medical_notes, allergies, status,
+             created_at, updated_at
+      FROM kids
+      WHERE daycare_id = ${daycareId}
+        AND id = ${id}
+        AND room_id IN ${this.client(roomIds)}
+      LIMIT 1
+    `;
+
+    return rows[0] ? mapKidRow(rows[0]) : null;
+  }
+
+  /** Finds a slug only when its room is included in the authorization scope. */
+  async findBySlugInRooms(
+    daycareId: string,
+    slug: string,
+    roomIds: readonly string[],
+  ): Promise<Kid | null> {
+    if (roomIds.length === 0) return null;
+
+    const rows = await this.client<Tables<"kids">[]>`
+      SELECT daycare_id, id, slug, name, birth_date, room_id,
+             enrollment_date, medical_notes, allergies, status,
+             created_at, updated_at
+      FROM kids
+      WHERE daycare_id = ${daycareId}
+        AND slug = ${slug}
+        AND room_id IN ${this.client(roomIds)}
+      LIMIT 1
+    `;
+
+    return rows[0] ? mapKidRow(rows[0]) : null;
+  }
+
   /** Inserts a kid using the daycare and identifier supplied by the domain record. */
   async create(kid: Kid): Promise<void> {
     await this.client`

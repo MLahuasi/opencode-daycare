@@ -83,6 +83,8 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 ## Rutas específicas
 
 - Home y Kids viven bajo `src/app/(staff)/`; el grupo `(staff)` no aparece en sus URLs públicas.
+- Kids requiere rol `teacher` y asignación a la sala del niño. La navegación oculta Kids sin capacidad efectiva y las rutas, acciones y consultas no autorizadas responden 404 sin revelar recursos.
+- Las fotografías solo se publican o adjuntan cuando existe al menos un progenitor activo y todos los progenitores activos han dado consentimiento.
 - Las rutas públicas de autenticación viven bajo `src/app/auth/`: `/auth/login`, `/auth/parent-invitation` y `/auth/parent-invitation/[token]`.
 - Solo `/` se conserva como redirect externo permanente en `next.config.ts`; las rutas legacy aprobadas responden 404.
 - Ningún Client Component importa `@/infrastructure`, filesystem, una entrada `server` ni configuración privada.

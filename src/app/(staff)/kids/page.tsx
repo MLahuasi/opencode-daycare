@@ -1,6 +1,6 @@
 import {
   calculateAge,
-  getKids,
+  getKidsInRooms,
   getParentKids,
   getRooms,
   parseCommaSeparatedTags,
@@ -11,7 +11,7 @@ import type { Kid } from "@/domain/kid";
 import type { Room } from "@/domain/room";
 import { KidsFilter, KidsHeader } from "./_components";
 import styles from "./_components/kids-list.module.css";
-import { createKidComposition } from "@/composition/kid";
+import { createKidComposition, getKidAuthorization } from "@/composition/kid";
 import { getTodayIsoDate } from "@/utils";
 import { requireStaffSession } from "@/composition/auth";
 
@@ -40,16 +40,18 @@ function toKidListItem(
  */
 export default async function KidsPage() {
   const session = await requireStaffSession();
+  const authorization = await getKidAuthorization(session.user.daycareId, session.user.personId);
   const dependencies = createKidComposition(session.user.daycareId);
 
   const [kids, parentKids, rooms] = await Promise.all([
-    getKids(dependencies),
+    getKidsInRooms(dependencies, authorization.assignedRoomIds),
     getParentKids(dependencies),
     getRooms(dependencies),
   ]);
   const today = getTodayIsoDate();
+  const authorizedRooms = rooms.filter((room) => authorization.assignedRoomIds.includes(room.id));
   const listItems = kids.map((kid) =>
-    toKidListItem(kid, today, parentKids, rooms),
+    toKidListItem(kid, today, parentKids, authorizedRooms),
   );
 
   return (

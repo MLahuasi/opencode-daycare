@@ -1,15 +1,15 @@
 "use server";
 
 import { requireStaffSession } from "@/composition/auth";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { validateInviteParentForm } from "../_schemas";
 import {
   createInvitation,
   ExistingInvitationParentKidError,
   ExistingInvitationPersonError,
 } from "@/application/family";
-import { getKidBySlug } from "@/application/kid";
-import { createKidComposition } from "@/composition/kid";
+import { getKidBySlugInRooms } from "@/application/kid";
+import { createKidComposition, getKidAuthorization } from "@/composition/kid";
 import { createFamilyComposition } from "@/composition/family";
 import { getApplicationEnvironment } from "@/config/server";
 import type { InviteParentActionState } from "./types";
@@ -26,6 +26,11 @@ export async function sendInviteParentAction(
   formData: FormData,
 ): Promise<InviteParentActionState> {
   const session = await requireStaffSession();
+  const authorization = await getKidAuthorization(session.user.daycareId, session.user.personId);
+
+  if (!authorization.roles.includes("teacher") || authorization.assignedRoomIds.length === 0) {
+    notFound();
+  }
 
   const validation = validateInviteParentForm({
     name: formData.get("name"),
@@ -47,20 +52,18 @@ export async function sendInviteParentAction(
   }
 
   const dependencies = createFamilyComposition(session.user.daycareId);
-  const kid = await getKidBySlug(createKidComposition(session.user.daycareId), rawSlug);
+  const kid = await getKidBySlugInRooms(
+    createKidComposition(session.user.daycareId),
+    rawSlug,
+    authorization.assignedRoomIds,
+  );
 
   if (!kid) {
-    return {
-      errors: {},
-      message: "No pudimos encontrar al niño.",
-    };
+    notFound();
   }
 
   if (kid.daycareId !== session.user.daycareId) {
-    return {
-      errors: {},
-      message: "No puedes crear una invitación para otra guardería.",
-    };
+    notFound();
   }
 
   let createdInvitation;

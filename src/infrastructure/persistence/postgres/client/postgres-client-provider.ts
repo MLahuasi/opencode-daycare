@@ -12,7 +12,8 @@ export class PostgresClientProvider {
    * @returns A configured PostgreSQL client.
    */
   createClient(): PostgresClient {
-    const { dbHost, dbPort, dbUsername, dbPassword } = getSupabaseEnvironment();
+    const { dbHost, dbPort, dbUsername, dbPassword, dbSslMode } =
+      getSupabaseEnvironment();
 
     return createPostgresClient({
       host: dbHost,
@@ -20,6 +21,7 @@ export class PostgresClientProvider {
       database: "postgres",
       username: dbUsername,
       password: dbPassword,
+      ssl: dbSslMode,
     });
   }
 }

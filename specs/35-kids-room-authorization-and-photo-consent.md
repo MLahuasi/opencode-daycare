@@ -1,6 +1,6 @@
 # SPEC 35 — Autorización de Kids por sala y consentimiento fotográfico
 
-> **Status:** Draft
+> **Status:** Implemented
 > **Depends on:** SPEC 34
 > **Date:** 2026-11-10
 > **Objective:** Restringir Kids a docentes asignados a las salas correspondientes y aplicar consentimiento fotográfico unánime de los progenitores activos.
@@ -49,16 +49,16 @@ activeParents.length > 0 && activeParents.every(parent => parent.photoConsent ==
 
 ## Acceptance criteria
 
-- [ ] Una persona con rol `teacher` solo puede operar sobre niños de sus salas asignadas.
-- [ ] Una persona sin rol `teacher` no ve Kids y recibe 404 al acceder directamente.
-- [ ] Una persona docente no puede inferir la existencia de una sala o niño no autorizado mediante acciones o errores.
-- [ ] La navegación de Staff refleja la capacidad efectiva de la sesión.
-- [ ] Cero progenitores activos impide publicar o adjuntar una foto.
-- [ ] Un progenitor activo sin consentimiento impide publicar o adjuntar una foto.
-- [ ] Todos los progenitores activos con consentimiento permiten la operación.
-- [ ] Las pruebas SQL y de aplicación cubren los casos positivos y negativos.
-- [ ] Playwright verifica navegación, acceso directo y consentimiento.
-- [ ] `npx eslint src`, `npx tsc --noEmit --incremental false` y `npm run build` terminan correctamente.
+- [x] Una persona con rol `teacher` solo puede operar sobre niños de sus salas asignadas.
+- [x] Una persona sin rol `teacher` no ve Kids y recibe 404 al acceder directamente.
+- [x] Una persona docente no puede inferir la existencia de una sala o niño no autorizado mediante acciones o errores.
+- [x] La navegación de Staff refleja la capacidad efectiva de la sesión.
+- [x] Cero progenitores activos impide publicar o adjuntar una foto.
+- [x] Un progenitor activo sin consentimiento impide publicar o adjuntar una foto.
+- [x] Todos los progenitores activos con consentimiento permiten la operación.
+- [x] Las pruebas SQL y de aplicación cubren los casos positivos y negativos.
+- [x] Playwright verifica navegación, acceso directo y consentimiento.
+- [x] `npx eslint src`, `npx tsc --noEmit --incremental false` y `npm run build` terminan correctamente.
 
 ## Decisions
 
@@ -75,3 +75,5 @@ activeParents.length > 0 && activeParents.every(parent => parent.photoConsent ==
 - RLS global y rol PostgreSQL, que pertenecen a SPEC 38.
 
 **Siguiente paso tras aprobación:** `/spec-impl 35-kids-room-authorization-and-photo-consent`
+
+---

@@ -130,6 +130,20 @@ are executed explicitly through Supabase CLI, never from bootstrap. `Application
 knows only ports; `Composition` is the place where those ports meet concrete
 Infrastructure adapters.
 
+### Kids authorization and photo privacy
+
+La capacidad efectiva de Kids es una política de dominio: solo una persona con
+rol `teacher` y asignación a la sala del niño puede listar, consultar, crear,
+editar o invitar progenitores. La navegación proyecta esa capacidad y las
+entradas de ruta, acciones y repositorios aplican la misma comprobación. Los
+recursos no autorizados responden 404 para evitar revelar la existencia de una
+sala o un niño.
+
+El consentimiento fotográfico también es una política compartida: debe existir
+al menos un progenitor activo y todos los progenitores activos deben haber
+consentido. Application reutiliza esta política para Kids y Posts; Infrastructure
+solo proporciona los datos persistidos necesarios.
+
 ## Persistence
 
 **Runtime source: PostgreSQL/Supabase.** Todas las entidades persistidas por la

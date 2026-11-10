@@ -1,15 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { requireStaffSession } from "@/composition/auth";
 import {
+  getKidByIdInRooms,
   getRooms,
   updateKid,
   validateKidForm,
 } from "@/application/kid";
 import type { Kid } from "@/domain/kid";
-import { createKidComposition } from "@/composition/kid";
+import { createKidComposition, getKidAuthorization } from "@/composition/kid";
 import type { KidFormActionState } from "./types";
 
 /**
@@ -26,8 +27,19 @@ export async function updateKidAction(
   formData: FormData,
 ): Promise<KidFormActionState> {
   const session = await requireStaffSession();
+  const authorization = await getKidAuthorization(session.user.daycareId, session.user.personId);
   const dependencies = createKidComposition(session.user.daycareId);
-  const rooms = await getRooms(dependencies);
+  const currentKid = await getKidByIdInRooms(
+    dependencies,
+    id,
+    authorization.assignedRoomIds,
+  );
+  if (!currentKid) notFound();
+
+  const rooms = (await getRooms(dependencies)).filter((room) =>
+    authorization.assignedRoomIds.includes(room.id),
+  );
+  if (!authorization.roles.includes("teacher") || rooms.length === 0) notFound();
   const validation = validateKidForm(
     {
       name: formData.get("name"),

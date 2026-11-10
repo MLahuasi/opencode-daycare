@@ -20,6 +20,7 @@ import type { PostDependencies } from "../post-dependencies";
 import { projectPostDetail } from "../queries";
 import type { PostDetail } from "../dto";
 import { hasCapability, hasRole } from "@/domain/person";
+import { hasKidPhotoSharingConsent } from "@/application/kid";
 
 /** Active Post destinations available to an authenticated staff member. */
 export type PostTargets = {
@@ -69,14 +70,15 @@ export async function hasPhotoSharingConsent(
       .map((person) => person.id),
   );
 
-  return parentKids
+  const activeParentRelationships = parentKids
     .filter(
       (parentKid) =>
         parentKid.daycareId === kid.daycareId &&
         parentKid.kidId === kidId &&
         activeParentIds.has(parentKid.parentId),
-    )
-    .every((parentKid) => parentKid.photoSharingConsent);
+    );
+
+  return hasKidPhotoSharingConsent(kidId, activeParentRelationships);
 }
 
 /**
