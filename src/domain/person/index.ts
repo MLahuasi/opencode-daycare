@@ -5,4 +5,4 @@ export {
   type PersonRoleCode,
   type PersonStatus,
 } from "./person";
-export { hasCapability, hasRole } from "./capabilities";
+export { canManageKids, hasCapability, hasRole } from "./capabilities";
