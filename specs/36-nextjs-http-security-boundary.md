@@ -86,7 +86,3 @@ value: IP validada por Vercel, nunca un header enviado directamente por el clien
 **Siguiente paso tras aprobación:** `/spec-impl 36-nextjs-http-security-boundary`
 
 ---
-
-Plan de implementación
-
-7. Ejecutar lint, typecheck y build; documentar variables y configuración sin secretos.

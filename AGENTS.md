@@ -28,12 +28,21 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - `npm run dev`, `npm run build`, `npm run start`, `npm run lint`.
 - `npm run db:migrate:dry-run` y `npm run db:migrate` para validar y aplicar
   migraciones Supabase al proyecto remoto enlazado.
+- `npm run test:e2e` ejecuta las pruebas Playwright de seguridad HTTP; sus
+  artefactos viven en `.playwright-mcp/http-security/`.
 - Typecheck: `npx tsc --noEmit --incremental false`.
 - `references/` no es runtime. No editar `references/screens/support.js` ni `next-env.d.ts`.
 - Guardar todos los logs, capturas, videos, traces y demás artefactos de Playwright en `.playwright-mcp/<Feature>/`.
 - Usar Context7 para documentación actual de frameworks y librerías.
 
 ## Supabase y MCP
+
+- La frontera HTTP vive en `src/proxy.ts`: genera CSP por nonce, cabeceras
+  defensivas y el header interno de IP saneada. No se debe confiar directamente
+  en `x-forwarded-for`.
+- Antes de cualquier `db:migrate:dry-run` remoto, Docker Desktop debe validar el
+  stack local con `npx supabase start`, `npx supabase status` y
+  `npx supabase db reset`.
 
 - La configuración del servidor MCP de Supabase vive en `opencode.json` bajo `mcp.supabase`.
 - El proyecto Supabase remoto se selecciona mediante `supabase link`; no fijar un proyecto de producción en código ni en documentación operativa.
@@ -75,7 +84,14 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - Los contratos de dominio se importan desde `@/domain/<domain>` y no se duplican en fixtures.
 - Los fixtures son deterministas: IDs, fechas, códigos y relaciones permanecen estables entre ejecuciones.
 - Configuración compartida usa constantes; configuración de entorno usa variables de entorno.
+- Los límites HTTP no secretos se leen mediante el getter tipado de la sección
+  `httpSecurity` en `src/config/server/environment.ts`: tamaño de imagen,
+  cantidad de imágenes, texto alternativo y body de Server Actions. Los
+  consumidores cliente reciben esos valores por props serializables.
 - Ningún módulo fuera de `src/config/server/environment.ts` lee directamente `process.env` o `env.get()`, salvo `src/instrumentation.ts` para `process.env.NEXT_RUNTIME` exclusivamente.
+- `next.config.ts` es la única excepción adicional de build: lee y valida
+  únicamente `HTTP_SERVER_ACTION_BODY_SIZE_BYTES`, porque Next.js carga esa
+  configuración antes del runtime server-only.
 - Las variables de entorno se configuran fuera de Git. Una variable `NEXT_PUBLIC_*` puede ser publicable, pero no elimina los límites server-only del SDK ni de su configuración.
 - Los servicios de dominio no construyen rutas físicas ni importan `node:fs`; usan puertos y adapters PostgreSQL server-only.
 - `CurrentDaycareProvider` es provisional y obtiene la única guardería operativa para el login. Debe reemplazarse por un selector explícito cuando se habiliten múltiples guarderías.

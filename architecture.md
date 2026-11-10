@@ -34,6 +34,10 @@ dependency direction.
   configuration, initializes mandatory external clients, and runs startup
   checks; it does not become a general Infrastructure barrel or request-time
   service locator.
+- The HTTP boundary is `src/proxy.ts`. It generates a per-request CSP nonce,
+  applies defensive response headers, resolves the client IP through the
+  hosting provider adapter and forwards only the internal sanitized IP header.
+  It must never trust a client-provided `x-forwarded-for` value.
 
 ## Organization
 
@@ -62,6 +66,10 @@ dependency direction.
 - `src/config/server/environment.ts` is the only application module allowed to
   read runtime environment variables. Consumers use section-specific getters;
   adapters must not access `process.env` directly.
+- The `httpSecurity` environment section owns the non-secret transport limits
+  for image bytes, image count, alternative text and Server Action bodies.
+  Server Components pass browser-safe limits to Client Components through
+  serializable props; Client Components do not import server configuration.
 - The Next.js lifecycle adapter may read only `process.env.NEXT_RUNTIME` directly,
   because Next.js needs that condition statically visible to separate Edge and
   Node.js bundles. It dynamically imports `src/instrumentation-node.ts`, which
@@ -187,6 +195,18 @@ snapshots inmutables de migración y no forman parte del camino runtime.
   are rejected and are not translated from legacy JSON IDs.
 
 ## Server and Client Boundaries
+
+### HTTP security boundary
+
+Next.js renders nonce-protected HTML dynamically because `src/app/layout.tsx`
+awaits `connection()`. The proxy copies the CSP to the upstream request so
+Next.js can attach the nonce to framework scripts, and copies it to the response
+so the browser enforces it. HSTS is conditional on production HTTPS.
+
+Local Supabase validation runs through Docker Desktop before any remote migration
+dry-run. The local stack is started with `supabase start`, checked with
+`supabase status`, and reset with `supabase db reset` before remote commands are
+considered.
 
 - Keep server components as the default.
 - Use client components only when state, event handlers, browser APIs or a

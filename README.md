@@ -53,9 +53,64 @@ Comandos disponibles:
 | `npm run build` | Build de producción |
 | `npm run start` | Servidor con el build generado |
 | `npm run lint` | Ejecución de ESLint |
+| `npm run test:e2e` | Pruebas Playwright de la frontera HTTP y navegación |
 | `npm run db:migrate:dry-run` | Comprueba migraciones pendientes en el proyecto Supabase remoto enlazado |
 | `npm run db:migrate` | Aplica migraciones al proyecto Supabase remoto enlazado |
 | `npm run db:seed` | Ejecuta explícitamente `supabase/seed.sql` en el proyecto Supabase remoto enlazado |
+
+### Frontera HTTP y límites de carga
+
+`src/proxy.ts` es la frontera HTTP de Next.js. Genera un nonce criptográfico por
+petición, propaga la CSP al renderizado dinámico y añade las cabeceras defensivas.
+También resuelve la IP con `ipAddress()` de `@vercel/functions`; nunca se acepta
+directamente `x-forwarded-for`. El header interno
+`x-open-daycare-client-ip` solo se crea con el valor resuelto por el proxy.
+
+Las rutas HTML se renderizan dinámicamente mediante `connection()` para que cada
+respuesta reciba un nonce diferente. HSTS solo aparece en producción sobre HTTPS;
+no se envía durante el desarrollo HTTP local.
+
+Los siguientes límites son configurables y no son secretos. Se validan en
+`src/config/server/environment.ts` y se pasan explícitamente a los Client
+Components que muestran el selector de imágenes:
+
+| Variable | Unidad | Propósito |
+| --- | --- | --- |
+| `HTTP_MAX_IMAGE_BYTES` | bytes | Tamaño máximo de una imagen |
+| `HTTP_MAX_IMAGES_PER_OPERATION` | cantidad | Imágenes máximas por operación |
+| `HTTP_MAX_ALT_LENGTH` | caracteres | Texto alternativo máximo |
+| `HTTP_SERVER_ACTION_BODY_SIZE_BYTES` | bytes | Body máximo de una Server Action |
+
+Usa `.env.template` como referencia y no publiques secretos en documentación,
+`.env` versionados ni variables `NEXT_PUBLIC_*`. `next.config.ts` lee únicamente
+el límite de Server Actions durante el build, porque Next.js carga ese archivo
+antes del runtime server-only.
+
+Las pruebas autenticadas de Playwright requieren configurar fuera de Git
+`E2E_DAYCARE_ID`, `E2E_STAFF_EMAIL` y `E2E_STAFF_PASSWORD`. Los reportes, traces,
+videos y capturas se guardan en `.playwright-mcp/http-security/`.
+
+### Supabase local con Docker Desktop
+
+Antes de ejecutar cualquier dry-run remoto, valida las migraciones contra el
+stack local. Docker Desktop debe estar instalado y ejecutándose:
+
+```bash
+npx supabase start
+npx supabase status
+npx supabase db reset
+```
+
+`supabase db reset` recrea la base local, aplica `supabase/migrations/` y ejecuta
+el seed local. Solo después de comprobar el stack local, enlazar explícitamente
+el proyecto remoto autorizado y revisar el destino, se permite ejecutar:
+
+```bash
+npm run db:migrate:dry-run
+```
+
+Detén el stack local cuando no lo uses con `npx supabase stop`. Nunca guardes
+tokens, passwords ni claves de servicio en estos documentos o en el repositorio.
 
 ## Configuración del Debugger de Next.js en VS Code
 
@@ -209,7 +264,7 @@ Credencial de bootstrap para el primer acceso en el proyecto nuevo:
 
 ```text
 Email:    caro@opendaycare.com
-Password: OpenDayCare1!
+Password: configurar de forma segura fuera del repositorio
 ```
 
 El seed guarda el hash bcrypt existente para esa contraseña. Esta credencial es
@@ -442,7 +497,7 @@ Estas credenciales existen únicamente para pruebas locales iniciales del seed:
 
 | Usuario | Email | Password | Rol |
 | --- | --- | --- | --- |
-| Caro Giménez | `caro@opendaycare.com` | `OpenDayCare1!` | `personal`, `teacher` |
+| Caro Giménez | `caro@opendaycare.com` | No versionada | `personal`, `teacher` |
 
 No reutilices esta clave en producción ni agregues credenciales reales al
 repositorio.
