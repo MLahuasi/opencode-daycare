@@ -1,7 +1,8 @@
 import { StaffSidebar } from "@/presentation/layout";
 import { requireStaffSession } from "@/composition/auth";
 import { getStaffNavigation } from "@/composition/staff-shell";
-import { redirect } from "next/navigation";
+import { getKidAuthorization } from "@/composition/kid";
+import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 /**
@@ -13,6 +14,10 @@ import type { ReactNode } from "react";
  */
 export default async function KidsLayout({ children }: { children: ReactNode }) {
   const session = await requireStaffSession();
+  const authorization = await getKidAuthorization(session.user.daycareId, session.user.personId);
+  if (!authorization.roles.includes("teacher") || authorization.assignedRoomIds.length === 0) {
+    notFound();
+  }
   const navigation = await getStaffNavigation(
     session.user.daycareId,
     session.user.personId,

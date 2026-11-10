@@ -11,6 +11,21 @@ export interface KidRepository {
   /** Finds a kid by its public profile slug. */
   findBySlug(slug: string): Promise<Kid | null>;
 
+  /** Lists kids whose rooms are included in the supplied authorization scope. */
+  findAllInRooms(roomIds: readonly string[]): Promise<readonly Kid[]>;
+
+  /** Finds a kid only when its room is included in the authorization scope. */
+  findByIdInRooms(
+    id: string,
+    roomIds: readonly string[],
+  ): Promise<Kid | null>;
+
+  /** Finds a slug only when its room is included in the authorization scope. */
+  findBySlugInRooms(
+    slug: string,
+    roomIds: readonly string[],
+  ): Promise<Kid | null>;
+
   /** Persists a newly created kid. */
   create(kid: Kid): Promise<void>;
 

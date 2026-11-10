@@ -80,8 +80,6 @@ activeParents.length > 0 && activeParents.every(parent => parent.photoConsent ==
 
 Plan de implementación
 
-1. Centralizar manage-kids exigiendo rol teacher y sala asignada.
-2. Aplicar la comprobación en layouts, páginas, acciones y repositorios de Kids.
 3. Ocultar Kids de la navegación sin capacidad efectiva.
 4. Reemplazar la comprobación de posts por src/application/kid/utils/consent.ts.
 5. Añadir pruebas para docentes asignados/no asignados, personal sin teacher, cero progenitores y consentimiento parcial.

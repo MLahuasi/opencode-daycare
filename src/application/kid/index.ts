@@ -18,9 +18,12 @@ export type {
 } from "./ports";
 export {
   getKidById,
+  getKidByIdInRooms,
   getKidBySlug,
+  getKidBySlugInRooms,
   getKidRoom,
   getKids,
+  getKidsInRooms,
   getLinkedParentsByKidId,
   getParentKids,
   getPeople,

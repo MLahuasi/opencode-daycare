@@ -8,8 +8,8 @@ import {
   ExistingInvitationParentKidError,
   ExistingInvitationPersonError,
 } from "@/application/family";
-import { getKidBySlug } from "@/application/kid";
-import { createKidComposition } from "@/composition/kid";
+import { getKidBySlugInRooms } from "@/application/kid";
+import { createKidComposition, getKidAuthorization } from "@/composition/kid";
 import { createFamilyComposition } from "@/composition/family";
 import { getApplicationEnvironment } from "@/config/server";
 import type { InviteParentActionState } from "./types";
@@ -26,6 +26,7 @@ export async function sendInviteParentAction(
   formData: FormData,
 ): Promise<InviteParentActionState> {
   const session = await requireStaffSession();
+  const authorization = await getKidAuthorization(session.user.daycareId, session.user.personId);
 
   const validation = validateInviteParentForm({
     name: formData.get("name"),
@@ -47,7 +48,11 @@ export async function sendInviteParentAction(
   }
 
   const dependencies = createFamilyComposition(session.user.daycareId);
-  const kid = await getKidBySlug(createKidComposition(session.user.daycareId), rawSlug);
+  const kid = await getKidBySlugInRooms(
+    createKidComposition(session.user.daycareId),
+    rawSlug,
+    authorization.assignedRoomIds,
+  );
 
   if (!kid) {
     return {

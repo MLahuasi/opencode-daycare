@@ -1,7 +1,7 @@
 import { KidForm } from "../../_components/kid-form";
 import type { KidFormValues } from "@/application/kid";
-import { getKidById, getRooms } from "@/application/kid";
-import { createKidComposition } from "@/composition/kid";
+import { getKidByIdInRooms, getRooms } from "@/application/kid";
+import { createKidComposition, getKidAuthorization } from "@/composition/kid";
 import { updateKidAction } from "../../_actions";
 import { requireStaffSession } from "@/composition/auth";
 import { notFound } from "next/navigation";
@@ -19,17 +19,19 @@ export default async function EditKidPage({
   params: Promise<{ id: string }>;
 }) {
   const session = await requireStaffSession();
+  const authorization = await getKidAuthorization(session.user.daycareId, session.user.personId);
 
   const { id } = await params;
   const dependencies = createKidComposition(session.user.daycareId);
   const [kid, rooms] = await Promise.all([
-    getKidById(dependencies, id),
+    getKidByIdInRooms(dependencies, id, authorization.assignedRoomIds),
     getRooms(dependencies),
   ]);
 
   if (!kid) {
     notFound();
   }
+  const authorizedRooms = rooms.filter((room) => authorization.assignedRoomIds.includes(room.id));
 
   const initialValues: KidFormValues = {
     name: kid.name,
@@ -47,7 +49,7 @@ export default async function EditKidPage({
         cancelHref={`/kids/${kid.slug}`}
         heading="Editar niño"
         initialValues={initialValues}
-        rooms={rooms}
+        rooms={authorizedRooms}
       />
     </main>
   );
