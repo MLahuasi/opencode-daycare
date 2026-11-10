@@ -1,6 +1,6 @@
 # SPEC 35 — Autorización de Kids por sala y consentimiento fotográfico
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 34
 > **Date:** 2026-11-10
 > **Objective:** Restringir Kids a docentes asignados a las salas correspondientes y aplicar consentimiento fotográfico unánime de los progenitores activos.
@@ -75,3 +75,15 @@ activeParents.length > 0 && activeParents.every(parent => parent.photoConsent ==
 - RLS global y rol PostgreSQL, que pertenecen a SPEC 38.
 
 **Siguiente paso tras aprobación:** `/spec-impl 35-kids-room-authorization-and-photo-consent`
+
+---
+
+Plan de implementación
+
+1. Centralizar manage-kids exigiendo rol teacher y sala asignada.
+2. Aplicar la comprobación en layouts, páginas, acciones y repositorios de Kids.
+3. Ocultar Kids de la navegación sin capacidad efectiva.
+4. Reemplazar la comprobación de posts por src/application/kid/utils/consent.ts.
+5. Añadir pruebas para docentes asignados/no asignados, personal sin teacher, cero progenitores y consentimiento parcial.
+6. Ejecutar Supabase local con Docker Desktop y verificar recorridos con Playwright.
+7. Actualizar la documentación indicada sin secretos ni URLs de proveedores.
