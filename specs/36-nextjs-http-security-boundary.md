@@ -89,7 +89,6 @@ value: IP validada por Vercel, nunca un header enviado directamente por el clien
 
 Plan de implementación
 
-3. Configurar CSP y cabeceras defensivas.
 4. Configurar serverActions.bodySizeLimit a 22mb y validar imágenes.
 5. Verificar que las rutas con nonce no se publiquen como estáticas.
 6. Añadir pruebas Playwright de headers, cargas y navegación.
