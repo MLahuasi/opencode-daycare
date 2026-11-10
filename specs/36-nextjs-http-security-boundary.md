@@ -1,6 +1,6 @@
 # SPEC 36 — Límite de seguridad HTTP de Next.js
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 35
 > **Date:** 2026-11-10
 > **Objective:** Endurecer el límite HTTP de Next.js con CSP por nonce, cabeceras defensivas, IP saneada y límites de carga explícitos.
@@ -71,11 +71,11 @@ value: IP validada por Vercel, nunca un header enviado directamente por el clien
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| El nonce fuerza renderizado dinámico | Documentarlo y verificar el coste en build y navegador. |
-| Una IP compartida puede agrupar usuarios | El límite por IP se combina con el límite por cuenta de SPEC 37. |
-| Un proxy futuro cambia la fuente de IP | Sustituir solo el adaptador de Vercel y conservar el header interno. |
+| Risk                                     | Mitigation                                                           |
+| ---------------------------------------- | -------------------------------------------------------------------- |
+| El nonce fuerza renderizado dinámico     | Documentarlo y verificar el coste en build y navegador.              |
+| Una IP compartida puede agrupar usuarios | El límite por IP se combina con el límite por cuenta de SPEC 37.     |
+| Un proxy futuro cambia la fuente de IP   | Sustituir solo el adaptador de Vercel y conservar el header interno. |
 
 ## What is **not** in this spec
 
@@ -84,3 +84,15 @@ value: IP validada por Vercel, nunca un header enviado directamente por el clien
 - Cambios de roles, grants o RLS de PostgreSQL.
 
 **Siguiente paso tras aprobación:** `/spec-impl 36-nextjs-http-security-boundary`
+
+---
+
+Plan de implementación
+
+1. Resolver la IP de Vercel y eliminar confianza directa en x-forwarded-for.
+2. Implementar nonce por petición en proxy.ts y conectarlo al renderizado.
+3. Configurar CSP y cabeceras defensivas.
+4. Configurar serverActions.bodySizeLimit a 22mb y validar imágenes.
+5. Verificar que las rutas con nonce no se publiquen como estáticas.
+6. Añadir pruebas Playwright de headers, cargas y navegación.
+7. Ejecutar lint, typecheck y build; documentar variables y configuración sin secretos.
