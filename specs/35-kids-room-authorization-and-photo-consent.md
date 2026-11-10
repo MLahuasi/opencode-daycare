@@ -77,7 +77,3 @@ activeParents.length > 0 && activeParents.every(parent => parent.photoConsent ==
 **Siguiente paso tras aprobación:** `/spec-impl 35-kids-room-authorization-and-photo-consent`
 
 ---
-
-Plan de implementación
-
-7. Actualizar la documentación indicada sin secretos ni URLs de proveedores.

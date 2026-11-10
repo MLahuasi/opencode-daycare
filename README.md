@@ -234,7 +234,7 @@ MAILER_EMAIL=example@gmail.com
 MAILER_SECRET_KEY=app_password_here
 MAILER_FROM=example@gmail.com
 
-MAIL_HOST=smtp.gmail.com
+MAIL_HOST=your_smtp_host
 MAIL_PORT=587
 MAIL_SECURE=false
 
@@ -290,12 +290,16 @@ Configura estas variables en `.env.local` o en el gestor de secretos del entorno
 fuera de Git:
 
 ```dotenv
-SUPABASE_DB_HOST=aws-0-us-east-1.pooler.supabase.com
+SUPABASE_DB_HOST=your_database_host
 SUPABASE_DB_PORT=5432
 SUPABASE_DB_USERNAME=postgres.<PROJECT_REF>
 SUPABASE_DB_PASSWORD=your_database_password
+SUPABASE_DB_SSL_MODE=require
 RUN_REMOTE_DB_TESTS=false
 ```
+
+`SUPABASE_DB_SSL_MODE` acepta `require` (valor predeterminado y obligatorio para
+entornos remotos) o `disable` únicamente para PostgreSQL local de desarrollo.
 
 La configuración regional server-only requiere una zona horaria IANA. Para
 Ecuador continental usa:
@@ -334,9 +338,21 @@ Las rutas legacy `/login`, `/kids/:id/edit`, `/auth/link-parent`, las rutas
 antiguas de Posts, `/activate-account` y `/auth/activate-account` responden 404.
 El redirect de compatibilidad `/` es el único redirect externo conservado.
 
+### Autorización de Kids y privacidad fotográfica
+
+Kids requiere capacidad efectiva por niño: la sesión debe tener el rol
+`teacher` y la persona debe estar asignada a la sala del niño. El enlace de Kids
+se oculta cuando no existe esa capacidad y las páginas, acciones y consultas no
+autorizadas responden 404, sin revelar si existe el niño o la sala.
+
+La publicación o adjunto de fotografías requiere al menos un progenitor activo
+y consentimiento afirmativo de todos los progenitores activos. Un progenitor
+sin consentimiento o la ausencia de progenitores activos deniega la operación.
+La misma política se reutiliza en los casos de uso de Kids y Posts.
+
 ### Invitaciones de padres
 
-El personal con rol `personal` puede crear invitaciones desde “Vincular otro
+Una persona docente autorizada puede crear invitaciones desde “Vincular otro
 padre” en `/kids/[slug]`. El servidor valida nombre, email y parentesco, genera
 un código criptográficamente aleatorio de ocho caracteres sin símbolos ambiguos
 y fija un vencimiento de siete días. La persona se crea como `parent/pending` y
@@ -408,7 +424,7 @@ resolver el puerto antes de cargar las variables de la aplicación.
 local. `AUTH_SESSION_COOKIE_SECURE` debe ser `true` cuando la aplicación se sirve
 exclusivamente sobre HTTPS.
 
-El personal con rol `personal` puede acceder a `/kids/**` y conserva el feed de
+El personal sin rol `teacher` no puede acceder a `/kids/**` y conserva el feed de
 personal en `/home`. Los padres con rol `parent` reciben un feed familiar en
 `/home`, limitado a los niños vinculados y a sus salas, y no pueden acceder a
 las rutas de Kids. Las personas inexistentes, inactivas o con un rol cambiado
@@ -420,16 +436,16 @@ y no expone contenido de otras familias. Incluye identidad del padre, niños
 vinculados, cierre de sesión y un estado vacío seguro cuando no existen
 relaciones. No muestra el composer ni la navegación exclusiva de personal.
 
-### Credenciales demo
+### Credenciales de prueba
 
-Estas credenciales existen únicamente para pruebas locales del prototipo:
+Estas credenciales existen únicamente para pruebas locales iniciales del seed:
 
 | Usuario | Email | Password | Rol |
 | --- | --- | --- | --- |
-| Caro Giménez | `caro@opendaycare.com` | `OpenDayCare1!` | `personal` |
+| Caro Giménez | `caro@opendaycare.com` | `OpenDayCare1!` | `personal`, `teacher` |
 
-Los demás hashes `mock-hash-*` de los fixtures no son contraseñas válidas.
-No reutilices la clave demo ni agregues credenciales reales al repositorio.
+No reutilices esta clave en producción ni agregues credenciales reales al
+repositorio.
 
 ## Arquitectura
 
