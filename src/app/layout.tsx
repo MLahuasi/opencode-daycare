@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Fredoka, Nunito } from "next/font/google";
 import { getApplicationEnvironment } from "@/config/server";
 import "./globals.css";
@@ -20,7 +21,9 @@ export const metadata: Metadata = {
   description: "Comunidad de Sala Soles en OpenDayCare.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  await connection();
+
   return (
     <html
        lang={getApplicationEnvironment().locale}
