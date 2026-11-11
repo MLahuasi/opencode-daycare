@@ -1,6 +1,6 @@
 # SPEC 37 — Protección contra abuso del login
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 36
 > **Date:** 2026-11-10
 > **Objective:** Proteger el login de enumeración y fuerza bruta mediante bcrypt ficticio, validación de 72 bytes y rate limiting persistente con HMAC.
@@ -60,19 +60,19 @@ La clave será HMAC-SHA-256 con un secreto server-only y un prefijo de propósit
 
 ## Acceptance criteria
 
-- [ ] Una cuenta inexistente ejecuta una comparación bcrypt antes de devolver el error.
-- [ ] Una contraseña de más de 72 bytes UTF-8 se rechaza sin truncarla.
-- [ ] El quinto fallo de una cuenta activa su bloqueo de 15 minutos.
-- [ ] El vigésimo fallo de una IP activa su bloqueo de 15 minutos.
-- [ ] Los fallos se cuentan por ventana de 15 minutos y expiran correctamente.
-- [ ] Un login correcto limpia el límite de cuenta.
-- [ ] Email e IP no aparecen en claro en la tabla ni en logs.
-- [ ] La respuesta no distingue cuenta inexistente, contraseña inválida o bloqueo.
-- [ ] Un fallo de PostgreSQL en el rate limiter rechaza el login genéricamente.
-- [ ] Dos instancias concurrentes no pueden saltarse el contador atómico.
-- [ ] La migración se valida con Docker local y `npm run db:migrate:dry-run` antes de cualquier aplicación remota.
-- [ ] Las pruebas transaccionales cubren los límites, la concurrencia, la recuperación y el fallo cerrado.
-- [ ] `npx eslint src`, `npx tsc --noEmit --incremental false` y `npm run build` terminan correctamente.
+- [x] Una cuenta inexistente ejecuta una comparación bcrypt antes de devolver el error.
+- [x] Una contraseña de más de 72 bytes UTF-8 se rechaza sin truncarla.
+- [x] El quinto fallo de una cuenta activa su bloqueo de 15 minutos.
+- [x] El vigésimo fallo de una IP activa su bloqueo de 15 minutos.
+- [x] Los fallos se cuentan por ventana de 15 minutos y expiran correctamente.
+- [x] Un login correcto limpia el límite de cuenta.
+- [x] Email e IP no aparecen en claro en la tabla ni en logs.
+- [x] La respuesta no distingue cuenta inexistente, contraseña inválida o bloqueo.
+- [x] Un fallo de PostgreSQL en el rate limiter rechaza el login genéricamente.
+- [x] Dos instancias concurrentes no pueden saltarse el contador atómico.
+- [x] La migración se valida con Docker local y `npm run db:migrate:dry-run` antes de cualquier aplicación remota.
+- [x] Las pruebas transaccionales cubren los límites, la concurrencia, la recuperación y el fallo cerrado.
+- [x] `npx eslint src`, `npx tsc --noEmit --incremental false` y `npm run build` terminan correctamente.
 
 ## Decisions
 
@@ -92,5 +92,3 @@ La clave será HMAC-SHA-256 con un secreto server-only y un prefijo de propósit
 **Siguiente paso tras aprobación:** `/spec-impl 37-credential-login-abuse-protection`
 
 ---
-
-Plan de implementación
