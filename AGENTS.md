@@ -84,6 +84,9 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - Los contratos de dominio se importan desde `@/domain/<domain>` y no se duplican en fixtures.
 - Los fixtures son deterministas: IDs, fechas, códigos y relaciones permanecen estables entre ejecuciones.
 - Configuración compartida usa constantes; configuración de entorno usa variables de entorno.
+- Los límites de abuso del login son constantes server-only en
+  `src/config/server/login-rate-limit.ts` (`LOGIN_RATE_LIMITS`); no se configuran
+  mediante variables `NEXT_PUBLIC_*` ni desde el cliente.
 - Los límites HTTP no secretos se leen mediante el getter tipado de la sección
   `httpSecurity` en `src/config/server/environment.ts`: tamaño de imagen,
   cantidad de imágenes, texto alternativo y body de Server Actions. Los

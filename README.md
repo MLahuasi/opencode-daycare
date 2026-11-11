@@ -87,6 +87,20 @@ el límite de Server Actions durante el build, porque Next.js carga ese archivo
 antes del runtime server-only. El buffer de cuerpos de `proxy` usa ese mismo
 límite, evitando que el máximo predeterminado de 10 MB trunque cargas válidas.
 
+Los límites de protección contra abuso del login no se configuran mediante
+variables de entorno ni desde el cliente. Son constantes server-only en
+`src/config/server/login-rate-limit.ts`, exportadas como `LOGIN_RATE_LIMITS`:
+
+| Propiedad | Valor | Propósito |
+| --- | ---: | --- |
+| `accountFailureLimit` | `5` | Fallos por cuenta en una ventana |
+| `ipFailureLimit` | `20` | Fallos por IP en una ventana |
+| `windowSeconds` | `900` | Duración de la ventana (15 minutos) |
+| `blockSeconds` | `900` | Duración del bloqueo (15 minutos) |
+
+Para cambiar estos valores, modifica la constante en el servidor y revisa el
+diff; no los expongas como `NEXT_PUBLIC_*` ni los leas desde el navegador.
+
 Las pruebas autenticadas de Playwright requieren configurar fuera de Git
 `E2E_DAYCARE_ID`, `E2E_STAFF_EMAIL` y `E2E_STAFF_PASSWORD`. Los reportes, traces,
 videos y capturas se guardan en `.playwright-mcp/http-security/`.

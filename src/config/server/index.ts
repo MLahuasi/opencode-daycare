@@ -1,5 +1,7 @@
 import "server-only";
 
+export { LOGIN_RATE_LIMITS } from "./login-rate-limit";
+
 export {
   getApplicationEnvironment,
   getAuthEnvironment,

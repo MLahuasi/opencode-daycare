@@ -68,6 +68,9 @@ dependency direction.
   adapters must not access `process.env` directly.
 - The `httpSecurity` environment section owns the non-secret transport limits
   for image bytes, image count, alternative text and Server Action bodies.
+- Login abuse limits are shared server-only constants in
+  `src/config/server/login-rate-limit.ts`; they are not runtime environment
+  variables and must never be exposed to Client Components.
   Server Components pass browser-safe limits to Client Components through
   serializable props; Client Components do not import server configuration.
 - The Next.js lifecycle adapter may read only `process.env.NEXT_RUNTIME` directly,
