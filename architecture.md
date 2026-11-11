@@ -38,6 +38,9 @@ dependency direction.
   applies defensive response headers, resolves the client IP through the
   hosting provider adapter and forwards only the internal sanitized IP header.
   It must never trust a client-provided `x-forwarded-for` value.
+- `x-open-daycare-client-ip` lets server-side login protection rate-limit the
+  provider-resolved IP without allowing clients to select or spoof the bucket
+  through forwarding headers.
 
 ## Organization
 
@@ -68,6 +71,9 @@ dependency direction.
   adapters must not access `process.env` directly.
 - The `httpSecurity` environment section owns the non-secret transport limits
   for image bytes, image count, alternative text and Server Action bodies.
+- Login abuse limits are shared server-only constants in
+  `src/config/server/login-rate-limit.ts`; they are not runtime environment
+  variables and must never be exposed to Client Components.
   Server Components pass browser-safe limits to Client Components through
   serializable props; Client Components do not import server configuration.
 - The Next.js lifecycle adapter may read only `process.env.NEXT_RUNTIME` directly,
@@ -207,6 +213,12 @@ Local Supabase validation runs through Docker Desktop before any remote migratio
 dry-run. The local stack is started with `supabase start`, checked with
 `supabase status`, and reset with `supabase db reset` before remote commands are
 considered.
+
+Login abuse protection is verified at two boundaries: the PostgreSQL transaction
+scenario `runRemoteLoginAbusePersistenceTests` exercises atomic counters,
+concurrency, expiry, cleanup, opaque hashes and error propagation with rollback;
+and the existing authentication/browser checks exercise the public login boundary.
+Remote transactional checks are opt-in through `RUN_REMOTE_DB_TESTS=true`.
 
 - Keep server components as the default.
 - Use client components only when state, event handlers, browser APIs or a

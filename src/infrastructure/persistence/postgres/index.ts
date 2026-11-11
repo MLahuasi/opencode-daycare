@@ -16,9 +16,14 @@ export {
   withRemoteDbTestTransaction,
 } from "./transactions/remote-db-test-context";
 export { runRemoteAuthPersistenceTests } from "./transactions/remote-auth-tests";
+export { runRemoteLoginAbusePersistenceTests } from "./transactions/remote-login-abuse-tests";
 export { runRemoteStaffPersistenceTests } from "./transactions/remote-staff-tests";
 export { runRemoteGeneralPersistenceTests } from "./transactions/remote-general-tests";
 export { PostgresCredentialRepository } from "./repositories/credential-repository";
+export {
+  PostgresLoginAttemptLimitRepository,
+  type LoginAttemptFailureResult,
+} from "./repositories/login-attempt-limit-repository";
 export { PostgresInvitationRepository } from "./repositories/invitation-repository";
 export { PostgresPostCommentRepository } from "./repositories/post-comment-repository";
 export { PostgresPostReactionRepository } from "./repositories/post-reaction-repository";

@@ -11,14 +11,26 @@ import {
   POSTGRES_SESSION_SOURCE,
   UUID_PATTERN,
 } from "@/config";
-import { getApplicationEnvironment, getAuthEnvironment } from "@/config/server";
+import {
+  getApplicationEnvironment,
+  getAuthEnvironment,
+  getLoginRateLimitEnvironment,
+} from "@/config/server";
 import { hasCapability } from "@/domain/person";
-import { isCredentialLoginEligible } from "@/application/auth";
+import {
+  isCredentialLoginEligible,
+} from "@/application/auth";
+import {
+  isPasswordWithinUtf8Limit,
+  normalizePassword,
+} from "@/domain/auth";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
+import { CLIENT_IP_HEADER } from "@/infrastructure/http/client-ip";
 import {
   PostgresCredentialRepository,
   PostgresPersonRepository,
   PostgresPersonRoleRepository,
+  PostgresLoginAttemptLimitRepository,
   PostgresClientProvider,
   type PostgresClient,
 } from "@/infrastructure/persistence/postgres";
@@ -32,6 +44,7 @@ function getAuthPostgresClient(): PostgresClient {
 
 const authEnvironment = getAuthEnvironment();
 const applicationEnvironment = getApplicationEnvironment();
+const loginRateLimitEnvironment = getLoginRateLimitEnvironment();
 /** Concrete NextAuth v4 configuration for the application's credential session. */
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -48,23 +61,43 @@ export const authOptions: NextAuthOptions = {
        * @param credentials - Submitted email and password values.
        * @returns The authenticated user projection or `null` when credentials fail.
        */
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const email =
           typeof credentials?.email === "string"
             ? credentials.email.trim().toLowerCase()
             : "";
-        const password =
+        const submittedPassword =
           typeof credentials?.password === "string" ? credentials.password : "";
+        const password = normalizePassword(submittedPassword);
         const daycareId =
           typeof credentials?.daycareId === "string"
             ? credentials.daycareId.trim()
             : "";
+        const rawClientIp = request.headers?.[CLIENT_IP_HEADER];
+        const clientIp = typeof rawClientIp === "string" ? rawClientIp : "";
 
-        if (!email || !password || !UUID_PATTERN.test(daycareId)) {
+        if (
+          !email ||
+          !password ||
+          !isPasswordWithinUtf8Limit(password) ||
+          !UUID_PATTERN.test(daycareId) ||
+          !clientIp
+        ) {
           return null;
         }
 
         const client = getAuthPostgresClient();
+        const loginAttemptLimits = new PostgresLoginAttemptLimitRepository(
+          client,
+          loginRateLimitEnvironment.hmacSecret,
+        );
+        if (
+          (await loginAttemptLimits.isBlocked("account", email)) ||
+          (await loginAttemptLimits.isBlocked("ip", clientIp))
+        ) {
+          return null;
+        }
+
         const credentialRepository = new PostgresCredentialRepository(client);
         const passwordHasher = new BcryptPasswordHasher();
         const peopleRepository = new PostgresPersonRepository(client);
@@ -74,20 +107,37 @@ export const authOptions: NextAuthOptions = {
           ? await credentialRepository.findByPersonId(daycareId, person.id)
           : null;
 
-        if (!person || !storedCredential) return null;
+        const rejectInvalidLogin = async (): Promise<null> => {
+          await loginAttemptLimits.recordFailure("account", email);
+          await loginAttemptLimits.recordFailure("ip", clientIp);
+          return null;
+        };
+
+        if (!person || !storedCredential) {
+          await passwordHasher.compareWithDummyHash(password);
+          return rejectInvalidLogin();
+        }
 
         const roles = await personRoleRepository.findRoles(person.id, daycareId);
         if (!isCredentialLoginEligible(person, storedCredential, roles, daycareId)) {
-          return null;
+          return rejectInvalidLogin();
         }
 
+        let passwordMatches: boolean;
         try {
-           if (!(await passwordHasher.compare(password, storedCredential.passwordHash))) {
-            return null;
-          }
+          passwordMatches = await passwordHasher.compare(
+            password,
+            storedCredential.passwordHash,
+          );
         } catch {
           return null;
         }
+
+        if (!passwordMatches) {
+          return rejectInvalidLogin();
+        }
+
+        await loginAttemptLimits.clearAccount(email);
 
         return {
           id: person.id,

@@ -65,6 +65,9 @@ petición, propaga la CSP al renderizado dinámico y añade las cabeceras defens
 También resuelve la IP con `ipAddress()` de `@vercel/functions`; nunca se acepta
 directamente `x-forwarded-for`. El header interno
 `x-open-daycare-client-ip` solo se crea con el valor resuelto por el proxy.
+Su beneficio es impedir que el cliente elija libremente la IP usada por el
+rate limiter: el proxy elimina los headers de forwarding manipulables y el
+login consume únicamente este header interno para contar los fallos por IP.
 
 Las rutas HTML se renderizan dinámicamente mediante `connection()` para que cada
 respuesta reciba un nonce diferente. HSTS solo aparece en producción sobre HTTPS;
@@ -87,9 +90,30 @@ el límite de Server Actions durante el build, porque Next.js carga ese archivo
 antes del runtime server-only. El buffer de cuerpos de `proxy` usa ese mismo
 límite, evitando que el máximo predeterminado de 10 MB trunque cargas válidas.
 
+Los límites de protección contra abuso del login no se configuran mediante
+variables de entorno ni desde el cliente. Son constantes server-only en
+`src/config/server/login-rate-limit.ts`, exportadas como `LOGIN_RATE_LIMITS`:
+
+| Propiedad | Valor | Propósito |
+| --- | ---: | --- |
+| `accountFailureLimit` | `5` | Fallos por cuenta en una ventana |
+| `ipFailureLimit` | `20` | Fallos por IP en una ventana |
+| `windowSeconds` | `900` | Duración de la ventana (15 minutos) |
+| `blockSeconds` | `900` | Duración del bloqueo (15 minutos) |
+
+Para cambiar estos valores, modifica la constante en el servidor y revisa el
+diff; no los expongas como `NEXT_PUBLIC_*` ni los leas desde el navegador.
+
 Las pruebas autenticadas de Playwright requieren configurar fuera de Git
 `E2E_DAYCARE_ID`, `E2E_STAFF_EMAIL` y `E2E_STAFF_PASSWORD`. Los reportes, traces,
 videos y capturas se guardan en `.playwright-mcp/http-security/`.
+
+La cobertura transaccional de los contadores está en
+`runRemoteLoginAbusePersistenceTests`. Requiere `RUN_REMOTE_DB_TESTS=true`, usa
+identificadores generados y revierte la transacción; valida los umbrales de
+cuenta/IP, concurrencia, expiración, limpieza, hashes opacos y propagación de
+errores del rate limiter. Debe ejecutarse únicamente contra una base autorizada
+y nunca durante el tráfico normal de la aplicación.
 
 ### Supabase local con Docker Desktop
 
@@ -109,6 +133,23 @@ el proyecto remoto autorizado y revisar el destino, se permite ejecutar:
 ```bash
 npm run db:migrate:dry-run
 ```
+
+La analítica local está deshabilitada intencionalmente en
+`supabase/config.toml` (`[analytics].enabled = false`). El contenedor `vector`
+intenta leer el Docker API mediante TCP y puede bloquear los health checks cuando
+Docker Desktop no expone ese endpoint; la analítica no es necesaria para aplicar
+ni validar migraciones PostgreSQL. Para validar migraciones sin la interfaz
+opcional, se pueden excluir Studio e Imgproxy:
+
+```powershell
+npx --yes supabase@3.0.0 stop
+npx --yes supabase@3.0.0 start --exclude studio,vector,logflare,imgproxy
+npx --yes supabase@3.0.0 db reset --yes
+npm run db:migrate:dry-run
+```
+
+No se debe habilitar como solución permanente `Expose daemon on tcp://localhost:2375
+without TLS`; expone el daemon de Docker sin cifrado ni autenticación.
 
 Detén el stack local cuando no lo uses con `npx supabase stop`. Nunca guardes
 tokens, passwords ni claves de servicio en estos documentos o en el repositorio.
