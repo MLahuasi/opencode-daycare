@@ -129,6 +129,8 @@ export const authOptions: NextAuthOptions = {
           return rejectInvalidLogin();
         }
 
+        await loginAttemptLimits.clearAccount(email);
+
         return {
           id: person.id,
           name: person.name,
