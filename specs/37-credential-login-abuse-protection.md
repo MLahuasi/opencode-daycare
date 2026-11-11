@@ -1,6 +1,6 @@
 # SPEC 37 — Protección contra abuso del login
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 36
 > **Date:** 2026-11-10
 > **Objective:** Proteger el login de enumeración y fuerza bruta mediante bcrypt ficticio, validación de 72 bytes y rate limiting persistente con HMAC.
@@ -90,3 +90,18 @@ La clave será HMAC-SHA-256 con un secreto server-only y un prefijo de propósit
 - Cambios de Cloudinary.
 
 **Siguiente paso tras aprobación:** `/spec-impl 37-credential-login-abuse-protection`
+
+---
+
+Plan de implementación
+
+1.  Añadir constantes server-only para límites, ventana y bloqueo.
+2.  Implementar normalización y validación de contraseña de 72 bytes UTF-8.
+3.  Añadir comparación bcrypt ficticia con hash fijo.
+4.  Crear migración, índices, función atómica y grants mínimos.
+5.  Integrar comprobación y registro de fallos.
+6.  Limpiar el límite de cuenta tras éxito y uniformar respuestas.
+7.  Consumir x-open-daycare-client-ip.
+8.  Validar localmente y ejecutar dry-run remoto sin aplicar.
+9.  Añadir pruebas transaccionales y Playwright.
+10. Actualizar documentación y ejecutar ESLint, TypeScript y build.
