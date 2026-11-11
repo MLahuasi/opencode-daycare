@@ -65,6 +65,9 @@ petición, propaga la CSP al renderizado dinámico y añade las cabeceras defens
 También resuelve la IP con `ipAddress()` de `@vercel/functions`; nunca se acepta
 directamente `x-forwarded-for`. El header interno
 `x-open-daycare-client-ip` solo se crea con el valor resuelto por el proxy.
+Su beneficio es impedir que el cliente elija libremente la IP usada por el
+rate limiter: el proxy elimina los headers de forwarding manipulables y el
+login consume únicamente este header interno para contar los fallos por IP.
 
 Las rutas HTML se renderizan dinámicamente mediante `connection()` para que cada
 respuesta reciba un nonce diferente. HSTS solo aparece en producción sobre HTTPS;

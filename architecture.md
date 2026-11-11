@@ -38,6 +38,9 @@ dependency direction.
   applies defensive response headers, resolves the client IP through the
   hosting provider adapter and forwards only the internal sanitized IP header.
   It must never trust a client-provided `x-forwarded-for` value.
+- `x-open-daycare-client-ip` lets server-side login protection rate-limit the
+  provider-resolved IP without allowing clients to select or spoof the bucket
+  through forwarding headers.
 
 ## Organization
 

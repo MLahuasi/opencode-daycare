@@ -40,6 +40,9 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - La frontera HTTP vive en `src/proxy.ts`: genera CSP por nonce, cabeceras
   defensivas y el header interno de IP saneada. No se debe confiar directamente
   en `x-forwarded-for`.
+- `x-open-daycare-client-ip` permite que el rate limiter use la IP resuelta por
+  el proxy sin aceptar una IP elegida por el cliente; el login no debe consumir
+  headers de forwarding no saneados.
 - Antes de cualquier `db:migrate:dry-run` remoto, Docker Desktop debe validar el
   stack local con `npx supabase start`, `npx supabase status` y
   `npx supabase db reset`.

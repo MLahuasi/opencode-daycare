@@ -25,6 +25,7 @@ import {
   normalizePassword,
 } from "@/domain/auth";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
+import { CLIENT_IP_HEADER } from "@/infrastructure/http/client-ip";
 import {
   PostgresCredentialRepository,
   PostgresPersonRepository,
@@ -60,7 +61,7 @@ export const authOptions: NextAuthOptions = {
        * @param credentials - Submitted email and password values.
        * @returns The authenticated user projection or `null` when credentials fail.
        */
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const email =
           typeof credentials?.email === "string"
             ? credentials.email.trim().toLowerCase()
@@ -72,12 +73,15 @@ export const authOptions: NextAuthOptions = {
           typeof credentials?.daycareId === "string"
             ? credentials.daycareId.trim()
             : "";
+        const rawClientIp = request.headers?.[CLIENT_IP_HEADER];
+        const clientIp = typeof rawClientIp === "string" ? rawClientIp : "";
 
         if (
           !email ||
           !password ||
           !isPasswordWithinUtf8Limit(password) ||
-          !UUID_PATTERN.test(daycareId)
+          !UUID_PATTERN.test(daycareId) ||
+          !clientIp
         ) {
           return null;
         }
@@ -87,7 +91,10 @@ export const authOptions: NextAuthOptions = {
           client,
           loginRateLimitEnvironment.hmacSecret,
         );
-        if (await loginAttemptLimits.isBlocked("account", email)) {
+        if (
+          (await loginAttemptLimits.isBlocked("account", email)) ||
+          (await loginAttemptLimits.isBlocked("ip", clientIp))
+        ) {
           return null;
         }
 
@@ -102,6 +109,7 @@ export const authOptions: NextAuthOptions = {
 
         const rejectInvalidLogin = async (): Promise<null> => {
           await loginAttemptLimits.recordFailure("account", email);
+          await loginAttemptLimits.recordFailure("ip", clientIp);
           return null;
         };
 
