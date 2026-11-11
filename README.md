@@ -389,7 +389,7 @@ fuera de Git:
 ```dotenv
 SUPABASE_DB_HOST=your_database_host
 SUPABASE_DB_PORT=5432
-SUPABASE_DB_USERNAME=postgres.<PROJECT_REF>
+SUPABASE_DB_USERNAME=open_daycare_runtime.<PROJECT_REF>
 SUPABASE_DB_PASSWORD=your_database_password
 SUPABASE_DB_SSL_MODE=require
 RUN_REMOTE_DB_TESTS=false
@@ -430,6 +430,43 @@ Tampoco realiza conexiones SMTP ni operaciones de Cloudinary durante el
 arranque. La refactorización de NextAuth mantiene Credentials, sesiones JWT,
 cookies, redirects y permisos sin cambios; su API server-side se consume desde
 `@/composition/auth`.
+
+### Rol runtime, RLS y provisión de secretos
+
+El runtime usa el rol PostgreSQL dedicado `open_daycare_runtime`, con `LOGIN` y
+`NOBYPASSRLS`, y no utiliza el rol administrador `postgres`. Las migraciones
+conceden únicamente los permisos DML necesarios. Cada operación tenant-scoped
+se ejecuta dentro de una transacción con contexto local (`app.daycare_id` y,
+cuando corresponde, `app.person_id`); ese contexto se limpia al finalizar la
+transacción y no se conserva en conexiones pooled.
+
+Las políticas RLS cubren las 15 tablas operativas públicas. Sin contexto no se
+devuelven filas y un contexto de guardería no puede leer ni modificar filas de
+otra guardería. La guardería operativa del login previo a sesión se resuelve
+mediante una función privada singleton; no se expone un listado de guarderías.
+
+La contraseña del rol se asigna manualmente fuera de Git. Desde una conexión
+administradora segura al PostgreSQL del proyecto, usar `psql` y el prompt
+interactivo para no incluir la contraseña en el historial:
+
+```text
+psql "host=<direct-db-host> port=<direct-db-port> dbname=postgres user=<admin-user> sslmode=require"
+postgres=> \password open_daycare_runtime
+```
+
+Introducir la contraseña únicamente en los prompts ocultos. En Vercel, guardar
+el mismo valor como secreto server-only `SUPABASE_DB_PASSWORD` y configurar
+`SUPABASE_DB_HOST`, `SUPABASE_DB_PORT` y `SUPABASE_DB_SSL_MODE=require` con los
+valores IPv4 del Session Pooler. Para Supavisor, el usuario debe tener el
+formato `open_daycare_runtime.<PROJECT_REF>`; el rol PostgreSQL base sigue
+siendo `open_daycare_runtime`. Nunca usar `NEXT_PUBLIC_*` para estas variables,
+ni incluir la contraseña en migraciones, documentación, logs o comandos
+versionados.
+
+Después de rotar la contraseña, ejecutar un despliegue controlado y comprobar
+el readiness (`SELECT 1`) y el login de la aplicación. Las migraciones se
+aplican explícitamente con `npm run db:migrate:dry-run` y, tras autorización,
+`npm run db:migrate`; nunca desde `bootstrap.ts`.
 
 Las rutas legacy `/login`, `/kids/:id/edit`, `/auth/link-parent`, las rutas
 antiguas de Posts, `/activate-account` y `/auth/activate-account` responden 404.

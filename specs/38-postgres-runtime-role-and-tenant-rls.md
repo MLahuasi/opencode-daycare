@@ -105,10 +105,3 @@ Cada política debe impedir acceso cuando el contexto no exista y debe comparar 
 **Siguiente paso tras aprobación:** `/spec-impl 38-postgres-runtime-role-and-tenant-rls`
 
 ---
-
-Plan de implementación
-
-8.  Ejecutar npm run db:migrate:dry-run, revisar el destino y detenerse.
-9.  Tras autorización separada, aplicar npm run db:migrate y verificar.
-10. Asignar la contraseña fuera de Git y configurar Vercel/Shared Pooler.
-11. Completar la documentación acumulada.
