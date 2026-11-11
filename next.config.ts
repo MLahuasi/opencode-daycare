@@ -22,6 +22,10 @@ function readServerActionBodySizeBytes(): number {
 
 const nextConfig: NextConfig = {
   experimental: {
+    // Proxy buffers request bodies before Server Actions read them. Keep this
+    // aligned with the action limit so uploads below the boundary are not
+    // truncated by Proxy's otherwise 10 MB default.
+    proxyClientMaxBodySize: readServerActionBodySizeBytes(),
     serverActions: {
       // Allows the request overhead while keeping Server Action bodies below
       // the HTTP boundary agreed by SPEC 36.

@@ -84,7 +84,8 @@ Components que muestran el selector de imágenes:
 Usa `.env.template` como referencia y no publiques secretos en documentación,
 `.env` versionados ni variables `NEXT_PUBLIC_*`. `next.config.ts` lee únicamente
 el límite de Server Actions durante el build, porque Next.js carga ese archivo
-antes del runtime server-only.
+antes del runtime server-only. El buffer de cuerpos de `proxy` usa ese mismo
+límite, evitando que el máximo predeterminado de 10 MB trunque cargas válidas.
 
 Las pruebas autenticadas de Playwright requieren configurar fuera de Git
 `E2E_DAYCARE_ID`, `E2E_STAFF_EMAIL` y `E2E_STAFF_PASSWORD`. Los reportes, traces,

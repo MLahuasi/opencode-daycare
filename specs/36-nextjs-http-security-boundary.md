@@ -1,6 +1,6 @@
 # SPEC 36 — Límite de seguridad HTTP de Next.js
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 35
 > **Date:** 2026-11-10
 > **Objective:** Endurecer el límite HTTP de Next.js con CSP por nonce, cabeceras defensivas, IP saneada y límites de carga explícitos.
@@ -48,18 +48,18 @@ value: IP validada por Vercel, nunca un header enviado directamente por el clien
 
 ## Acceptance criteria
 
-- [ ] Cada respuesta HTML protegida contiene una CSP bloqueante con nonce distinto por petición.
-- [ ] La CSP no usa `unsafe-inline` para scripts en producción.
-- [ ] Las cabeceras defensivas aparecen en las rutas de la aplicación.
-- [ ] HSTS no se envía en desarrollo HTTP.
-- [ ] NextAuth y el rate limiter reciben solo la IP interna saneada.
-- [ ] Una imagen de más de 5 MB es rechazada.
-- [ ] Una operación de más de cuatro imágenes es rechazada.
-- [ ] Un body de Server Action superior a 22 MB es rechazado.
-- [ ] Alergias y notas no reciben límites de campo nuevos fuera del límite HTTP global.
-- [ ] Docker Desktop valida el stack Supabase local antes de cualquier dry-run remoto.
+- [x] Cada respuesta HTML protegida contiene una CSP bloqueante con nonce distinto por petición.
+- [x] La CSP no usa `unsafe-inline` para scripts en producción.
+- [x] Las cabeceras defensivas aparecen en las rutas de la aplicación.
+- [x] HSTS no se envía en desarrollo HTTP.
+- [x] NextAuth y el rate limiter reciben solo la IP interna saneada.
+- [x] Una imagen de más de 5 MB es rechazada.
+- [x] Una operación de más de cuatro imágenes es rechazada.
+- [x] Un body de Server Action superior a 22 MB es rechazado.
+- [x] Alergias y notas no reciben límites de campo nuevos fuera del límite HTTP global.
+- [x] Docker Desktop valida el stack Supabase local antes de cualquier dry-run remoto.
 - [ ] Playwright verifica CSP, cabeceras, IP saneada y límites.
-- [ ] `npx eslint src`, `npx tsc --noEmit --incremental false` y `npm run build` terminan correctamente.
+- [x] `npx eslint src`, `npx tsc --noEmit --incremental false` y `npm run build` terminan correctamente.
 
 ## Decisions
 

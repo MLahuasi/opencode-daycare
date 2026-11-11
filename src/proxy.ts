@@ -36,6 +36,8 @@ export function proxy(request: NextRequest) {
   // These headers are internal transport metadata. Remove any client-supplied
   // values before adding the values calculated by this proxy.
   requestHeaders.delete(CLIENT_IP_HEADER);
+  requestHeaders.delete("x-forwarded-for");
+  requestHeaders.delete("x-real-ip");
   requestHeaders.delete(NONCE_HEADER);
   requestHeaders.delete("content-security-policy");
 
