@@ -1,11 +1,5 @@
 import type { PostMedia, PostType } from "@/domain/post";
 
-/** Maximum number of images attached to one post. */
-export const MAX_POST_MEDIA = 4;
-
-/** Maximum size of one uploaded image in bytes. */
-export const MAX_MEDIA_BYTES = 10 * 1024 * 1024;
-
 /** Maximum number of characters accepted in a post description. */
 export const MAX_POST_BODY_LENGTH = 2000;
 
@@ -18,7 +12,12 @@ const POST_TYPES: readonly PostType[] = [
   "announcement",
 ];
 const MEDIA_FORMATS = ["jpg", "jpeg", "png", "webp"] as const;
-const MAX_ALT_LENGTH = 500;
+
+export type PostFormValidationLimits = {
+  maxImageBytes: number;
+  maxAltLength: number;
+  maxImagesPerOperation: number;
+};
 
 /** Operation mode supported by the post form. */
 export type PostFormMode = "create" | "edit";
@@ -66,14 +65,17 @@ function normalizeIds(value: unknown): string[] {
   }))];
 }
 
-function validateMediaItem(value: unknown): value is PostMedia {
+function validateMediaItem(
+  value: unknown,
+  limits: PostFormValidationLimits,
+): value is PostMedia {
   if (!isRecord(value)) {
     return false;
   }
 
   const altIsValid =
     value.alt === null ||
-    (typeof value.alt === "string" && value.alt.length <= MAX_ALT_LENGTH);
+    (typeof value.alt === "string" && value.alt.length <= limits.maxAltLength);
   const width = value.width;
   const height = value.height;
   const bytes = value.bytes;
@@ -95,14 +97,17 @@ function validateMediaItem(value: unknown): value is PostMedia {
     width > 0 &&
     height > 0 &&
     bytes > 0 &&
-    bytes <= MAX_MEDIA_BYTES &&
+    bytes <= limits.maxImageBytes &&
     typeof value.originalName === "string" &&
     Boolean(value.originalName.trim()) &&
     altIsValid
   );
 }
 
-function validateMedia(value: unknown): { value: PostMedia[]; error?: string } {
+function validateMedia(
+  value: unknown,
+  limits: PostFormValidationLimits,
+): { value: PostMedia[]; error?: string } {
   if (value === undefined || value === null) {
     return { value: [] };
   }
@@ -111,14 +116,14 @@ function validateMedia(value: unknown): { value: PostMedia[]; error?: string } {
     return { value: [], error: "Las imágenes no son válidas." };
   }
 
-  if (value.length > MAX_POST_MEDIA) {
+  if (value.length > limits.maxImagesPerOperation) {
     return {
       value: [],
-      error: `Puedes adjuntar hasta ${MAX_POST_MEDIA} imágenes.`,
+      error: `Puedes adjuntar hasta ${limits.maxImagesPerOperation} imágenes.`,
     };
   }
 
-  if (!value.every(validateMediaItem)) {
+  if (!value.every((item) => validateMediaItem(item, limits))) {
     return { value: [], error: "Revisa el formato y los metadatos de las imágenes." };
   }
 
@@ -133,6 +138,7 @@ function validateMedia(value: unknown): { value: PostMedia[]; error?: string } {
  */
 export function validatePostForm(
   input: PostFormInput,
+  limits: PostFormValidationLimits,
 ): PostFormValidationResult {
   const errors: PostFormErrors = {};
   const mode = input.mode === "create" || input.mode === "edit" ? input.mode : null;
@@ -143,7 +149,7 @@ export function validatePostForm(
   const kidIds = normalizeIds(input.kidIds);
   const roomId = normalizeNullableId(input.roomId);
   const body = typeof input.body === "string" ? input.body.trim() : "";
-  const media = validateMedia(input.media);
+  const media = validateMedia(input.media, limits);
   const hasImages = input.hasImages === true || media.value.length > 0;
 
   if (!mode) errors.mode = "Selecciona un modo de publicación válido.";

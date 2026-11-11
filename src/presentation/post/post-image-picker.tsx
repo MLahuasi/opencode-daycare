@@ -2,10 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, DragEvent } from "react";
-import {
-  MAX_MEDIA_BYTES,
-  MAX_POST_MEDIA,
-} from "@/presentation/post/schemas";
 import { isSupportedImageFile } from "@/presentation/post/utils";
 import { Button } from "@/presentation/ui";
 import styles from "./post-image-picker.module.css";
@@ -28,10 +24,14 @@ type PostImagePickerProps = {
   className?: string;
   /** Whether selection and editing are disabled. */
   disabled?: boolean;
+  /** Maximum size accepted for each image in bytes. */
+  maxImageBytes: number;
   /** Name used by the native file input in form submission. */
   inputName?: string;
   /** Maximum number of new images accepted by the picker. */
-  maxImages?: number;
+  maxImages: number;
+  /** Maximum alternative-text length accepted for each image. */
+  maxAltLength: number;
   /** Called with the current valid image selections. */
   onChange?: (images: readonly PostImageSelection[]) => void;
 };
@@ -70,8 +70,10 @@ function formatFileSize(bytes: number): string {
 export function PostImagePicker({
   className = "",
   disabled = false,
+  maxImageBytes,
   inputName = "images",
-  maxImages = MAX_POST_MEDIA,
+  maxImages,
+  maxAltLength,
   onChange,
 }: PostImagePickerProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -140,8 +142,8 @@ export function PostImagePicker({
         continue;
       }
 
-      if (file.size > MAX_MEDIA_BYTES) {
-        nextError = `Cada imagen debe pesar como máximo ${formatFileSize(MAX_MEDIA_BYTES)}.`;
+       if (file.size > maxImageBytes) {
+         nextError = `Cada imagen debe pesar como máximo ${formatFileSize(maxImageBytes)}.`;
         continue;
       }
 
@@ -258,7 +260,10 @@ export function PostImagePicker({
         >
           Elegir imágenes
         </Button>
-        <small>JPEG, PNG o WebP · máximo 10 MB por imagen · hasta {maxImages} nuevas</small>
+        <small>
+          JPEG, PNG o WebP · máximo {formatFileSize(maxImageBytes)} por imagen ·
+          hasta {maxImages} nuevas
+        </small>
       </div>
 
       {error ? (
@@ -279,7 +284,7 @@ export function PostImagePicker({
                   Texto alternativo
                   <input
                     disabled={disabled}
-                    maxLength={500}
+                    maxLength={maxAltLength}
                     onChange={(event) => updateAlt(image.id, event.target.value)}
                     placeholder="Describe la imagen"
                     type="text"

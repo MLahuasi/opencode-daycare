@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getHttpSecurityEnvironment } from "@/config/server";
 import { requireStaffSession } from "@/composition/auth";
 import { createPostAction } from "@/app/_actions/posts";
 import { getPostTargets } from "@/application/post";
@@ -41,6 +42,7 @@ export default async function NewPostPage() {
         cancelHref="/home"
         initialValues={initialValues}
         kids={targets.kids}
+        limits={getHttpSecurityEnvironment()}
         rooms={targets.rooms}
       />
     </main>

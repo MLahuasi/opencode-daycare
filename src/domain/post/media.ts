@@ -19,8 +19,11 @@ export type PostMedia = DaycareScoped & {
   url?: string;
 };
 
-const MAX_MEDIA_BYTES = 10 * 1024 * 1024;
-const MAX_ALT_LENGTH = 500;
+export type PostMediaValidationLimits = {
+  maxImageBytes: number;
+  maxAltLength: number;
+  maxImagesPerOperation: number;
+};
 
 /**
  * Checks whether media metadata satisfies the Post media invariants.
@@ -28,7 +31,10 @@ const MAX_ALT_LENGTH = 500;
  * @param media - Media metadata to validate.
  * @returns Whether the media item is valid.
  */
-export function isValidPostMedia(media: PostMedia): boolean {
+export function isValidPostMedia(
+  media: PostMedia,
+  limits: PostMediaValidationLimits,
+): boolean {
   return (
     media.id.trim().length > 0 &&
     media.publicId.trim().length > 0 &&
@@ -38,12 +44,12 @@ export function isValidPostMedia(media: PostMedia): boolean {
     media.width > 0 &&
     media.height > 0 &&
     media.bytes > 0 &&
-    media.bytes <= MAX_MEDIA_BYTES &&
+    media.bytes <= limits.maxImageBytes &&
     Number.isInteger(media.width) &&
     Number.isInteger(media.height) &&
     Number.isInteger(media.bytes) &&
     media.originalName.trim().length > 0 &&
-    (media.alt === null || media.alt.length <= MAX_ALT_LENGTH)
+    (media.alt === null || media.alt.length <= limits.maxAltLength)
   );
 }
 
@@ -53,6 +59,12 @@ export function isValidPostMedia(media: PostMedia): boolean {
  * @param media - Media collection attached to the Post.
  * @returns Whether the collection respects the Post media limit.
  */
-export function hasValidPostMediaCount(media: readonly PostMedia[]): boolean {
-  return media.length <= 4 && media.every(isValidPostMedia);
+export function hasValidPostMediaCount(
+  media: readonly PostMedia[],
+  limits: PostMediaValidationLimits,
+): boolean {
+  return (
+    media.length <= limits.maxImagesPerOperation &&
+    media.every((item) => isValidPostMedia(item, limits))
+  );
 }

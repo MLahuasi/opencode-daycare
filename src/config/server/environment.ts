@@ -37,6 +37,13 @@ export type CloudinaryEnvironment = {
   url: string;
 };
 
+export type HttpSecurityEnvironment = {
+  maxImageBytes: number;
+  maxImagesPerOperation: number;
+  maxAltLength: number;
+  serverActionBodySizeBytes: number;
+};
+
 export type SupabaseEnvironment = {
   dbHost: string;
   dbPort: number;
@@ -51,6 +58,7 @@ export type Environment = {
   auth: AuthEnvironment;
   mailer: MailerEnvironment;
   cloudinary: CloudinaryEnvironment;
+  httpSecurity: HttpSecurityEnvironment;
   supabase: SupabaseEnvironment;
 };
 
@@ -205,6 +213,14 @@ function readEnvironment(): Environment {
     cloudinary: {
       url: readUrl("CLOUDINARY_URL", ["cloudinary:"]),
     },
+    httpSecurity: {
+      maxImageBytes: readPositiveInteger("HTTP_MAX_IMAGE_BYTES"),
+      maxImagesPerOperation: readPositiveInteger("HTTP_MAX_IMAGES_PER_OPERATION"),
+      maxAltLength: readPositiveInteger("HTTP_MAX_ALT_LENGTH"),
+      serverActionBodySizeBytes: readPositiveInteger(
+        "HTTP_SERVER_ACTION_BODY_SIZE_BYTES",
+      ),
+    },
     supabase: {
       dbHost: readRequiredString("SUPABASE_DB_HOST"),
       dbPort: readPositiveInteger("SUPABASE_DB_PORT"),
@@ -250,6 +266,11 @@ export function getMailerEnvironment(): MailerEnvironment {
 /** Returns the validated Cloudinary configuration. */
 export function getCloudinaryEnvironment(): CloudinaryEnvironment {
   return getCachedEnvironment().cloudinary;
+}
+
+/** Returns the validated HTTP transport and upload limits. */
+export function getHttpSecurityEnvironment(): HttpSecurityEnvironment {
+  return getCachedEnvironment().httpSecurity;
 }
 
 /** Returns the validated Supabase configuration. */
