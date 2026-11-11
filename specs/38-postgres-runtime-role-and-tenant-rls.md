@@ -1,6 +1,6 @@
 # SPEC 38 — Rol runtime PostgreSQL y RLS por tenant
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 37
 > **Date:** 2026-11-10
 > **Objective:** Ejecutar la aplicación con `open_daycare_runtime` y aplicar aislamiento RLS por guardería a todas las tablas operativas con `daycare_id`.
@@ -88,12 +88,12 @@ Cada política debe impedir acceso cuando el contexto no exista y debe comparar 
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Una política bloquea una ruta legítima | Probar cada repositorio con fixtures de dos guarderías en Docker. |
-| Estado de sesión queda en una conexión pooled | Usar `sql.begin` y `SET LOCAL` dentro de la misma transacción. |
-| Una función privilegiada amplía el acceso | Mantenerla privada, fijar `search_path` y probar grants negativos. |
-| La contraseña operativa queda desincronizada | Rotarla con procedimiento documentado y verificar readiness después del despliegue. |
+| Risk                                          | Mitigation                                                                          |
+| --------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Una política bloquea una ruta legítima        | Probar cada repositorio con fixtures de dos guarderías en Docker.                   |
+| Estado de sesión queda en una conexión pooled | Usar `sql.begin` y `SET LOCAL` dentro de la misma transacción.                      |
+| Una función privilegiada amplía el acceso     | Mantenerla privada, fijar `search_path` y probar grants negativos.                  |
+| La contraseña operativa queda desincronizada  | Rotarla con procedimiento documentado y verificar readiness después del despliegue. |
 
 ## What is **not** in this spec
 
@@ -103,3 +103,19 @@ Cada política debe impedir acceso cuando el contexto no exista y debe comparar 
 - Cambios de Cloudinary o URLs de imágenes.
 
 **Siguiente paso tras aprobación:** `/spec-impl 38-postgres-runtime-role-and-tenant-rls`
+
+---
+
+Plan de implementación
+
+1.  Inventariar tablas, claves foráneas, grants y tablas con daycare_id.
+2.  Crear migración del rol, revocar grants amplios y conceder mínimos.
+3.  Crear función privada singleton para resolver la guardería operativa.
+4.  Crear funciones auxiliares de contexto y políticas RLS.
+5.  Añadir índices y verificar funciones SECURITY DEFINER.
+6.  Adaptar databaseClient, repositorios y composición a transacciones con SET LOCAL.
+7.  Validar migraciones y RLS desde cero con Docker.
+8.  Ejecutar npm run db:migrate:dry-run, revisar el destino y detenerse.
+9.  Tras autorización separada, aplicar npm run db:migrate y verificar.
+10. Asignar la contraseña fuera de Git y configurar Vercel/Shared Pooler.
+11. Completar la documentación acumulada.
