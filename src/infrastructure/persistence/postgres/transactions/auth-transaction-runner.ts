@@ -8,11 +8,11 @@ import { PostgresCredentialRepository } from "../repositories/credential-reposit
 import { PostgresInvitationRepository } from "../repositories/invitation-repository";
 import { PostgresParentKidRepository } from "../repositories/parent-kid-repository";
 import { PostgresPersonRepository } from "../repositories/person-repository";
-import type { PostgresClient } from "../client/postgres-client";
+import type { PostgresQueryClient } from "../client/postgres-client";
 
 /** Runs Auth acceptance operations against one PostgreSQL transaction. */
 export class PostgresAuthTransactionRunner implements AuthTransactionRunner {
-  public constructor(private readonly client: PostgresClient) {}
+  public constructor(private readonly client: PostgresQueryClient) {}
 
   async run<T>(
     operation: (repositories: AuthTransactionRepositories) => Promise<T>,

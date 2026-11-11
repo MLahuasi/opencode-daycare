@@ -32,6 +32,8 @@ import {
   PostgresPersonRoleRepository,
   PostgresLoginAttemptLimitRepository,
   PostgresClientProvider,
+  CurrentDaycareProvider,
+  createTenantScopedPostgresClient,
   type PostgresClient,
 } from "@/infrastructure/persistence/postgres";
 
@@ -87,8 +89,24 @@ export const authOptions: NextAuthOptions = {
         }
 
         const client = getAuthPostgresClient();
+        let operationalDaycareId: string;
+        try {
+          operationalDaycareId = await new CurrentDaycareProvider(
+            client,
+          ).getCurrentDaycareId();
+        } catch {
+          return null;
+        }
+
+        if (operationalDaycareId !== daycareId) {
+          return null;
+        }
+
+        const scopedClient = createTenantScopedPostgresClient(client, {
+          daycareId,
+        });
         const loginAttemptLimits = new PostgresLoginAttemptLimitRepository(
-          client,
+          scopedClient,
           loginRateLimitEnvironment.hmacSecret,
         );
         if (
@@ -98,10 +116,10 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const credentialRepository = new PostgresCredentialRepository(client);
+        const credentialRepository = new PostgresCredentialRepository(scopedClient);
         const passwordHasher = new BcryptPasswordHasher();
-        const peopleRepository = new PostgresPersonRepository(client);
-        const personRoleRepository = new PostgresPersonRoleRepository(client);
+        const peopleRepository = new PostgresPersonRepository(scopedClient);
+        const personRoleRepository = new PostgresPersonRoleRepository(scopedClient);
         const person = await peopleRepository.findByEmail(daycareId, email);
         const storedCredential = person
           ? await credentialRepository.findByPersonId(daycareId, person.id)
@@ -188,9 +206,14 @@ export const authOptions: NextAuthOptions = {
         return {};
       }
 
-       const person = await new PostgresPersonRepository(
-         getAuthPostgresClient(),
-       ).findById(token.daycareId, token.personId);
+        const scopedClient = createTenantScopedPostgresClient(
+          getAuthPostgresClient(),
+          { daycareId: token.daycareId, personId: token.personId },
+        );
+        const person = await new PostgresPersonRepository(scopedClient).findById(
+          token.daycareId,
+          token.personId,
+        );
 
        if (!isActiveSessionPerson(person, token)) {
          return {};
@@ -235,13 +258,22 @@ export async function requireActiveSession(): Promise<Session> {
     redirect("/auth/login");
   }
 
-  const person = await new PostgresPersonRepository(
+  const scopedClient = createTenantScopedPostgresClient(
     getAuthPostgresClient(),
-  ).findById(session.user.daycareId, session.user.personId);
+    {
+      daycareId: session.user.daycareId,
+      personId: session.user.personId,
+    },
+  );
+  const person = await new PostgresPersonRepository(scopedClient).findById(
+    session.user.daycareId,
+    session.user.personId,
+  );
 
-  const roles = await new PostgresPersonRoleRepository(
-    getAuthPostgresClient(),
-  ).findRoles(session.user.personId, session.user.daycareId);
+  const roles = await new PostgresPersonRoleRepository(scopedClient).findRoles(
+    session.user.personId,
+    session.user.daycareId,
+  );
 
   if (!isActiveSessionPerson(person, session.user) || roles.length === 0) {
     redirect("/auth/login");

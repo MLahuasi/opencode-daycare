@@ -4,6 +4,7 @@ import { canManageKids, type PersonRoleCode } from "@/domain/person";
 import {
   PostgresPersonRoleRepository,
   PostgresPostAccessRepository,
+  createTenantScopedPostgresClient,
 } from "@/infrastructure/persistence/postgres";
 import { getPostgresRuntimeClient } from "../postgres-runtime";
 
@@ -26,10 +27,14 @@ export async function getKidAuthorization(
   personId: string,
 ): Promise<KidAuthorization> {
   const client = getPostgresRuntimeClient();
+  const scopedClient = createTenantScopedPostgresClient(client, {
+    daycareId,
+    personId,
+  });
   const [roles, assignedRoomIds] = await Promise.all([
-    new PostgresPersonRoleRepository(client).findRoles(personId, daycareId),
+    new PostgresPersonRoleRepository(scopedClient).findRoles(personId, daycareId),
     new PostgresPostAccessRepository(
-      client,
+      scopedClient,
       { getCurrentDaycareId: async () => daycareId },
     ).findStaffRoomIds(personId),
   ]);

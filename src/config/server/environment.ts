@@ -79,6 +79,21 @@ function readRequiredString(name: string): string {
   return value;
 }
 
+function readRuntimeDbUsername(): string {
+  const value = readRequiredString("SUPABASE_DB_USERNAME");
+
+  if (
+    value !== "open_daycare_runtime" &&
+    !value.startsWith("open_daycare_runtime.")
+  ) {
+    throw new Error(
+      "[environment] SUPABASE_DB_USERNAME must use the open_daycare_runtime role",
+    );
+  }
+
+  return value;
+}
+
 function readUrl(name: string, protocols: readonly string[]): string {
   const value = readRequiredString(name);
   let parsedUrl: URL;
@@ -232,7 +247,7 @@ function readEnvironment(): Environment {
     supabase: {
       dbHost: readRequiredString("SUPABASE_DB_HOST"),
       dbPort: readPositiveInteger("SUPABASE_DB_PORT"),
-      dbUsername: readRequiredString("SUPABASE_DB_USERNAME"),
+      dbUsername: readRuntimeDbUsername(),
       dbPassword: readRequiredString("SUPABASE_DB_PASSWORD"),
       dbSslMode: readOptionalEnum(
         "SUPABASE_DB_SSL_MODE",

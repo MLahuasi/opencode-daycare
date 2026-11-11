@@ -7,6 +7,7 @@ import {
   PostgresPersonRepository,
   PostgresKidRepository,
   PostgresAuthTransactionRunner,
+  createTenantScopedPostgresClient,
 } from "@/infrastructure/persistence/postgres";
 import { createAuthComposition } from "../auth";
 import { JmlqInvitationMailer } from "@/infrastructure/adapters/mailer";
@@ -31,13 +32,16 @@ export function createFamilyComposition(daycareId?: string): FamilyComposition {
     ? { getCurrentDaycareId: async () => daycareId }
     : getPostgresRuntimeDaycare();
   const client = getPostgresRuntimeClient();
-  const invitations = new PostgresInvitationRepository(client);
-  const people = new PostgresPersonRepository(client);
-  const parentKids = new PostgresParentKidRepository(client);
-  const kids = new PostgresKidRepository(client);
+  const scopedClient = createTenantScopedPostgresClient(client, {
+    daycareId: () => currentDaycare.getCurrentDaycareId(),
+  });
+  const invitations = new PostgresInvitationRepository(scopedClient);
+  const people = new PostgresPersonRepository(scopedClient);
+  const parentKids = new PostgresParentKidRepository(scopedClient);
+  const kids = new PostgresKidRepository(scopedClient);
 
   return {
-    ...createAuthComposition(),
+    ...createAuthComposition(scopedClient),
     invitations: {
       findAll: async () => invitations.findAll(await currentDaycare.getCurrentDaycareId()),
       findByCode: async (code) => invitations.findByCode(await currentDaycare.getCurrentDaycareId(), code),
@@ -115,7 +119,7 @@ export function createFamilyComposition(daycareId?: string): FamilyComposition {
        */
       now: () => new Date(),
     },
-    transaction: new PostgresAuthTransactionRunner(client),
+    transaction: new PostgresAuthTransactionRunner(scopedClient),
     mailer: new JmlqInvitationMailer(),
   };
 }
