@@ -13,7 +13,13 @@ import {
 } from "@/config";
 import { getApplicationEnvironment, getAuthEnvironment } from "@/config/server";
 import { hasCapability } from "@/domain/person";
-import { isCredentialLoginEligible } from "@/application/auth";
+import {
+  isCredentialLoginEligible,
+} from "@/application/auth";
+import {
+  isPasswordWithinUtf8Limit,
+  normalizePassword,
+} from "@/domain/auth";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
   PostgresCredentialRepository,
@@ -53,14 +59,20 @@ export const authOptions: NextAuthOptions = {
           typeof credentials?.email === "string"
             ? credentials.email.trim().toLowerCase()
             : "";
-        const password =
+        const submittedPassword =
           typeof credentials?.password === "string" ? credentials.password : "";
+        const password = normalizePassword(submittedPassword);
         const daycareId =
           typeof credentials?.daycareId === "string"
             ? credentials.daycareId.trim()
             : "";
 
-        if (!email || !password || !UUID_PATTERN.test(daycareId)) {
+        if (
+          !email ||
+          !password ||
+          !isPasswordWithinUtf8Limit(password) ||
+          !UUID_PATTERN.test(daycareId)
+        ) {
           return null;
         }
 

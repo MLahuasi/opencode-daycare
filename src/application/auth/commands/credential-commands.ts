@@ -1,5 +1,7 @@
 import {
   isValidActivationPassword,
+  isPasswordWithinUtf8Limit,
+  normalizePassword,
   type Credential,
 } from "@/domain/auth";
 import type { AuthDependencies } from "../auth-dependencies";
@@ -22,7 +24,12 @@ export async function createCredential(
   dependencies: AuthDependencies,
   input: CreateCredentialInput,
 ): Promise<Credential> {
-  if (!isValidActivationPassword(input.password)) {
+  const password = normalizePassword(input.password);
+
+  if (
+    !isValidActivationPassword(password) ||
+    !isPasswordWithinUtf8Limit(password)
+  ) {
     throw new InvalidActivationPasswordError("The password does not meet activation policy.");
   }
 
@@ -30,7 +37,7 @@ export async function createCredential(
     daycareId: input.daycareId,
     id: dependencies.identifiers.create(),
     personId: input.personId,
-    passwordHash: await dependencies.passwordHasher.hash(input.password),
+    passwordHash: await dependencies.passwordHasher.hash(password),
   };
 
   await dependencies.credentials.upsert(credential);

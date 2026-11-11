@@ -95,7 +95,6 @@ La clave será HMAC-SHA-256 con un secreto server-only y un prefijo de propósit
 
 Plan de implementación
 
-2.  Implementar normalización y validación de contraseña de 72 bytes UTF-8.
 3.  Añadir comparación bcrypt ficticia con hash fijo.
 4.  Crear migración, índices, función atómica y grants mínimos.
 5.  Integrar comprobación y registro de fallos.
