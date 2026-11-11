@@ -108,6 +108,13 @@ Las pruebas autenticadas de Playwright requieren configurar fuera de Git
 `E2E_DAYCARE_ID`, `E2E_STAFF_EMAIL` y `E2E_STAFF_PASSWORD`. Los reportes, traces,
 videos y capturas se guardan en `.playwright-mcp/http-security/`.
 
+La cobertura transaccional de los contadores está en
+`runRemoteLoginAbusePersistenceTests`. Requiere `RUN_REMOTE_DB_TESTS=true`, usa
+identificadores generados y revierte la transacción; valida los umbrales de
+cuenta/IP, concurrencia, expiración, limpieza, hashes opacos y propagación de
+errores del rate limiter. Debe ejecutarse únicamente contra una base autorizada
+y nunca durante el tráfico normal de la aplicación.
+
 ### Supabase local con Docker Desktop
 
 Antes de ejecutar cualquier dry-run remoto, valida las migraciones contra el

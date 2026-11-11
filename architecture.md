@@ -214,6 +214,12 @@ dry-run. The local stack is started with `supabase start`, checked with
 `supabase status`, and reset with `supabase db reset` before remote commands are
 considered.
 
+Login abuse protection is verified at two boundaries: the PostgreSQL transaction
+scenario `runRemoteLoginAbusePersistenceTests` exercises atomic counters,
+concurrency, expiry, cleanup, opaque hashes and error propagation with rollback;
+and the existing authentication/browser checks exercise the public login boundary.
+Remote transactional checks are opt-in through `RUN_REMOTE_DB_TESTS=true`.
+
 - Keep server components as the default.
 - Use client components only when state, event handlers, browser APIs or a
   client-only library is required.

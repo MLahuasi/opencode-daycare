@@ -51,6 +51,10 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
   no se debe exponer el daemon Docker sin TLS para resolverlo. Studio e Imgproxy
   pueden excluirse durante la validación de migraciones, pues no participan en
   PostgreSQL.
+- Las pruebas transaccionales de protección del login usan
+  `runRemoteLoginAbusePersistenceTests`, requieren `RUN_REMOTE_DB_TESTS=true` y
+  revierten sus escrituras; no deben ejecutarse contra tráfico real ni con
+  credenciales versionadas.
 
 - La configuración del servidor MCP de Supabase vive en `opencode.json` bajo `mcp.supabase`.
 - El proyecto Supabase remoto se selecciona mediante `supabase link`; no fijar un proyecto de producción en código ni en documentación operativa.
@@ -133,6 +137,8 @@ Antes de finalizar:
 - Revisar que no se filtren secretos, URLs completas, claves, headers, bodies ni detalles de respuestas en logs o errores de arranque.
 - Buscar colores literales fuera de `src/app/globals.css`.
 - Ejecutar `npx eslint src`, `npx tsc --noEmit --incremental false` y `npm run build` cuando apliquen.
+- Ejecutar `npm run test:e2e` cuando el servidor y las variables `E2E_*` estén
+  disponibles; conservar sus artefactos bajo `.playwright-mcp/`.
 
 <!-- context7 -->
 Use Context7 MCP to fetch current documentation whenever the user asks about a library, framework, SDK, API, CLI tool, or cloud service — even well-known ones like React, Next.js, Prisma, Express, Tailwind, Django, or Spring Boot. This includes API syntax, configuration, version migration, library-specific debugging, setup instructions, and CLI tool usage. Use even when you think you know the answer — your training data may not reflect recent changes. Prefer this over web search for library docs.
