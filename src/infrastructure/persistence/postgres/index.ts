@@ -16,6 +16,7 @@ export {
   withRemoteDbTestTransaction,
 } from "./transactions/remote-db-test-context";
 export { runRemoteAuthPersistenceTests } from "./transactions/remote-auth-tests";
+export { runRemoteLoginAbusePersistenceTests } from "./transactions/remote-login-abuse-tests";
 export { runRemoteStaffPersistenceTests } from "./transactions/remote-staff-tests";
 export { runRemoteGeneralPersistenceTests } from "./transactions/remote-general-tests";
 export { PostgresCredentialRepository } from "./repositories/credential-repository";

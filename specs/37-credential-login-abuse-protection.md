@@ -95,5 +95,4 @@ La clave será HMAC-SHA-256 con un secreto server-only y un prefijo de propósit
 
 Plan de implementación
 
-9.  Añadir pruebas transaccionales y Playwright.
 10. Actualizar documentación y ejecutar ESLint, TypeScript y build.
