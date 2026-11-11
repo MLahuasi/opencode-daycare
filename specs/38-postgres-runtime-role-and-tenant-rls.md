@@ -108,8 +108,6 @@ Cada política debe impedir acceso cuando el contexto no exista y debe comparar 
 
 Plan de implementación
 
-3.  Crear función privada singleton para resolver la guardería operativa.
-4.  Crear funciones auxiliares de contexto y políticas RLS.
 5.  Añadir índices y verificar funciones SECURITY DEFINER.
 6.  Adaptar databaseClient, repositorios y composición a transacciones con SET LOCAL.
 7.  Validar migraciones y RLS desde cero con Docker.
