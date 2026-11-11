@@ -108,8 +108,6 @@ Cada política debe impedir acceso cuando el contexto no exista y debe comparar 
 
 Plan de implementación
 
-1.  Inventariar tablas, claves foráneas, grants y tablas con daycare_id.
-2.  Crear migración del rol, revocar grants amplios y conceder mínimos.
 3.  Crear función privada singleton para resolver la guardería operativa.
 4.  Crear funciones auxiliares de contexto y políticas RLS.
 5.  Añadir índices y verificar funciones SECURITY DEFINER.
