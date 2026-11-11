@@ -108,8 +108,6 @@ Cada política debe impedir acceso cuando el contexto no exista y debe comparar 
 
 Plan de implementación
 
-6.  Adaptar databaseClient, repositorios y composición a transacciones con SET LOCAL.
-7.  Validar migraciones y RLS desde cero con Docker.
 8.  Ejecutar npm run db:migrate:dry-run, revisar el destino y detenerse.
 9.  Tras autorización separada, aplicar npm run db:migrate y verificar.
 10. Asignar la contraseña fuera de Git y configurar Vercel/Shared Pooler.

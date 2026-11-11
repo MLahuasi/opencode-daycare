@@ -17,13 +17,6 @@ begin
 end
 $$;
 
-alter role open_daycare_runtime
-  with login
-  nosuperuser
-  nocreatedb
-  nocreaterole
-  nobypassrls;
-
 -- The runtime role must not inherit schema-management or broad object access.
 revoke all on schema public from open_daycare_runtime;
 revoke create on schema public from open_daycare_runtime;
