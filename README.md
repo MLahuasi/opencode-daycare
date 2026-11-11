@@ -127,6 +127,23 @@ el proyecto remoto autorizado y revisar el destino, se permite ejecutar:
 npm run db:migrate:dry-run
 ```
 
+La analítica local está deshabilitada intencionalmente en
+`supabase/config.toml` (`[analytics].enabled = false`). El contenedor `vector`
+intenta leer el Docker API mediante TCP y puede bloquear los health checks cuando
+Docker Desktop no expone ese endpoint; la analítica no es necesaria para aplicar
+ni validar migraciones PostgreSQL. Para validar migraciones sin la interfaz
+opcional, se pueden excluir Studio e Imgproxy:
+
+```powershell
+npx --yes supabase@3.0.0 stop
+npx --yes supabase@3.0.0 start --exclude studio,vector,logflare,imgproxy
+npx --yes supabase@3.0.0 db reset --yes
+npm run db:migrate:dry-run
+```
+
+No se debe habilitar como solución permanente `Expose daemon on tcp://localhost:2375
+without TLS`; expone el daemon de Docker sin cifrado ni autenticación.
+
 Detén el stack local cuando no lo uses con `npx supabase stop`. Nunca guardes
 tokens, passwords ni claves de servicio en estos documentos o en el repositorio.
 

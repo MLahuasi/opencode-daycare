@@ -46,6 +46,11 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - Antes de cualquier `db:migrate:dry-run` remoto, Docker Desktop debe validar el
   stack local con `npx supabase start`, `npx supabase status` y
   `npx supabase db reset`.
+- La analítica local permanece deshabilitada en `supabase/config.toml` porque
+  `vector` requiere acceso al Docker API TCP y puede bloquear los health checks;
+  no se debe exponer el daemon Docker sin TLS para resolverlo. Studio e Imgproxy
+  pueden excluirse durante la validación de migraciones, pues no participan en
+  PostgreSQL.
 
 - La configuración del servidor MCP de Supabase vive en `opencode.json` bajo `mcp.supabase`.
 - El proyecto Supabase remoto se selecciona mediante `supabase link`; no fijar un proyecto de producción en código ni en documentación operativa.

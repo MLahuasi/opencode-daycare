@@ -95,6 +95,5 @@ La clave será HMAC-SHA-256 con un secreto server-only y un prefijo de propósit
 
 Plan de implementación
 
-8.  Validar localmente y ejecutar dry-run remoto sin aplicar.
 9.  Añadir pruebas transaccionales y Playwright.
 10. Actualizar documentación y ejecutar ESLint, TypeScript y build.
