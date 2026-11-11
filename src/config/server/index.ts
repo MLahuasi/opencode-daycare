@@ -7,6 +7,7 @@ export {
   getAuthEnvironment,
   getCloudinaryEnvironment,
   getHttpSecurityEnvironment,
+  getLoginRateLimitEnvironment,
   getMailerEnvironment,
   getSupabaseEnvironment,
   validateEnvironment,
@@ -18,6 +19,7 @@ export type {
   CloudinaryEnvironment,
   Environment,
   HttpSecurityEnvironment,
+  LoginRateLimitEnvironment,
   MailerEnvironment,
   SupabaseEnvironment,
 } from "./environment";

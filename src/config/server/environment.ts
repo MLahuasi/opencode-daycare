@@ -44,6 +44,10 @@ export type HttpSecurityEnvironment = {
   serverActionBodySizeBytes: number;
 };
 
+export type LoginRateLimitEnvironment = {
+  hmacSecret: string;
+};
+
 export type SupabaseEnvironment = {
   dbHost: string;
   dbPort: number;
@@ -59,6 +63,7 @@ export type Environment = {
   mailer: MailerEnvironment;
   cloudinary: CloudinaryEnvironment;
   httpSecurity: HttpSecurityEnvironment;
+  loginRateLimit: LoginRateLimitEnvironment;
   supabase: SupabaseEnvironment;
 };
 
@@ -221,6 +226,9 @@ function readEnvironment(): Environment {
         "HTTP_SERVER_ACTION_BODY_SIZE_BYTES",
       ),
     },
+    loginRateLimit: {
+      hmacSecret: readRequiredString("LOGIN_RATE_LIMIT_HMAC_SECRET"),
+    },
     supabase: {
       dbHost: readRequiredString("SUPABASE_DB_HOST"),
       dbPort: readPositiveInteger("SUPABASE_DB_PORT"),
@@ -271,6 +279,11 @@ export function getCloudinaryEnvironment(): CloudinaryEnvironment {
 /** Returns the validated HTTP transport and upload limits. */
 export function getHttpSecurityEnvironment(): HttpSecurityEnvironment {
   return getCachedEnvironment().httpSecurity;
+}
+
+/** Returns the server-only login rate limit configuration. */
+export function getLoginRateLimitEnvironment(): LoginRateLimitEnvironment {
+  return getCachedEnvironment().loginRateLimit;
 }
 
 /** Returns the validated Supabase configuration. */

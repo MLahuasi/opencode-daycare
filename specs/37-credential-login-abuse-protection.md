@@ -95,7 +95,6 @@ La clave será HMAC-SHA-256 con un secreto server-only y un prefijo de propósit
 
 Plan de implementación
 
-5.  Integrar comprobación y registro de fallos.
 6.  Limpiar el límite de cuenta tras éxito y uniformar respuestas.
 7.  Consumir x-open-daycare-client-ip.
 8.  Validar localmente y ejecutar dry-run remoto sin aplicar.
