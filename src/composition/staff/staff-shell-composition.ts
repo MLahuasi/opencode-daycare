@@ -1,21 +1,11 @@
 import "server-only";
 
-import type { StaffShellReader } from "@/application/staff";
+import type {
+  StaffNavigationProjection,
+  StaffShellReader,
+} from "@/application/staff";
 import { PostgresStaffShellRepository } from "@/infrastructure/persistence/postgres";
 import { getPostgresRuntimeClient } from "../postgres-runtime";
-
-/** Dynamic Staff Shell projection consumed by Staff navigation presenters. */
-export type StaffNavigationProjection = {
-  brand: {
-    name: string;
-    room: string;
-  };
-  profile: {
-    initial: string;
-    name: string;
-    role: string;
-  };
-};
 
 function formatRooms(roomNames: readonly string[]): string {
   return roomNames.length > 0 ? `Salas ${roomNames.join(", ")}` : "Sin salas";

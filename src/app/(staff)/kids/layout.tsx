@@ -1,6 +1,8 @@
 import { StaffSidebar } from "@/presentation/layout";
-import { staffNavigationConfig } from "@/presentation/navigation";
+import { createStaffNavigationConfig } from "@/presentation/navigation";
+import { createStaffShellComposition } from "@/composition/staff";
 import { requireStaffSession } from "@/composition/auth";
+import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 /**
@@ -11,11 +13,22 @@ import type { ReactNode } from "react";
  * @returns The Kids layout with desktop and mobile staff navigation.
  */
 export default async function KidsLayout({ children }: { children: ReactNode }) {
-  await requireStaffSession();
+  const session = await requireStaffSession();
+  const staffNavigation = await createStaffShellComposition().getNavigation(
+    session.user.daycareId,
+    session.user.personId,
+  );
+
+  if (!staffNavigation) {
+    notFound();
+  }
 
   return (
     <div className="flex min-h-screen bg-background">
-      <StaffSidebar activeSection="children" navigation={staffNavigationConfig} />
+      <StaffSidebar
+        activeSection="children"
+        navigation={createStaffNavigationConfig(staffNavigation)}
+      />
       <div className="min-w-0 flex-1 pb-20 md:pb-0">{children}</div>
     </div>
   );

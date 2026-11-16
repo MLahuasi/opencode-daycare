@@ -1,4 +1,4 @@
 export {
   createStaffShellComposition,
-  type StaffNavigationProjection,
 } from "./staff-shell-composition";
+export type { StaffNavigationProjection } from "@/application/staff";

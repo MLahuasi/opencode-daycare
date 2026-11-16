@@ -4,8 +4,12 @@ import { toggleFeedReactionAction } from "@/app/_actions/posts";
 import { getFeedOverview } from "@/composition/feed";
 import { getAuthorizedPosts } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
-import { staffNavigationConfig } from "@/presentation/navigation";
-import { requireActiveSession } from "@/composition/auth";
+import { createStaffNavigationConfig } from "@/presentation/navigation";
+import { createStaffShellComposition } from "@/composition/staff";
+import {
+  getSessionPersonRoles,
+  requireActiveSession,
+} from "@/composition/auth";
 import { redirect } from "next/navigation";
 import { getApplicationEnvironment } from "@/config/server";
 
@@ -16,19 +20,31 @@ import { getApplicationEnvironment } from "@/config/server";
  */
 export default async function Home() {
   const session = await requireActiveSession();
+  const roles = await getSessionPersonRoles(
+    session.user.daycareId,
+    session.user.personId,
+  );
+  const staffNavigation = await createStaffShellComposition().getNavigation(
+    session.user.daycareId,
+    session.user.personId,
+  );
 
-  if (session.user.role === "parent") {
+  if (!staffNavigation) {
+    redirect("/auth/login");
+  }
+
+  if (roles.includes("parent")) {
     redirect("/family-feed");
   }
 
   const feedOverview = await getFeedOverview(session.user.daycareId);
    const feedPosts = await getAuthorizedPosts(
       createPostComposition(session.user.daycareId),
-      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+       { daycareId: session.user.daycareId, personId: session.user.personId, roles },
    );
   return (
     <div className="flex min-h-screen bg-background">
-      <StaffSidebar navigation={staffNavigationConfig} />
+      <StaffSidebar navigation={createStaffNavigationConfig(staffNavigation)} />
       <FeedContent
         canReact
         commentHref={(postId) => `/posts/${encodeURIComponent(postId)}/comments/new`}

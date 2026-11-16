@@ -6,6 +6,19 @@ export type StaffShellRecord = {
   roomNames: readonly string[];
 };
 
+/** Dynamic brand and profile data projected for the Staff Shell. */
+export type StaffNavigationProjection = {
+  brand: {
+    name: string;
+    room: string;
+  };
+  profile: {
+    initial: string;
+    name: string;
+    role: string;
+  };
+};
+
 /** Reads the tenant-scoped data required by the Staff Shell projection. */
 export interface StaffShellReader {
   /**

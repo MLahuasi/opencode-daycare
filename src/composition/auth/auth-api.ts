@@ -1,6 +1,12 @@
 import "server-only";
 
 import type { NextAuthOptions, Session } from "next-auth";
+import type { PersonRoles } from "@/domain/person";
+import {
+  PostgresPersonRoleRepository,
+  type PostgresQueryClient,
+} from "@/infrastructure/persistence/postgres";
+import { getPostgresRuntimeClient } from "../postgres-runtime";
 import {
   authOptions as infrastructureAuthOptions,
   getAuthSession as readInfrastructureAuthSession,
@@ -24,4 +30,22 @@ export function requireActiveSession(): Promise<Session> {
 /** Requires an active staff session through Auth Composition. */
 export function requireStaffSession(): Promise<Session> {
   return requireInfrastructureStaffSession();
+}
+
+/**
+ * Reads the current tenant-scoped roles without placing them in the session.
+ *
+ * @param daycareId - PostgreSQL daycare identifier.
+ * @param personId - PostgreSQL person identifier.
+ * @returns Roles currently assigned to the person in the daycare.
+ */
+export async function getSessionPersonRoles(
+  daycareId: string,
+  personId: string,
+): Promise<PersonRoles> {
+  const client: PostgresQueryClient = getPostgresRuntimeClient();
+  return new PostgresPersonRoleRepository(client).findByPersonAndDaycare(
+    personId,
+    daycareId,
+  );
 }
