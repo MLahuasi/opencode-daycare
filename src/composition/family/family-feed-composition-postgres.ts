@@ -13,6 +13,7 @@ import {
   PostgresPostReactionRepository,
   PostgresPostRepository,
   PostgresRoomRepository,
+  createTenantScopedPostgresClient,
 } from "@/infrastructure/persistence/postgres";
 
 /** PostgreSQL-only Family Feed composition for the General runtime routes. */
@@ -20,15 +21,15 @@ export function createPostgresFamilyFeedComposition(
   client: PostgresQueryClient,
   currentDaycare: CurrentDaycareReader,
 ): FamilyFeedQueryDependencies {
-  const people = new PostgresPersonRepository(client);
-  const parentKids = new PostgresParentKidRepository(client);
-  const kids = new PostgresKidRepository(client);
-  const rooms = new PostgresRoomRepository(client);
-  const posts = new PostgresPostRepository(client, currentDaycare);
-  const comments = new PostgresPostCommentRepository(client, currentDaycare);
-  const reactions = new PostgresPostReactionRepository(client, currentDaycare);
-
   const daycareId = () => currentDaycare.getCurrentDaycareId();
+  const scopedClient = createTenantScopedPostgresClient(client, { daycareId });
+  const people = new PostgresPersonRepository(scopedClient);
+  const parentKids = new PostgresParentKidRepository(scopedClient);
+  const kids = new PostgresKidRepository(scopedClient);
+  const rooms = new PostgresRoomRepository(scopedClient);
+  const posts = new PostgresPostRepository(scopedClient, currentDaycare);
+  const comments = new PostgresPostCommentRepository(scopedClient, currentDaycare);
+  const reactions = new PostgresPostReactionRepository(scopedClient, currentDaycare);
 
   return {
     directory: {

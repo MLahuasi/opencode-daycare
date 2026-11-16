@@ -2,7 +2,10 @@ import "server-only";
 
 import type { AuthDependencies } from "@/application/auth";
 import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
-import { PostgresCredentialRepository } from "@/infrastructure/persistence/postgres";
+import {
+  PostgresCredentialRepository,
+  type PostgresQueryClient,
+} from "@/infrastructure/persistence/postgres";
 import { getPostgresRuntimeClient } from "../postgres-runtime";
 import { randomUUID } from "node:crypto";
 
@@ -14,9 +17,11 @@ export type AuthComposition = AuthDependencies;
  *
  * @returns The credential, hashing and identifier dependencies.
  */
-export function createAuthComposition(): AuthComposition {
+export function createAuthComposition(
+  client: PostgresQueryClient = getPostgresRuntimeClient(),
+): AuthComposition {
   return {
-    credentials: new PostgresCredentialRepository(getPostgresRuntimeClient()),
+    credentials: new PostgresCredentialRepository(client),
     passwordHasher: new BcryptPasswordHasher(),
     identifiers: {
       /**

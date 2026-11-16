@@ -4,6 +4,7 @@ import type { StaffNavigationConfig } from "@/presentation/layout";
 import { PostgresStaffShellRepository } from "@/infrastructure/persistence/postgres";
 import { staffNavigationConfig } from "@/presentation/navigation";
 import { getKidAuthorization } from "@/composition/kid";
+import { createTenantScopedPostgresClient } from "@/infrastructure/persistence/postgres";
 import { getPostgresRuntimeClient } from "../postgres-runtime";
 import type { StaffShellRow } from "@/infrastructure/persistence/postgres";
 
@@ -46,8 +47,12 @@ export async function getStaffNavigation(
   daycareId: string,
   personId: string,
 ): Promise<StaffNavigationConfig | null> {
+  const client = createTenantScopedPostgresClient(getPostgresRuntimeClient(), {
+    daycareId,
+    personId,
+  });
   const [row, kidAuthorization] = await Promise.all([
-    new PostgresStaffShellRepository(getPostgresRuntimeClient()).findByPerson(
+    new PostgresStaffShellRepository(client).findByPerson(
       daycareId,
       personId,
     ),

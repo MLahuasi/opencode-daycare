@@ -7,6 +7,11 @@ export {
   PostgresClientProvider,
 } from "./client/postgres-client-provider";
 export {
+  createTenantScopedPostgresClient,
+  withPostgresTenantContext,
+  type PostgresTenantContext,
+} from "./client/tenant-context";
+export {
   CurrentDaycareNotFoundError,
   CurrentDaycareProvider,
   MultipleCurrentDaycaresError,

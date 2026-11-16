@@ -8,6 +8,7 @@ export type ApplicationEnvironment = {
   locale: string;
   timeZone: string;
   nodeEnvironment: "development" | "test" | "production";
+  isVercelDeployment: boolean;
   isBuild: boolean;
 };
 
@@ -74,6 +75,21 @@ function readRequiredString(name: string): string {
 
   if (!value) {
     throw new Error(`[environment] Invalid or missing variable: ${name}`);
+  }
+
+  return value;
+}
+
+function readRuntimeDbUsername(): string {
+  const value = readRequiredString("SUPABASE_DB_USERNAME");
+
+  if (
+    value !== "open_daycare_runtime" &&
+    !value.startsWith("open_daycare_runtime.")
+  ) {
+    throw new Error(
+      "[environment] SUPABASE_DB_USERNAME must use the open_daycare_runtime role",
+    );
   }
 
   return value;
@@ -186,6 +202,7 @@ function readEnvironment(): Environment {
         "NODE_ENV",
         ["development", "test", "production"],
       ),
+      isVercelDeployment: process.env.VERCEL === "1",
       isBuild: process.env.NEXT_PHASE === "phase-production-build",
     },
     auth: {
@@ -232,7 +249,7 @@ function readEnvironment(): Environment {
     supabase: {
       dbHost: readRequiredString("SUPABASE_DB_HOST"),
       dbPort: readPositiveInteger("SUPABASE_DB_PORT"),
-      dbUsername: readRequiredString("SUPABASE_DB_USERNAME"),
+      dbUsername: readRuntimeDbUsername(),
       dbPassword: readRequiredString("SUPABASE_DB_PASSWORD"),
       dbSslMode: readOptionalEnum(
         "SUPABASE_DB_SSL_MODE",

@@ -12,6 +12,7 @@ import {
   PostgresParentKidRepository,
   PostgresPersonRepository,
   PostgresRoomRepository,
+  createTenantScopedPostgresClient,
 } from "@/infrastructure/persistence/postgres";
 import { getPostgresRuntimeClient, getPostgresRuntimeDaycare } from "../postgres-runtime";
 
@@ -33,10 +34,13 @@ export function createKidComposition(daycareId?: string): KidComposition {
     ? { getCurrentDaycareId: async () => daycareId }
     : getPostgresRuntimeDaycare();
   const client = getPostgresRuntimeClient();
-  const kids = new PostgresKidRepository(client);
-  const people = new PostgresPersonRepository(client);
-  const rooms = new PostgresRoomRepository(client);
-  const parentKids = new PostgresParentKidRepository(client);
+  const scopedClient = createTenantScopedPostgresClient(client, {
+    daycareId: () => currentDaycare.getCurrentDaycareId(),
+  });
+  const kids = new PostgresKidRepository(scopedClient);
+  const people = new PostgresPersonRepository(scopedClient);
+  const rooms = new PostgresRoomRepository(scopedClient);
+  const parentKids = new PostgresParentKidRepository(scopedClient);
 
   return {
     kids: {

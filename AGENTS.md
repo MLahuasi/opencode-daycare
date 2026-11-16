@@ -82,6 +82,8 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - Las fachadas server-only `databaseClient`, `mailerClient` e `imageStorageClient` son las únicas APIs públicas de sus capacidades; no exponen SDKs, proveedores ni tipos concretos.
 - Los proveedores PostgreSQL, JMLQ y Cloudinary permanecen dentro de Infrastructure y solo se ensamblan desde sus fachadas o Composition.
 - PostgreSQL usa `postgres.js` mediante el Session Pooler IPv4 configurado por `SUPABASE_DB_HOST`, `SUPABASE_DB_PORT`, `SUPABASE_DB_USERNAME` y `SUPABASE_DB_PASSWORD`.
+- El runtime usa `open_daycare_runtime` (o `open_daycare_runtime.<project-ref>` mediante Supavisor), nunca el usuario administrador `postgres`; el rol tiene `NOBYPASSRLS` y la contraseña se provisiona fuera de Git.
+- Las tablas operativas públicas tienen RLS tenant-scoped. Las consultas runtime usan transacciones con contexto local `app.daycare_id` y, cuando corresponde, `app.person_id`; nunca guardar ese contexto como estado de una conexión pooled.
 - `databaseClient` comprueba readiness mediante `SELECT 1`; no existe una dependencia runtime de `supabase-js` ni de `NEXT_PUBLIC_SUPABASE_*`.
 - La composición server-side de Auth vive en `src/composition/auth/`; los consumidores no importan `@/auth` ni `@/infrastructure/auth` directamente.
 - `src/presentation/ui/index.ts` es el barrel público de UI y `src/presentation/navigation/index.ts` el de navegación.
@@ -108,6 +110,7 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
   únicamente `HTTP_SERVER_ACTION_BODY_SIZE_BYTES`, porque Next.js carga esa
   configuración antes del runtime server-only.
 - Las variables de entorno se configuran fuera de Git. Una variable `NEXT_PUBLIC_*` puede ser publicable, pero no elimina los límites server-only del SDK ni de su configuración.
+- La contraseña del rol runtime se asigna con `psql` mediante `\password open_daycare_runtime` desde una conexión administradora segura y se guarda como secreto server-only `SUPABASE_DB_PASSWORD` en Vercel. No imprimirla, versionarla ni pasarla en comandos persistentes.
 - Los servicios de dominio no construyen rutas físicas ni importan `node:fs`; usan puertos y adapters PostgreSQL server-only.
 - `CurrentDaycareProvider` es provisional y obtiene la única guardería operativa para el login. Debe reemplazarse por un selector explícito cuando se habiliten múltiples guarderías.
 

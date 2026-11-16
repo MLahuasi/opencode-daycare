@@ -16,6 +16,7 @@ import {
   PostgresPostReactionRepository,
   PostgresPostRepository,
   PostgresRoomRepository,
+  createTenantScopedPostgresClient,
 } from "@/infrastructure/persistence/postgres";
 
 /** PostgreSQL-only Post composition for `(general)` route verification. */
@@ -23,11 +24,14 @@ export function createPostgresPostComposition(
   client: PostgresQueryClient,
   currentDaycare: CurrentDaycareReader,
 ): PostDependencies {
-  const peopleRepository = new PostgresPersonRepository(client);
-  const parentKidsRepository = new PostgresParentKidRepository(client);
-  const kidsRepository = new PostgresKidRepository(client);
-  const roomsRepository = new PostgresRoomRepository(client);
-  const access = new PostgresPostAccessRepository(client, currentDaycare);
+  const scopedClient = createTenantScopedPostgresClient(client, {
+    daycareId: () => currentDaycare.getCurrentDaycareId(),
+  });
+  const peopleRepository = new PostgresPersonRepository(scopedClient);
+  const parentKidsRepository = new PostgresParentKidRepository(scopedClient);
+  const kidsRepository = new PostgresKidRepository(scopedClient);
+  const roomsRepository = new PostgresRoomRepository(scopedClient);
+  const access = new PostgresPostAccessRepository(scopedClient, currentDaycare);
 
   return {
     authorizationAccess: access,
@@ -60,9 +64,9 @@ export function createPostgresPostComposition(
       create: (room) => roomsRepository.create(room),
       update: (room) => roomsRepository.update(room),
     },
-    posts: new PostgresPostRepository(client, currentDaycare, access),
-    comments: new PostgresPostCommentRepository(client, currentDaycare),
-    reactions: new PostgresPostReactionRepository(client, currentDaycare),
+    posts: new PostgresPostRepository(scopedClient, currentDaycare, access),
+    comments: new PostgresPostCommentRepository(scopedClient, currentDaycare),
+    reactions: new PostgresPostReactionRepository(scopedClient, currentDaycare),
     imageStorage: createCloudinaryImageStorage(),
     authorization: new PostAuthorizationPolicy(access),
     identifiers: { create: () => randomUUID() },

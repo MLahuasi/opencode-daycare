@@ -189,6 +189,30 @@ snapshots inmutables de migración y no forman parte del camino runtime.
   single operational daycare for the login default. It must be replaced by an
   explicit daycare selector when multiple daycares are exposed to users.
 
+### Runtime role and tenant isolation
+
+Production PostgreSQL connections use the dedicated `open_daycare_runtime` role
+through the IPv4 Session Pooler. Supavisor may require the connection username
+`open_daycare_runtime.<project-ref>`, while the PostgreSQL role remains
+`open_daycare_runtime`. The role has `NOBYPASSRLS` and receives only the grants
+required by runtime; its password is provisioned outside Git and stored only in
+server-side deployment secrets.
+
+All operational public tables are protected by tenant-scoped RLS. Repository
+queries run inside a transaction that sets `app.daycare_id` and, where needed,
+`app.person_id` transaction-locally. The context is therefore discarded on
+commit or rollback and cannot leak through a pooled connection. Missing context
+returns no operational rows, and a tenant context cannot access another
+daycare's rows. The pre-session login path resolves the sole operational daycare
+through a private singleton function rather than exposing a daycare listing.
+
+Provision the password with an interactive `psql` administrator session using
+`\password open_daycare_runtime`; do not put it in a migration, shell history,
+log, documentation, or source file. Configure the corresponding
+`SUPABASE_DB_PASSWORD` secret and pooler settings in Vercel, then verify
+PostgreSQL readiness with `SELECT 1`. Remote migrations remain an explicit
+deployment operation: run the dry-run first and apply only after authorization.
+
 ### Operational rollback
 
 - Stop authenticated traffic before rolling back a deployment.

@@ -17,10 +17,12 @@ export function proxy(request: NextRequest) {
   // The nonce is unique to this request and is shared with Next.js through
   // the CSP header so framework-generated scripts can be rendered safely.
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const applicationEnvironment = getApplicationEnvironment();
+  const isDevelopment = applicationEnvironment.nodeEnvironment === "development";
   const contentSecurityPolicy = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
-    `style-src 'self' 'nonce-${nonce}'`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDevelopment ? " 'unsafe-eval'" : ""}`,
+    `style-src 'self' 'nonce-${nonce}'${isDevelopment ? " 'unsafe-inline'" : ""}`,
     "img-src 'self' blob: data:",
     "font-src 'self'",
     "object-src 'none'",
@@ -31,7 +33,21 @@ export function proxy(request: NextRequest) {
   ].join("; ");
 
   const requestHeaders = new Headers(request.headers);
-  const clientIp = resolveClientIp(request);
+  const resolvedClientIp = resolveClientIp(request);
+  const isLoopbackHost = ["localhost", "127.0.0.1", "::1"].includes(
+    request.nextUrl.hostname,
+  );
+  // Vercel supplies the trusted IP metadata in deployed environments. During
+  // local development, or when running a production build on localhost for
+  // verification, use only a loopback address instead of rejecting every
+  // login or trusting forwarding headers. Deployed Vercel requests must still
+  // provide the trusted edge-resolved IP.
+  const clientIp =
+    resolvedClientIp ??
+    (applicationEnvironment.nodeEnvironment === "development" ||
+    (!applicationEnvironment.isVercelDeployment && isLoopbackHost)
+      ? "127.0.0.1"
+      : undefined);
 
   // These headers are internal transport metadata. Remove any client-supplied
   // values before adding the values calculated by this proxy.
@@ -72,7 +88,6 @@ export function proxy(request: NextRequest) {
     "camera=(), microphone=(), geolocation=(), payment=()",
   );
 
-  const applicationEnvironment = getApplicationEnvironment();
   // HSTS is only safe to advertise from production HTTPS responses. Sending
   // it during local HTTP development can make the browser force HTTPS later.
   if (

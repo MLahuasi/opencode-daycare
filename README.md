@@ -154,6 +154,236 @@ without TLS`; expone el daemon de Docker sin cifrado ni autenticación.
 Detén el stack local cuando no lo uses con `npx supabase stop`. Nunca guardes
 tokens, passwords ni claves de servicio en estos documentos o en el repositorio.
 
+### Pruebas directas contra Supabase remoto desde VS Code (sin Docker)
+
+La aplicación puede ejecutarse localmente desde VS Code y conectarse directamente
+al proyecto Supabase remoto. En este flujo Docker no participa: solo se utiliza
+la base de datos remota y el cliente nativo `psql` para tareas administrativas.
+No ejecutes `db reset --remote` ni `npm run db:seed` contra un proyecto que ya
+contenga datos operativos.
+
+#### 1. Instalar el cliente PostgreSQL en Windows
+
+Desde la terminal PowerShell integrada de VS Code instala PostgreSQL Client:
+
+```powershell
+winget install --id PostgreSQL.PostgreSQL.17 --exact --source winget
+```
+
+Cierra y vuelve a abrir VS Code. Comprueba que `psql` está disponible:
+
+```powershell
+$psql = Get-ChildItem "C:\Program Files\PostgreSQL\*\bin\psql.exe" -ErrorAction Stop |
+  Sort-Object FullName -Descending |
+  Select-Object -First 1 -ExpandProperty FullName
+
+& $psql --version
+$env:Path = "$(Split-Path $psql);$env:Path"
+```
+
+#### 2. Obtener los datos del Session Pooler
+
+En Supabase abre **Connect → Session Pooler** y copia el host exacto. Usa el
+puerto `5432`. No calcules el host manualmente y no uses `localhost` ni
+`127.0.0.1`.
+
+El usuario administrativo del Shared Pooler tiene el formato
+`postgres.<PROJECT_REF>`. El usuario que utilizará la aplicación tiene el
+formato `open_daycare_runtime.<PROJECT_REF>`:
+
+```dotenv
+SUPABASE_DB_HOST=<HOST_SESSION_POOLER>
+SUPABASE_DB_PORT=5432
+SUPABASE_DB_USERNAME=open_daycare_runtime.<PROJECT_REF>
+SUPABASE_DB_PASSWORD=<CONTRASEÑA_DEL_ROL_RUNTIME>
+SUPABASE_DB_SSL_MODE=require
+```
+
+El `PROJECT_REF` no es el UUID de `public.daycares`; son identificadores
+distintos.
+
+#### 3. Asignar la contraseña del rol runtime
+
+Genera una contraseña localmente sin escribirla en el historial:
+
+```powershell
+node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))" | Set-Clipboard
+$runtimePassword = Get-Clipboard
+```
+
+Conéctate al host remoto como administrador. La contraseña solicitada es la
+contraseña administrativa actual de Supabase, no la del rol runtime:
+
+```powershell
+$poolerHost = "<HOST_SESSION_POOLER>"
+$projectRef = "<PROJECT_REF>"
+
+psql "host=$poolerHost port=5432 dbname=postgres user=postgres.$projectRef sslmode=require"
+```
+
+Dentro de `psql`, confirma que el destino no sea local y asigna la contraseña
+sin incluirla en un comando:
+
+```text
+\conninfo
+\password open_daycare_runtime
+\q
+```
+
+Después guarda esa misma contraseña en `.env` o `.env.local`, fuera de Git. Por
+ejemplo, desde PowerShell, sin imprimirla:
+
+```powershell
+$path = ".env"
+$content = Get-Content -Raw -LiteralPath $path
+$content = [regex]::Replace(
+  $content,
+  "(?m)^SUPABASE_DB_PASSWORD=.*$",
+  [System.Text.RegularExpressions.MatchEvaluator]{
+    param($match)
+    "SUPABASE_DB_PASSWORD=$runtimePassword"
+  }
+)
+Set-Content -LiteralPath $path -Value $content -NoNewline
+Remove-Variable runtimePassword
+Set-Clipboard ""
+```
+
+Comprueba que el archivo local está ignorado:
+
+```powershell
+git check-ignore .env
+```
+
+Nunca ejecutes `Get-Content .env`, imprimas la contraseña o la incluyas en una
+URL de conexión, migración, log o commit.
+
+#### 4. Confirmar la conexión remota del rol runtime
+
+Puedes probar el rol directamente con el mismo host remoto:
+
+```powershell
+psql "host=$poolerHost port=5432 dbname=postgres user=open_daycare_runtime.$projectRef sslmode=require"
+```
+
+Dentro de `psql`:
+
+```sql
+select current_user;
+select 1 as connection_test;
+select count(*) as rows_without_tenant_context from public.people;
+```
+
+El usuario debe ser `open_daycare_runtime` y la consulta sin contexto tenant no
+debe devolver filas operativas. Sal con `\q`.
+
+#### 5. Ejecutar Next.js local contra Supabase remoto
+
+Configura también `APP_URL` y `NEXTAUTH_URL` para el origen local:
+
+```dotenv
+APP_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3000
+AUTH_SESSION_COOKIE_SECURE=false
+RUN_REMOTE_DB_TESTS=false
+```
+
+Inicia la aplicación desde VS Code:
+
+```powershell
+npm run dev
+```
+
+El arranque debe mostrar:
+
+```text
+[environment] Server environment validated
+[database] Client initialized
+[database] PostgreSQL connection successful
+[bootstrap] Application initialization completed
+```
+
+La aplicación se abre en `http://localhost:3000`, pero sus consultas PostgreSQL
+se ejecutan en el Supabase remoto.
+
+#### 6. Obtener el daycare y probar el login de Staff
+
+Desde otra terminal de VS Code, consulta el UUID de la guardería enlazada:
+
+```powershell
+npx --yes supabase@3.0.0 db query --remote --read-only --output-format json "select id, name, brand_name from public.daycares order by name;"
+```
+
+El `id` obtenido es el valor de `public.daycares.id`, no el `PROJECT_REF`.
+Abre el login con ese UUID:
+
+```text
+http://localhost:3000/auth/login?daycareId=<DAYCARE_UUID>
+```
+
+Usa una persona activa con credencial y rol `personal`/`teacher`. Para la cuenta
+bootstrap conocida del seed, el email es `caro@opendaycare.com`, pero la
+contraseña no está versionada y debe configurarse fuera del repositorio.
+
+Comprueba que el login redirige a `/home`, que el Staff Shell muestra los datos
+remotos y que `/kids` solo permite operar sobre salas asignadas.
+
+#### 7. Probar un padre de familia
+
+Consulta padres existentes sin mostrar contraseñas:
+
+```powershell
+npx --yes supabase@3.0.0 db query --remote --read-only --output-format json "select p.name as person_name, p.email as person_email, p.status as person_status from public.people p join public.people_roles pr on pr.person_id = p.id and pr.daycare_id = p.daycare_id join public.roles r on r.id = pr.role_id and r.code = 'parent';"
+```
+
+El padre debe tener estado `active`, una credencial y una relación en
+`parent_kids`. Cierra la sesión de Staff, abre el mismo login con
+`daycareId=<DAYCARE_UUID>` e inicia sesión con la contraseña propia del padre.
+
+Verifica que:
+
+- se redirige a `/home`;
+- solo ve el Family Feed de sus niños vinculados;
+- no ve el composer ni la navegación de personal;
+- `/kids` responde con rechazo uniforme o `404`;
+- no puede ver contenido de otras familias.
+
+Si no existe un padre con contraseña conocida, crea uno mediante el flujo de
+invitación de un niño autorizado (`/kids/<slug>/invite-parent`) y activa la
+cuenta desde el enlace recibido. Este flujo escribe datos reales en la base
+remota y debe ejecutarse solo con una cuenta de prueba controlada.
+
+#### 8. Ejecutar Playwright autenticado contra el remoto
+
+Configura fuera de Git:
+
+```dotenv
+E2E_DAYCARE_ID=<DAYCARE_UUID>
+E2E_STAFF_EMAIL=<EMAIL_STAFF_ACTIVO>
+E2E_STAFF_PASSWORD=<CONTRASEÑA_STAFF>
+```
+
+Playwright necesita recibir estas variables en el proceso de la terminal. En
+PowerShell:
+
+```powershell
+Get-Content .env | ForEach-Object {
+  if ($_ -match '^\s*([^#=]+)=(.*)$') {
+    [Environment]::SetEnvironmentVariable($matches[1].Trim(), $matches[2], "Process")
+  }
+}
+
+npx eslint src
+npx tsc --noEmit --incremental false
+npm run build
+npm run test:e2e
+```
+
+Los artefactos se guardan en `.playwright-mcp/http-security/`. No ejecutes
+pruebas de bloqueo repetido contra cuentas reales; las pruebas de persistencia
+remota deben habilitarse explícitamente con `RUN_REMOTE_DB_TESTS=true`, usar una
+base autorizada y conservar el rollback transaccional.
+
 ## Configuración del Debugger de Next.js en VS Code
 
 ### 1. Crear el archivo de configuración
@@ -389,7 +619,7 @@ fuera de Git:
 ```dotenv
 SUPABASE_DB_HOST=your_database_host
 SUPABASE_DB_PORT=5432
-SUPABASE_DB_USERNAME=postgres.<PROJECT_REF>
+SUPABASE_DB_USERNAME=open_daycare_runtime.<PROJECT_REF>
 SUPABASE_DB_PASSWORD=your_database_password
 SUPABASE_DB_SSL_MODE=require
 RUN_REMOTE_DB_TESTS=false
@@ -430,6 +660,43 @@ Tampoco realiza conexiones SMTP ni operaciones de Cloudinary durante el
 arranque. La refactorización de NextAuth mantiene Credentials, sesiones JWT,
 cookies, redirects y permisos sin cambios; su API server-side se consume desde
 `@/composition/auth`.
+
+### Rol runtime, RLS y provisión de secretos
+
+El runtime usa el rol PostgreSQL dedicado `open_daycare_runtime`, con `LOGIN` y
+`NOBYPASSRLS`, y no utiliza el rol administrador `postgres`. Las migraciones
+conceden únicamente los permisos DML necesarios. Cada operación tenant-scoped
+se ejecuta dentro de una transacción con contexto local (`app.daycare_id` y,
+cuando corresponde, `app.person_id`); ese contexto se limpia al finalizar la
+transacción y no se conserva en conexiones pooled.
+
+Las políticas RLS cubren las 15 tablas operativas públicas. Sin contexto no se
+devuelven filas y un contexto de guardería no puede leer ni modificar filas de
+otra guardería. La guardería operativa del login previo a sesión se resuelve
+mediante una función privada singleton; no se expone un listado de guarderías.
+
+La contraseña del rol se asigna manualmente fuera de Git. Desde una conexión
+administradora segura al PostgreSQL del proyecto, usar `psql` y el prompt
+interactivo para no incluir la contraseña en el historial:
+
+```text
+psql "host=<direct-db-host> port=<direct-db-port> dbname=postgres user=<admin-user> sslmode=require"
+postgres=> \password open_daycare_runtime
+```
+
+Introducir la contraseña únicamente en los prompts ocultos. En Vercel, guardar
+el mismo valor como secreto server-only `SUPABASE_DB_PASSWORD` y configurar
+`SUPABASE_DB_HOST`, `SUPABASE_DB_PORT` y `SUPABASE_DB_SSL_MODE=require` con los
+valores IPv4 del Session Pooler. Para Supavisor, el usuario debe tener el
+formato `open_daycare_runtime.<PROJECT_REF>`; el rol PostgreSQL base sigue
+siendo `open_daycare_runtime`. Nunca usar `NEXT_PUBLIC_*` para estas variables,
+ni incluir la contraseña en migraciones, documentación, logs o comandos
+versionados.
+
+Después de rotar la contraseña, ejecutar un despliegue controlado y comprobar
+el readiness (`SELECT 1`) y el login de la aplicación. Las migraciones se
+aplican explícitamente con `npm run db:migrate:dry-run` y, tras autorización,
+`npm run db:migrate`; nunca desde `bootstrap.ts`.
 
 Las rutas legacy `/login`, `/kids/:id/edit`, `/auth/link-parent`, las rutas
 antiguas de Posts, `/activate-account` y `/auth/activate-account` responden 404.

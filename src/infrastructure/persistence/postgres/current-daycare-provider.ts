@@ -34,7 +34,9 @@ export class CurrentDaycareProvider {
    * @throws MultipleCurrentDaycaresError when the table has multiple rows.
    */
   async getCurrentDaycareId(): Promise<string> {
-    const rows = await this.client<CurrentDaycareRow[]>`SELECT id FROM daycares`;
+    const rows = await this.client<CurrentDaycareRow[]>`
+      SELECT private.get_operational_daycare_id() AS id
+    `;
 
     if (rows.length === 0) {
       throw new CurrentDaycareNotFoundError();
