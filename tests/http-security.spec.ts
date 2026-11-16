@@ -74,6 +74,11 @@ test.describe("HTTP security boundary", () => {
     );
     await signIn(page);
     await page.goto("/posts/new");
+    await page
+      .getByRole("group", { name: "Para" })
+      .getByRole("button")
+      .nth(1)
+      .click();
 
     const input = page.locator('input[type="file"][name="images"]');
     await input.setInputFiles({
@@ -81,14 +86,14 @@ test.describe("HTTP security boundary", () => {
       mimeType: "image/png",
       buffer: pngBuffer(5 * 1024 * 1024 + 1),
     });
-    await expect(page.getByRole("alert")).toContainText("5.0 MB");
+    await expect(page.locator("#post-image-picker-error")).toContainText("5.0 MB");
 
     await input.setInputFiles({
       name: "not-an-image.txt",
       mimeType: "text/plain",
       buffer: Buffer.from("not an image"),
     });
-    await expect(page.getByRole("alert")).toContainText("JPEG, PNG o WebP");
+    await expect(page.locator("#post-image-picker-error")).toContainText("JPEG, PNG o WebP");
   });
 
   test("rejects a fifth image in one operation", async ({ page }) => {
@@ -98,6 +103,11 @@ test.describe("HTTP security boundary", () => {
     );
     await signIn(page);
     await page.goto("/posts/new");
+    await page
+      .getByRole("group", { name: "Para" })
+      .getByRole("button")
+      .nth(1)
+      .click();
 
     await page.locator('input[type="file"][name="images"]').setInputFiles(
       Array.from({ length: 5 }, (_, index) => ({
@@ -106,6 +116,6 @@ test.describe("HTTP security boundary", () => {
         buffer: pngBuffer(1024),
       })),
     );
-    await expect(page.getByRole("alert")).toContainText("hasta 4 imágenes nuevas");
+    await expect(page.locator("#post-image-picker-error")).toContainText("hasta 4 imágenes nuevas");
   });
 });

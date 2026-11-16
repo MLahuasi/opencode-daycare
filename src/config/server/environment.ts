@@ -8,6 +8,7 @@ export type ApplicationEnvironment = {
   locale: string;
   timeZone: string;
   nodeEnvironment: "development" | "test" | "production";
+  isVercelDeployment: boolean;
   isBuild: boolean;
 };
 
@@ -201,6 +202,7 @@ function readEnvironment(): Environment {
         "NODE_ENV",
         ["development", "test", "production"],
       ),
+      isVercelDeployment: process.env.VERCEL === "1",
       isBuild: process.env.NEXT_PHASE === "phase-production-build",
     },
     auth: {

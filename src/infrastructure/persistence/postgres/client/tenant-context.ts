@@ -7,10 +7,17 @@ export type PostgresTenantContext = {
   personId?: string | (() => Promise<string | undefined>);
 };
 
-type UntypedPostgresQuery = (
-  strings: TemplateStringsArray,
-  ...values: readonly unknown[]
-) => Promise<unknown>;
+type UntypedPostgresQuery = {
+  (
+    strings: TemplateStringsArray,
+    ...values: readonly unknown[]
+  ): Promise<unknown>;
+  (...values: readonly unknown[]): unknown;
+};
+
+function isTemplateStringsArray(value: unknown): value is TemplateStringsArray {
+  return Array.isArray(value) && "raw" in value;
+}
 
 async function resolveContextValue<T>(
   value: T | (() => Promise<T>) | undefined,
@@ -49,13 +56,27 @@ export function createTenantScopedPostgresClient(
   client: PostgresQueryClient,
   context: PostgresTenantContext,
 ): PostgresQueryClient {
-  const query = (async (
-    strings: TemplateStringsArray,
+  const query = ((
+    stringsOrValue: TemplateStringsArray | unknown,
     ...values: unknown[]
-  ) =>
-    withPostgresTenantContext(client, context, (transaction) =>
-      (transaction as unknown as UntypedPostgresQuery)(strings, ...values),
-    )) as unknown as Record<string, unknown>;
+  ) => {
+    // A direct call such as client(ids) creates a composable postgres.js SQL
+    // fragment for an IN (...) clause; it does not execute a query and must
+    // remain synchronous. Only tagged templates need the tenant transaction.
+    if (!isTemplateStringsArray(stringsOrValue)) {
+      return (client as unknown as UntypedPostgresQuery)(
+        stringsOrValue,
+        ...values,
+      );
+    }
+
+    return withPostgresTenantContext(client, context, (transaction) =>
+      (transaction as unknown as UntypedPostgresQuery)(
+        stringsOrValue,
+        ...values,
+      ),
+    );
+  }) as unknown as Record<string, unknown>;
 
   query.begin = <T>(
     operation: (transaction: PostgresQueryClient) => Promise<T>,

@@ -8,7 +8,10 @@ import {
 } from "../postgres-runtime";
 import type { CurrentDaycareReader } from "@/application/daycare/ports";
 import type { PostViewer } from "@/application/post";
-import { PostgresPersonRoleRepository } from "@/infrastructure/persistence/postgres";
+import {
+  createTenantScopedPostgresClient,
+  PostgresPersonRoleRepository,
+} from "@/infrastructure/persistence/postgres";
 
 /** Concrete server-only dependencies required by Post use cases. */
 export type PostComposition = PostDependencies;
@@ -27,8 +30,12 @@ export async function getPostViewer(
   daycareId: string,
   personId: string,
 ): Promise<PostViewer> {
-  const roles = await new PostgresPersonRoleRepository(
+  const client = createTenantScopedPostgresClient(
     getPostgresRuntimeClient(),
+    { daycareId, personId },
+  );
+  const roles = await new PostgresPersonRoleRepository(
+    client,
   ).findRoles(personId, daycareId);
 
   return { daycareId, personId, roles };

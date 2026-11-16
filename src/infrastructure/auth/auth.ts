@@ -290,12 +290,21 @@ export async function requireActiveSession(): Promise<Session> {
 export async function requireStaffSession(): Promise<Session> {
   const session = await requireActiveSession();
 
-  const roles = await new PostgresPersonRoleRepository(
+  const scopedClient = createTenantScopedPostgresClient(
     getAuthPostgresClient(),
+    {
+      daycareId: session.user.daycareId,
+      personId: session.user.personId,
+    },
+  );
+  const roles = await new PostgresPersonRoleRepository(
+    scopedClient,
   ).findRoles(session.user.personId, session.user.daycareId);
 
   if (!hasCapability(roles, "staff-shell")) {
-    redirect("/home");
+    redirect(
+      hasCapability(roles, "family-feed") ? "/family-feed" : "/auth/login",
+    );
   }
 
   return session;
