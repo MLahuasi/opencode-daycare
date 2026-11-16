@@ -16,6 +16,7 @@ import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
   PostgresCredentialRepository,
   PostgresPersonRepository,
+  PostgresPersonRoleRepository,
   PostgresClientProvider,
   type PostgresClient,
 } from "@/infrastructure/persistence/postgres";
@@ -65,6 +66,7 @@ export const authOptions: NextAuthOptions = {
         const credentialRepository = new PostgresCredentialRepository(client);
         const passwordHasher = new BcryptPasswordHasher();
         const peopleRepository = new PostgresPersonRepository(client);
+        const personRoleRepository = new PostgresPersonRoleRepository(client);
         const person = await peopleRepository.findByEmail(daycareId, email);
         const storedCredential = person
           ? await credentialRepository.findByPersonId(daycareId, person.id)
@@ -80,10 +82,21 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-           if (!(await passwordHasher.compare(password, storedCredential.passwordHash))) {
-            return null;
+          if (
+            !(await passwordHasher.compare(password, storedCredential.passwordHash))
+          ) {
+             return null;
           }
         } catch {
+          return null;
+        }
+
+        const roles = await personRoleRepository.findByPersonAndDaycare(
+          person.id,
+          daycareId,
+        );
+
+        if (roles.length === 0) {
           return null;
         }
 
@@ -93,7 +106,9 @@ export const authOptions: NextAuthOptions = {
           email: person.email,
           personId: person.id,
           daycareId: person.daycareId,
-          role: person.role,
+          // The singular role remains only as a temporary NextAuth field until
+          // the session contract is reduced to tenant identity in Step 4.
+          role: roles[0],
           persistenceSource: POSTGRES_SESSION_SOURCE,
         };
       },
