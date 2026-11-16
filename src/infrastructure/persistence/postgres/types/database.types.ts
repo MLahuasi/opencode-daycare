@@ -135,6 +135,11 @@ export type Database = {
         relationship: Enums<"parent_relationship">;
         updated_at: string;
       }>;
+      people_roles: Table<{
+        daycare_id: string;
+        person_id: string;
+        role_id: string;
+      }>;
       people: Table<{
         created_at: string;
         daycare_id: string;
@@ -152,6 +157,10 @@ export type Database = {
         name: string;
         updated_at: string;
       }>;
+      roles: Table<{
+        code: Enums<"person_role">;
+        id: string;
+      }>;
       staff_rooms: Table<{
         created_at: string;
         daycare_id: string;
@@ -166,7 +175,7 @@ export type Database = {
     Enums: {
       kid_status: "active" | "inactive";
       parent_relationship: "mother" | "father" | "guardian";
-      person_role: "parent" | "personal";
+      person_role: "admin" | "parent" | "personal" | "teacher";
       person_status: "active" | "inactive" | "pending";
       post_media_delivery_type: "authenticated";
       post_media_format: "jpg" | "jpeg" | "png" | "webp";
