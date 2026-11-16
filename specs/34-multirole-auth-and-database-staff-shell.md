@@ -1,6 +1,6 @@
 # SPEC 34 — Auth multirol y Staff Shell desde PostgreSQL
 
-> **Status:** Draft
+> **Status:** Approved
 > **Depends on:** SPEC 33
 > **Date:** 2026-11-06
 > **Objective:** Adaptar Auth, autorización, Home y todos los consumidores del Staff Shell para consultar roles y perfil desde PostgreSQL sin almacenar roles en el JWT.
@@ -144,14 +144,14 @@ Una persona puede tener varias capacidades simultáneamente. Caro se autentica c
 
 ## Risks
 
-| Risk | Mitigation |
-| --- | --- |
-| Una sesión conserva capacidades después de retirar un rol. | Consultar roles desde PostgreSQL en cada guard o autorización relevante. |
-| Un rol de otro daycare concede acceso incorrecto. | Filtrar siempre `people_roles` por `daycare_id` y probar aislamiento entre tenants. |
-| Algún consumidor sigue esperando `session.user.role`. | Buscar usos globales y cubrir login, Home, Kids, Posts y Family en typecheck y smoke tests. |
-| El Staff Shell pierde datos con varias salas. | Usar orden determinista, formato explícito y pruebas de las tres salas del seed. |
-| Home falla con contenido vacío. | Eliminar `feed_overview` y probar explícitamente cero kids y cero posts. |
-| Se aplica el esquema antes de terminar la adaptación. | Bloquear la aplicación remota hasta el último paso y usar únicamente un proyecto nuevo. |
+| Risk                                                       | Mitigation                                                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Una sesión conserva capacidades después de retirar un rol. | Consultar roles desde PostgreSQL en cada guard o autorización relevante.                    |
+| Un rol de otro daycare concede acceso incorrecto.          | Filtrar siempre `people_roles` por `daycare_id` y probar aislamiento entre tenants.         |
+| Algún consumidor sigue esperando `session.user.role`.      | Buscar usos globales y cubrir login, Home, Kids, Posts y Family en typecheck y smoke tests. |
+| El Staff Shell pierde datos con varias salas.              | Usar orden determinista, formato explícito y pruebas de las tres salas del seed.            |
+| Home falla con contenido vacío.                            | Eliminar `feed_overview` y probar explícitamente cero kids y cero posts.                    |
+| Se aplica el esquema antes de terminar la adaptación.      | Bloquear la aplicación remota hasta el último paso y usar únicamente un proyecto nuevo.     |
 
 ## What is **not** in this spec
 
@@ -161,3 +161,19 @@ Una persona puede tener varias capacidades simultáneamente. Caro se autentica c
 - Editor de permisos configurables.
 - Tabla `feed_overview` o contenido visual persistido para Home.
 - Seed de niños, padres, invitaciones o publicaciones.
+
+---
+
+Plan de implementación
+
+1.  Sustituir el contrato singular de roles por el catálogo multirol.
+2.  Implementar el lector PostgreSQL de roles tenant-scoped.
+3.  Adaptar Credentials/Auth para validar roles.
+4.  Reducir JWT y sesión a personId y daycareId.
+5.  Implementar predicados de capacidades y autorización.
+6.  Crear la composición dinámica del Staff Shell.
+7.  Actualizar consumidores de StaffSidebar.
+8.  Retirar feed_overview y construir Home con datos actuales.
+9.  Verificar Home vacío y múltiples salas.
+10. Crear pruebas de login, multirol, aislamiento y proyecciones.
+11. Ejecutar validaciones y smoke tests contra un proyecto nuevo.
