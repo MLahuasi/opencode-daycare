@@ -106,9 +106,6 @@ export const authOptions: NextAuthOptions = {
           email: person.email,
           personId: person.id,
           daycareId: person.daycareId,
-          // The singular role remains only as a temporary NextAuth field until
-          // the session contract is reduced to tenant identity in Step 4.
-          role: roles[0],
           persistenceSource: POSTGRES_SESSION_SOURCE,
         };
       },
@@ -140,7 +137,6 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.personId = user.personId;
         token.daycareId = user.daycareId;
-        token.role = user.role;
         token.persistenceSource = POSTGRES_SESSION_SOURCE;
       }
 
@@ -151,7 +147,10 @@ export const authOptions: NextAuthOptions = {
         return {};
       }
 
-       const person = await new PostgresPersonRepository(
+      // Remove legacy role claims when an older token is refreshed.
+      delete (token as Record<string, unknown>).role;
+
+      const person = await new PostgresPersonRepository(
          getAuthPostgresClient(),
        ).findById(token.daycareId, token.personId);
 
@@ -162,11 +161,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session({ session, token }) {
-       if (session.user && isPostgresSessionIdentity(token)) {
-         session.user.personId = token.personId;
-         session.user.daycareId = token.daycareId;
-         session.user.role = token.role;
-         session.user.persistenceSource = token.persistenceSource;
+      if (session.user && isPostgresSessionIdentity(token)) {
+        session.user.personId = token.personId;
+        session.user.daycareId = token.daycareId;
+        session.user.persistenceSource = token.persistenceSource;
       }
 
       return session;
@@ -184,7 +182,7 @@ export function getAuthSession() {
 }
 
 /**
- * Requires an active session whose persisted person and role still match.
+ * Requires an active session whose persisted person still matches.
  *
  * @returns The active session for a parent or staff member.
  */
@@ -211,16 +209,10 @@ export async function requireActiveSession(): Promise<Session> {
 }
 
 /**
- * Requires an active staff session and revalidates its persisted role.
+ * Requires an active staff session.
  *
  * @returns The active staff session.
  */
 export async function requireStaffSession(): Promise<Session> {
-  const session = await requireActiveSession();
-
-  if (session.user.role !== "personal") {
-    redirect("/home");
-  }
-
-  return session;
+  return requireActiveSession();
 }
