@@ -1,4 +1,4 @@
-export type { FeedRelations, StaffRoom } from "./mappers";
+export type { FeedRelations, PersonRow, StaffRoom } from "./mappers";
 export {
   mapCredentialRow,
   mapFeedCommentRow,

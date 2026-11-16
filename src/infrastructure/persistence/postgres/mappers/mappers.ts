@@ -5,7 +5,7 @@ import type { Person } from "@/domain/person";
 import type { PostComment, PostMedia, PostReaction, PersistedPost } from "@/domain/post";
 import type { Room } from "@/domain/room";
 import { getApplicationEnvironment } from "@/config/server";
-import type { Tables } from "../types/database.types";
+import type { Enums, Tables } from "../types/database.types";
 
 /** Staff-to-room assignment used by staff authorization adapters. */
 export type StaffRoom = {
@@ -32,14 +32,19 @@ function toIsoDateOnly(value: unknown): string {
   return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
-/** Maps a PostgreSQL people row to the Person domain entity. */
-export function mapPersonRow(row: Tables<"people">): Person {
+/** PostgreSQL people projection enriched with normalized tenant roles. */
+export type PersonRow = Tables<"people"> & {
+  roles: Enums<"person_role">[];
+};
+
+/** Maps a PostgreSQL people projection to the Person domain entity. */
+export function mapPersonRow(row: PersonRow): Person {
   return {
     daycareId: row.daycare_id,
     id: row.id,
     name: row.name,
     email: row.email,
-    role: row.role,
+    roles: row.roles,
     status: row.status,
   };
 }

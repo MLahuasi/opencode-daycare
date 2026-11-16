@@ -133,8 +133,8 @@ export type Database = {
         daycare_id: string;
         email: string;
         id: string;
+        job_title: string | null;
         name: string;
-        role: Enums<"person_role">;
         status: Enums<"person_status">;
         updated_at: string;
       }>;
