@@ -38,7 +38,7 @@ export function presentPostDetail(
 
   return {
     ...detail,
-    authorRoleLabel: detail.author.role === "personal" ? "maestra" : "familia",
+    authorRoleLabel: detail.author.roles.includes("personal") ? "maestra" : "familia",
     comments: detail.comments.map((comment) => ({
       ...comment,
        timeLabel: timeFormatter.format(new Date(comment.createdAt)),
