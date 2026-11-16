@@ -7,8 +7,8 @@ import {
 } from "@/presentation/post";
 import styles from "./feed-content.module.css";
 
-/** Visual copy shown by the staff feed header. */
-export type FeedOverviewViewModel = {
+/** Current-data copy shown by the staff feed header. */
+export type FeedHeaderViewModel = {
   roomLabel: string;
   greeting: string;
   attendance: string;
@@ -30,7 +30,7 @@ type FeedContentProps = {
     postId: string,
   ) => Promise<{ success: boolean; active?: boolean; message?: string }>;
   /** Room header, greeting and composer copy. */
-  overview: FeedOverviewViewModel;
+  overview: FeedHeaderViewModel;
   /** Published Posts to render as cards. */
   posts: readonly Post[];
   /** IANA time zone used to render post timestamps. */
@@ -52,7 +52,7 @@ function getLocalDateKey(value: Date, timeZone: string): string {
 }
 
 /**
- * Renders the static Sala Soles staff feed.
+ * Renders the staff feed with an overview projected from current data.
  *
  * @param props - Feed content configuration.
  * @param props.className - Optional classes applied to the feed landmark.

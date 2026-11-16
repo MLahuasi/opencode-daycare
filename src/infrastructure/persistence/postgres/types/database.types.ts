@@ -77,18 +77,6 @@ export type Database = {
         updated_at: string;
         width: number;
       }>;
-      feed_overview: Table<{
-        attendance: string;
-        composer_prompt: string;
-        created_at: string;
-        date: string;
-        daycare_id: string;
-        greeting: string;
-        id: string;
-        published_today_label: string;
-        room_label: string;
-        updated_at: string;
-      }>;
       feed_reactions: Table<{
         created_at: string;
         daycare_id: string;
