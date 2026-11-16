@@ -14,6 +14,35 @@ export type PersonRole = (typeof PERSON_ROLE_CODES)[number];
 /** The complete set of roles assigned to a person in one daycare. */
 export type PersonRoles = readonly PersonRole[];
 
+/** Capability represented by one or more persisted person roles. */
+export type PersonCapability =
+  | "family-feed"
+  | "manage-posts"
+  | "staff-shell";
+
+/** Checks whether a role set contains one persisted role. */
+export function hasPersonRole(
+  roles: PersonRoles,
+  role: PersonRole,
+): boolean {
+  return roles.includes(role);
+}
+
+/** Checks whether a role set grants one application capability. */
+export function hasPersonCapability(
+  roles: PersonRoles,
+  capability: PersonCapability,
+): boolean {
+  switch (capability) {
+    case "family-feed":
+      return hasPersonRole(roles, "parent");
+    case "manage-posts":
+      return hasPersonRole(roles, "teacher");
+    case "staff-shell":
+      return hasPersonRole(roles, "personal");
+  }
+}
+
 /** Account lifecycle status assigned to a person. */
 export type PersonStatus = "active" | "inactive" | "pending";
 

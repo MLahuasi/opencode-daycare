@@ -66,6 +66,6 @@ export function projectPostDetail(
     post: input.post,
     reactions: projectReactions(input.reactions, people),
     recipient,
-    viewerRole: input.viewerRole,
+    viewerRoles: input.viewerRoles,
   };
 }

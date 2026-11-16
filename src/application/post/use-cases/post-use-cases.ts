@@ -1,4 +1,5 @@
 import { derivePostEngagement, type Post } from "@/domain/post";
+import { hasPersonRole } from "@/domain/person";
 import type { Kid } from "@/domain/kid";
 import type { Room } from "@/domain/room";
 import type { PostViewer } from "../ports";
@@ -62,7 +63,7 @@ export async function hasPhotoSharingConsent(
       .filter(
         (person) =>
           person.daycareId === kid.daycareId &&
-          person.role === "parent" &&
+           hasPersonRole(person.roles, "parent") &&
           person.status === "active",
       )
       .map((person) => person.id),
@@ -89,7 +90,7 @@ export async function getPostTargets(
   dependencies: PostDependencies,
   viewer: PostViewer,
 ): Promise<PostTargets> {
-  if (viewer.role !== "personal") return { kids: [], rooms: [] };
+  if (!hasPersonRole(viewer.roles, "personal")) return { kids: [], rooms: [] };
 
   const [assignedRoomIds, rooms, kids] = await Promise.all([
     dependencies.authorizationAccess.findStaffRoomIds(viewer.personId),
@@ -219,7 +220,7 @@ export async function getPostDetail(
     reactions: reactions.filter((reaction) => reaction.postId === post.id),
     recipientKid,
     recipientRoom,
-    viewerRole: viewer.role,
+    viewerRoles: viewer.roles,
   });
 }
 
