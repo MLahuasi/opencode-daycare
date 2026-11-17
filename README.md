@@ -539,15 +539,64 @@ Uso:
 /spec-impl kid-allergy-tags
 ```
 
-## Agente y comando personalizados
+## Agentes personalizados
 
-### `spec-acceptance-validator`
+Los agentes reutilizables del proyecto están definidos en `.opencode/agents/`.
+Se invocan mencionando su nombre, por ejemplo `@accessibility-checker`, y se
+les deben proporcionar los archivos o la spec que delimitan su trabajo.
 
-Agente definido en
-`.opencode/agent/spec-acceptance-validator.md`. Revisa cada criterio de
-aceptación individualmente, usa Playwright cuando corresponde, ejecuta las
-comprobaciones relevantes y corrige solo incumplimientos necesarios. Marca un
-criterio como verificado únicamente cuando existe evidencia.
+### `@accessibility-checker`
+
+Revisa y corrige los archivos indicados por el usuario según WCAG 2.2 niveles A
+y AA. Comprueba semántica HTML, nombres accesibles, formularios, teclado, foco,
+ARIA, estados dinámicos, contraste y responsive. Aplica correcciones enfocadas
+sin modificar archivos no relacionados y reporta las verificaciones que aún
+requieren navegador, zoom, estilos computados o tecnología de asistencia.
+
+Úsalo cuando se necesite revisar o mejorar la accesibilidad de una pantalla o
+componente específico:
+
+```text
+@accessibility-checker @src/app/auth/login/page.tsx
+```
+
+### `@react-best-practices`
+
+Revisa y mejora la implementación React del proyecto. Evalúa Hooks, pureza de
+componentes, estado, Effects, keys, límites Server/Client, imports,
+composición, tipos y comportamiento accesible. Consulta la documentación
+actual de React y Next.js cuando el cambio depende del framework.
+
+Úsalo para revisiones o refactorizaciones de componentes React, Hooks y JSX.
+
+### `@db-migrator`
+
+Verifica y aplica migraciones Supabase versionadas únicamente en el stack local
+de desarrollo. Ejecuta el dry-run local, detecta drift, revisa riesgos de
+seguridad y confirma el resultado después de una aplicación autorizada.
+Nunca accede ni modifica staging, producción, proyectos remotos, URLs de base
+de datos ni credenciales de producción. Las migraciones validadas localmente
+se despliegan a producción mediante el proceso autorizado de CI o despliegue,
+no mediante este agente.
+
+Úsalo ante cambios de tablas, columnas, índices, constraints, RLS, funciones,
+triggers u otra estructura persistida.
+
+### `@spec-acceptance-validator`
+
+Valida los criterios de aceptación de una spec en `specs/*.md`, comprueba cada
+criterio con evidencia, usa Playwright y Context7 cuando corresponde y corrige
+solo los incumplimientos necesarios. Mantiene sin marcar los criterios fallidos,
+bloqueados o no verificables.
+
+Úsalo después de implementar una spec aprobada y antes de marcarla como
+completada:
+
+```text
+@spec-acceptance-validator specs/04-kid-allergy-tags.md
+```
+
+Los agentes no realizan commits, pushes ni merges automáticamente.
 
 ### `/spec-acceptance-validator`
 
