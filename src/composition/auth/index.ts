@@ -5,6 +5,8 @@ export {
   getAuthSession,
   getPostViewer,
   getSessionPersonRoles,
+  getSessionStaffRoomIds,
   requireActiveSession,
   requireStaffSession,
+  requireTeacherSession,
 } from "./auth-api";

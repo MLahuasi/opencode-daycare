@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getPostViewer, requireStaffSession } from "@/composition/auth";
+import { getPostViewer, requireTeacherSession } from "@/composition/auth";
 import { updatePostAction } from "@/app/_actions/posts";
 import { getPostTargets } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
@@ -25,7 +25,7 @@ type EditPostPageProps = {
 export default async function EditPostPage({
   params,
 }: EditPostPageProps) {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
   const viewer = await getPostViewer(session);
   const { postId } = await params;
    const dependencies = createPostComposition(session.user.daycareId);

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getPostViewer, requireStaffSession } from "@/composition/auth";
+import { getPostViewer, requireTeacherSession } from "@/composition/auth";
 import { createPostAction } from "@/app/_actions/posts";
 import { getPostTargets } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
@@ -14,7 +14,7 @@ import {
  * @returns The authorized empty Post form, or a redirect when no destination exists.
  */
 export default async function NewPostPage() {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
   const viewer = await getPostViewer(session);
    const targets = await getPostTargets(
      createPostComposition(session.user.daycareId),

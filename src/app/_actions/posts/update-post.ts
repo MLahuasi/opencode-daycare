@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getPostViewer, requireStaffSession } from "@/composition/auth";
+import { getPostViewer, requireTeacherSession } from "@/composition/auth";
 import { createPostImageStorage } from "@/composition/post";
 import { updatePost } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
@@ -21,7 +21,7 @@ export async function updatePostAction(
   _previousState: PostFormActionState,
   formData: FormData,
 ): Promise<PostFormActionState> {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
   const viewer = await getPostViewer(session);
   const postId = formData.get("postId");
 

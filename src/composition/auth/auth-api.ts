@@ -5,6 +5,7 @@ import type { PersonRoles } from "@/domain/person";
 import type { PostViewer } from "@/application/post";
 import {
   PostgresPersonRoleRepository,
+  PostgresPostAccessRepository,
   type PostgresQueryClient,
 } from "@/infrastructure/persistence/postgres";
 import { getPostgresRuntimeClient } from "../postgres-runtime";
@@ -13,6 +14,7 @@ import {
   getAuthSession as readInfrastructureAuthSession,
   requireActiveSession as requireInfrastructureActiveSession,
   requireStaffSession as requireInfrastructureStaffSession,
+  requireTeacherSession as requireInfrastructureTeacherSession,
 } from "@/infrastructure/auth/auth";
 
 /** Server-side NextAuth options assembled by the Auth Composition Root. */
@@ -33,6 +35,11 @@ export function requireStaffSession(): Promise<Session> {
   return requireInfrastructureStaffSession();
 }
 
+/** Requires a session with the live teacher capability. */
+export function requireTeacherSession(): Promise<Session> {
+  return requireInfrastructureTeacherSession();
+}
+
 /**
  * Reads the current tenant-scoped roles without placing them in the session.
  *
@@ -49,6 +56,21 @@ export async function getSessionPersonRoles(
     personId,
     daycareId,
   );
+}
+
+/**
+ * Reads the rooms currently assigned to the authenticated staff member.
+ *
+ * @param session - Session containing the tenant-scoped staff identity.
+ * @returns Assigned room identifiers, without persisting them in the session.
+ */
+export async function getSessionStaffRoomIds(
+  session: Session,
+): Promise<readonly string[]> {
+  const daycareId = session.user.daycareId;
+  return new PostgresPostAccessRepository(getPostgresRuntimeClient(), {
+    getCurrentDaycareId: async () => daycareId,
+  }).findStaffRoomIds(session.user.personId);
 }
 
 /**

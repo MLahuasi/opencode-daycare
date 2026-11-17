@@ -1,6 +1,6 @@
 "use server";
 
-import { requireStaffSession } from "@/composition/auth";
+import { getSessionStaffRoomIds, requireTeacherSession } from "@/composition/auth";
 import { redirect } from "next/navigation";
 import { validateInviteParentForm } from "../_schemas";
 import {
@@ -25,7 +25,7 @@ export async function sendInviteParentAction(
   _previousState: InviteParentActionState,
   formData: FormData,
 ): Promise<InviteParentActionState> {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
 
   const validation = validateInviteParentForm({
     name: formData.get("name"),
@@ -61,6 +61,9 @@ export async function sendInviteParentAction(
       errors: {},
       message: "No puedes crear una invitación para otra guardería.",
     };
+  }
+  if (!(await getSessionStaffRoomIds(session)).includes(kid.roomId)) {
+    return { errors: {}, message: "No tienes permiso para este niño." };
   }
 
   let createdInvitation;

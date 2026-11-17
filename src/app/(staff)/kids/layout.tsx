@@ -1,7 +1,7 @@
 import { StaffSidebar } from "@/presentation/layout";
 import { createStaffNavigationConfig } from "@/presentation/navigation";
 import { createStaffShellComposition } from "@/composition/staff";
-import { requireStaffSession } from "@/composition/auth";
+import { requireTeacherSession } from "@/composition/auth";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -13,7 +13,7 @@ import type { ReactNode } from "react";
  * @returns The Kids layout with desktop and mobile staff navigation.
  */
 export default async function KidsLayout({ children }: { children: ReactNode }) {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
   const staffNavigation = await createStaffShellComposition().getNavigation(
     session.user.daycareId,
     session.user.personId,

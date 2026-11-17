@@ -7,7 +7,7 @@ import { createStaffNavigationConfig } from "@/presentation/navigation";
 import { createStaffShellComposition } from "@/composition/staff";
 import {
   getSessionPersonRoles,
-  requireActiveSession,
+  requireStaffSession,
 } from "@/composition/auth";
 import { redirect } from "next/navigation";
 import { getApplicationEnvironment } from "@/config/server";
@@ -18,7 +18,7 @@ import { getApplicationEnvironment } from "@/config/server";
  * @returns The responsive staff feed layout.
  */
 export default async function Home() {
-  const session = await requireActiveSession();
+  const session = await requireStaffSession();
   const roles = await getSessionPersonRoles(
     session.user.daycareId,
     session.user.personId,
@@ -30,10 +30,6 @@ export default async function Home() {
 
   if (!staffNavigation) {
     redirect("/auth/login");
-  }
-
-  if (roles.includes("parent")) {
-    redirect("/family-feed");
   }
 
   const postComposition = createPostComposition(session.user.daycareId);

@@ -14,6 +14,7 @@ import { createFamilyFeedComposition } from "@/composition/family";
 import { createPostComposition } from "@/composition/post";
 import { presentPostDetail } from "@/presentation/post";
 import { getApplicationEnvironment } from "@/config/server";
+import { hasPersonCapability } from "@/domain/person";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -49,7 +50,7 @@ export default async function PostDetailPage({
    const environment = getApplicationEnvironment();
    const viewModel = presentPostDetail(detail, environment.locale, environment.timeZone);
 
-    if (roles.includes("parent")) {
+     if (!hasPersonCapability(roles, "staff-shell") && roles.includes("parent")) {
     const familyContext = await getFamilyFeedContext(
        createFamilyFeedComposition(session.user.daycareId),
       session.user.personId,
@@ -69,7 +70,11 @@ export default async function PostDetailPage({
     );
    }
 
-   const staffNavigation = await createStaffShellComposition().getNavigation(
+    if (!hasPersonCapability(roles, "staff-shell")) {
+      notFound();
+    }
+
+    const staffNavigation = await createStaffShellComposition().getNavigation(
      session.user.daycareId,
      session.user.personId,
    );

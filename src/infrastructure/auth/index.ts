@@ -3,4 +3,5 @@ export {
   getAuthSession,
   requireActiveSession,
   requireStaffSession,
+  requireTeacherSession,
 } from "./auth";

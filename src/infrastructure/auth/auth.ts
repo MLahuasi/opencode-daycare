@@ -20,6 +20,7 @@ import {
   getSharedPostgresClient,
   type PostgresClient,
 } from "@/infrastructure/persistence/postgres";
+import { hasPersonCapability } from "@/domain/person";
 
 let postgresClient: PostgresClient | undefined;
 
@@ -214,5 +215,32 @@ export async function requireActiveSession(): Promise<Session> {
  * @returns The active staff session.
  */
 export async function requireStaffSession(): Promise<Session> {
-  return requireActiveSession();
+  const session = await requireActiveSession();
+  const roles = await new PostgresPersonRoleRepository(
+    getAuthPostgresClient(),
+  ).findByPersonAndDaycare(session.user.personId, session.user.daycareId);
+
+  if (!hasPersonCapability(roles, "staff-shell")) {
+    redirect("/auth/login");
+  }
+
+  return session;
+}
+
+/**
+ * Requires the current live role set to include the Kids and Posts capability.
+ *
+ * @returns The active session for a teacher.
+ */
+export async function requireTeacherSession(): Promise<Session> {
+  const session = await requireStaffSession();
+  const roles = await new PostgresPersonRoleRepository(
+    getAuthPostgresClient(),
+  ).findByPersonAndDaycare(session.user.personId, session.user.daycareId);
+
+  if (!hasPersonCapability(roles, "manage-posts")) {
+    redirect("/auth/login");
+  }
+
+  return session;
 }

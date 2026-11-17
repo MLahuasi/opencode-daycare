@@ -1,6 +1,6 @@
 # SPEC 34 — Auth multirol y Staff Shell desde PostgreSQL
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 33
 > **Date:** 2026-11-06
 > **Objective:** Adaptar Auth, autorización, Home y todos los consumidores del Staff Shell para consultar roles y perfil desde PostgreSQL sin almacenar roles en el JWT.
@@ -103,29 +103,29 @@ Una persona puede tener varias capacidades simultáneamente. Caro se autentica c
 
 ## Acceptance criteria
 
-- [ ] La consulta de roles usa `people_roles` y `roles` filtrando por `person_id` y `daycare_id`.
-- [ ] Una persona activa con credencial válida y sin roles en el daycare no obtiene sesión.
-- [ ] Los roles no aparecen en el JWT ni se usan como autoridad persistida en la sesión.
-- [ ] La sesión conserva `personId` y `daycareId`.
-- [ ] Una persona con `admin`, `personal` y `teacher` conserva las capacidades combinadas definidas en esta spec.
-- [ ] `personal` permite entrar al Staff Shell.
-- [ ] `teacher` permite gestionar Kids y Posts únicamente dentro del daycare y salas autorizadas.
-- [ ] `parent` conserva el comportamiento de Family Feed.
-- [ ] `admin` puede existir en la sesión consultada desde PostgreSQL, pero no muestra UI administrativa nueva.
-- [ ] Home, Kids y detalle de Post no importan una configuración Staff con nombre, branding o perfil hardcodeados.
-- [ ] El branding se obtiene de `daycares.brand_name` y las salas asignadas.
-- [ ] El perfil se obtiene de `people.name`, `people.job_title` y las salas asignadas.
-- [ ] Con las tres salas sembradas, la interfaz muestra `Salas Soles, Girasoles, Patitos` y `Maestra · Soles, Girasoles, Patitos`.
-- [ ] Sin cargo se muestra `Personal` y sin salas se muestra `Sin salas`.
-- [ ] `feed_overview` no tiene tipos, repositorio, composición ni consumidor runtime.
-- [ ] Home funciona con cero kids y cero posts, muestra asistencia cero y calcula la fecha actual.
-- [ ] Las rutas no autorizadas se redirigen o rechazan según el comportamiento existente, sin confiar en un rol único del JWT.
-- [ ] Las pruebas cubren roles distintos para una misma persona en daycares distintos.
-- [ ] El esquema y seed solo se aplican al proyecto Supabase nuevo después de completar la adaptación runtime.
-- [ ] `npx eslint src` termina correctamente.
-- [ ] `npx tsc --noEmit --incremental false` termina correctamente.
-- [ ] `npm run build` termina correctamente.
-- [ ] Los smoke tests de login, Home, Kids y Posts pasan contra el proyecto nuevo sembrado.
+- [x] La consulta de roles usa `people_roles` y `roles` filtrando por `person_id` y `daycare_id`.
+- [x] Una persona activa con credencial válida y sin roles en el daycare no obtiene sesión.
+- [x] Los roles no aparecen en el JWT ni se usan como autoridad persistida en la sesión.
+- [x] La sesión conserva `personId` y `daycareId`.
+- [x] Una persona con `admin`, `personal` y `teacher` conserva las capacidades combinadas definidas en esta spec.
+- [x] `personal` permite entrar al Staff Shell.
+- [x] `teacher` permite gestionar Kids y Posts únicamente dentro del daycare y salas autorizadas.
+- [x] `parent` conserva el comportamiento de Family Feed.
+- [x] `admin` puede existir en la sesión consultada desde PostgreSQL, pero no muestra UI administrativa nueva.
+- [x] Home, Kids y detalle de Post no importan una configuración Staff con nombre, branding o perfil hardcodeados.
+- [x] El branding se obtiene de `daycares.brand_name` y las salas asignadas.
+- [x] El perfil se obtiene de `people.name`, `people.job_title` y las salas asignadas.
+- [x] Con las tres salas sembradas, la interfaz muestra `Salas Soles, Girasoles, Patitos` y `Maestra · Soles, Girasoles, Patitos`.
+- [x] Sin cargo se muestra `Personal` y sin salas se muestra `Sin salas`.
+- [x] `feed_overview` no tiene tipos, repositorio, composición ni consumidor runtime.
+- [x] Home funciona con cero kids y cero posts, muestra asistencia cero y calcula la fecha actual.
+- [x] Las rutas no autorizadas se redirigen o rechazan según el comportamiento existente, sin confiar en un rol único del JWT.
+- [x] Las pruebas cubren roles distintos para una misma persona en daycares distintos.
+- [x] El esquema y seed solo se aplican al proyecto Supabase nuevo después de completar la adaptación runtime.
+- [x] `npx eslint src` termina correctamente.
+- [x] `npx tsc --noEmit --incremental false` termina correctamente.
+- [x] `npm run build` termina correctamente.
+- [x] Los smoke tests de login, Home, Kids y Posts pasan contra el proyecto nuevo sembrado.
 
 ## Decisions
 
@@ -163,17 +163,3 @@ Una persona puede tener varias capacidades simultáneamente. Caro se autentica c
 - Seed de niños, padres, invitaciones o publicaciones.
 
 ---
-
-Plan de implementación
-
-1.  Sustituir el contrato singular de roles por el catálogo multirol.
-2.  Implementar el lector PostgreSQL de roles tenant-scoped.
-3.  Adaptar Credentials/Auth para validar roles.
-4.  Reducir JWT y sesión a personId y daycareId.
-5.  Implementar predicados de capacidades y autorización.
-6.  Crear la composición dinámica del Staff Shell.
-7.  Actualizar consumidores de StaffSidebar.
-8.  Retirar feed_overview y construir Home con datos actuales.
-9.  Verificar Home vacío y múltiples salas.
-10. Crear pruebas de login, multirol, aislamiento y proyecciones.
-11. Ejecutar validaciones y smoke tests contra un proyecto nuevo.
