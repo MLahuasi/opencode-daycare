@@ -2,7 +2,7 @@ import "server-only";
 
 import {
   CurrentDaycareProvider,
-  PostgresClientProvider,
+  getSharedPostgresClient,
   type PostgresClient,
 } from "@/infrastructure/persistence/postgres";
 
@@ -11,7 +11,7 @@ let currentDaycare: CurrentDaycareProvider | undefined;
 
 /** Returns the shared server-side PostgreSQL client used by runtime compositions. */
 export function getPostgresRuntimeClient(): PostgresClient {
-  client ??= new PostgresClientProvider().createClient();
+  client ??= getSharedPostgresClient();
   return client;
 }
 

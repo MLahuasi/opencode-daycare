@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireStaffSession } from "@/composition/auth";
+import { getPostViewer, requireTeacherSession } from "@/composition/auth";
 import { createPostImageStorage } from "@/composition/post";
 import { createPost } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
@@ -20,7 +20,8 @@ export async function createPostAction(
   _previousState: PostFormActionState,
   formData: FormData,
 ): Promise<PostFormActionState> {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
+  const viewer = await getPostViewer(session);
   const parsed = await parsePostSubmission(
     formData,
     session.user.personId,
@@ -40,7 +41,7 @@ export async function createPostAction(
        roomId: parsed.values.roomId,
        type: parsed.values.type,
        },
-       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+        viewer,
      );
 
      if (!createdPost) {

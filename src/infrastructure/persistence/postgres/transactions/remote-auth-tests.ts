@@ -49,10 +49,25 @@ export async function runRemoteAuthPersistenceTests(): Promise<void> {
         (${ids.secondDaycareId}, ${`Remote Auth ${ids.secondDaycareId}`})
     `;
     await client`
-      INSERT INTO people (id, daycare_id, name, email, role, status)
+      INSERT INTO roles (id, code)
+      VALUES (${randomUUID()}, 'parent')
+      ON CONFLICT (code) DO NOTHING
+    `;
+    await client`
+      INSERT INTO people (id, daycare_id, name, email, status)
       VALUES
-        (${ids.firstPersonId}, ${ids.firstDaycareId}, 'Remote Parent A', ${email}, 'parent', 'active'),
-        (${ids.secondPersonId}, ${ids.secondDaycareId}, 'Remote Parent B', ${email}, 'parent', 'active')
+        (${ids.firstPersonId}, ${ids.firstDaycareId}, 'Remote Parent A', ${email}, 'active'),
+        (${ids.secondPersonId}, ${ids.secondDaycareId}, 'Remote Parent B', ${email}, 'active')
+    `;
+    await client`
+      INSERT INTO people_roles (daycare_id, person_id, role_id)
+      SELECT ${ids.firstDaycareId}, ${ids.firstPersonId}, id
+      FROM roles
+      WHERE code = 'parent'
+      UNION ALL
+      SELECT ${ids.secondDaycareId}, ${ids.secondPersonId}, id
+      FROM roles
+      WHERE code = 'parent'
     `;
 
     const firstPerson = await people.findByEmail(ids.firstDaycareId, email);
@@ -97,8 +112,19 @@ export async function runRemoteAuthPersistenceTests(): Promise<void> {
         VALUES (${ids.firstDaycareId}, ${`Rollback Auth ${ids.firstDaycareId}`})
       `;
       await client`
-        INSERT INTO people (id, daycare_id, name, email, role, status)
-        VALUES (${ids.firstPersonId}, ${ids.firstDaycareId}, 'Rollback Parent', ${email}, 'parent', 'pending')
+        INSERT INTO roles (id, code)
+        VALUES (${randomUUID()}, 'parent')
+        ON CONFLICT (code) DO NOTHING
+      `;
+      await client`
+        INSERT INTO people (id, daycare_id, name, email, status)
+        VALUES (${ids.firstPersonId}, ${ids.firstDaycareId}, 'Rollback Parent', ${email}, 'pending')
+      `;
+      await client`
+        INSERT INTO people_roles (daycare_id, person_id, role_id)
+        SELECT ${ids.firstDaycareId}, ${ids.firstPersonId}, id
+        FROM roles
+        WHERE code = 'parent'
       `;
       await client`
         INSERT INTO rooms (id, daycare_id, name)

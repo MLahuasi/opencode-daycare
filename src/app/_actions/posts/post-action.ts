@@ -175,7 +175,7 @@ export async function parsePostSubmission(
 
   const targets = await getPostTargets(
     createPostComposition(authenticatedDaycareId),
-    { daycareId: authenticatedDaycareId, personId, role: "personal" },
+    { daycareId: authenticatedDaycareId, personId, roles: ["personal", "teacher"] },
   );
   const targetKids = targets.kids.filter((kid) =>
     initialValidation.data.kidIds.includes(kid.id),

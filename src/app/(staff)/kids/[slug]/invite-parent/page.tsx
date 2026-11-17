@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { requireStaffSession } from "@/composition/auth";
+import { getSessionStaffRoomIds, requireTeacherSession } from "@/composition/auth";
 import { getKidBySlug } from "@/application/kid";
 import { createKidComposition } from "@/composition/kid";
 import { InviteParentForm } from "./_components";
@@ -16,7 +16,7 @@ export default async function InviteParentPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
 
   const { slug } = await params;
   const kid = await getKidBySlug(createKidComposition(session.user.daycareId), slug);
@@ -24,6 +24,7 @@ export default async function InviteParentPage({
   if (!kid) {
     notFound();
   }
+  if (!(await getSessionStaffRoomIds(session)).includes(kid.roomId)) notFound();
 
   return <InviteParentForm kid={{ id: kid.id, name: kid.name, slug: kid.slug }} />;
 }

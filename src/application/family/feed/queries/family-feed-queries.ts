@@ -3,6 +3,7 @@ import {
   selectFamilyFeedPosts,
   type FamilyFeedFilter,
 } from "@/domain/family";
+import { hasPersonRole } from "@/domain/person";
 import type {
   FamilyFeedContext,
   FamilyFeedProjection,
@@ -29,7 +30,7 @@ export async function getFamilyFeedContext(
   ]);
 
   if (!person) throw new Error("Authenticated person was not found in persistence.");
-  if (person.role !== "parent") {
+  if (!hasPersonRole(person.roles, "parent")) {
     throw new Error("Family context is only available to parent accounts.");
   }
 

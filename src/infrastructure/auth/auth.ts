@@ -16,14 +16,16 @@ import { BcryptPasswordHasher } from "@/infrastructure/adapters/password";
 import {
   PostgresCredentialRepository,
   PostgresPersonRepository,
-  PostgresClientProvider,
+  PostgresPersonRoleRepository,
+  getSharedPostgresClient,
   type PostgresClient,
 } from "@/infrastructure/persistence/postgres";
+import { hasPersonCapability } from "@/domain/person";
 
 let postgresClient: PostgresClient | undefined;
 
 function getAuthPostgresClient(): PostgresClient {
-  postgresClient ??= new PostgresClientProvider().createClient();
+  postgresClient ??= getSharedPostgresClient();
   return postgresClient;
 }
 
@@ -65,6 +67,7 @@ export const authOptions: NextAuthOptions = {
         const credentialRepository = new PostgresCredentialRepository(client);
         const passwordHasher = new BcryptPasswordHasher();
         const peopleRepository = new PostgresPersonRepository(client);
+        const personRoleRepository = new PostgresPersonRoleRepository(client);
         const person = await peopleRepository.findByEmail(daycareId, email);
         const storedCredential = person
           ? await credentialRepository.findByPersonId(daycareId, person.id)
@@ -80,10 +83,21 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-           if (!(await passwordHasher.compare(password, storedCredential.passwordHash))) {
-            return null;
+          if (
+            !(await passwordHasher.compare(password, storedCredential.passwordHash))
+          ) {
+             return null;
           }
         } catch {
+          return null;
+        }
+
+        const roles = await personRoleRepository.findByPersonAndDaycare(
+          person.id,
+          daycareId,
+        );
+
+        if (roles.length === 0) {
           return null;
         }
 
@@ -93,7 +107,6 @@ export const authOptions: NextAuthOptions = {
           email: person.email,
           personId: person.id,
           daycareId: person.daycareId,
-          role: person.role,
           persistenceSource: POSTGRES_SESSION_SOURCE,
         };
       },
@@ -125,7 +138,6 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.personId = user.personId;
         token.daycareId = user.daycareId;
-        token.role = user.role;
         token.persistenceSource = POSTGRES_SESSION_SOURCE;
       }
 
@@ -136,7 +148,10 @@ export const authOptions: NextAuthOptions = {
         return {};
       }
 
-       const person = await new PostgresPersonRepository(
+      // Remove legacy role claims when an older token is refreshed.
+      delete (token as Record<string, unknown>).role;
+
+      const person = await new PostgresPersonRepository(
          getAuthPostgresClient(),
        ).findById(token.daycareId, token.personId);
 
@@ -147,11 +162,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session({ session, token }) {
-       if (session.user && isPostgresSessionIdentity(token)) {
-         session.user.personId = token.personId;
-         session.user.daycareId = token.daycareId;
-         session.user.role = token.role;
-         session.user.persistenceSource = token.persistenceSource;
+      if (session.user && isPostgresSessionIdentity(token)) {
+        session.user.personId = token.personId;
+        session.user.daycareId = token.daycareId;
+        session.user.persistenceSource = token.persistenceSource;
       }
 
       return session;
@@ -169,7 +183,7 @@ export function getAuthSession() {
 }
 
 /**
- * Requires an active session whose persisted person and role still match.
+ * Requires an active session whose persisted person still matches.
  *
  * @returns The active session for a parent or staff member.
  */
@@ -196,15 +210,36 @@ export async function requireActiveSession(): Promise<Session> {
 }
 
 /**
- * Requires an active staff session and revalidates its persisted role.
+ * Requires an active staff session.
  *
  * @returns The active staff session.
  */
 export async function requireStaffSession(): Promise<Session> {
   const session = await requireActiveSession();
+  const roles = await new PostgresPersonRoleRepository(
+    getAuthPostgresClient(),
+  ).findByPersonAndDaycare(session.user.personId, session.user.daycareId);
 
-  if (session.user.role !== "personal") {
-    redirect("/home");
+  if (!hasPersonCapability(roles, "staff-shell")) {
+    redirect("/auth/login");
+  }
+
+  return session;
+}
+
+/**
+ * Requires the current live role set to include the Kids and Posts capability.
+ *
+ * @returns The active session for a teacher.
+ */
+export async function requireTeacherSession(): Promise<Session> {
+  const session = await requireStaffSession();
+  const roles = await new PostgresPersonRoleRepository(
+    getAuthPostgresClient(),
+  ).findByPersonAndDaycare(session.user.personId, session.user.daycareId);
+
+  if (!hasPersonCapability(roles, "manage-posts")) {
+    redirect("/auth/login");
   }
 
   return session;

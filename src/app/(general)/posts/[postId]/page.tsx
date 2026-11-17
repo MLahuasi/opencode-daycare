@@ -1,15 +1,20 @@
 import { notFound } from "next/navigation";
-import { requireActiveSession } from "@/composition/auth";
+import {
+  getSessionPersonRoles,
+  requireActiveSession,
+} from "@/composition/auth";
 import { deleteFeedCommentAction } from "@/app/_actions/posts";
 import { getFamilyFeedContext } from "@/application/family/feed";
 import { getPostDetail } from "@/application/post";
 import { PostDetailView } from "@/presentation/post";
 import { FamilySidebar, StaffSidebar } from "@/presentation/layout";
-import { staffNavigationConfig } from "@/presentation/navigation";
+import { createStaffNavigationConfig } from "@/presentation/navigation";
+import { createStaffShellComposition } from "@/composition/staff";
 import { createFamilyFeedComposition } from "@/composition/family";
 import { createPostComposition } from "@/composition/post";
 import { presentPostDetail } from "@/presentation/post";
 import { getApplicationEnvironment } from "@/config/server";
+import { hasPersonCapability } from "@/domain/person";
 
 /** Dynamic parameters accepted by the general Post detail route. */
 type PostDetailPageProps = {
@@ -28,11 +33,15 @@ export default async function PostDetailPage({
   params,
 }: PostDetailPageProps) {
   const session = await requireActiveSession();
+  const roles = await getSessionPersonRoles(
+    session.user.daycareId,
+    session.user.personId,
+  );
   const { postId } = await params;
    const detail = await getPostDetail(
      createPostComposition(session.user.daycareId),
      postId,
-      { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+       { daycareId: session.user.daycareId, personId: session.user.personId, roles },
    );
 
    if (!detail) {
@@ -41,7 +50,7 @@ export default async function PostDetailPage({
    const environment = getApplicationEnvironment();
    const viewModel = presentPostDetail(detail, environment.locale, environment.timeZone);
 
-  if (session.user.role === "parent") {
+     if (!hasPersonCapability(roles, "staff-shell") && roles.includes("parent")) {
     const familyContext = await getFamilyFeedContext(
        createFamilyFeedComposition(session.user.daycareId),
       session.user.personId,
@@ -59,11 +68,24 @@ export default async function PostDetailPage({
         />
       </div>
     );
-  }
+   }
 
-  return (
-    <div className="flex min-h-screen bg-background text-foreground">
-      <StaffSidebar navigation={staffNavigationConfig} />
+    if (!hasPersonCapability(roles, "staff-shell")) {
+      notFound();
+    }
+
+    const staffNavigation = await createStaffShellComposition().getNavigation(
+     session.user.daycareId,
+     session.user.personId,
+   );
+
+   if (!staffNavigation) {
+     notFound();
+   }
+
+   return (
+     <div className="flex min-h-screen bg-background text-foreground">
+      <StaffSidebar navigation={createStaffNavigationConfig(staffNavigation)} />
       <PostDetailView
         backHref="/home"
         className="min-w-0 flex-1"

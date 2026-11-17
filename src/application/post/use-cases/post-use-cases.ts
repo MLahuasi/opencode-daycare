@@ -1,4 +1,5 @@
 import { derivePostEngagement, type Post } from "@/domain/post";
+import { hasPersonRole } from "@/domain/person";
 import type { Kid } from "@/domain/kid";
 import type { Room } from "@/domain/room";
 import type { PostViewer } from "../ports";
@@ -62,7 +63,7 @@ export async function hasPhotoSharingConsent(
       .filter(
         (person) =>
           person.daycareId === kid.daycareId &&
-          person.role === "parent" &&
+           hasPersonRole(person.roles, "parent") &&
           person.status === "active",
       )
       .map((person) => person.id),
@@ -89,7 +90,7 @@ export async function getPostTargets(
   dependencies: PostDependencies,
   viewer: PostViewer,
 ): Promise<PostTargets> {
-  if (viewer.role !== "personal") return { kids: [], rooms: [] };
+  if (!hasPersonRole(viewer.roles, "personal")) return { kids: [], rooms: [] };
 
   const [assignedRoomIds, rooms, kids] = await Promise.all([
     dependencies.authorizationAccess.findStaffRoomIds(viewer.personId),
@@ -171,21 +172,24 @@ export async function getPostDetail(
     return null;
   }
 
-  const [people, comments, reactions, recipientKid, recipientRoom] =
+  const [people, comments, reactions, recipientKids, recipientRoom] =
     await Promise.all([
       dependencies.people.findAll(),
-       dependencies.comments.findByPostId(post.id),
-       dependencies.reactions.findByPostId(post.id),
-      post.kidIds[0] ? dependencies.kids.findById(post.kidIds[0]) : Promise.resolve(null),
+      dependencies.comments.findByPostId(post.id),
+      dependencies.reactions.findByPostId(post.id),
+      Promise.all(post.kidIds.map((kidId) => dependencies.kids.findById(kidId))),
       post.roomId ? dependencies.rooms.findById(post.roomId) : Promise.resolve(null),
     ]);
+  const existingRecipientKids = recipientKids.filter(
+    (kid): kid is NonNullable<typeof kid> => kid !== null,
+  );
   const author = people.find(
     (person) => person.id === post.authorId && person.daycareId === post.daycareId,
   );
   if (!author) return null;
 
   if (
-    (recipientKid && recipientKid.daycareId !== post.daycareId) ||
+    existingRecipientKids.some((kid) => kid.daycareId !== post.daycareId) ||
     (recipientRoom && recipientRoom.daycareId !== post.daycareId) ||
     comments.some((comment) => comment.daycareId !== post.daycareId) ||
     reactions.some((reaction) => reaction.daycareId !== post.daycareId)
@@ -217,9 +221,9 @@ export async function getPostDetail(
     people,
     post: projectedPost,
     reactions: reactions.filter((reaction) => reaction.postId === post.id),
-    recipientKid,
+    recipientKids: existingRecipientKids,
     recipientRoom,
-    viewerRole: viewer.role,
+    viewerRoles: viewer.roles,
   });
 }
 

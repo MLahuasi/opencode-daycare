@@ -1,4 +1,5 @@
 import type { StaffNavigationConfig } from "@/presentation/layout";
+import type { StaffNavigationProjection } from "@/application/staff";
 
 /**
  * Transversal copy and navigation profile used by the staff shell.
@@ -6,25 +7,28 @@ import type { StaffNavigationConfig } from "@/presentation/layout";
  * Lives in shared config because it is application-level navigation
  * configuration, not a mutable fixture nor a domain model.
  */
-export const staffNavigationConfig = {
-  navigationLabel: "Navegación principal",
-  sectionsLabel: "Secciones",
-  mobileNavigationLabel: "Navegación móvil",
-  brand: {
-    name: "OpenDayCare",
-    room: "Sala Soles",
-  },
-  newPostLabel: "Nueva publicación",
-  profile: {
-    initial: "C",
-    name: "Caro Giménez",
-    role: "Maestra · Soles",
-  },
-  logoutLabel: "Cerrar sesión",
-  navigationItems: [
-    { label: "Feed", icon: "feed", href: "/home", active: true },
-    { label: "Niños", icon: "children", href: "/kids" },
-    { label: "Avisos", icon: "alerts" },
-    { label: "Mi cuenta", icon: "account" },
-  ],
-} satisfies StaffNavigationConfig;
+/**
+ * Builds the Staff Shell navigation from persisted brand and profile data.
+ *
+ * @param projection - Dynamic Staff Shell data loaded from PostgreSQL.
+ * @returns Complete navigation configuration for the Staff Sidebar.
+ */
+export function createStaffNavigationConfig(
+  projection: StaffNavigationProjection,
+): StaffNavigationConfig {
+  return {
+    navigationLabel: "Navegación principal",
+    sectionsLabel: "Secciones",
+    mobileNavigationLabel: "Navegación móvil",
+    brand: projection.brand,
+    newPostLabel: "Nueva publicación",
+    profile: projection.profile,
+    logoutLabel: "Cerrar sesión",
+    navigationItems: [
+      { label: "Feed", icon: "feed", href: "/home", active: true },
+      { label: "Niños", icon: "children", href: "/kids" },
+      { label: "Avisos", icon: "alerts" },
+      { label: "Mi cuenta", icon: "account" },
+    ],
+  };
+}

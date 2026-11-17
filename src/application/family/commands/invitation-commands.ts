@@ -51,7 +51,7 @@ export async function createInvitation(
 
   const existingPerson = await dependencies.people.findByEmail(kid.daycareId, email);
 
-  if (existingPerson && existingPerson.role !== "parent") {
+  if (existingPerson && !existingPerson.roles.includes("parent")) {
     throw new ExistingInvitationPersonError(
       "The invitation email belongs to a non-parent person.",
     );
@@ -62,7 +62,7 @@ export async function createInvitation(
     id: dependencies.identifiers.create(),
     name: input.name.trim(),
     email,
-    role: "parent",
+    roles: ["parent"],
     status: "pending",
   };
   const existingParentKid = await dependencies.parentKids.findByParentAndKid(
@@ -125,7 +125,7 @@ export async function createParentKidFromInvitation(
   }
 
   await dependencies.parentKids.create({
-    id: `parent-kid-${person.id}-${invitation.kidId}`,
+    id: dependencies.identifiers.create(),
     daycareId: invitation.daycareId,
     parentId: person.id,
     kidId: invitation.kidId,
@@ -167,7 +167,8 @@ export async function acceptInvitation(
     throw new InvalidInvitationAcceptanceError("The invitation email does not match.");
   }
 
-  const existingActiveParent = person.role === "parent" && person.status === "active";
+  const existingActiveParent =
+    person.roles.includes("parent") && person.status === "active";
 
   if (!existingActiveParent && (!input.password || !isValidActivationPassword(input.password))) {
     throw new InvalidInvitationAcceptanceError("The activation password is invalid.");
@@ -205,7 +206,7 @@ export async function acceptInvitation(
       }
 
       await transactionRepositories.parentKids.create({
-        id: `parent-kid-${person.id}-${currentInvitation.kidId}`,
+        id: dependencies.identifiers.create(),
         daycareId: currentInvitation.daycareId,
         parentId: person.id,
         kidId: currentInvitation.kidId,
@@ -224,7 +225,7 @@ export async function acceptInvitation(
     if (!existingActiveParent && input.password) {
       const credential = {
         daycareId: person.daycareId,
-        id: `credential-${person.id}`,
+        id: dependencies.identifiers.create(),
         personId: person.id,
         passwordHash: await dependencies.passwordHasher.hash(input.password),
       };

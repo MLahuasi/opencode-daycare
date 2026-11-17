@@ -3,7 +3,7 @@ import type { KidFormValues } from "@/application/kid";
 import { getKidById, getRooms } from "@/application/kid";
 import { createKidComposition } from "@/composition/kid";
 import { updateKidAction } from "../../_actions";
-import { requireStaffSession } from "@/composition/auth";
+import { getSessionStaffRoomIds, requireTeacherSession } from "@/composition/auth";
 import { notFound } from "next/navigation";
 
 /**
@@ -18,7 +18,7 @@ export default async function EditKidPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
 
   const { id } = await params;
   const dependencies = createKidComposition(session.user.daycareId);
@@ -30,6 +30,8 @@ export default async function EditKidPage({
   if (!kid) {
     notFound();
   }
+  const staffRoomIds = new Set(await getSessionStaffRoomIds(session));
+  if (!staffRoomIds.has(kid.roomId)) notFound();
 
   const initialValues: KidFormValues = {
     name: kid.name,
@@ -47,7 +49,7 @@ export default async function EditKidPage({
         cancelHref={`/kids/${kid.slug}`}
         heading="Editar niño"
         initialValues={initialValues}
-        rooms={rooms}
+        rooms={rooms.filter((room) => staffRoomIds.has(room.id))}
       />
     </main>
   );

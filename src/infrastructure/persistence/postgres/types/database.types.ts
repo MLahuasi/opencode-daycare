@@ -77,18 +77,6 @@ export type Database = {
         updated_at: string;
         width: number;
       }>;
-      feed_overview: Table<{
-        attendance: string;
-        composer_prompt: string;
-        created_at: string;
-        date: string;
-        daycare_id: string;
-        greeting: string;
-        id: string;
-        published_today_label: string;
-        room_label: string;
-        updated_at: string;
-      }>;
       feed_reactions: Table<{
         created_at: string;
         daycare_id: string;
@@ -135,13 +123,18 @@ export type Database = {
         relationship: Enums<"parent_relationship">;
         updated_at: string;
       }>;
+      people_roles: Table<{
+        daycare_id: string;
+        person_id: string;
+        role_id: string;
+      }>;
       people: Table<{
         created_at: string;
         daycare_id: string;
         email: string;
         id: string;
+        job_title: string | null;
         name: string;
-        role: Enums<"person_role">;
         status: Enums<"person_status">;
         updated_at: string;
       }>;
@@ -151,6 +144,10 @@ export type Database = {
         id: string;
         name: string;
         updated_at: string;
+      }>;
+      roles: Table<{
+        code: Enums<"person_role">;
+        id: string;
       }>;
       staff_rooms: Table<{
         created_at: string;
@@ -166,7 +163,7 @@ export type Database = {
     Enums: {
       kid_status: "active" | "inactive";
       parent_relationship: "mother" | "father" | "guardian";
-      person_role: "parent" | "personal";
+      person_role: "admin" | "parent" | "personal" | "teacher";
       person_status: "active" | "inactive" | "pending";
       post_media_delivery_type: "authenticated";
       post_media_format: "jpg" | "jpeg" | "png" | "webp";

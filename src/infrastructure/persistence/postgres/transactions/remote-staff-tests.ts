@@ -103,10 +103,27 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
         (${ids.otherDaycareId}, 'Remote Staff Other Tenant')
     `;
     await client`
-      INSERT INTO people (id, daycare_id, name, email, role, status)
+      INSERT INTO roles (id, code)
       VALUES
-        (${ids.staffId}, ${ids.daycareId}, 'Remote Staff', 'staff-remote@example.test', 'personal', 'active'),
-        (${ids.parentId}, ${ids.daycareId}, 'Remote Parent', 'parent-remote@example.test', 'parent', 'active')
+        (${randomUUID()}, 'personal'),
+        (${randomUUID()}, 'parent')
+      ON CONFLICT (code) DO NOTHING
+    `;
+    await client`
+      INSERT INTO people (id, daycare_id, name, email, status)
+      VALUES
+        (${ids.staffId}, ${ids.daycareId}, 'Remote Staff', 'staff-remote@example.test', 'active'),
+        (${ids.parentId}, ${ids.daycareId}, 'Remote Parent', 'parent-remote@example.test', 'active')
+    `;
+    await client`
+      INSERT INTO people_roles (daycare_id, person_id, role_id)
+      SELECT ${ids.daycareId}, ${ids.staffId}, id
+      FROM roles
+      WHERE code = 'personal'
+      UNION ALL
+      SELECT ${ids.daycareId}, ${ids.parentId}, id
+      FROM roles
+      WHERE code = 'parent'
     `;
     await rooms.create({ daycareId: ids.daycareId, id: ids.roomId, name: "Remote Room" });
     await rooms.create({

@@ -13,7 +13,7 @@ import { KidsFilter, KidsHeader } from "./_components";
 import styles from "./_components/kids-list.module.css";
 import { createKidComposition } from "@/composition/kid";
 import { getTodayIsoDate } from "@/utils";
-import { requireStaffSession } from "@/composition/auth";
+import { getSessionStaffRoomIds, requireTeacherSession } from "@/composition/auth";
 
 function toKidListItem(
   kid: Kid,
@@ -39,8 +39,9 @@ function toKidListItem(
  * @returns The Kids list page with a safe DTO payload for the client filter.
  */
 export default async function KidsPage() {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
   const dependencies = createKidComposition(session.user.daycareId);
+  const staffRoomIds = new Set(await getSessionStaffRoomIds(session));
 
   const [kids, parentKids, rooms] = await Promise.all([
     getKids(dependencies),
@@ -48,7 +49,7 @@ export default async function KidsPage() {
     getRooms(dependencies),
   ]);
   const today = getTodayIsoDate();
-  const listItems = kids.map((kid) =>
+  const listItems = kids.filter((kid) => staffRoomIds.has(kid.roomId)).map((kid) =>
     toKidListItem(kid, today, parentKids, rooms),
   );
 

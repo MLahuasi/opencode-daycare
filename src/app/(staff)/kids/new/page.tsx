@@ -3,7 +3,7 @@ import type { KidFormValues } from "@/application/kid";
 import { getRooms } from "@/application/kid";
 import { createKidComposition } from "@/composition/kid";
 import { createKidAction } from "../_actions";
-import { requireStaffSession } from "@/composition/auth";
+import { getSessionStaffRoomIds, requireTeacherSession } from "@/composition/auth";
 
 const EMPTY_KID_FORM_VALUES: KidFormValues = {
   name: "",
@@ -19,9 +19,12 @@ const EMPTY_KID_FORM_VALUES: KidFormValues = {
  * @returns The new kid form configured to cancel back to the Kids list.
  */
 export default async function NewKidPage() {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
 
-  const rooms = await getRooms(createKidComposition(session.user.daycareId));
+  const staffRoomIds = new Set(await getSessionStaffRoomIds(session));
+  const rooms = (await getRooms(createKidComposition(session.user.daycareId))).filter(
+    (room) => staffRoomIds.has(room.id),
+  );
 
   return (
     <main className="flex min-h-screen items-start justify-center px-6 py-10 max-sm:px-4 max-sm:py-6">

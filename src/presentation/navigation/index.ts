@@ -4,4 +4,4 @@ export {
   type FamilyNavigationIcon,
   type FamilyNavigationItem,
 } from "./family-navigation";
-export { staffNavigationConfig } from "./staff-navigation";
+export { createStaffNavigationConfig } from "./staff-navigation";

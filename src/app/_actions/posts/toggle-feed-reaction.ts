@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireActiveSession } from "@/composition/auth";
+import { getPostViewer, requireActiveSession } from "@/composition/auth";
 import { toggleReaction } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 
@@ -20,6 +20,7 @@ export async function toggleFeedReactionAction(
   postId: string,
 ): Promise<ToggleFeedReactionResult> {
   const session = await requireActiveSession();
+  const viewer = await getPostViewer(session);
 
   const normalizedPostId = postId.trim();
   if (!normalizedPostId) {
@@ -30,7 +31,7 @@ export async function toggleFeedReactionAction(
      const result = await toggleReaction(
        createPostComposition(session.user.daycareId),
        normalizedPostId,
-       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+      viewer,
      );
 
      if (!result) {

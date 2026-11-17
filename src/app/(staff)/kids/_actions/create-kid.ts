@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireStaffSession } from "@/composition/auth";
+import { getSessionStaffRoomIds, requireTeacherSession } from "@/composition/auth";
 import {
   createKid,
   getRooms,
@@ -23,9 +23,12 @@ export async function createKidAction(
   _previousState: KidFormActionState,
   formData: FormData,
 ): Promise<KidFormActionState> {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
   const dependencies = createKidComposition(session.user.daycareId);
-  const rooms = await getRooms(dependencies);
+  const staffRoomIds = new Set(await getSessionStaffRoomIds(session));
+  const rooms = (await getRooms(dependencies)).filter((room) =>
+    staffRoomIds.has(room.id),
+  );
   const validation = validateKidForm(
     {
       name: formData.get("name"),

@@ -159,7 +159,7 @@ export function PostDetailView({
         <section aria-labelledby="comments-heading" className={styles.commentsSection}>
           <div className={styles.commentsHeading}>
             <h2 id="comments-heading">Comentarios · {comments.length}</h2>
-            {detail.viewerRole === "parent" || detail.viewerRole === "personal" ? (
+            {detail.viewerRoles.includes("parent") || detail.viewerRoles.includes("personal") ? (
               <LinkButton
                 href={`/posts/${encodeURIComponent(post.id)}/comments/new`}
                 variant="soft"
@@ -176,14 +176,14 @@ export function PostDetailView({
                   <div className={styles.commentBody}>
                     <header className={styles.commentHeader}>
                       <strong>{comment.author.name}</strong>
-                      <span>{comment.author.role === "personal" ? "· maestra" : "· familia"}</span>
+                      <span>{comment.author.roles.includes("personal") ? "· maestra" : "· familia"}</span>
                       <time dateTime={comment.createdAt}>
                         {comment.timeLabel}
                         {comment.updatedAt ? " · editado" : ""}
                       </time>
                     </header>
                     <p>{comment.body}</p>
-                    {(detail.viewerRole === "parent" || detail.viewerRole === "personal") &&
+                    {(detail.viewerRoles.includes("parent") || detail.viewerRoles.includes("personal")) &&
                     comment.authorId === viewerPersonId &&
                     deleteCommentAction ? (
                       <div className={styles.commentActions}>

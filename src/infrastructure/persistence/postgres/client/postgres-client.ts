@@ -21,7 +21,9 @@ export type PostgresQueryClient = Sql | TransactionSql;
 export function createPostgresClient(options: Options = {}): PostgresClient {
   return postgres({
     ssl: "require",
-    max: 10,
+    // Supabase session pooler projects commonly expose 15 sessions. Keep
+    // the application pool below that limit, even if another process exists.
+    max: 5,
     idle_timeout: 20,
     connect_timeout: 10,
     ...options,

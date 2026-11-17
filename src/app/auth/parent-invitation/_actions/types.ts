@@ -8,8 +8,6 @@ export type ParentInvitationActionState = {
     password?: string;
     /** Password confirmation validation error. */
     passwordConfirmation?: string;
-    /** Consent validation error. */
-    photoSharingConsent?: string;
   };
   /** General action feedback message. */
   message: string;

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { requireActiveSession } from "@/composition/auth";
+import { getPostViewer, requireActiveSession } from "@/composition/auth";
 import { createFeedCommentAction } from "@/app/_actions/posts";
 import { getPostDetail } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
@@ -25,10 +25,11 @@ export default async function NewPostCommentPage({
 }: NewPostCommentPageProps) {
   const { postId } = await params;
   const session = await requireActiveSession();
+  const viewer = await getPostViewer(session);
   const detail = await getPostDetail(
     createPostComposition(session.user.daycareId),
     postId,
-    { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+    viewer,
   );
 
    if (!detail) {

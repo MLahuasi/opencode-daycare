@@ -7,7 +7,7 @@ import {
 import {
   type FamilyFeedFilter,
 } from "@/domain/family/feed";
-import { requireActiveSession } from "@/composition/auth";
+import { getSessionPersonRoles, requireActiveSession } from "@/composition/auth";
 import { FamilySidebar } from "@/presentation/layout";
 import { presentFamilyFeedOptions } from "@/presentation/family";
 import { createFamilyFeedComposition } from "@/composition/family";
@@ -26,7 +26,12 @@ export default async function FamilyFeedPage({
 }) {
   const session = await requireActiveSession();
 
-  if (session.user.role !== "parent") {
+  const roles = await getSessionPersonRoles(
+    session.user.daycareId,
+    session.user.personId,
+  );
+
+  if (!roles.includes("parent")) {
     redirect("/home");
   }
 

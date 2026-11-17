@@ -63,12 +63,29 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
         (${ids.otherDaycareId}, 'Remote General Other Tenant')
     `;
     await client`
-      INSERT INTO people (id, daycare_id, name, email, role, status)
+      INSERT INTO roles (id, code)
       VALUES
-        (${ids.staffId}, ${ids.daycareId}, 'General Staff', 'general-staff@example.test', 'personal', 'active'),
-        (${ids.parentId}, ${ids.daycareId}, 'General Parent', 'general-parent@example.test', 'parent', 'active'),
-        (${ids.otherParentId}, ${ids.daycareId}, 'Other General Parent', 'other-general-parent@example.test', 'parent', 'active'),
-        (${ids.otherStaffId}, ${ids.otherDaycareId}, 'Other Staff', 'other-staff@example.test', 'personal', 'active')
+        (${randomUUID()}, 'personal'),
+        (${randomUUID()}, 'parent')
+      ON CONFLICT (code) DO NOTHING
+    `;
+    await client`
+      INSERT INTO people (id, daycare_id, name, email, status)
+      VALUES
+        (${ids.staffId}, ${ids.daycareId}, 'General Staff', 'general-staff@example.test', 'active'),
+        (${ids.parentId}, ${ids.daycareId}, 'General Parent', 'general-parent@example.test', 'active'),
+        (${ids.otherParentId}, ${ids.daycareId}, 'Other General Parent', 'other-general-parent@example.test', 'active'),
+        (${ids.otherStaffId}, ${ids.otherDaycareId}, 'Other Staff', 'other-staff@example.test', 'active')
+    `;
+    await client`
+      INSERT INTO people_roles (daycare_id, person_id, role_id)
+      SELECT ${ids.daycareId}, ${ids.staffId}, id FROM roles WHERE code = 'personal'
+      UNION ALL
+      SELECT ${ids.daycareId}, ${ids.parentId}, id FROM roles WHERE code = 'parent'
+      UNION ALL
+      SELECT ${ids.daycareId}, ${ids.otherParentId}, id FROM roles WHERE code = 'parent'
+      UNION ALL
+      SELECT ${ids.otherDaycareId}, ${ids.otherStaffId}, id FROM roles WHERE code = 'personal'
     `;
     await rooms.create({ daycareId: ids.daycareId, id: ids.roomId, name: 'General Room' });
     await client`
@@ -153,15 +170,15 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
 
     assert.deepEqual((await posts.findAll()).map((item) => item.id), [ids.postId]);
     assert.equal(await authorization.canView(
-      { daycareId: ids.daycareId, personId: ids.parentId, role: 'parent' },
+      { daycareId: ids.daycareId, personId: ids.parentId, roles: ['parent'] },
       post,
     ), true);
     assert.equal(await authorization.canView(
-      { daycareId: ids.daycareId, personId: ids.staffId, role: 'personal' },
+      { daycareId: ids.daycareId, personId: ids.staffId, roles: ['personal', 'teacher'] },
       post,
     ), true);
     assert.equal(await authorization.canView(
-      { daycareId: ids.daycareId, personId: ids.parentId, role: 'parent' },
+      { daycareId: ids.daycareId, personId: ids.parentId, roles: ['parent'] },
       { ...post, daycareId: ids.otherDaycareId, id: ids.otherPostId },
     ), false);
 
@@ -175,7 +192,7 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
     const otherParentViewer = {
       daycareId: ids.daycareId,
       personId: ids.otherParentId,
-      role: 'parent' as const,
+      roles: ['parent'] as const,
     };
     assert.equal(
       await updateComment(
@@ -197,7 +214,7 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
     const detailWithEngagement = await getPostDetail(
       dependencies,
       ids.postId,
-      { daycareId: ids.daycareId, personId: ids.parentId, role: 'parent' },
+      { daycareId: ids.daycareId, personId: ids.parentId, roles: ['parent'] },
     );
     assert.equal(detailWithEngagement?.post.engagement.commentCount, 1);
     assert.equal(detailWithEngagement?.post.engagement.reactionCount, 1);
@@ -227,7 +244,7 @@ export async function runRemoteGeneralPersistenceTests(): Promise<void> {
     const detail = await getPostDetail(
       dependencies,
       ids.postId,
-      { daycareId: ids.daycareId, personId: ids.parentId, role: 'parent' },
+      { daycareId: ids.daycareId, personId: ids.parentId, roles: ['parent'] },
     );
     assert.equal(detail?.post.id, ids.postId);
     assert.equal(detail?.comments.length, 1);

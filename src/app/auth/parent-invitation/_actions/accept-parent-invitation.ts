@@ -9,7 +9,7 @@ import type { ParentInvitationActionState } from "./types";
  * Accepts a public parent invitation and activates its family relationship.
  *
  * @param _previousState - Previous feedback required by the action contract.
- * @param formData - Token, email, password and consent submitted by the parent.
+ * @param formData - Token, email, password and optional photo consent submitted by the parent.
  * @returns Validation or persistence feedback until acceptance succeeds.
  */
 export async function acceptParentInvitationAction(
@@ -36,10 +36,6 @@ export async function acceptParentInvitationAction(
     errors.passwordConfirmation = "Las contraseñas no coinciden.";
   }
 
-  if (!photoSharingConsent) {
-    errors.photoSharingConsent = "Debes aceptar el consentimiento para continuar.";
-  }
-
   if (Object.keys(errors).length > 0) {
     return { errors, message: "Revisa los campos marcados." };
   }
@@ -59,6 +55,11 @@ export async function acceptParentInvitationAction(
         message: "El enlace de invitación no es válido o ya no está disponible.",
       };
     }
+
+    console.error("[parent-invitation] Account activation failed", {
+      errorName: error instanceof Error ? error.name : "UnknownError",
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
 
     return {
       errors: {},

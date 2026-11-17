@@ -14,7 +14,7 @@ import {
 } from "./_components";
 import styles from "./_components/kid-profile.module.css";
 import { getTodayIsoDate } from "@/utils";
-import { requireStaffSession } from "@/composition/auth";
+import { getSessionStaffRoomIds, requireTeacherSession } from "@/composition/auth";
 import { createKidComposition } from "@/composition/kid";
 import { notFound } from "next/navigation";
 
@@ -34,7 +34,7 @@ export default async function KidProfilePage({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ invitation?: string | string[] }>;
 }) {
-  const session = await requireStaffSession();
+  const session = await requireTeacherSession();
 
   const { slug } = await params;
   const resolvedSearchParams = await searchParams;
@@ -49,6 +49,8 @@ export default async function KidProfilePage({
   if (!kid) {
     notFound();
   }
+  const staffRoomIds = new Set(await getSessionStaffRoomIds(session));
+  if (!staffRoomIds.has(kid.roomId)) notFound();
 
   const [room, linkedParents] = await Promise.all([
     getKidRoom(dependencies, kid),
