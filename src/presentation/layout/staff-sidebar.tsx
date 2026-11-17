@@ -114,7 +114,7 @@ export function StaffSidebar({ activeSection = "feed", className = "", navigatio
 
         <nav className={styles.navigation} aria-label={navigation.sectionsLabel}>
           {navigation.navigationItems.map((item) => (
-            <NavigationControl activeSection={activeSection} item={item} key={item.label} />
+            <NavigationControl activeSection={activeSection} item={item} key={item.icon} />
           ))}
         </nav>
 
@@ -134,7 +134,7 @@ export function StaffSidebar({ activeSection = "feed", className = "", navigatio
 
       <nav className={styles.mobileNavigation} aria-label={navigation.mobileNavigationLabel}>
         {navigation.navigationItems.map((item) => (
-          <NavigationControl activeSection={activeSection} item={item} key={item.label} mobile />
+          <NavigationControl activeSection={activeSection} item={item} key={item.icon} mobile />
         ))}
       </nav>
     </>

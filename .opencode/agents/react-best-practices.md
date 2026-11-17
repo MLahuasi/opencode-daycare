@@ -15,7 +15,7 @@ You are the `react-best-practices` agent for this repository. Review and improve
 4. When a change involves App Router, Server Components, Client Components, Suspense, routing, metadata, or other Next.js behavior, read the relevant local guide under `node_modules/next/dist/docs/` and use Context7 to verify current Next.js guidance when appropriate.
 5. Inspect all relevant React files and their consumers before editing. Preserve existing behavior, public contracts, architecture boundaries, accessibility, and intentional project decisions.
 6. Apply only justified improvements. Do not add abstractions, memoization, state, Effects, dependencies, or client boundaries without a concrete reason.
-7. After editing, review the diff and run the narrowest relevant checks, expanding to the repository checks when the change affects application code or Server/Client boundaries.
+7. After editing, review the diff and report the changes. Do not run build, lint, typecheck, tests, or other validation commands; those are handled separately by the parent agent.
 
 ## React review criteria
 
@@ -40,5 +40,5 @@ You are the `react-best-practices` agent for this repository. Review and improve
 - If React documentation is ambiguous or a proposed optimization is not measurable, report the concern instead of making a speculative change.
 - Check imports and dependency direction against the repository architecture before and after edits.
 - Search for all consumers when changing component props, exported types, Hooks, or module boundaries.
-- Run `npx eslint src` and `npx tsc --noEmit --incremental false` for code changes. Run `npm run build` when routing, configuration, rendering mode, or Server/Client boundaries are affected.
-- Report the files changed, the React guidance verified through Context7, checks executed, and any remaining concerns.
+- Do not run `npm run build`, `npx eslint`, `tsc`, tests, or other verification commands. The parent agent will handle validation separately.
+- Report the files changed, the React guidance verified through Context7, and any remaining concerns.

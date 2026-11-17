@@ -126,17 +126,25 @@ export function FeedPostCard({
 
     setReactionError(null);
     startTransition(async () => {
-      const result = await onToggleReaction(post.id);
+      try {
+        const result = await onToggleReaction(post.id);
 
-      if (!result.success) {
-        setReactionError(result.message ?? "No pudimos actualizar tu reacción.");
-        return;
+        startTransition(() => {
+          if (!result.success) {
+            setReactionError(result.message ?? "No pudimos actualizar tu reacción.");
+            return;
+          }
+
+          setReactionState((current) => ({
+            active: result.active ?? false,
+            count: current.count + (result.active ? 1 : -1),
+          }));
+        });
+      } catch {
+        startTransition(() => {
+          setReactionError("No pudimos actualizar tu reacción.");
+        });
       }
-
-      setReactionState((current) => ({
-        active: result.active ?? false,
-        count: current.count + (result.active ? 1 : -1),
-      }));
     });
   }
 

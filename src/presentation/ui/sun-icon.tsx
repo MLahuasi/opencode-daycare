@@ -1,6 +1,11 @@
 import type { SVGAttributes } from "react";
 
-/** Renders a reusable sun brand icon. */
+/**
+ * Renders a reusable sun brand icon.
+ *
+ * @param props - Native SVG attributes applied to the icon.
+ * @returns A decorative sun icon.
+ */
 export function SunIcon(props: SVGAttributes<SVGSVGElement>) {
   return (
     <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" {...props}>

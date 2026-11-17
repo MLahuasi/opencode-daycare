@@ -11,7 +11,7 @@ import {
 import { parseCommaSeparatedTags } from "@/utils";
 import type { Room } from "@/domain/room";
 import type { KidFormAction, KidFormActionState } from "../_actions/types";
-import { validateKidForm } from "@/application/kid";
+import { validateKidForm } from "@/application/kid/validation";
 import type { KidFormErrors, KidFormValues } from "@/application/kid";
 import { presentKidFormError } from "@/presentation/kid";
 import styles from "./kid-form.module.css";

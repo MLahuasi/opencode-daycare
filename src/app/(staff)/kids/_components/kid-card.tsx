@@ -29,6 +29,7 @@ function getParentLabel(parentCount: number): string {
  *
  * @param props - Card content options.
  * @param props.kid - Safe list DTO used to render the card.
+ * @param props.tone - Avatar tone assigned to this card.
  * @returns A link to the kid's canonical profile route.
  */
 export function KidCard({ kid, tone }: KidCardProps) {
@@ -48,10 +49,14 @@ export function KidCard({ kid, tone }: KidCardProps) {
       </span>
       {kid.allergies.length > 0 || kid.shouldLinkParent ? (
         <span className={styles.cardBadges}>
-          {kid.allergies.map((allergy, index) => (
+          {kid.allergies.map((allergy) => (
             <Badge
-              key={`${allergy}-${index}`}
-              variant={ALLERGY_BADGE_VARIANTS[index % ALLERGY_BADGE_VARIANTS.length]}
+              key={allergy}
+              variant={
+                ALLERGY_BADGE_VARIANTS[
+                  kid.allergies.indexOf(allergy) % ALLERGY_BADGE_VARIANTS.length
+                ]
+              }
             >
               {allergy}
             </Badge>
