@@ -97,11 +97,11 @@ export function ParentInvitationForm({
           className={styles.consentField}
           indicatorClassName={styles.consentBox}
           disabled={isPending}
-          label="Autorizo a la guardería a tomar y compartir fotos de mi hijo dentro de la app."
+          label="Autorizo a la guardería a tomar y compartir fotos de mi hijo dentro de la app. (opcional)"
           name="photoSharingConsent"
         />
-        <span className={styles.validationError} hidden={!actionState.errors.photoSharingConsent} role="alert">
-          {actionState.errors.photoSharingConsent}
+        <span className={styles.fieldHint}>
+          Si no lo autorizas, podrás usar la aplicación, pero no se publicarán fotos de tu hijo.
         </span>
         <Button className={styles.primaryButton} disabled={isPending} type="submit">
           {isPending ? "Guardando..." : existingActiveParent ? "Confirmar vinculación" : "Activar mi cuenta"}

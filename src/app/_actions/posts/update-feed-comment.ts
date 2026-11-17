@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireActiveSession } from "@/composition/auth";
+import { getPostViewer, requireActiveSession } from "@/composition/auth";
 import { updateComment } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
 import { validateFeedCommentForm } from "@/presentation/post/schemas";
@@ -20,6 +20,7 @@ export async function updateFeedCommentAction(
   formData: FormData,
 ): Promise<FeedCommentActionState> {
   const session = await requireActiveSession();
+  const viewer = await getPostViewer(session);
 
   const commentId = formData.get("commentId");
   const postId = formData.get("postId");
@@ -45,7 +46,7 @@ export async function updateFeedCommentAction(
        body: validation.data.body,
        commentId,
        },
-       { daycareId: session.user.daycareId, personId: session.user.personId, role: session.user.role },
+       viewer,
      );
 
     if (!updatedComment) {

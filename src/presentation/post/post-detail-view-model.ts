@@ -21,6 +21,12 @@ export type PostDetailViewModel = Omit<
   };
 };
 
+function formatRecipientNames(names: readonly string[]): string {
+  if (names.length <= 1) return names[0] ?? "Varios niños";
+  if (names.length === 2) return `${names[0]} y ${names[1]}`;
+  return `${names.slice(0, -1).join(", ")} y ${names[names.length - 1]}`;
+}
+
 /**
  * Formats neutral Post detail data for the visual detail component.
  *
@@ -49,8 +55,8 @@ export function presentPostDetail(
       kind: detail.recipient.kind,
       label:
         detail.recipient.kind === "kid"
-          ? `familia de ${detail.recipient.name}`
-          : `sala ${detail.recipient.name}`,
+          ? `familia de ${formatRecipientNames(detail.recipient.names)}`
+          : `sala ${formatRecipientNames(detail.recipient.names)}`,
     },
   };
 }

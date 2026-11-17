@@ -6,6 +6,7 @@ export { createPostgresClient } from "./client/postgres-client";
 export {
   PostgresClientProvider,
 } from "./client/postgres-client-provider";
+export { getSharedPostgresClient } from "./client/shared-postgres-client";
 export {
   CurrentDaycareNotFoundError,
   CurrentDaycareProvider,

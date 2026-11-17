@@ -125,7 +125,7 @@ export async function createParentKidFromInvitation(
   }
 
   await dependencies.parentKids.create({
-    id: `parent-kid-${person.id}-${invitation.kidId}`,
+    id: dependencies.identifiers.create(),
     daycareId: invitation.daycareId,
     parentId: person.id,
     kidId: invitation.kidId,
@@ -206,7 +206,7 @@ export async function acceptInvitation(
       }
 
       await transactionRepositories.parentKids.create({
-        id: `parent-kid-${person.id}-${currentInvitation.kidId}`,
+        id: dependencies.identifiers.create(),
         daycareId: currentInvitation.daycareId,
         parentId: person.id,
         kidId: currentInvitation.kidId,
@@ -225,7 +225,7 @@ export async function acceptInvitation(
     if (!existingActiveParent && input.password) {
       const credential = {
         daycareId: person.daycareId,
-        id: `credential-${person.id}`,
+        id: dependencies.identifiers.create(),
         personId: person.id,
         passwordHash: await dependencies.passwordHasher.hash(input.password),
       };

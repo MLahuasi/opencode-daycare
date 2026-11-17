@@ -2,6 +2,7 @@ import "server-only";
 
 import type { NextAuthOptions, Session } from "next-auth";
 import type { PersonRoles } from "@/domain/person";
+import type { PostViewer } from "@/application/post";
 import {
   PostgresPersonRoleRepository,
   type PostgresQueryClient,
@@ -48,4 +49,21 @@ export async function getSessionPersonRoles(
     personId,
     daycareId,
   );
+}
+
+/**
+ * Builds an authorization viewer from session identifiers and live roles.
+ *
+ * @param session - Authenticated session containing only tenant identifiers.
+ * @returns A Post authorization viewer with current PostgreSQL roles.
+ */
+export async function getPostViewer(session: Session): Promise<PostViewer> {
+  return {
+    daycareId: session.user.daycareId,
+    personId: session.user.personId,
+    roles: await getSessionPersonRoles(
+      session.user.daycareId,
+      session.user.personId,
+    ),
+  };
 }

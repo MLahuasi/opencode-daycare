@@ -48,10 +48,14 @@ function projectReactions(
 export function projectPostDetail(
   input: PostDetailProjectionInput,
 ): PostDetail | null {
-  const recipient = input.recipientKid
-    ? { id: input.recipientKid.id, kind: "kid" as const, name: input.recipientKid.name }
+  const recipient = input.recipientKids.length > 0
+    ? {
+        id: input.recipientKids[0].id,
+        kind: "kid" as const,
+        names: input.recipientKids.map((kid) => kid.name),
+      }
     : input.recipientRoom
-      ? { id: input.recipientRoom.id, kind: "room" as const, name: input.recipientRoom.name }
+      ? { id: input.recipientRoom.id, kind: "room" as const, names: [input.recipientRoom.name] }
       : null;
 
   if (!recipient) {

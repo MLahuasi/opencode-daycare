@@ -1,15 +1,14 @@
 import "server-only";
 
 import type { PostgresClient } from "@/infrastructure/persistence/postgres/client/postgres-client";
-import { PostgresClientProvider } from "@/infrastructure/persistence/postgres/client/postgres-client-provider";
+import { getSharedPostgresClient } from "@/infrastructure/persistence/postgres";
 
 let databaseClientInstance: PostgresClient | undefined;
 let initializationPromise: Promise<void> | undefined;
 
 async function initializeDatabaseClient(): Promise<void> {
   if (!databaseClientInstance) {
-    const provider = new PostgresClientProvider();
-    databaseClientInstance = provider.createClient();
+    databaseClientInstance = getSharedPostgresClient();
   }
 }
 

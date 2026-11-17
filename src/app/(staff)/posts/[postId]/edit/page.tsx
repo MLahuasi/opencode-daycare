@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { requireStaffSession } from "@/composition/auth";
+import { getPostViewer, requireStaffSession } from "@/composition/auth";
 import { updatePostAction } from "@/app/_actions/posts";
 import { getPostTargets } from "@/application/post";
 import { createPostComposition } from "@/composition/post";
@@ -26,6 +26,7 @@ export default async function EditPostPage({
   params,
 }: EditPostPageProps) {
   const session = await requireStaffSession();
+  const viewer = await getPostViewer(session);
   const { postId } = await params;
    const dependencies = createPostComposition(session.user.daycareId);
    const [post, targets] = await Promise.all([
@@ -33,7 +34,7 @@ export default async function EditPostPage({
      getPostTargets(dependencies, {
         daycareId: session.user.daycareId,
         personId: session.user.personId,
-       role: session.user.role,
+        roles: viewer.roles,
      }),
    ]);
 

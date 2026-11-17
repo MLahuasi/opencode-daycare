@@ -17,14 +17,14 @@ import {
   PostgresCredentialRepository,
   PostgresPersonRepository,
   PostgresPersonRoleRepository,
-  PostgresClientProvider,
+  getSharedPostgresClient,
   type PostgresClient,
 } from "@/infrastructure/persistence/postgres";
 
 let postgresClient: PostgresClient | undefined;
 
 function getAuthPostgresClient(): PostgresClient {
-  postgresClient ??= new PostgresClientProvider().createClient();
+  postgresClient ??= getSharedPostgresClient();
   return postgresClient;
 }
 

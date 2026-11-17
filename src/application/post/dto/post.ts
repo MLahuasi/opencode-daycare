@@ -46,7 +46,7 @@ export type PostDetailProjectionInput = {
   people: readonly Person[];
   post: Post;
   reactions: readonly PostReaction[];
-  recipientKid: Kid | null;
+  recipientKids: readonly Kid[];
   recipientRoom: Room | null;
   viewerRoles: PersonRoles;
 };
@@ -70,7 +70,7 @@ export type PostDetail = {
   recipient: {
     id: string;
     kind: "kid" | "room";
-    name: string;
+    names: readonly string[];
   };
   viewerRoles: PersonRoles;
 };
