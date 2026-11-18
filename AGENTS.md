@@ -28,6 +28,8 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - `npm run dev`, `npm run build`, `npm run start`, `npm run lint`.
 - `npm run db:migrate:dry-run` y `npm run db:migrate` para validar y aplicar
   migraciones Supabase al proyecto remoto enlazado.
+- `npm run db:migrate:local:dry-run` y `npm run db:migrate:local` para validar y aplicar
+  migraciones únicamente al stack Supabase local de desarrollo.
 - Typecheck: `npx tsc --noEmit --incremental false`.
 - `references/` no es runtime. No editar `references/screens/support.js` ni `next-env.d.ts`.
 - Guardar todos los logs, capturas, videos, traces y demás artefactos de Playwright en `.playwright-mcp/<Feature>/`.
@@ -43,11 +45,15 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - El MCP de Supabase se reserva para documentación, inspección y migraciones autorizadas; no se usa para ejecutar operaciones normales de la aplicación.
 - Antes de cambiar el esquema remoto, consultar primero las tablas existentes y preferir desarrollo local, migraciones revisables y verificación posterior.
 - Las migraciones y seeds SQL versionados viven en `supabase/migrations/`; no se ejecutan desde el bootstrap ni desde una ruta HTTP.
+- Todo cambio de base de datos —tablas, columnas, índices, constraints, RLS, funciones, triggers o datos estructurales— debe pasar por `@db-migrator`. Debe existir una migración SQL versionada, ejecutarse primero `npm run db:migrate:local:dry-run` y aplicarse únicamente al stack local de desarrollo con autorización explícita.
+- `@db-migrator` no crea, edita, elimina ni renombra migraciones durante su ejecución; si falta una migración o existe drift, debe detenerse y reportarlo.
+- `@db-migrator` es exclusivamente de desarrollo: nunca consulta, valida ni modifica staging, producción, un proyecto enlazado remoto, una URL de base de datos ni credenciales de producción.
 - La referencia documental externa está en `../info/opencode-daycare/references/open-daycare-schema.md`; es un diccionario de diseño, no DDL ejecutable ni fuente de runtime.
 
 ## Workflow
 
 - Para funcionalidades grandes, cargar `spec`; para implementar una spec aprobada, cargar `spec-impl` y respetar sus pausas de revisión.
+- Durante `spec-impl`, cualquier paso que modifique la base de datos debe invocar `@db-migrator` y esperar su resultado antes de continuar al siguiente paso.
 - Validador de aceptación del proyecto: agente `@spec-acceptance-validator` (`.opencode/agent/spec-acceptance-validator.md`) y comando `/spec-acceptance-validator <spec>` (`.opencode/command/spec-acceptance-validator.md`). Corrige incumplimientos, marca solo criterios verificados y usa Context7 y Playwright cuando aplica.
 - Los nombres de specs se relacionan con el módulo, no con una captura o prototipo.
 

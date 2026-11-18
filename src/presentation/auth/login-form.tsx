@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { SubmitEvent } from "react";
 import { useState } from "react";
+import { getLoginDestination } from "@/app/auth/login/_actions/get-login-destination";
 import { Button, FormField, LinkButton } from "@/presentation/ui";
 import styles from "./auth.module.css";
 
@@ -39,21 +40,25 @@ export function LoginForm({
       return;
     }
 
-    const result = await signIn("credentials", {
-      email: formData.get("email"),
-      password: formData.get("password"),
-      daycareId: selectedDaycareId,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email: formData.get("email"),
+        password: formData.get("password"),
+        daycareId: selectedDaycareId,
+        redirect: false,
+      });
 
-    setIsPending(false);
+      if (result?.ok) {
+        router.push(await getLoginDestination());
+        return;
+      }
 
-    if (result?.ok) {
-      router.push("/home");
-      return;
+      setErrorMessage("El email o la contraseña no son válidos.");
+    } catch {
+      setErrorMessage("No pudimos iniciar sesión. Inténtalo de nuevo.");
+    } finally {
+      setIsPending(false);
     }
-
-    setErrorMessage("El email o la contraseña no son válidos.");
   }
 
   return (

@@ -59,11 +59,12 @@ Comandos disponibles:
 
 ### Baseline y seed de un proyecto nuevo
 
-La migración actual y `supabase/seed.sql` pertenecen exclusivamente al baseline
-de un proyecto Supabase nuevo, después de que SPEC 34 adapte el runtime. Está
-terminantemente prohibido ejecutar `npm run db:migrate` o `npm run db:seed` contra
-el proyecto Supabase remoto actualmente enlazado o contra cualquier proyecto que
-contenga datos históricos.
+La migración baseline y `supabase/seed.sql` pertenecen al aprovisionamiento de
+un proyecto Supabase nuevo, después de que SPEC 34 adapte el runtime. No se debe
+ejecutar `npm run db:seed` contra un proyecto que contenga datos históricos.
+Las migraciones posteriores de seguridad pueden desplegarse manualmente al
+remoto de test únicamente después de verificar el proyecto, revisar el dry-run
+y completar las prevalidaciones de datos descritas en la sección del auditor.
 
 Antes de ejecutar cualquiera de los dos comandos, verifica el proyecto enlazado
 y enlaza explícitamente el proyecto nuevo:
@@ -539,15 +540,320 @@ Uso:
 /spec-impl kid-allergy-tags
 ```
 
-## Agente y comando personalizados
+## Agentes personalizados
 
-### `spec-acceptance-validator`
+Los agentes reutilizables del proyecto están definidos en `.opencode/agents/`.
+Se invocan mencionando su nombre, por ejemplo `@accessibility-checker`, y se
+les deben proporcionar los archivos o la spec que delimitan su trabajo.
 
-Agente definido en
-`.opencode/agent/spec-acceptance-validator.md`. Revisa cada criterio de
-aceptación individualmente, usa Playwright cuando corresponde, ejecuta las
-comprobaciones relevantes y corrige solo incumplimientos necesarios. Marca un
-criterio como verificado únicamente cuando existe evidencia.
+### `@accessibility-checker`
+
+Revisa y corrige los archivos indicados por el usuario según WCAG 2.2 niveles A
+y AA. Comprueba semántica HTML, nombres accesibles, formularios, teclado, foco,
+ARIA, estados dinámicos, contraste y responsive. Aplica correcciones enfocadas
+sin modificar archivos no relacionados y reporta las verificaciones que aún
+requieren navegador, zoom, estilos computados o tecnología de asistencia.
+
+Úsalo cuando se necesite revisar o mejorar la accesibilidad de una pantalla o
+componente específico:
+
+```text
+@accessibility-checker @src/app/auth/login/page.tsx
+```
+
+### `@react-best-practices`
+
+Revisa y mejora la implementación React del proyecto. Evalúa Hooks, pureza de
+componentes, estado, Effects, keys, límites Server/Client, imports,
+composición, tipos y comportamiento accesible. Consulta la documentación
+actual de React y Next.js cuando el cambio depende del framework.
+
+Úsalo para revisiones o refactorizaciones de componentes React, Hooks y JSX.
+
+### `@db-migrator`
+
+Verifica y aplica migraciones Supabase versionadas únicamente en el stack local
+de desarrollo. Ejecuta el dry-run local, detecta drift, revisa riesgos de
+seguridad y confirma el resultado después de una aplicación autorizada.
+Nunca accede ni modifica staging, producción, proyectos remotos, URLs de base
+de datos ni credenciales de producción. Las migraciones validadas localmente
+se despliegan a producción mediante el proceso autorizado de CI o despliegue,
+no mediante este agente.
+
+Úsalo ante cambios de tablas, columnas, índices, constraints, RLS, funciones,
+triggers u otra estructura persistida.
+
+### `@db-security-auditor`
+
+Audita y corrige riesgos de seguridad en PostgreSQL/Supabase y en las capas de
+autorización de la aplicación. Su foco es evitar fugas entre guarderías, niños,
+padres y personal, además de detectar IDOR/BOLA, filtros de tenant ausentes,
+roles mal configurados, sesiones obsoletas, relaciones padre-niño inseguras,
+RLS incompleto, grants excesivos, vistas inseguras y funciones
+`SECURITY DEFINER` peligrosas.
+
+Úsalo antes de exponer nuevas tablas, roles, endpoints o flujos de invitación,
+familia, publicaciones, archivos y datos médicos; también después de cambios
+en migraciones o autorización:
+
+```text
+@db-security-auditor revisa la seguridad de parent_kids, kids y family-feed
+```
+
+Puede auditar la base Supabase remota de **test** en modo estrictamente lectura cuando el
+usuario lo solicite y la identidad del proyecto esté autorizada, usando solo
+una conexión SQL/CLI de lectura ya configurada. No usa Supabase MCP. Puede
+modificar código, pruebas y crear migraciones versionadas enfocadas, pero no
+aplica SQL ni ejecuta migraciones remotas. Todo cambio de base de datos debe
+entregarse después a `@db-migrator` para dry-run y aplicación autorizada en el
+stack local, seguido del proceso separado de despliegue al remoto de test.
+
+El agente no usa Supabase MCP, Docker local ni servicios locales para la
+auditoría. La conexión se obtiene desde `SECURITY_AUDITOR_DB_URL` y
+`SECURITY_AUDITOR_DB_PASSWORD` en `.env`, usando consultas CLI con
+`--read-only`. La contraseña no se incluye en migraciones, código, logs ni
+prompts.
+
+### Flujo de migraciones y auditoría remota de test
+
+Este procedimiento es manual y apunta exclusivamente al proyecto Supabase
+remoto de test. No usa Docker local, GitHub Actions ni Supabase MCP.
+
+#### 1. Configurar `.env`
+
+Verifica que el archivo no esté versionado:
+
+```powershell
+git check-ignore -v .env
+git ls-files .env
+```
+
+Añade las variables fuera de Git. Nunca incluyas la contraseña dentro de la
+URL del auditor:
+
+```dotenv
+SUPABASE_DB_PASSWORD=<database-admin-password>
+SUPABASE_DB_URL=postgresql://postgres.<PROJECT_REF>@<POOLER_HOST>:5432/postgres?sslmode=require
+SECURITY_AUDITOR_DB_PASSWORD=<auditor-password>
+SECURITY_AUDITOR_DB_URL=postgresql://security_auditor.<PROJECT_REF>@<POOLER_HOST>:5432/postgres?sslmode=require
+```
+
+`SUPABASE_DB_PASSWORD` es la contraseña administrativa usada únicamente para
+las migraciones. `SUPABASE_DB_URL` y `SECURITY_AUDITOR_DB_URL` no contienen
+contraseñas. `SECURITY_AUDITOR_DB_PASSWORD` pertenece exclusivamente al rol
+auditor.
+
+#### 2. Cargar variables sin mostrarlas
+
+```powershell
+function Get-DotEnvValue([string]$Name) {
+  $line = Get-Content .env |
+    Where-Object { $_ -match "^\s*$([regex]::Escape($Name))=" } |
+    Select-Object -First 1
+
+  if (-not $line) { throw "No se encontró $Name en .env" }
+
+  return (($line -split "=", 2)[1]).Trim().Trim('"').Trim("'")
+}
+
+$adminPassword = Get-DotEnvValue "SUPABASE_DB_PASSWORD"
+$adminDbUrl = Get-DotEnvValue "SUPABASE_DB_URL"
+$auditorPassword = Get-DotEnvValue "SECURITY_AUDITOR_DB_PASSWORD"
+$auditorDbUrl = Get-DotEnvValue "SECURITY_AUDITOR_DB_URL"
+
+foreach ($value in @($adminDbUrl, $auditorDbUrl)) {
+  if ([string]::IsNullOrWhiteSpace($value) -or $value.Contains('<')) {
+    throw "La URL de base de datos contiene un placeholder o está vacía"
+  }
+}
+
+$env:SUPABASE_DB_PASSWORD = $adminPassword
+```
+
+Las variables de PowerShell son temporales: se pierden al cerrar la consola,
+abrir otra sesión o ejecutar el proceso desde otro agente. Por eso, no se debe
+intentar conservar `$adminPassword`, `$auditorPassword` o `$env:PGPASSWORD` en
+un archivo `.ps1`. Si se abre una nueva consola, vuelve a ejecutar la función
+anterior para cargar los valores desde `.env`. El agente auditor lee las
+variables persistentes de `.env`; no depende de las variables de la consola
+interactiva.
+
+La persistencia recomendada es:
+
+- `.env`: URLs sin contraseña y contraseñas ignoradas por Git.
+- PowerShell: variables temporales durante cada comando CLI.
+- Archivos SQL temporales: solo para consultas multilínea; deben eliminarse
+  después de la ejecución y nunca deben contener contraseñas.
+
+No copies valores de ejemplo como `<PROJECT_REF>` o `<POOLER_HOST>` en una
+consola. Sustitúyelos en `.env` por los valores reales del proyecto autorizado.
+
+#### 3. Confirmar el proyecto remoto
+
+```powershell
+Get-Content supabase\.temp\project-ref
+```
+
+Confirma que la referencia corresponde al entorno de test autorizado. No
+continúes si el proyecto es incorrecto.
+
+#### 4. Ejecutar prevalidaciones de datos
+
+Usa la URL administrativa sin contraseña cargada desde `.env` y crea un archivo
+SQL temporal:
+
+```powershell
+$env:PGPASSWORD = $adminPassword
+
+$precheckSql = @'
+select
+  (
+    select count(*)
+    from (
+      select daycare_id, person_id
+      from public.credential
+      group by daycare_id, person_id
+      having count(*) > 1
+    ) duplicates
+  ) as credential_duplicate_groups,
+  (
+    select count(*)
+    from (
+      select daycare_id, code
+      from public.invitation
+      group by daycare_id, code
+      having count(*) > 1
+    ) duplicates
+  ) as invitation_duplicate_groups;
+'@
+
+$precheckPath = Join-Path $env:LOCALAPPDATA "Temp\migration-prevalidation.sql"
+
+[System.IO.File]::WriteAllText(
+  $precheckPath,
+  $precheckSql,
+  [System.Text.UTF8Encoding]::new($false)
+)
+```
+
+Ejecuta el archivo contra Supabase remoto en modo solo lectura:
+
+```powershell
+npx --yes supabase@3.0.0 db query `
+  --remote="$adminDbUrl" `
+  --read-only `
+  --file="$precheckPath"
+```
+
+Los contadores deben ser `0`. Si existe algún duplicado, detén el proceso y
+resuelve los datos mediante una migración de saneamiento aprobada. No muestres
+hashes, códigos, tokens, UUID ni filas completas.
+
+Elimina el archivo temporal:
+
+```powershell
+Remove-Item $precheckPath -ErrorAction SilentlyContinue
+Remove-Variable precheckSql, precheckPath -ErrorAction SilentlyContinue
+```
+
+#### 5. Revisar las migraciones pendientes
+
+```powershell
+npm run db:migrate:dry-run
+```
+
+Revisa el proyecto destino, el orden y el contenido de las migraciones. El
+dry-run no modifica la base de datos.
+
+#### 6. Aplicar manualmente las migraciones
+
+Después de aprobar el dry-run:
+
+```powershell
+npm run db:migrate
+```
+
+Este comando aplica las migraciones al proyecto remoto enlazado. No ejecutes
+`npm run db:seed` en una base con datos históricos.
+
+Confirma la convergencia:
+
+```powershell
+npm run db:migrate:dry-run
+```
+
+#### 7. Activar el login del auditor
+
+Después de aplicar la migración que crea `security_auditor` como `NOLOGIN`,
+configura el acceso desde el SQL Editor autorizado o el gestor de secretos:
+
+```sql
+alter role security_auditor
+  login
+  password '<auditor-password-managed-outside-git>';
+```
+
+No guardes esta sentencia ni la contraseña en una migración, commit, log o
+prompt.
+
+#### 8. Verificar la conexión y los privilegios
+
+```powershell
+$env:PGPASSWORD = $auditorPassword
+
+npx --yes supabase@3.0.0 db query `
+  --remote="$auditorDbUrl" `
+  --read-only `
+  "select current_user, current_database(), current_setting('transaction_read_only');"
+```
+
+El resultado debe indicar el usuario auditor y `transaction_read_only = on`.
+
+Comprueba también que no tenga privilegios de escritura ni `BYPASSRLS`:
+
+```powershell
+npx --yes supabase@3.0.0 db query `
+  --remote="$auditorDbUrl" `
+  --read-only `
+  "select
+     has_table_privilege(current_user, 'public.people', 'SELECT') as can_select,
+     has_table_privilege(current_user, 'public.people', 'INSERT') as can_insert,
+     has_table_privilege(current_user, 'public.people', 'UPDATE') as can_update,
+     has_table_privilege(current_user, 'public.people', 'DELETE') as can_delete;"
+```
+
+#### 9. Ejecutar el agente auditor
+
+```text
+@db-security-auditor audita public.people en el Supabase remoto de test usando
+solo CLI remoto con --read-only. No uses MCP, Docker, servicios locales ni
+consultas de escritura. No muestres secretos, hashes, tokens ni filas sensibles.
+```
+
+#### 10. Limpiar la sesión
+
+```powershell
+Remove-Item Env:PGPASSWORD -ErrorAction SilentlyContinue
+Remove-Item Env:SUPABASE_DB_PASSWORD -ErrorAction SilentlyContinue
+Remove-Variable adminPassword, adminDbUrl, auditorPassword, auditorDbUrl `
+  -ErrorAction SilentlyContinue
+```
+
+### `@spec-acceptance-validator`
+
+Valida los criterios de aceptación de una spec en `specs/*.md`, comprueba cada
+criterio con evidencia, usa Playwright y Context7 cuando corresponde y corrige
+solo los incumplimientos necesarios. Mantiene sin marcar los criterios fallidos,
+bloqueados o no verificables.
+
+Úsalo después de implementar una spec aprobada y antes de marcarla como
+completada:
+
+```text
+@spec-acceptance-validator specs/04-kid-allergy-tags.md
+```
+
+Los agentes no realizan commits, pushes ni merges automáticamente.
 
 ### `/spec-acceptance-validator`
 

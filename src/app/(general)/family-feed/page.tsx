@@ -63,6 +63,7 @@ export default async function FamilyFeedPage({
     session.user.personId,
     selectedFilter,
   );
+  const { locale, timeZone } = getApplicationEnvironment();
 
   return (
     <div className={styles.shell}>
@@ -71,11 +72,11 @@ export default async function FamilyFeedPage({
         <FamilyFeedContent
           options={options}
           person={familyFeed.context.person}
-           posts={familyFeed.posts}
-           selectedFilter={selectedFilter}
-           locale={getApplicationEnvironment().locale}
-           timeZone={getApplicationEnvironment().timeZone}
-         />
+          posts={familyFeed.posts}
+          selectedFilter={selectedFilter}
+          locale={locale}
+          timeZone={timeZone}
+        />
       </div>
     </div>
   );

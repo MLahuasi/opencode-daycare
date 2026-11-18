@@ -27,6 +27,9 @@ export function AuthShell({
 }: AuthShellProps) {
   return (
     <div className={styles.shell}>
+      <a className={styles.skipLink} href="#main-content">
+        Saltar al contenido principal
+      </a>
       <section aria-label="OpenDayCare" className={styles.brandPanel}>
         <div aria-hidden="true" className={styles.brandOrbTop} />
         <div aria-hidden="true" className={styles.brandOrbBottom} />
@@ -42,7 +45,9 @@ export function AuthShell({
         </div>
         <p className={styles.brandEyebrow}>🌿 Guardería {eyebrow}</p>
       </section>
-      <section className={styles.formPanel}>{children}</section>
+      <main className={styles.formPanel} id="main-content">
+        {children}
+      </main>
     </div>
   );
 }

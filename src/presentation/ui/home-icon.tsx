@@ -1,6 +1,11 @@
 import type { SVGAttributes } from "react";
 
-/** Renders a reusable home navigation icon. */
+/**
+ * Renders a reusable home navigation icon.
+ *
+ * @param props - Native SVG attributes applied to the icon.
+ * @returns A decorative home icon.
+ */
 export function HomeIcon(props: SVGAttributes<SVGSVGElement>) {
   return (
     <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" {...props}>

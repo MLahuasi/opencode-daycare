@@ -122,7 +122,7 @@ export function TagsInput({
       data-invalid={isInvalid ? "true" : undefined}
     >
       {tags.map((tag, index) => (
-        <span className={styles.tag} key={`${tag}-${index}`}>
+        <span className={styles.tag} key={tag}>
           <span>{tag}</span>
           <Button
             aria-label={`${removeLabel} ${tag}`}

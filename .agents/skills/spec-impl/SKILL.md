@@ -179,6 +179,8 @@ Once confirmed, follow these rules during the entire implementation:
 
 **One rule above all:** implement what the spec says. If something in the spec looks suboptimal to you, mention it as an observation but implement what was agreed. Changes to the spec go into the spec, not into the code by surprise.
 
+**Database changes:** If the current implementation step changes database tables, columns, indexes, constraints, RLS, functions, triggers, or other persisted schema/data structure, stop the step after preparing the versioned migration and invoke the `db-migrator` agent. The agent must verify the migration and run `npm run db:migrate:local:dry-run` before the step can be considered complete. It may apply changes only to the local development Supabase stack with explicit user authorization; it must never access or modify staging, production, a linked remote project, or production credentials. Do not continue to the next implementation step until `db-migrator` reports success or a documented blocker.
+
 **Work rhythm:**
 
 - Implement one step of the plan.

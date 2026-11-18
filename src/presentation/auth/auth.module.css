@@ -4,6 +4,22 @@
   min-height: 100vh;
   background: var(--color-page);
 }
+.skipLink {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  padding: 10px 16px;
+  border-radius: 0 0 8px 0;
+  background: var(--color-ink);
+  color: var(--color-surface);
+  transform: translateY(-120%);
+}
+.skipLink:focus-visible {
+  transform: translateY(0);
+  outline: 3px solid var(--color-auth-focus);
+  outline-offset: 2px;
+}
 .brandPanel {
   position: relative;
   display: flex;
