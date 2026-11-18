@@ -1,6 +1,6 @@
 ---
 description: Applies current React best practices across the project's React files using Context7 verification.
-mode: all
+mode: subagent
 steps: 50
 color: "#61dafb"
 ---

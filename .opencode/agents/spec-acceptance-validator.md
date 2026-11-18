@@ -1,7 +1,7 @@
 ---
 name: spec-acceptance-validator
 description: Validates and fixes acceptance criteria from a project spec. Use when asked to verify, validate, or complete a `specs/*.md` implementation.
-mode: all
+mode: subagent
 model: openai/gpt-5.6-terra
 color: success
 steps: 50

@@ -1,6 +1,6 @@
 ---
 description: Verifies versioned Supabase database migrations and applies authorized migrations safely to the local development stack only.
-mode: all
+mode: subagent
 steps: 30
 color: "#3ecf8e"
 ---

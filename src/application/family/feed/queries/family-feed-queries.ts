@@ -29,20 +29,26 @@ export async function getFamilyFeedContext(
     dependencies.directory.findRooms(),
   ]);
 
-  if (!person) throw new Error("Authenticated person was not found in persistence.");
+  if (!person || person.status !== "active") {
+    throw new Error("Authenticated person is not active in persistence.");
+  }
   if (!hasPersonRole(person.roles, "parent")) {
     throw new Error("Family context is only available to parent accounts.");
   }
 
   const authorizedKidIds = new Set(parentKids.map((parentKid) => parentKid.kidId));
-  const authorizedKids = kids.filter((kid) => authorizedKidIds.has(kid.id));
+  const activeKids = selectActiveFamilyKids(kids, authorizedKidIds);
+  const activeKidIds = new Set(activeKids.map((kid) => kid.id));
+  const authorizedKids = activeKids;
+  const authorizedParentKids = parentKids.filter((parentKid) =>
+    activeKidIds.has(parentKid.kidId),
+  );
   const authorizedRoomIds = new Set(authorizedKids.map((kid) => kid.roomId));
   const authorizedRooms = rooms.filter((room) => authorizedRoomIds.has(room.id));
-  const activeKids = selectActiveFamilyKids(kids, authorizedKidIds);
 
   return {
     person,
-    parentKids,
+    parentKids: authorizedParentKids,
     kids: authorizedKids,
     activeKids,
     rooms: authorizedRooms,
