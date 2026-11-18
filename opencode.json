@@ -5,6 +5,10 @@
     "schema_db": {
       "path": "../info/opencode-daycare/references/schemas",
       "description": "Schema de base de datos, tablas, columnas y referencias a crear, esto no está implementado en la base de datos, solo es para referencia"
+    },
+    "cronjob_info": {
+      "path": "../info/17-opencode-cron-jobs.md",
+      "description": "Documentación de ejecutar e implementar subagentes con CronJobs"
     }
   },
 
@@ -27,7 +31,7 @@
       "enabled": true,
       "oauth": false,
       "headers": {
-        "Authorization": "Bearer ctx7sk-d3584aa8-f0bb-470f-834f-3c5f5c049dcc"
+        "Authorization": "Bearer {env:CONTEXT7_API_KEY}"
       }
     },
     "supabase": {
