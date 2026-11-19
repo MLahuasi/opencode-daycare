@@ -4,16 +4,13 @@ import {
 } from "@/application/family/feed";
 import { getSessionPersonRoles, requireActiveSession } from "@/composition/auth";
 import { createFamilyFeedComposition } from "@/composition/family";
-import { FamilySidebar } from "@/presentation/layout";
+import { FamilySidebar, LogoutButton } from "@/presentation/layout";
 import {
   Avatar,
-  Badge,
-  Button,
   CheckboxField,
   getAvatarToneByPosition,
 } from "@/presentation/ui";
-import { AccountProfileForm } from "./_components/account-profile-form";
-import { PasswordForm } from "./_components/password-form";
+import { AccountSettingsActions } from "./_components/account-settings-actions";
 import styles from "./account.module.css";
 
 /**
@@ -37,6 +34,9 @@ export default async function FamilyAccountPage() {
     session.user.personId,
   );
   const roomsById = new Map(familyContext.rooms.map((room) => [room.id, room]));
+  const parentKidsByKidId = new Map(
+    familyContext.parentKids.map((parentKid) => [parentKid.kidId, parentKid]),
+  );
 
   return (
     <div className={styles.shell}>
@@ -58,20 +58,12 @@ export default async function FamilyAccountPage() {
               <p className={styles.profileName}>{familyContext.person.name}</p>
               <p className={styles.profileEmail}>{familyContext.person.email}</p>
             </div>
-          </div>
-
-          <section
-            aria-labelledby="account-profile-heading"
-            className={styles.section}
-          >
-            <h2 className={styles.sectionTitle} id="account-profile-heading">
-              Datos personales
-            </h2>
-            <AccountProfileForm
+            <AccountSettingsActions
+              mode="profile"
               name={familyContext.person.name}
               phone={familyContext.person.phone}
             />
-          </section>
+          </div>
 
           <section aria-labelledby="account-kids-heading" className={styles.section}>
             <p className={styles.sectionLabel} id="account-kids-heading">
@@ -92,7 +84,13 @@ export default async function FamilyAccountPage() {
                         {roomsById.get(kid.roomId)?.name ?? "Sala no asignada"}
                       </p>
                     </div>
-                    <Badge variant="neutral">Solo lectura</Badge>
+                    <CheckboxField
+                      checked={parentKidsByKidId.get(kid.id)?.photoSharingConsent ?? false}
+                      className={styles.photoControl}
+                      disabled
+                      indicatorClassName={styles.switch}
+                      label="Fotos"
+                    />
                   </div>
                 ))}
               </div>
@@ -129,24 +127,18 @@ export default async function FamilyAccountPage() {
             </p>
           </section>
 
-          <section
-            aria-labelledby="account-password-heading"
-            className={styles.section}
-          >
-            <h2 className={styles.sectionTitle} id="account-password-heading">
-              Contraseña
-            </h2>
-            <PasswordForm />
-          </section>
+          <AccountSettingsActions
+            mode="security"
+            name={familyContext.person.name}
+            phone={familyContext.person.phone}
+          />
 
-          <section aria-labelledby="account-support-heading" className={styles.section}>
-            <p className={styles.sectionLabel} id="account-support-heading">
-              Ayuda y soporte
-            </p>
-            <Button className={styles.supportButton} disabled variant="ghost">
-              Soporte próximamente
-            </Button>
-          </section>
+          <LogoutButton
+            className={styles.pageLogout}
+            label="Cerrar sesión"
+            showLabel
+          />
+
         </div>
       </main>
     </div>

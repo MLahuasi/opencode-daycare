@@ -59,6 +59,28 @@
   margin: 0;
 }
 
+.photoControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.photoControl input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.photoControl > span:first-of-type {
+  order: 2;
+}
+
+.photoControl > span:last-child {
+  order: 1;
+}
+
 .kidName {
   color: var(--color-ink);
   font-size: 15px;
@@ -117,11 +139,13 @@
   content: "";
 }
 
-.notificationRow input:checked + .switch {
+.notificationRow input:checked + .switch,
+.photoControl input:checked + .switch {
   background: var(--color-auth-checkbox);
 }
 
-.notificationRow input:checked + .switch::after {
+.notificationRow input:checked + .switch::after,
+.photoControl input:checked + .switch::after {
   left: 21px;
 }
 
@@ -138,6 +162,24 @@
   justify-content: space-between;
   margin-top: 6px;
   border: 1px solid var(--color-border);
+}
+
+.pageLogout {
+  width: 100%;
+  height: auto;
+  justify-content: center;
+  margin-top: 2px;
+  border: 1px solid var(--color-coral-light);
+  border-radius: 14px;
+  background: var(--color-coral-soft);
+  color: var(--color-coral-dark);
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.pageLogout svg {
+  display: none;
 }
 
 .eyebrow,
@@ -175,6 +217,89 @@
 .profileSummary {
   min-width: 0;
   flex: 1;
+}
+
+.editButton {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-navigation);
+}
+
+.actionList {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: var(--color-surface);
+}
+
+.actionButton {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0;
+  border-bottom: 1px solid var(--color-card-divider);
+  padding: 16px 22px;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.actionButton:last-child {
+  border-bottom: 0;
+}
+
+.actionButton > span:last-child {
+  color: var(--color-photo-border);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.modalBackdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--color-modal-backdrop);
+  padding: 20px;
+}
+
+.modal {
+  width: min(100%, 520px);
+  max-height: min(90vh, 720px);
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-form-card);
+  padding: 22px;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.modalTitle {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-fredoka), sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.closeButton {
+  min-width: 40px;
+  padding: 8px;
+  font-size: 22px;
 }
 
 .profileName {
