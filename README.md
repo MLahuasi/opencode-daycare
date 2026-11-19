@@ -47,15 +47,15 @@ mismo origen y puerto; no se configura un puerto diferente por ruta.
 
 Comandos disponibles:
 
-| Comando | Uso |
-| --- | --- |
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de producción |
-| `npm run start` | Servidor con el build generado |
-| `npm run lint` | Ejecución de ESLint |
-| `npm run db:migrate:dry-run` | Comprueba migraciones pendientes en el proyecto Supabase remoto enlazado |
-| `npm run db:migrate` | Aplica migraciones al proyecto Supabase remoto enlazado |
-| `npm run db:seed` | Ejecuta explícitamente `supabase/seed.sql` en el proyecto Supabase remoto enlazado |
+| Comando                      | Uso                                                                                |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| `npm run dev`                | Servidor de desarrollo                                                             |
+| `npm run build`              | Build de producción                                                                |
+| `npm run start`              | Servidor con el build generado                                                     |
+| `npm run lint`               | Ejecución de ESLint                                                                |
+| `npm run db:migrate:dry-run` | Comprueba migraciones pendientes en el proyecto Supabase remoto enlazado           |
+| `npm run db:migrate`         | Aplica migraciones al proyecto Supabase remoto enlazado                            |
+| `npm run db:seed`            | Ejecuta explícitamente `supabase/seed.sql` en el proyecto Supabase remoto enlazado |
 
 ### Baseline y seed de un proyecto nuevo
 
@@ -93,16 +93,16 @@ base vacía y `supabase/seed.sql` se ejecutó dos veces.
 
 Conteos observados después del segundo ciclo:
 
-| Entidad | Filas |
-| --- | ---: |
-| `daycares` | 1 |
-| `roles` | 4 |
-| `people` | 1 |
-| `credential` | 1 |
-| `people_roles` | 3 |
-| `rooms` | 3 |
-| `staff_rooms` | 3 |
-| **Total** | **16** |
+| Entidad        |  Filas |
+| -------------- | -----: |
+| `daycares`     |      1 |
+| `roles`        |      4 |
+| `people`       |      1 |
+| `credential`   |      1 |
+| `people_roles` |      3 |
+| `rooms`        |      3 |
+| `staff_rooms`  |      3 |
+| **Total**      | **16** |
 
 Relaciones verificadas:
 
@@ -332,8 +332,8 @@ relaciones. No muestra el composer ni la navegación exclusiva de personal.
 
 Estas credenciales existen únicamente para pruebas locales del prototipo:
 
-| Usuario | Email | Password | Rol |
-| --- | --- | --- | --- |
+| Usuario      | Email                  | Password        | Rol        |
+| ------------ | ---------------------- | --------------- | ---------- |
 | Caro Giménez | `caro@opendaycare.com` | `OpenDayCare1!` | `personal` |
 
 Los demás hashes `mock-hash-*` de los fixtures no son contraseñas válidas.
@@ -925,3 +925,12 @@ móvil.
 
 `Badge` y `SearchField` también forman parte del catálogo UI reutilizable, pero
 se utilizan en otras features y no dentro de `StaffSidebar`.
+
+---
+
+## PENDIENTES
+
+references/screens/avisos.dc.html
+references/screens/familia-cuenta.dc.html
+references/screens/mi-cuenta.dc.html
+references/screens/resumen-dia.dc.html
