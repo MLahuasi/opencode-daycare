@@ -167,6 +167,8 @@ como `output: "standalone"`, debe incluir también la carpeta `templates/`.
 ## Rutas oficiales
 
 - `/home`: feed del personal o feed familiar filtrado según el rol autenticado.
+- `/account`: cuenta del personal autenticado, con edición de nombre y teléfono,
+  cambio de contraseña y cierre de sesión.
 - `/`: redirect permanente a `/home`.
 - `/auth/login`: inicio de sesión.
 - `/auth/parent-invitation`: inicio de activación de una invitación.
@@ -931,5 +933,4 @@ se utilizan en otras features y no dentro de `StaffSidebar`.
 ## PENDIENTES
 
 references/screens/avisos.dc.html
-references/screens/mi-cuenta.dc.html
 references/screens/resumen-dia.dc.html

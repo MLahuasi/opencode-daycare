@@ -1,0 +1,13 @@
+.form { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; color: var(--color-text); font-size: 14px; font-weight: 700; }
+.input { width: 100%; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface); color: var(--color-ink); padding: 10px 12px; outline: none; }
+.input:focus { border-color: var(--color-coral-light); box-shadow: 0 0 0 3px var(--color-coral-soft); }
+.input[aria-invalid="true"] { border-color: var(--color-error); }
+.error { margin: -8px 0 0; color: var(--color-error); font-size: 13px; font-weight: 700; }
+.submitButton { align-self: flex-start; }
+.status { margin: 0; color: var(--color-auth-success); font-size: 13px; font-weight: 700; }
+.modalBackdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; background: var(--color-modal-backdrop); padding: 20px; }
+.modal { width: min(100%, 520px); max-height: min(90vh, 720px); overflow-y: auto; border: 1px solid var(--color-border); border-radius: 18px; background: var(--color-surface); box-shadow: var(--shadow-form-card); padding: 22px; }
+.modalHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.modalTitle { margin: 0; color: var(--color-ink); font-family: var(--font-fredoka), sans-serif; font-size: 22px; font-weight: 600; }
+.closeButton { min-width: 40px; padding: 8px; font-size: 22px; }
