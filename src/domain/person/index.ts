@@ -8,3 +8,4 @@ export {
   type PersonRoles,
   type PersonStatus,
 } from "./person";
+export { normalizePhone } from "./phone";
