@@ -5,6 +5,8 @@ import {
 import { getSessionPersonRoles, requireActiveSession } from "@/composition/auth";
 import { createFamilyFeedComposition } from "@/composition/family";
 import { FamilySidebar } from "@/presentation/layout";
+import { AccountProfileForm } from "./_components/account-profile-form";
+import { PasswordForm } from "./_components/password-form";
 import styles from "../family-feed.module.css";
 
 /**
@@ -36,9 +38,15 @@ export default async function FamilyAccountPage() {
         <p>Mi cuenta</p>
         <section aria-labelledby="account-profile-heading">
           <h2 id="account-profile-heading">Datos personales</h2>
-          <p>{familyContext.person.name}</p>
           <p>{familyContext.person.email}</p>
-          <p>{familyContext.person.phone ?? "Sin teléfono"}</p>
+          <AccountProfileForm
+            name={familyContext.person.name}
+            phone={familyContext.person.phone}
+          />
+        </section>
+        <section aria-labelledby="account-password-heading">
+          <h2 id="account-password-heading">Contraseña</h2>
+          <PasswordForm />
         </section>
       </main>
     </div>
