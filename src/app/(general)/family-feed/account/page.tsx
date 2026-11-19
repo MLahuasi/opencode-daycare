@@ -1,10 +1,46 @@
 import { redirect } from "next/navigation";
+import {
+  getFamilyFeedContext,
+} from "@/application/family/feed";
+import { getSessionPersonRoles, requireActiveSession } from "@/composition/auth";
+import { createFamilyFeedComposition } from "@/composition/family";
+import { FamilySidebar } from "@/presentation/layout";
+import styles from "../family-feed.module.css";
 
 /**
- * Keeps the future family-account destination available without implementing it.
+ * Renders the authenticated family account shell and its persisted profile data.
  *
- * @returns Never returns because the route redirects to the family feed.
+ * @returns The family account shell.
  */
-export default function FamilyAccountPlaceholder() {
-  redirect("/family-feed");
+export default async function FamilyAccountPage() {
+  const session = await requireActiveSession();
+  const roles = await getSessionPersonRoles(
+    session.user.daycareId,
+    session.user.personId,
+  );
+
+  if (!roles.includes("parent")) {
+    redirect("/home");
+  }
+
+  const familyContext = await getFamilyFeedContext(
+    createFamilyFeedComposition(session.user.daycareId),
+    session.user.personId,
+  );
+
+  return (
+    <div className={styles.shell}>
+      <FamilySidebar activeHref="/family-feed/account" person={familyContext.person} />
+      <main className={styles.content}>
+        <h1>Ajustes</h1>
+        <p>Mi cuenta</p>
+        <section aria-labelledby="account-profile-heading">
+          <h2 id="account-profile-heading">Datos personales</h2>
+          <p>{familyContext.person.name}</p>
+          <p>{familyContext.person.email}</p>
+          <p>{familyContext.person.phone ?? "Sin teléfono"}</p>
+        </section>
+      </main>
+    </div>
+  );
 }

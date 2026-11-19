@@ -12,6 +12,8 @@ import styles from "./family-sidebar.module.css";
 type FamilySidebarProps = {
   /** Optional classes applied to the desktop sidebar. */
   className?: string;
+  /** Route whose navigation item should be marked as current. */
+  activeHref?: string;
   /** Parent identity displayed in the profile section. */
   person: Pick<Person, "name">;
 };
@@ -66,10 +68,15 @@ function NavigationIcon({ name }: { name: FamilyNavigationIcon }) {
  *
  * @param props - Family sidebar configuration.
  * @param props.className - Optional classes applied to the desktop sidebar.
+ * @param props.activeHref - Route whose navigation item is marked as current.
  * @param props.person - Parent identity shown in the sidebar profile.
  * @returns The family navigation shell.
  */
-export function FamilySidebar({ className = "", person }: FamilySidebarProps) {
+export function FamilySidebar({
+  activeHref = "/family-feed",
+  className = "",
+  person,
+}: FamilySidebarProps) {
   const initial = person.name.trim().charAt(0).toUpperCase();
 
   return (
@@ -80,10 +87,12 @@ export function FamilySidebar({ className = "", person }: FamilySidebarProps) {
       >
         <Brand name="OpenDayCare" room="Familia" />
         <nav aria-label="Secciones" className={styles.navigation}>
-          {familyNavigationConfig.items.map((item) => (
+          {familyNavigationConfig.items.map((item) => {
+            const isActive = item.href === activeHref;
+            return (
             <LinkButton
-              aria-current={item.active ? "page" : undefined}
-              className={`${styles.navigationButton} ${item.active ? styles.navigationButtonActive : ""}`}
+              aria-current={isActive ? "page" : undefined}
+              className={`${styles.navigationButton} ${isActive ? styles.navigationButtonActive : ""}`}
               href={item.href}
               key={item.href}
               variant="ghost"
@@ -91,7 +100,8 @@ export function FamilySidebar({ className = "", person }: FamilySidebarProps) {
               <NavigationIcon name={item.icon} />
               {item.label}
             </LinkButton>
-          ))}
+            );
+          })}
         </nav>
         <div className={styles.profile}>
           <Avatar initial={initial} size="md" tone="purple" />
@@ -104,10 +114,12 @@ export function FamilySidebar({ className = "", person }: FamilySidebarProps) {
       </aside>
 
       <nav aria-label="Navegación familiar móvil" className={styles.mobileNavigation}>
-        {familyNavigationConfig.items.map((item) => (
+          {familyNavigationConfig.items.map((item) => {
+            const isActive = item.href === activeHref;
+            return (
           <LinkButton
-            aria-current={item.active ? "page" : undefined}
-            className={`${styles.mobileNavigationButton} ${item.active ? styles.mobileNavigationButtonActive : ""}`}
+            aria-current={isActive ? "page" : undefined}
+            className={`${styles.mobileNavigationButton} ${isActive ? styles.mobileNavigationButtonActive : ""}`}
             href={item.href}
             key={item.href}
             variant="ghost"
@@ -115,7 +127,8 @@ export function FamilySidebar({ className = "", person }: FamilySidebarProps) {
             <NavigationIcon name={item.icon} />
             <span>{item.label}</span>
             </LinkButton>
-          ))}
+            );
+          })}
         <div className={styles.mobileLogout}>
           <LogoutButton label="Cerrar sesión" />
         </div>
