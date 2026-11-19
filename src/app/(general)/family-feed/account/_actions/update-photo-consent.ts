@@ -37,7 +37,7 @@ export async function updatePhotoConsentAction(
   const kidId = String(formData.get("kidId") ?? "").trim();
   const enabledValue = String(formData.get("enabled") ?? "").trim().toLowerCase();
 
-  if (!kidId || !["true", "false"].includes(enabledValue)) {
+  if (!kidId || (enabledValue && !["true", "false"].includes(enabledValue))) {
     return { message: "La solicitud de consentimiento no es válida." };
   }
 

@@ -11,6 +11,7 @@ import {
   getAvatarToneByPosition,
 } from "@/presentation/ui";
 import { AccountSettingsActions } from "./_components/account-settings-actions";
+import { PhotoConsentControl } from "./_components/photo-consent-control";
 import styles from "./account.module.css";
 
 /**
@@ -84,12 +85,12 @@ export default async function FamilyAccountPage() {
                         {roomsById.get(kid.roomId)?.name ?? "Sala no asignada"}
                       </p>
                     </div>
-                    <CheckboxField
-                      checked={parentKidsByKidId.get(kid.id)?.photoSharingConsent ?? false}
-                      className={styles.photoControl}
-                      disabled
-                      indicatorClassName={styles.switch}
-                      label="Fotos"
+                    <PhotoConsentControl
+                      checked={
+                        parentKidsByKidId.get(kid.id)?.photoSharingConsent ?? false
+                      }
+                      kidName={kid.name}
+                      kidId={kid.id}
                     />
                   </div>
                 ))}
