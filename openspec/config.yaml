@@ -1,0 +1,36 @@
+schema: spec-driven
+
+context: |
+  OpenDayCare es un prototipo de una plataforma para gestionar una guardería
+  infantil ficticia. Su objetivo es facilitar la operación diaria del personal
+  y la comunicación con las familias mediante autenticación, perfiles de niños,
+  publicaciones, comentarios, invitaciones de padres y feeds diferenciados por
+  rol.
+
+  El proyecto también sirve como laboratorio de desarrollo asistido por agentes,
+  MCPs y Spec Driven Development. Las propuestas, diseños, especificaciones y
+  tareas de OpenSpec deben estar escritas en español y priorizar una solución
+  segura, mantenible y adecuada para una aplicación multi-tenant con persistencia
+  PostgreSQL.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always state what is out of scope
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing

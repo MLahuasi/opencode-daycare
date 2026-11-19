@@ -931,6 +931,5 @@ se utilizan en otras features y no dentro de `StaffSidebar`.
 ## PENDIENTES
 
 references/screens/avisos.dc.html
-references/screens/familia-cuenta.dc.html
 references/screens/mi-cuenta.dc.html
 references/screens/resumen-dia.dc.html
