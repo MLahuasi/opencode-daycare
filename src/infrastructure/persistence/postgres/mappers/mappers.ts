@@ -44,6 +44,7 @@ export function mapPersonRow(row: PersonRow): Person {
     id: row.id,
     name: row.name,
     email: row.email,
+    phone: row.phone,
     roles: row.roles,
     status: row.status,
   };

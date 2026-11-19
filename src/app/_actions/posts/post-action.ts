@@ -239,7 +239,9 @@ export async function parsePostSubmission(
     }
   }
 
-  if (targetKids.length > 0 && (files.length > 0 || retainedMedia.length > 0)) {
+  // Consent is evaluated only for new uploads. Retained media belongs to an
+  // existing publication and must remain unaffected by a later consent change.
+  if (targetKids.length > 0 && files.length > 0) {
     const consentResults = await Promise.all(
       targetKids.map(async (kid) => ({
           hasConsent: await hasPhotoSharingConsent(

@@ -12,6 +12,19 @@ export interface FamilyParentKidRepository {
   findByParentAndKid(parentId: string, kidId: string): Promise<ParentKid | null>;
 
   /**
+   * Updates photo-sharing consent for an existing parent-kid relationship.
+   *
+   * @param parentId - Stable parent person identifier.
+   * @param kidId - Stable kid identifier.
+   * @param enabled - Whether future photo publications are allowed.
+   */
+  updatePhotoSharingConsent(
+    parentId: string,
+    kidId: string,
+    enabled: boolean,
+  ): Promise<void>;
+
+  /**
    * Persists a newly accepted parent-kid relationship.
    *
    * @param parentKid - Relationship record to persist.

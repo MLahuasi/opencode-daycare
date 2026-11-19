@@ -5,27 +5,38 @@ import { Button } from "@/presentation/ui";
 import styles from "./staff-sidebar.module.css";
 
 type LogoutButtonProps = {
+  /** Optional class overrides for a specific layout placement. */
+  className?: string;
   label: string;
+  /** Whether to render the accessible label as visible button text. */
+  showLabel?: boolean;
 };
 
 /**
  * Signs out the current NextAuth session and returns to the login route.
  *
  * @param props - Logout button configuration.
+ * @param props.className - Optional class overrides for the button.
  * @param props.label - Accessible label for the logout control.
+ * @param props.showLabel - Whether to render the label visibly.
  * @returns A configured logout button.
  */
-export function LogoutButton({ label }: LogoutButtonProps) {
+export function LogoutButton({
+  className = "",
+  label,
+  showLabel = false,
+}: LogoutButtonProps) {
   return (
     <Button
       aria-label={label}
-      className={styles.logoutButton}
+      className={`${styles.logoutButton} ${className}`}
       onClick={() => signOut({ callbackUrl: "/auth/login" })}
       variant="ghost"
     >
       <svg aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
       </svg>
+      {showLabel ? label : null}
     </Button>
   );
 }
