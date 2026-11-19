@@ -135,6 +135,7 @@ export type Database = {
         id: string;
         job_title: string | null;
         name: string;
+        phone: string | null;
         status: Enums<"person_status">;
         updated_at: string;
       }>;

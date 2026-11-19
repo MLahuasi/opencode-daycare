@@ -16,7 +16,7 @@ export class PostgresPersonRepository {
    */
   async findAll(daycareId: string): Promise<readonly Person[]> {
     const rows = await this.client<PersonRow[]>`
-      SELECT p.daycare_id, p.id, p.name, p.email, p.job_title, p.status,
+      SELECT p.daycare_id, p.id, p.name, p.email, p.phone, p.job_title, p.status,
              p.created_at, p.updated_at,
              coalesce(
                array_agg(r.code ORDER BY r.code)
@@ -29,7 +29,7 @@ export class PostgresPersonRepository {
        AND pr.person_id = p.id
       LEFT JOIN roles AS r ON r.id = pr.role_id
       WHERE p.daycare_id = ${daycareId}
-      GROUP BY p.daycare_id, p.id, p.name, p.email, p.job_title,
+      GROUP BY p.daycare_id, p.id, p.name, p.email, p.phone, p.job_title,
                p.status, p.created_at, p.updated_at
       ORDER BY p.id
     `;
@@ -46,7 +46,7 @@ export class PostgresPersonRepository {
    */
   async findById(daycareId: string, id: string): Promise<Person | null> {
     const rows = await this.client<PersonRow[]>`
-      SELECT p.daycare_id, p.id, p.name, p.email, p.job_title, p.status,
+      SELECT p.daycare_id, p.id, p.name, p.email, p.phone, p.job_title, p.status,
              p.created_at, p.updated_at,
              coalesce(
                array_agg(r.code ORDER BY r.code)
@@ -60,7 +60,7 @@ export class PostgresPersonRepository {
       LEFT JOIN roles AS r ON r.id = pr.role_id
       WHERE p.daycare_id = ${daycareId}
         AND p.id = ${id}
-      GROUP BY p.daycare_id, p.id, p.name, p.email, p.job_title,
+      GROUP BY p.daycare_id, p.id, p.name, p.email, p.phone, p.job_title,
                p.status, p.created_at, p.updated_at
       LIMIT 1
     `;
@@ -77,7 +77,7 @@ export class PostgresPersonRepository {
    */
   async findByEmail(daycareId: string, email: string): Promise<Person | null> {
     const rows = await this.client<PersonRow[]>`
-      SELECT p.daycare_id, p.id, p.name, p.email, p.job_title, p.status,
+      SELECT p.daycare_id, p.id, p.name, p.email, p.phone, p.job_title, p.status,
              p.created_at, p.updated_at,
              coalesce(
                array_agg(r.code ORDER BY r.code)
@@ -91,7 +91,7 @@ export class PostgresPersonRepository {
       LEFT JOIN roles AS r ON r.id = pr.role_id
       WHERE p.daycare_id = ${daycareId}
         AND lower(p.email) = lower(${email})
-      GROUP BY p.daycare_id, p.id, p.name, p.email, p.job_title,
+      GROUP BY p.daycare_id, p.id, p.name, p.email, p.phone, p.job_title,
                p.status, p.created_at, p.updated_at
       LIMIT 1
     `;
@@ -108,12 +108,13 @@ export class PostgresPersonRepository {
   async create(person: Person): Promise<void> {
     await this.client.begin(async (transaction) => {
       await transaction`
-      INSERT INTO people (daycare_id, id, name, email, status)
+      INSERT INTO people (daycare_id, id, name, email, phone, status)
       VALUES (
         ${person.daycareId},
         ${person.id},
         ${person.name},
         ${person.email},
+        ${person.phone},
         ${person.status}
       )
       `;
@@ -141,6 +142,7 @@ export class PostgresPersonRepository {
         UPDATE people
         SET name = ${person.name},
             email = ${person.email},
+            phone = ${person.phone},
             status = ${person.status},
             updated_at = now()
         WHERE daycare_id = ${person.daycareId}

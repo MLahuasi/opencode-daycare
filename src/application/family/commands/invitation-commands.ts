@@ -62,6 +62,7 @@ export async function createInvitation(
     id: dependencies.identifiers.create(),
     name: input.name.trim(),
     email,
+    phone: null,
     roles: ["parent"],
     status: "pending",
   };
