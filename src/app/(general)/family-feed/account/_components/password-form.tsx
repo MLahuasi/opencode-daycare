@@ -6,6 +6,7 @@ import {
   type PasswordActionState,
 } from "../_actions/change-password";
 import { Button, FormField } from "@/presentation/ui";
+import styles from "../account.module.css";
 
 const initialState: PasswordActionState = {
   errors: {},
@@ -24,23 +25,25 @@ export function PasswordForm() {
   );
 
   return (
-    <form action={formAction} noValidate>
-      <FormField htmlFor="account-password" label="Nueva contraseña">
+    <form action={formAction} className={styles.form} noValidate>
+      <FormField className={styles.field} htmlFor="account-password" label="Nueva contraseña">
         <input
           aria-describedby={state.errors.password ? "account-password-error" : undefined}
           aria-invalid={state.errors.password ? "true" : undefined}
+          className={styles.input}
           id="account-password"
           name="password"
           type="password"
         />
       </FormField>
       {state.errors.password ? (
-        <p id="account-password-error" role="alert">
+        <p className={styles.error} id="account-password-error" role="alert">
           {state.errors.password}
         </p>
       ) : null}
 
       <FormField
+        className={styles.field}
         htmlFor="account-password-confirmation"
         label="Confirmar contraseña"
       >
@@ -51,22 +54,23 @@ export function PasswordForm() {
               : undefined
           }
           aria-invalid={state.errors.confirmation ? "true" : undefined}
+          className={styles.input}
           id="account-password-confirmation"
           name="confirmation"
           type="password"
         />
       </FormField>
       {state.errors.confirmation ? (
-        <p id="account-password-confirmation-error" role="alert">
+        <p className={styles.error} id="account-password-confirmation-error" role="alert">
           {state.errors.confirmation}
         </p>
       ) : null}
 
-      <Button disabled={isPending} type="submit">
+      <Button className={styles.button} disabled={isPending} type="submit">
         {isPending ? "Actualizando…" : "Cambiar contraseña"}
       </Button>
       {state.message ? (
-        <p aria-live="polite" role="status">
+        <p aria-live="polite" className={styles.status} role="status">
           {state.message}
         </p>
       ) : null}

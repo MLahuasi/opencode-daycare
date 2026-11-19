@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { updateAccountAction, type AccountActionState } from "../_actions/update-account";
 import { Button, FormField } from "@/presentation/ui";
+import styles from "../account.module.css";
 
 const initialState: AccountActionState = {
   errors: {},
@@ -32,11 +33,12 @@ export function AccountProfileForm({
   );
 
   return (
-    <form action={formAction} noValidate>
-      <FormField htmlFor="account-name" label="Nombre">
+    <form action={formAction} className={styles.form} noValidate>
+      <FormField className={styles.field} htmlFor="account-name" label="Nombre">
         <input
           aria-describedby={state.errors.name ? "account-name-error" : undefined}
           aria-invalid={state.errors.name ? "true" : undefined}
+          className={styles.input}
           defaultValue={name}
           id="account-name"
           name="name"
@@ -44,15 +46,16 @@ export function AccountProfileForm({
         />
       </FormField>
       {state.errors.name ? (
-        <p id="account-name-error" role="alert">
+        <p className={styles.error} id="account-name-error" role="alert">
           {state.errors.name}
         </p>
       ) : null}
 
-      <FormField htmlFor="account-phone" label="Teléfono">
+      <FormField className={styles.field} htmlFor="account-phone" label="Teléfono">
         <input
           aria-describedby={state.errors.phone ? "account-phone-error" : undefined}
           aria-invalid={state.errors.phone ? "true" : undefined}
+          className={styles.input}
           defaultValue={phone ?? ""}
           id="account-phone"
           name="phone"
@@ -60,16 +63,16 @@ export function AccountProfileForm({
         />
       </FormField>
       {state.errors.phone ? (
-        <p id="account-phone-error" role="alert">
+        <p className={styles.error} id="account-phone-error" role="alert">
           {state.errors.phone}
         </p>
       ) : null}
 
-      <Button disabled={isPending} type="submit">
+      <Button className={styles.button} disabled={isPending} type="submit">
         {isPending ? "Guardando…" : "Guardar cambios"}
       </Button>
       {state.message ? (
-        <p aria-live="polite" role="status">
+        <p aria-live="polite" className={styles.status} role="status">
           {state.message}
         </p>
       ) : null}
