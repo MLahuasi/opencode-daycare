@@ -8,6 +8,8 @@ import { hasPersonRole } from "@/domain/person";
 /** Validation and persistence feedback returned by the photo consent action. */
 export type PhotoConsentActionState = {
   message: string;
+  success: boolean;
+  refreshToken?: number;
 };
 
 /**
@@ -31,14 +33,17 @@ export async function updatePhotoConsentAction(
   );
 
   if (!hasPersonRole(roles, "parent")) {
-    return { message: "No tienes permiso para modificar este consentimiento." };
+    return {
+      message: "No tienes permiso para modificar este consentimiento.",
+      success: false,
+    };
   }
 
   const kidId = String(formData.get("kidId") ?? "").trim();
   const enabledValue = String(formData.get("enabled") ?? "").trim().toLowerCase();
 
   if (!kidId || (enabledValue && !["true", "false"].includes(enabledValue))) {
-    return { message: "La solicitud de consentimiento no es válida." };
+    return { message: "La solicitud de consentimiento no es válida.", success: false };
   }
 
   const enabled = enabledValue === "true";
@@ -49,7 +54,10 @@ export async function updatePhotoConsentAction(
   );
 
   if (!relationship) {
-    return { message: "No tienes permiso para modificar este consentimiento." };
+    return {
+      message: "No tienes permiso para modificar este consentimiento.",
+      success: false,
+    };
   }
 
   try {
@@ -61,6 +69,7 @@ export async function updatePhotoConsentAction(
   } catch {
     return {
       message: "No pudimos guardar el consentimiento. Inténtalo nuevamente.",
+      success: false,
     };
   }
 
@@ -71,5 +80,7 @@ export async function updatePhotoConsentAction(
     message: enabled
       ? "Se permitirá publicar fotos futuras de este hijo."
       : "No se permitirán nuevas publicaciones de fotos de este hijo.",
+    success: true,
+    refreshToken: Date.now(),
   };
 }

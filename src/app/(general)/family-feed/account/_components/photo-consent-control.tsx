@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { CheckboxField } from "@/presentation/ui";
 import {
   updatePhotoConsentAction,
@@ -8,7 +9,7 @@ import {
 } from "../_actions/update-photo-consent";
 import styles from "../account.module.css";
 
-const initialState: PhotoConsentActionState = { message: "" };
+const initialState: PhotoConsentActionState = { message: "", success: false };
 
 type PhotoConsentControlProps = {
   checked: boolean;
@@ -34,6 +35,13 @@ export function PhotoConsentControl({
     initialState,
   );
   const [checked, setChecked] = useState(initialChecked);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.success && state.refreshToken) {
+      router.refresh();
+    }
+  }, [router, state.refreshToken, state.success]);
 
   return (
     <form action={formAction} className={styles.photoControlForm}>

@@ -1,6 +1,6 @@
 # SPEC 35 — Ajustes de cuenta familiar
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 20, SPEC 29, SPEC 34
 > **Date:** 2026-11-19
 > **Objective:** Implementar `/family-feed/account` para que un padre gestione su nombre, teléfono y contraseña, consulte sus hijos vinculados y vea las opciones futuras de cuenta.
@@ -147,11 +147,11 @@ La identidad anterior se obtiene exclusivamente de la sesión activa. El formula
 - [x] La migración añade `people.phone` como columna nullable.
 - [x] El listado solo muestra hijos activos vinculados al padre autenticado.
 - [x] La página no permite modificar ni crear vínculos padre-hijo.
-- [ ] Cada hijo muestra un control “Fotos” cuyo estado inicial proviene de `parent_kids.photo_sharing_consent`.
-- [ ] El padre puede activar o desactivar “Fotos” para cada hijo vinculado.
-- [ ] La actualización de “Fotos” solo modifica la relación padre-hijo autorizada y no otra relación del daycare.
-- [ ] Desactivar “Fotos” bloquea futuras publicaciones de fotos para ese hijo.
-- [ ] Desactivar “Fotos” no elimina ni oculta fotos publicadas anteriormente.
+- [x] Cada hijo muestra un control “Fotos” cuyo estado inicial proviene de `parent_kids.photo_sharing_consent`.
+- [x] El padre puede activar o desactivar “Fotos” para cada hijo vinculado.
+- [x] La actualización de “Fotos” solo modifica la relación padre-hijo autorizada y no otra relación del daycare.
+- [x] Desactivar “Fotos” bloquea futuras publicaciones de fotos para ese hijo.
+- [x] Desactivar “Fotos” no elimina ni oculta fotos publicadas anteriormente.
 - [x] Los controles de notificaciones son visibles y están deshabilitados.
 - [x] La opción de soporte es visible y está deshabilitada.
 - [x] El cambio de contraseña muestra dos campos: nueva contraseña y confirmación.
@@ -216,25 +216,3 @@ La identidad anterior se obtiene exclusivamente de la sesión activa. El formula
 - Aplicación automática de la migración al proyecto Supabase remoto.
 
 ---
-
-Plan de implementación
-
-1.  Crear y verificar la migración people.phone.
-2.  Actualizar dominio, tipos, mapper y repositorio.
-3.  Crear comando de cambio de contraseña.
-4.  Crear Server Action de actualización de cuenta.
-5.  Crear Server Action de cambio de contraseña.
-6.  Reemplazar el placeholder por la página funcional.
-7.  Crear formularios interactivos con useActionState.
-8.  Crear estilos CSS Module.
-9.  Añadir hijos, notificaciones, contraseña, soporte y logout.
-10. Añadir la Server Action autorizada para actualizar el consentimiento de fotos por hijo.
-11. Aplicar el consentimiento únicamente a futuras publicaciones y conservar las fotos existentes.
-12. Validar la migración en Supabase local.
-13. Ejecutar lint, typecheck, build y pruebas.
-
-14. Implementar la Server Action autorizada.
-15. Habilitar el control Fotos por hijo.
-16. Persistir cambios en parent_kids.photo_sharing_consent.
-17. Aplicar el consentimiento solo a futuras publicaciones.
-18. Ejecutar validaciones y el spec-acceptance-validator.
