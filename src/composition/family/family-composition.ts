@@ -53,6 +53,13 @@ export function createFamilyComposition(daycareId?: string): FamilyComposition {
     },
     parentKids: {
       findByParentAndKid: async (parentId, kidId) => parentKids.findByParentAndKid(await currentDaycare.getCurrentDaycareId(), parentId, kidId),
+      updatePhotoSharingConsent: async (parentId, kidId, enabled) =>
+        parentKids.updatePhotoSharingConsent(
+          await currentDaycare.getCurrentDaycareId(),
+          parentId,
+          kidId,
+          enabled,
+        ),
       create: (relationship) => parentKids.create(relationship),
     },
     kids: {

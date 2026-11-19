@@ -85,6 +85,28 @@ export class PostgresParentKidRepository {
     return rows[0] ? mapParentKidRow(rows[0]) : null;
   }
 
+  /** Updates only the photo-sharing consent of an existing relationship. */
+  async updatePhotoSharingConsent(
+    daycareId: string,
+    parentId: string,
+    kidId: string,
+    enabled: boolean,
+  ): Promise<void> {
+    const rows = await this.client<{ id: string }[]>`
+      UPDATE parent_kids
+      SET photo_sharing_consent = ${enabled},
+          updated_at = now()
+      WHERE daycare_id = ${daycareId}
+        AND parent_id = ${parentId}
+        AND kid_id = ${kidId}
+      RETURNING id
+    `;
+
+    if (!rows[0]) {
+      throw new Error("Cannot update missing parent-kid relationship consent.");
+    }
+  }
+
   async create(parentKid: ParentKid): Promise<void> {
     await this.client`
       INSERT INTO parent_kids (
