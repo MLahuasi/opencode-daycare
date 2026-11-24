@@ -53,33 +53,51 @@ La sentencia `ALTER ROLE` del usuario auditor no se ejecuta desde la aplicación
 ni desde una migración: se ejecuta una sola vez en el SQL Editor autorizado de
 Supabase, o mediante el procedimiento administrativo equivalente del proveedor.
 
-### Variables de entorno
+### Variables de entorno para desarrollo y pruebas
 
-Las variables server-only requeridas por la aplicación son:
+`.env.template` es la plantilla comentada para desarrollo local y pruebas.
+Cópiala como `.env.local` o `.env` según la herramienta que vaya a ejecutarla:
 
-| Grupo | Variables |
-| --- | --- |
-| Aplicación | `APP_URL`, `APP_LOCALE`, `APP_TIME_ZONE` |
-| Autenticación | `AUTH_SECRET`, `AUTH_SESSION_MAX_AGE_SECONDS`, `AUTH_SESSION_COOKIE_NAME`, `AUTH_SESSION_COOKIE_HTTP_ONLY`, `AUTH_SESSION_COOKIE_SECURE`, `AUTH_SESSION_COOKIE_SAME_SITE`, `AUTH_SESSION_COOKIE_PATH`, `AUTH_SIGN_IN_PATH`, `NEXTAUTH_URL` |
-| Base de datos | `SUPABASE_DB_HOST`, `SUPABASE_DB_PORT`, `SUPABASE_DB_USERNAME`, `SUPABASE_DB_PASSWORD` |
-| Correo | `MAILER_EMAIL`, `MAILER_SECRET_KEY`, `MAILER_FROM`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_SECURE`, `MAIL_TEMPLATE_EXTENSION` |
-| Imágenes | `CLOUDINARY_URL` |
+```powershell
+Copy-Item .env.template .env.local
+```
 
-Para pruebas o herramientas se pueden configurar adicionalmente
-`RUN_REMOTE_DB_TESTS`, `SECURITY_AUDITOR_DB_PASSWORD`,
-`SECURITY_AUDITOR_DB_URL` y `CONTEXT7_API_KEY`. No son necesarias para arrancar
-la aplicación en producción. Los límites HTTP y credenciales `E2E_*` pertenecen
-al entorno local de pruebas y no deben publicarse.
+Incluye las variables server-only de la aplicación: `APP_*`, `AUTH_*`,
+`NEXTAUTH_URL`, `SUPABASE_DB_*`, `MAILER_*` y `CLOUDINARY_URL`.
 
-`.env.template` es la referencia comentada y contiene también las variables
-reservadas para herramientas o pruebas externas. La comparación con el `.env`
-local usado durante las pruebas confirma que tiene el mismo conjunto de claves;
-el `.env` local contiene repetidas `APP_LOCALE`, `APP_TIME_ZONE` y
-`NEXTAUTH_URL`, que deben quedar definidas una sola vez para evitar valores
-ambiguos.
+Para pruebas remotas autorizadas, cambia temporalmente:
+
+```dotenv
+RUN_REMOTE_DB_TESTS=true
+```
+
+Estas pruebas usan PostgreSQL remoto dentro de una transacción con rollback.
+Después vuelve a `RUN_REMOTE_DB_TESTS=false`. Las variables
+`E2E_DAYCARE_ID`, `E2E_STAFF_EMAIL` y `E2E_STAFF_PASSWORD` solo deben existir
+si un runner E2E externo las consume; el código actual no las lee.
+
+`CONTEXT7_API_KEY` pertenece al MCP de Context7 usado por OpenCode, no a la
+aplicación. `SECURITY_AUDITOR_DB_URL` y `SECURITY_AUDITOR_DB_PASSWORD` solo se
+configuran en el entorno separado que ejecuta auditorías remotas de lectura.
 
 `MAIL_TEMPLATE_PATH` no se configura en `.env`: se deriva de la carpeta
 `templates/`, que debe existir en el directorio de ejecución.
+
+### Variables de entorno para producción
+
+Usa `.env.prod.template` como referencia. No copies secretos al repositorio:
+configura los valores en el gestor de secretos del proveedor de hosting. La
+plantilla contiene únicamente las variables necesarias para ejecutar
+OpenDayCare en producción, incluyendo `RUN_REMOTE_DB_TESTS=false`.
+
+En producción:
+
+- `APP_URL` y `NEXTAUTH_URL` deben ser el mismo origen HTTPS público.
+- `AUTH_SESSION_COOKIE_SECURE=true`.
+- `SUPABASE_DB_*` debe apuntar al Session Pooler del proyecto Supabase remoto.
+- `MAILER_*` y `CLOUDINARY_URL` deben usar credenciales de producción.
+- No configures `CONTEXT7_API_KEY`, `E2E_*` ni las variables del auditor en el
+  runtime web. El auditor usa un gestor de secretos independiente.
 
 ### Docker y Supabase local
 
