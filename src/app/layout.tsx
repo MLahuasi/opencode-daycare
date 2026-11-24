@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fredoka, Nunito } from "next/font/google";
+import type { ReactNode } from "react";
 import { getApplicationEnvironment } from "@/config/server";
 import "./globals.css";
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
   description: "Comunidad de Sala Soles en OpenDayCare.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang={getApplicationEnvironment().locale}
