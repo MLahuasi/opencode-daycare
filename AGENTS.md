@@ -71,6 +71,14 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 - La composición server-side de Auth vive en `src/composition/auth/`; los consumidores no importan `@/auth` ni `@/infrastructure/auth` directamente.
 - `src/presentation/ui/index.ts` es el barrel público de UI y `src/presentation/navigation/index.ts` el de navegación.
 - Consumir UI y navegación desde `@/presentation/ui` y `@/presentation/navigation`.
+- `src/presentation/account/index.ts` es el barrel público de la presentación
+  compartida de cuenta. Consumir `AccountProfileForm`, `AccountPasswordForm` y
+  `AccountModal` desde `@/presentation/account`.
+- Los formularios compartidos de cuenta reciben Server Actions y estados por
+  props; no importan acciones concretas, Composition ni Infrastructure.
+- `FormField` proporciona etiqueta y agrupación, pero no sustituye los controles
+  nativos `<input>`, que permanecen encapsulados dentro de los formularios
+  compartidos.
 - Mantener componentes específicos de una ruta dentro de `src/app/**/_components`, `src/app/**/_actions` o `src/app/**/_schemas`.
 - Los archivos especiales de App Router mantienen su convención de Next.js; la organización interna no crea rutas sin `page` o `route`.
 - Solo `src/app` contiene páginas, layouts, Route Handlers y colaboradores privados de ruta.
@@ -90,9 +98,16 @@ Las reglas específicas de este proyecto permanecen en este `AGENTS.md`.
 
 - Home y Kids viven bajo `src/app/(staff)/`; el grupo `(staff)` no aparece en sus URLs públicas.
 - Las rutas públicas de autenticación viven bajo `src/app/auth/`: `/auth/login`, `/auth/parent-invitation` y `/auth/parent-invitation/[token]`.
+- La cuenta del personal vive en `src/app/(staff)/account/` y se publica como
+  `/account`; la cuenta familiar vive en `src/app/(general)/family-feed/account/`.
+- Las Server Actions de familia y personal deben permanecer separadas y aplicar
+  sus autorizaciones propias, aunque ambas rutas reutilicen `src/presentation/account/`.
 - Solo `/` se conserva como redirect externo permanente en `next.config.ts`; las rutas legacy aprobadas responden 404.
 - Ningún Client Component importa `@/infrastructure`, filesystem, una entrada `server` ni configuración privada.
 - Ningún Client Component importa `@/config/server`, `@/bootstrap`, una fachada server-only ni un SDK externo.
+- Los Client Components de `src/presentation/account/` solo dependen de UI,
+  tipos y APIs del navegador; reciben acciones server válidas mediante props y
+  no conocen las reglas de autorización de las rutas consumidoras.
 
 ## Excepciones de estilos del proyecto
 
