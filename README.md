@@ -361,9 +361,9 @@ Remove-Variable adminPassword, adminDbHost, adminDbPort, adminDbUsername, `
 para una base nueva, después de verificar el proyecto destino:
 
 ```bash
-npm run db:migrate:dry-run
-npm run db:migrate
-npm run db:migrate:dry-run
+npm run db:migrate:production:dry-run
+npm run db:migrate:production
+npm run db:migrate:production:dry-run
 ```
 
 El segundo dry-run debe confirmar que no quedan migraciones pendientes. Para un
@@ -419,10 +419,8 @@ Ejecuta las validaciones en CI o antes del despliegue:
 
 ```bash
 npm ci
-npm run lint
-npx tsc --noEmit --incremental false
-npm run build
-npm run start
+npm run build:production
+npm run start:production
 ```
 
 El servidor escucha en el puerto `3000`. Usa el dominio o proxy HTTPS del
@@ -452,13 +450,18 @@ No reactives repositorios JSON ni ejecutes el seed como mecanismo de rollback.
 | --- | --- |
 | `npm run dev` | Desarrollo local en el puerto 3000 |
 | `npm run lint` | ESLint |
-| `npx tsc --noEmit --incremental false` | Typecheck |
+| `npm run typecheck` | Typecheck |
+| `npm run validate` | ESLint y TypeScript |
 | `npm run build` | Build de producción |
-| `npm run start` | Ejecutar el build de producción |
+| `npm run build:production` | Validar y generar el build de producción |
+| `npm run start` | Ejecutar el build generado |
+| `npm run start:production` | Arrancar el servidor de producción |
 | `npm run db:migrate:local:dry-run` | Revisar migraciones contra Supabase local |
 | `npm run db:migrate:local` | Aplicar migraciones al stack local |
 | `npm run db:migrate:dry-run` | Revisar migraciones del proyecto remoto enlazado |
 | `npm run db:migrate` | Aplicar migraciones al proyecto remoto enlazado |
+| `npm run db:migrate:production:dry-run` | Dry-run explícito de migraciones de producción |
+| `npm run db:migrate:production` | Aplicar explícitamente migraciones de producción |
 | `npm run db:seed` | Seed explícito de una base remota nueva y vacía |
 
 ## Rutas principales
