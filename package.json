@@ -8,7 +8,7 @@
     "build:production": "npm run validate && npm run build",
     "start": "next start --port 3000",
     "start:production": "npm run start",
-    "lint": "eslint",
+    "lint": "eslint src",
     "typecheck": "tsc --noEmit --incremental false",
     "validate": "npm run lint && npm run typecheck",
     "db:migrate:local:dry-run": "npx --yes supabase@3.0.0 db push --dry-run --skip-vault",
