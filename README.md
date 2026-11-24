@@ -31,6 +31,101 @@ La aplicación se inicia en [http://localhost:3000](http://localhost:3000).
 Completa `.env.local` con valores locales. Los archivos `.env*` están ignorados
 por Git; solo `.env.template` se versiona. Nunca guardes secretos reales en Git.
 
+### Agentes y herramientas por entorno
+
+Los agentes y herramientas no tienen el mismo alcance en desarrollo y
+producción. La aplicación OpenDayCare no ejecuta agentes de administración de
+base de datos durante el runtime web.
+
+#### Desarrollo y pruebas
+
+| Agente o herramienta | Uso |
+| --- | --- |
+| **OpenCode** | Implementar, revisar y validar cambios del repositorio. |
+| **Context7 MCP** | Consultar documentación técnica desde OpenCode mediante `CONTEXT7_API_KEY`; no pertenece a la aplicación. |
+| **Supabase CLI** | Arrancar Supabase local, revisar/aplicar migraciones y ejecutar consultas autorizadas. |
+| **Docker Desktop** | Ejecutar el stack local de Supabase para pruebas aisladas. |
+| **Pruebas PostgreSQL remotas** | Pruebas autorizadas protegidas por `RUN_REMOTE_DB_TESTS=true` y rollback transaccional. |
+| **`security_auditor`** | Rol opcional de solo lectura para auditorías remotas de desarrollo. |
+
+Para pruebas locales con Docker:
+
+```powershell
+npx --yes supabase@3.0.0 start
+npm run db:migrate:local:dry-run
+npm run db:migrate:local
+npx --yes supabase@3.0.0 status
+```
+
+Al terminar:
+
+```powershell
+npx --yes supabase@3.0.0 stop
+```
+
+Para pruebas remotas autorizadas, cambia temporalmente en el entorno de
+desarrollo:
+
+```dotenv
+RUN_REMOTE_DB_TESTS=true
+```
+
+Después de las pruebas, restáuralo a `RUN_REMOTE_DB_TESTS=false`. Estas
+pruebas no forman parte del arranque normal y deben ejecutarse con rollback.
+
+El rol `security_auditor` es opcional y no se necesita para ejecutar la
+aplicación. Si se requiere para una auditoría de desarrollo, habilítalo solo en
+el SQL Editor del proyecto autorizado:
+
+```sql
+alter role security_auditor
+  login
+  password '<auditor-password-managed-outside-git>';
+```
+
+Guarda `SECURITY_AUDITOR_DB_URL` y `SECURITY_AUDITOR_DB_PASSWORD` únicamente
+en el entorno del auditor o en un `.env` local ignorado por Git. No los
+configures en Vercel.
+
+#### Producción
+
+En producción el runtime web se ejecuta en **Vercel**. No se ejecutan Docker,
+OpenCode, Context7, pruebas remotas ni el rol `security_auditor` dentro de
+Vercel.
+
+El flujo productivo es:
+
+1. Confirmar el proyecto Supabase enlazado.
+2. Ejecutar el dry-run de migraciones.
+3. Aplicar las migraciones remotas explícitamente.
+4. Ejecutar un segundo dry-run y confirmar que no quedan pendientes.
+5. Si la base es nueva y está vacía, ejecutar `npm run db:seed`.
+6. Configurar variables en **Vercel → Settings → Environment Variables**.
+7. Ejecutar `npm run build:production` mediante el despliegue.
+8. Hacer **Redeploy** después de modificar variables.
+9. Verificar `/auth/login`, `/home`, `/account` y las operaciones principales.
+
+Comandos de migración productiva:
+
+```powershell
+npm run db:migrate:production:dry-run
+npm run db:migrate:production
+npm run db:migrate:production:dry-run
+```
+
+El seed crea datos iniciales de demostración y solo debe ejecutarse en una base
+nueva y vacía con autorización. Después de usarlo, rota la contraseña inicial
+y crea cuentas administradas. En producción debe mantenerse:
+
+```dotenv
+RUN_REMOTE_DB_TESTS=false
+```
+
+La migración que crea `security_auditor` puede formar parte del historial, pero
+no se debe ejecutar `ALTER ROLE security_auditor` en producción. El rol debe
+permanecer `NOLOGIN` salvo que exista una necesidad operativa aprobada y un
+entorno separado de auditoría.
+
 ### Dónde ejecutar los comandos
 
 Todos los comandos `npm`, `npx supabase` y PowerShell de este documento se
@@ -79,6 +174,34 @@ si un runner E2E externo las consume; el código actual no las lee.
 `CONTEXT7_API_KEY` pertenece al MCP de Context7 usado por OpenCode, no a la
 aplicación. `SECURITY_AUDITOR_DB_URL` y `SECURITY_AUDITOR_DB_PASSWORD` solo se
 configuran en el entorno separado que ejecuta auditorías remotas de lectura.
+
+#### Auditor remoto para desarrollo
+
+El rol `security_auditor` no es una cuenta de OpenDayCare y no es necesario
+para ejecutar la aplicación en producción. Solo configúralo si vas a realizar
+auditorías remotas de lectura durante desarrollo o pruebas autorizadas.
+
+La migración `20261117230000_provision_security_auditor.sql` crea el rol como
+`NOLOGIN`, sin contraseña y con permisos de lectura limitados. Para habilitar
+el acceso temporal del auditor, ejecuta una sola vez en el **SQL Editor del
+proyecto Supabase de desarrollo**:
+
+```sql
+alter role security_auditor
+  login
+  password '<auditor-password-managed-outside-git>';
+```
+
+Genera la contraseña fuera del repositorio y guárdala únicamente en el gestor
+de secretos o en `.env` local, que está excluido de Git:
+
+```dotenv
+SECURITY_AUDITOR_DB_PASSWORD=<auditor-password>
+SECURITY_AUDITOR_DB_URL=postgresql://security_auditor.<PROJECT_REF>@<POOLER_HOST>:5432/postgres?sslmode=require
+```
+
+No pongas estas variables en Vercel ni en el entorno web de producción. No
+incluyas la contraseña en migraciones, commits, logs o documentación.
 
 `MAIL_TEMPLATE_PATH` no se configura en `.env`: se deriva de la carpeta
 `templates/`, que debe existir en el directorio de ejecución.
@@ -139,7 +262,7 @@ Password: OpenDayCare1!
 
 Estas credenciales están destinadas únicamente al bootstrap local o a una base
 de demostración recién creada. Rota la contraseña y crea cuentas administradas
-antes de permitir cualquier acceso real; nunca las uses en producción.
+antes de permitir cualquier acceso real.
 
 ## Paso a producción
 
@@ -161,84 +284,12 @@ Antes de aplicar cambios, ejecuta las prevalidaciones remotas de la sección
 **Comandos PowerShell y cliente PostgreSQL/Supabase**. Si los contadores no son
 `0`, detén el proceso y corrige los datos mediante una migración aprobada.
 
-### Migración remota y usuario auditor
+### Migración remota de producción
 
-La migración `20261117230000_provision_security_auditor.sql` crea el rol
-`security_auditor` como `NOLOGIN`, sin contraseña, con permisos de lectura
-limitados y `BYPASSRLS` desactivado. Este rol es opcional y solo se usa para
-auditorías remotas de lectura; no es la cuenta con la que el personal inicia
-sesión en OpenDayCare.
-
-#### Dónde ejecutar `ALTER ROLE`
-
-Después de que `npm run db:migrate` termine correctamente, un administrador del
-proyecto debe abrir el **Dashboard de Supabase del proyecto remoto autorizado**
-y entrar en **SQL Editor → New query**. La sentencia se ejecuta allí, conectada
-al proyecto remoto correcto:
-
-```sql
-alter role security_auditor
-  login
-  password '<auditor-password-managed-outside-git>';
-```
-
-#### Cómo generar y configurar la contraseña
-
-Genera la contraseña en un gestor de secretos o temporalmente con PowerShell.
-Este comando produce un valor aleatorio Base64URL sin comillas simples, para
-que pueda usarse de forma segura en la sentencia SQL:
-
-```powershell
-$bytes = New-Object byte[] 32
-[System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
-$auditorPassword = [Convert]::ToBase64String($bytes).TrimEnd('=')
-$auditorPassword = $auditorPassword.Replace('+', '-').Replace('/', '_')
-$auditorPassword
-```
-
-1. Copia el valor generado directamente al placeholder de la sentencia en
-   **Supabase Dashboard → SQL Editor → New query** y pulsa **Run**:
-
-   ```sql
-   alter role security_auditor
-     login
-     password '<valor-generado>';
-   ```
-
-2. Guarda el mismo valor en el gestor de secretos del entorno que ejecutará las
-   auditorías. Para una ejecución local, configúralo en `.env` (ignorado por
-   Git) como:
-
-   ```dotenv
-   SECURITY_AUDITOR_DB_PASSWORD=<el-mismo-valor-generado>
-   SECURITY_AUDITOR_DB_URL=postgresql://security_auditor.<PROJECT_REF>@<POOLER_HOST>:5432/postgres?sslmode=require
-   ```
-
-   En CI o producción, configura esas dos variables en el gestor de secretos
-   del proveedor, no en un archivo versionado.
-
-3. `SECURITY_AUDITOR_DB_PASSWORD` es únicamente para el cliente auditor. No es
-   la contraseña de la aplicación, no reemplaza `SUPABASE_DB_PASSWORD` y no se
-   necesita para que OpenDayCare arranque.
-
-No ejecutes esta sentencia desde PowerShell, Docker local, `supabase db query`,
-una migración versionada ni Supabase MCP.
-
-No incluyas esta sentencia ni la contraseña en una migración, commit, log o
-prompt. Guarda la contraseña fuera de Git y configura
-`SECURITY_AUDITOR_DB_URL` y `SECURITY_AUDITOR_DB_PASSWORD` únicamente en el
-entorno del auditor.
-
-Verifica la sesión del auditor con una conexión remota de solo lectura:
-
-```sql
-select current_user,
-       current_setting('transaction_read_only');
-```
-
-El resultado debe identificar `security_auditor` y mostrar `on`. Comprueba
-también que no tenga privilegios `INSERT`, `UPDATE` o `DELETE`. El auditor no
-usa Docker, Supabase MCP ni credenciales administrativas para sus consultas.
+La migración `20261117230000_provision_security_auditor.sql` puede aplicarse
+porque forma parte del historial versionado, pero **no ejecutes `ALTER ROLE` en
+producción**. El rol auditor debe permanecer `NOLOGIN` si no existe una
+necesidad operativa aprobada. No es necesario para que OpenDayCare arranque.
 
 ### Comandos PowerShell y cliente PostgreSQL/Supabase
 
@@ -261,10 +312,8 @@ $adminDbPort = Get-DotEnvValue "SUPABASE_DB_PORT"
 $adminDbUsername = Get-DotEnvValue "SUPABASE_DB_USERNAME"
 $adminDbUrl = "postgresql://{0}@{1}:{2}/postgres?sslmode=require" -f `
   $adminDbUsername, $adminDbHost, $adminDbPort
-$auditorPassword = Get-DotEnvValue "SECURITY_AUDITOR_DB_PASSWORD"
-$auditorDbUrl = Get-DotEnvValue "SECURITY_AUDITOR_DB_URL"
 
-foreach ($value in @($adminDbUrl, $auditorDbUrl)) {
+foreach ($value in @($adminDbUrl)) {
   if ([string]::IsNullOrWhiteSpace($value) -or $value.Contains('<')) {
     throw "La URL contiene un placeholder o está vacía"
   }
@@ -325,26 +374,7 @@ Remove-Item $precheckPath -ErrorAction SilentlyContinue
 Remove-Variable precheckSql, precheckPath -ErrorAction SilentlyContinue
 ```
 
-Los dos contadores deben ser `0`. Para verificar el usuario auditor usa su URL
-remota y contraseña, siempre con `--read-only`:
-
-```powershell
-$env:PGPASSWORD = $auditorPassword
-
-npx --yes supabase@3.0.0 db query `
-  --remote="$auditorDbUrl" `
-  --read-only `
-  "select current_user, current_database(), current_setting('transaction_read_only');"
-
-npx --yes supabase@3.0.0 db query `
-  --remote="$auditorDbUrl" `
-  --read-only `
-  "select
-     has_table_privilege(current_user, 'public.people', 'SELECT') as can_select,
-     has_table_privilege(current_user, 'public.people', 'INSERT') as can_insert,
-     has_table_privilege(current_user, 'public.people', 'UPDATE') as can_update,
-     has_table_privilege(current_user, 'public.people', 'DELETE') as can_delete;"
-```
+Los dos contadores deben ser `0`.
 
 Limpia las variables temporales al terminar:
 
@@ -352,13 +382,12 @@ Limpia las variables temporales al terminar:
 Remove-Item Env:PGPASSWORD -ErrorAction SilentlyContinue
 Remove-Item Env:SUPABASE_DB_PASSWORD -ErrorAction SilentlyContinue
 Remove-Variable adminPassword, adminDbHost, adminDbPort, adminDbUsername, `
-  adminDbUrl, auditorPassword, auditorDbUrl `
+  adminDbUrl `
   -ErrorAction SilentlyContinue
 ```
 
 `db:migrate` aplica únicamente las migraciones versionadas en
-`supabase/migrations/`. El seed no forma parte del despliegue normal; úsalo solo
-para una base nueva, después de verificar el proyecto destino:
+`supabase/migrations/`. Ejecuta el flujo de producción en este orden:
 
 ```bash
 npm run db:migrate:production:dry-run
@@ -367,12 +396,17 @@ npm run db:migrate:production:dry-run
 ```
 
 El segundo dry-run debe confirmar que no quedan migraciones pendientes. Para un
-proyecto Supabase nuevo y vacío, el seed se ejecuta explícitamente después de
+proyecto Supabase nuevo y vacío, ejecuta explícitamente el seed después de
 aplicar la estructura:
 
 ```bash
 npm run db:seed
 ```
+
+El seed crea la guardería inicial, salas, roles y una cuenta de demostración.
+No lo ejecutes sobre una base con datos históricos sin autorización. Después de
+usarlo, rota la contraseña inicial y crea cuentas administradas. La variable
+`RUN_REMOTE_DB_TESTS` debe permanecer en `false`.
 
 ### 2. Configurar secretos y variables
 
@@ -392,6 +426,7 @@ SUPABASE_DB_HOST=<session-pooler-host>
 SUPABASE_DB_PORT=5432
 SUPABASE_DB_USERNAME=postgres.<PROJECT_REF>
 SUPABASE_DB_PASSWORD=<database-password>
+RUN_REMOTE_DB_TESTS=false
 
 MAILER_EMAIL=<sender>
 MAILER_SECRET_KEY=<smtp-secret>
@@ -412,6 +447,9 @@ mailer, Cloudinary y autenticación son server-only; nunca las expongas como
 La plantilla `templates/parent-invitation.html` debe estar disponible en el
 runtime. Si el proveedor usa un paquete standalone, incluye también la carpeta
 `templates/` junto con el artefacto generado por Next.js.
+
+Después de cambiar variables en Vercel, selecciona **Deployments → Redeploy**;
+las variables nuevas no modifican una función ya desplegada.
 
 ### 3. Construir y arrancar la aplicación
 
