@@ -1,9 +1,20 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-import { AccountProfileForm } from "./account-profile-form";
-import { PasswordForm } from "./password-form";
+import { useState } from "react";
 import { Button } from "@/presentation/ui";
+import {
+  AccountModal,
+  AccountPasswordForm,
+  AccountProfileForm,
+  type AccountPasswordState,
+  type AccountProfileState,
+} from "@/presentation/account";
+import {
+  changePasswordAction,
+} from "../_actions/change-password";
+import {
+  updateAccountAction,
+} from "../_actions/update-account";
 import styles from "../account.module.css";
 
 type AccountSettingsActionsProps = {
@@ -12,39 +23,8 @@ type AccountSettingsActionsProps = {
   phone: string | null;
 };
 
-type ModalProps = {
-  children: ReactNode;
-  onClose: () => void;
-  title: string;
-};
-
-function AccountModal({ children, onClose, title }: ModalProps) {
-  return (
-    <div className={styles.modalBackdrop} role="presentation">
-      <div
-        aria-labelledby="account-modal-title"
-        aria-modal="true"
-        className={styles.modal}
-        role="dialog"
-      >
-        <div className={styles.modalHeader}>
-          <h2 className={styles.modalTitle} id="account-modal-title">
-            {title}
-          </h2>
-          <Button
-            aria-label="Cerrar ventana"
-            className={styles.closeButton}
-            onClick={onClose}
-            variant="ghost"
-          >
-            ×
-          </Button>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
+const profileInitialState: AccountProfileState = { errors: {}, message: "" };
+const passwordInitialState: AccountPasswordState = { errors: {}, message: "" };
 
 /**
  * Provides separate modal entry points for profile and password forms.
@@ -68,6 +48,7 @@ export function AccountSettingsActions({
       <>
         <Button
           className={styles.editButton}
+          id="family-account-edit"
           onClick={() => setActiveModal("profile")}
           variant="soft"
         >
@@ -75,10 +56,18 @@ export function AccountSettingsActions({
         </Button>
         {activeModal === "profile" ? (
           <AccountModal
+            idPrefix="family-account-profile"
             onClose={() => setActiveModal(null)}
+            restoreFocusId="family-account-edit"
             title="Editar datos de cuenta"
           >
-            <AccountProfileForm name={name} phone={phone} />
+            <AccountProfileForm
+              action={updateAccountAction}
+              idPrefix="family-account-profile"
+              initialState={profileInitialState}
+              name={name}
+              phone={phone}
+            />
           </AccountModal>
         ) : null}
       </>
@@ -90,6 +79,7 @@ export function AccountSettingsActions({
       <div className={styles.actionList}>
         <Button
           className={styles.actionButton}
+          id="family-account-password"
           onClick={() => setActiveModal("password")}
           variant="ghost"
         >
@@ -104,10 +94,16 @@ export function AccountSettingsActions({
 
       {activeModal === "password" ? (
         <AccountModal
+          idPrefix="family-account-password-modal"
           onClose={() => setActiveModal(null)}
+          restoreFocusId="family-account-password"
           title="Cambiar contraseña"
         >
-          <PasswordForm />
+          <AccountPasswordForm
+            action={changePasswordAction}
+            idPrefix="family-account-password"
+            initialState={passwordInitialState}
+          />
         </AccountModal>
       ) : null}
     </>

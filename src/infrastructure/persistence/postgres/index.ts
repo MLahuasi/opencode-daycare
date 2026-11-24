@@ -36,6 +36,7 @@ export {
 } from "./repositories/post-access-repository";
 export { PostgresRoomRepository } from "./repositories/room-repository";
 export { PostgresStaffShellRepository } from "./repositories/staff-shell-repository";
+export { PostgresStaffAccountRepository } from "./repositories/staff-account-repository";
 export type { FeedRelations, StaffRoom } from "./mappers";
 export {
   mapCredentialRow,

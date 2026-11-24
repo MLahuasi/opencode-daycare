@@ -44,6 +44,10 @@ dependency direction.
   valid reuse outside that route.
 - Expose a public module API when a module has multiple consumers; consumers
   should not depend on implementation details.
+- Shared account presentation belongs in `src/presentation/account/` and is
+  exposed through its `index.ts` barrel. It may receive serializable state,
+  configuration and valid server actions through props, but must not import
+  route actions, Composition or Infrastructure.
 - Do not create generic layers or folders merely for symmetry. Every directory
   must contain a concrete responsibility and a real consumer.
 
@@ -57,6 +61,9 @@ dependency direction.
   filesystem and framework server APIs where required by its adapter role.
 - Presentation consumes application contracts and presentation models, never
   concrete infrastructure services.
+- Account forms and dialogs are presentation concerns. `AccountProfileForm`,
+  `AccountPasswordForm` and `AccountModal` are reused by staff and family
+  routes, while each route keeps its own server actions and authorization.
 - Composition wires application and infrastructure together and is not a
   replacement for either layer.
 - `src/config/server/environment.ts` is the only application module allowed to
@@ -81,6 +88,7 @@ Application or Presentation.
 flowchart TB
     BROWSER[Browser] --> ROUTES[src/app<br/>pages, layouts, actions, handlers]
     ROUTES --> PRESENTATION[src/presentation<br/>UI and navigation]
+    PRESENTATION --> ACCOUNT_UI[account forms and dialogs]
     ROUTES --> COMPOSITION[src/composition<br/>Composition Root]
 
     COMPOSITION --> APPLICATION[src/application<br/>use cases and ports]
@@ -183,6 +191,10 @@ snapshots inmutables de migración y no forman parte del camino runtime.
   configuration, server-only modules or persistence collections.
 - Route entrypoints and server actions may use framework server APIs, but must
   delegate business behavior to application services assembled by composition.
+- Route-specific account actions remain under each account route so family and
+  staff authorization cannot be accidentally shared. They may pass their action
+  and initial state into `src/presentation/account/`, but presentation must not
+  select or construct those actions.
 - Server route entrypoints must not import PostgreSQL clients or repositories
   directly; concrete database assembly belongs in `src/composition/`.
 - `src/bootstrap.ts` and all external-client facades are server-only. They must
@@ -201,6 +213,9 @@ snapshots inmutables de migración y no forman parte del camino runtime.
   Composition Root is the only assembly point.
 - Verify Server/Client boundaries, private configuration access and data
   projection before exposing a component to the browser.
+- Verify that shared account presentation imports only presentation UI, browser
+  APIs and contracts; verify that family and staff actions remain separate and
+  preserve their authorization boundaries.
 - Verify that `instrumentation.ts` remains a minimal Next.js lifecycle adapter,
   that it dynamically imports bootstrap code only for Node.js, and that startup
   initialization is idempotent.

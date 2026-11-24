@@ -8,6 +8,7 @@ import { PostgresParentKidRepository } from "../repositories/parent-kid-reposito
 import { PostgresPostAccessRepository } from "../repositories/post-access-repository";
 import { PostgresPostRepository } from "../repositories/post-repository";
 import { PostgresRoomRepository } from "../repositories/room-repository";
+import { PostgresStaffAccountRepository } from "../repositories/staff-account-repository";
 import { withRemoteDbTestTransaction } from "./remote-db-test-context";
 
 function createIds() {
@@ -91,6 +92,7 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
       getCurrentDaycareId: async () => ids.daycareId,
     };
     const rooms = new PostgresRoomRepository(client);
+    const accounts = new PostgresStaffAccountRepository(client);
     const kids = new PostgresKidRepository(client);
     const parentKids = new PostgresParentKidRepository(client);
     const access = new PostgresPostAccessRepository(client, currentDaycare);
@@ -159,6 +161,27 @@ export async function runRemoteStaffPersistenceTests(): Promise<void> {
       INSERT INTO staff_rooms (daycare_id, person_id, room_id)
       VALUES (${ids.daycareId}, ${ids.staffId}, ${ids.roomId})
     `;
+
+    const accountBeforeUpdate = await accounts.findByPerson(
+      ids.daycareId,
+      ids.staffId,
+    );
+    assert.deepEqual(accountBeforeUpdate?.roomNames, ["Remote Room"]);
+    await accounts.updateProfile(ids.daycareId, ids.staffId, {
+      name: "Remote Staff Updated",
+      phone: "+34600123456",
+    });
+    const accountAfterUpdate = await accounts.findByPerson(
+      ids.daycareId,
+      ids.staffId,
+    );
+    assert.equal(accountAfterUpdate?.name, "Remote Staff Updated");
+    assert.equal(accountAfterUpdate?.phone, "+34600123456");
+    assert.equal(accountAfterUpdate?.email, "staff-remote@example.test");
+    assert.equal(
+      await accounts.findByPerson(ids.otherDaycareId, ids.staffId),
+      null,
+    );
     await parentKids.create({
       daycareId: ids.daycareId,
       id: ids.parentKidId,
